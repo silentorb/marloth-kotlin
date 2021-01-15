@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Filter>
+	<Components>
+		<Result id="result">
+			<Source source="multiblend2 01"/>
+			<FilterType value="0"/>
+			<Advanced value="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+		</Result>
+		<Blend6 id="blend6 01">
+			<Foreground source="noisedistortion2 02" red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Opacity value="1"/>
+			<Mode value="0"/>
+		</Blend6>
+		<BrightnessContrast3 id="brightnesscontrast3 01">
+			<Source source="noisedistortion2 01"/>
+			<Brightness value="-0.3800000000000000044"/>
+			<Contrast value="0.5"/>
+			<PreserveColor value="false"/>
+		</BrightnessContrast3>
+		<Ellipse id="ellipse 01">
+			<Color source="perlinnoise2 01" red="1" green="0.5019607843137254832" blue="0" alpha="1"/>
+			<Background red="1" green="1" blue="1" alpha="0"/>
+			<Radius source="perlinnoise2 02" value="0.8900000000000000133"/>
+			<Rotation value="0"/>
+			<Squash value="-0.1400000000000000133"/>
+			<BevelWidth value="0.0400000000000000008"/>
+			<BevelCurve value="0"/>
+		</Ellipse>
+		<Ellipse id="ellipse 02">
+			<Color red="0" green="0" blue="0" alpha="1"/>
+			<Background red="1" green="1" blue="1" alpha="0"/>
+			<Radius source="perlinnoise2 02" value="0.8900000000000000133"/>
+			<Rotation value="0"/>
+			<Squash value="-0.1400000000000000133"/>
+			<BevelWidth value="0.0200000000000000004"/>
+			<BevelCurve value="0"/>
+		</Ellipse>
+		<Ellipse id="ellipse 03">
+			<Color red="1" green="1" blue="1" alpha="1"/>
+			<Background red="1" green="1" blue="1" alpha="0"/>
+			<Radius source="perlinnoise2 03" value="0.7099999999999999645"/>
+			<Rotation value="0"/>
+			<Squash value="-0.1400000000000000133"/>
+			<BevelWidth value="0.0200000000000000004"/>
+			<BevelCurve value="0"/>
+		</Ellipse>
+		<Multiblend2 id="multiblend2 01">
+			<Layer7 red="1" green="0.0660000000000000031" blue="0" alpha="1"/>
+			<Opacity7 value="0"/>
+			<Layer6 red="1" green="0.7720000000000000195" blue="0.1130000000000000032" alpha="1"/>
+			<Opacity6 value="0"/>
+			<Layer5 red="0.7054263565891472076" green="0.7054263565891472076" blue="0.5304368727840874653" alpha="1"/>
+			<Opacity5 source="brightnesscontrast3 01" value="0.6400000000000000133"/>
+			<Layer4 source="perlinnoise2 04" red="0.2499496695728542772" green="0.2558139534883721034" blue="0.1764917973679466512" alpha="1"/>
+			<Opacity4 source="blend6 01" value="0"/>
+			<Layer3 red="0" green="1" blue="1" alpha="1"/>
+			<Opacity3 value="0"/>
+			<Layer2 red="0" green="0.7600000000000000089" blue="1" alpha="1"/>
+			<Opacity2 value="0"/>
+			<Layer1 red="0" green="0" blue="0" alpha="1"/>
+			<Opacity1 value="1"/>
+		</Multiblend2>
+		<NoiseDistortion2 id="noisedistortion2 01">
+			<Source source="ellipse 03"/>
+			<Distortion value="0.3300000000000000155"/>
+			<Roughness value="0.5500000000000000444"/>
+			<Scale value="1.1999999999999999556"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Variation value="1"/>
+		</NoiseDistortion2>
+		<NoiseDistortion2 id="noisedistortion2 02">
+			<Source source="noisedistortion2 04"/>
+			<Distortion value="0.0200000000000000004"/>
+			<Roughness value="0.5699999999999999512"/>
+			<Scale value="1.2299999999999999822"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Variation value="1"/>
+		</NoiseDistortion2>
+		<NoiseDistortion2 id="noisedistortion2 04">
+			<Source source="ellipse 01"/>
+			<Distortion value="0.1100000000000000006"/>
+			<Roughness value="0.4799999999999999822"/>
+			<Scale value="2.3100000000000000533"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Variation value="1"/>
+		</NoiseDistortion2>
+		<PerlinNoise2 id="perlinnoise2 01">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.7900000000000000355"/>
+			<Scale value="2.1899999999999999467"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.8000000000000000444"/>
+			<Variation value="25328"/>
+			<OctaveCurve value="2"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 02">
+			<Noise red="0.6589147286821706029" green="0.6589147286821706029" blue="0.6589147286821706029" alpha="1"/>
+			<Background red="0.5038759689922480689" green="0.5038759689922480689" blue="0.5038759689922480689" alpha="1"/>
+			<Roughness value="0"/>
+			<Scale value="1.9799999999999999822"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.4799999999999999822"/>
+			<Variation value="1"/>
+			<OctaveCurve value="1"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 03">
+			<Noise red="0.3682170542635658794" green="0.3682170542635658794" blue="0.3682170542635658794" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0"/>
+			<Scale value="1.4099999999999999201"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.3200000000000000067"/>
+			<Variation value="1"/>
+			<OctaveCurve value="1"/>
+		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 04">
+			<Noise red="0.4740978928561658257" green="0.4883720930232557933" blue="0.2952947539210383776" alpha="1"/>
+			<Background red="0" green="0" blue="0" alpha="1"/>
+			<Roughness value="0.3900000000000000133"/>
+			<Scale value="0.6600000000000000311"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.0700000000000000067"/>
+			<Variation value="1"/>
+			<OctaveCurve value="3"/>
+		</PerlinNoise2>
+	</Components>
+	<GroupNames/>
+	<SettingsOverride>
+		<Size value="0"/>
+		<Variation value="0"/>
+		<Seamless value="0"/>
+		<ResultBlending value="0"/>
+	</SettingsOverride>
+	<Presets>
+		<DefaultPreset preview_image="LIFESAVER_OPAQUE">
+			<Settings size_factor="1" variation="1" seamless="false" antialiasing="2" map_type="0" edges_only="true" clip_hdr_for_result="false"/>
+			<Lighting>
+				<Height value="0.2000000000000000111"/>
+				<Environment>
+					<Source value=""/>
+					<Brightness value="1"/>
+					<Saturation value="1"/>
+					<Rotation value="0"/>
+					<RotationAxis x="0" y="0" z="0"/>
+				</Environment>
+				<Ambience>
+					<AmbientLight red="0" green="0" blue="0"/>
+					<Shadowing value="0"/>
+					<CurrentOcclusionSettings>
+						<RayDirections value="4"/>
+						<TraceDistance value="0.2000000000000000111"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="0"/>
+						<ROQuality value="3"/>
+					</CurrentOcclusionSettings>
+					<CustomOcclusionSettings>
+						<RayDirections value="16"/>
+						<TraceDistance value="0.2999999999999999889"/>
+						<RayJittering value="true"/>
+						<RayBounce value="true"/>
+						<AvoidStreaks value="true"/>
+						<DirectSamples value="1"/>
+						<ROQuality value="10"/>
+					</CustomOcclusionSettings>
+					<ArtisticSettings>
+						<BlackPoint value="0"/>
+						<Midtones value="0.5"/>
+						<WhitePoint value="1"/>
+					</ArtisticSettings>
+				</Ambience>
+			</Lighting>
+			<Controls/>
+		</DefaultPreset>
+	</Presets>
+	<Locks>
+		<Settings size="false" variation="false"/>
+		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
+		<Controls/>
+	</Locks>
+	<Information author="cj" name-en="bush" url="" description="" keywords="" update_notes="" major_version="8" minor_version="5"/>
+	<ControlsOrder>
+		<Automatic value="true"/>
+	</ControlsOrder>
+	<FilterEditor>
+		<Groups/>
+		<ThumbnailSize value="1"/>
+		<Canvas left="-250" top="-171" zoom_factor="0"/>
+		<Viewport left="0" top="0" zoom_factor="-2"/>
+		<LockPreview>
+			<Locked value="true"/>
+			<LockedComponent name="multiblend2 01"/>
+		</LockPreview>
+		<Item id="blend6 01">
+			<Position left="208" top="48"/>
+		</Item>
+		<Item id="brightnesscontrast3 01">
+			<Position left="176" top="304"/>
+		</Item>
+		<Item id="ellipse 01">
+			<Position left="416" top="-128"/>
+		</Item>
+		<Item id="ellipse 02">
+			<Position left="304" top="-320"/>
+		</Item>
+		<Item id="ellipse 03">
+			<Position left="480" top="320"/>
+		</Item>
+		<Item id="multiblend2 01">
+			<Position left="-32" top="176"/>
+		</Item>
+		<Item id="noisedistortion2 01">
+			<Position left="320" top="224"/>
+		</Item>
+		<Item id="noisedistortion2 02">
+			<Position left="-176" top="-176"/>
+		</Item>
+		<Item id="noisedistortion2 04">
+			<Position left="64" top="-176"/>
+		</Item>
+		<Item id="perlinnoise2 01">
+			<Position left="576" top="48"/>
+		</Item>
+		<Item id="perlinnoise2 02">
+			<Position left="688" top="-272"/>
+		</Item>
+		<Item id="perlinnoise2 03">
+			<Position left="720" top="288"/>
+		</Item>
+		<Item id="perlinnoise2 04">
+			<Position left="416" top="496"/>
+		</Item>
+		<Item id="result">
+			<Position left="-240" top="160"/>
+		</Item>
+	</FilterEditor>
+</Filter>

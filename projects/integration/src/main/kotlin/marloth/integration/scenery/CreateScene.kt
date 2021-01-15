@@ -15,7 +15,11 @@ import simulation.main.Deck
 import simulation.misc.Definitions
 
 val graphElementCache = singleValueCache<Graph, ElementGroups> { graph ->
-  nodesToElements(mapOf(), graph)
+  val roots = getGraphRoots(graph)
+  if (roots.any())
+    nodesToElements(mapOf(), graph)
+  else
+    listOf()
 }
 
 fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck, graph: Graph): (Id) -> GameScene = { player ->
@@ -50,12 +54,8 @@ fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck, grap
     else
       null
 
-    val roots = getGraphRoots(graph)
     val mainElements = gatherVisualElements(definitions, deck, player, characterRig) +
-        if (roots.any())
-          graphElementCache(graph)
-        else
-          listOf()
+        graphElementCache(graph)
 
     val layers = listOf(
         SceneLayer(

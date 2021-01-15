@@ -2,6 +2,9 @@
 "graph" : [
 ["building","parent","city-street"],
 ["city-street","",""],
+["lamppost","parent","city-street"],
+["lamppost","type","lamppost"],
+["lamppost","translation",[-2.5928857,0.0,0.46405122]],
 ["road","mesh","floorSquare"],
 ["road","collisionShape","box"],
 ["road","type","solid-static"],
