@@ -49,28 +49,25 @@
 			<Opacity value="1"/>
 			<Mode value="0"/>
 		</Blend6>
+		<Blend6 id="blend6 02">
+			<Foreground source="offset4 02" red="1" green="1" blue="1" alpha="1"/>
+			<Background source="ellipse 02" red="0" green="0" blue="0" alpha="1"/>
+			<Opacity value="1"/>
+			<Mode value="0"/>
+		</Blend6>
 		<BrightnessContrast3 id="brightnesscontrast3 01">
 			<Source source="noisedistortion2 01"/>
-			<Brightness value="-0.3800000000000000044"/>
+			<Brightness value="-0.6799999999999999378"/>
 			<Contrast value="0.5"/>
 			<PreserveColor value="false"/>
 		</BrightnessContrast3>
-		<Ellipse id="ellipse 01">
-			<Color source="perlinnoise2 01" red="1" green="0.5019607843137254832" blue="0" alpha="1"/>
+		<Ellipse id="ellipse 02">
+			<Color source="perlinnoise2 01" red="0" green="0" blue="0" alpha="1"/>
 			<Background red="1" green="1" blue="1" alpha="0"/>
 			<Radius source="perlinnoise2 02" value="0.8900000000000000133"/>
 			<Rotation value="0"/>
 			<Squash value="-0.1400000000000000133"/>
 			<BevelWidth value="0.0400000000000000008"/>
-			<BevelCurve value="0"/>
-		</Ellipse>
-		<Ellipse id="ellipse 02">
-			<Color red="0" green="0" blue="0" alpha="1"/>
-			<Background red="1" green="1" blue="1" alpha="0"/>
-			<Radius source="perlinnoise2 02" value="0.8900000000000000133"/>
-			<Rotation value="0"/>
-			<Squash value="-0.1400000000000000133"/>
-			<BevelWidth value="0.0200000000000000004"/>
 			<BevelCurve value="0"/>
 		</Ellipse>
 		<Ellipse id="ellipse 03">
@@ -82,26 +79,42 @@
 			<BevelWidth value="0.0200000000000000004"/>
 			<BevelCurve value="0"/>
 		</Ellipse>
+		<Ellipse id="ellipse 04">
+			<Color source="perlinnoise2 05" red="0" green="0" blue="0" alpha="1"/>
+			<Background red="1" green="1" blue="1" alpha="0"/>
+			<Radius value="0.4799999999999999822"/>
+			<Rotation value="0"/>
+			<Squash value="-0.1400000000000000133"/>
+			<BevelWidth value="0.3900000000000000133"/>
+			<BevelCurve value="0"/>
+		</Ellipse>
+		<Levels3 id="levels3 01">
+			<Source source="blend6 01"/>
+			<BlackPoint value="0"/>
+			<Gamma value="-0.8200000000000000622"/>
+			<WhitePoint value="0.1100000000000000006"/>
+			<PreserveColor value="false"/>
+		</Levels3>
 		<Multiblend2 id="multiblend2 01">
 			<Layer7 red="1" green="0.0660000000000000031" blue="0" alpha="1"/>
 			<Opacity7 value="0"/>
 			<Layer6 red="1" green="0.7720000000000000195" blue="0.1130000000000000032" alpha="1"/>
 			<Opacity6 value="0"/>
-			<Layer5 red="0.7054263565891472076" green="0.7054263565891472076" blue="0.5304368727840874653" alpha="1"/>
+			<Layer5 red="0.9186046511627906641" green="0.9186046511627906641" blue="0.6836127636560302978" alpha="1"/>
 			<Opacity5 source="brightnesscontrast3 01" value="0.6400000000000000133"/>
 			<Layer4 source="perlinnoise2 04" red="0.2499496695728542772" green="0.2558139534883721034" blue="0.1764917973679466512" alpha="1"/>
 			<Opacity4 source="blend6 01" value="0"/>
 			<Layer3 red="0" green="1" blue="1" alpha="1"/>
-			<Opacity3 value="0"/>
-			<Layer2 red="0" green="0.7600000000000000089" blue="1" alpha="1"/>
-			<Opacity2 value="0"/>
+			<Opacity3 source="offset4 01" value="0"/>
+			<Layer2 red="0" green="0" blue="0" alpha="1"/>
+			<Opacity2 source="levels3 01" value="0"/>
 			<Layer1 red="0" green="0" blue="0" alpha="1"/>
-			<Opacity1 value="1"/>
+			<Opacity1 value="0"/>
 		</Multiblend2>
 		<NoiseDistortion2 id="noisedistortion2 01">
 			<Source source="ellipse 03"/>
-			<Distortion value="0.3300000000000000155"/>
-			<Roughness value="0.5500000000000000444"/>
+			<Distortion value="0.2700000000000000178"/>
+			<Roughness value="0.4299999999999999933"/>
 			<Scale value="1.1999999999999999556"/>
 			<Stretch value="0"/>
 			<Angle value="0"/>
@@ -119,7 +132,7 @@
 			<Variation value="1"/>
 		</NoiseDistortion2>
 		<NoiseDistortion2 id="noisedistortion2 04">
-			<Source source="ellipse 01"/>
+			<Source source="blend6 02"/>
 			<Distortion value="0.1100000000000000006"/>
 			<Roughness value="0.4799999999999999822"/>
 			<Scale value="2.3100000000000000533"/>
@@ -128,6 +141,20 @@
 			<Details value="1"/>
 			<Variation value="1"/>
 		</NoiseDistortion2>
+		<Offset4 id="offset4 01">
+			<Source source="ellipse 04"/>
+			<OffsetX value="-0.0200000000000000004"/>
+			<OffsetY value="0"/>
+			<Percentage value="1"/>
+			<Mode value="0"/>
+		</Offset4>
+		<Offset4 id="offset4 02">
+			<Source source="polygon4 01"/>
+			<OffsetX value="0"/>
+			<OffsetY value="0.3099999999999999978"/>
+			<Percentage value="1"/>
+			<Mode value="0"/>
+		</Offset4>
 		<PerlinNoise2 id="perlinnoise2 01">
 			<Noise red="1" green="1" blue="1" alpha="1"/>
 			<Background red="0" green="0" blue="0" alpha="1"/>
@@ -136,7 +163,7 @@
 			<Stretch value="0"/>
 			<Angle value="0"/>
 			<Details value="1"/>
-			<Contrast value="0.8000000000000000444"/>
+			<Contrast value="0.2999999999999999889"/>
 			<Variation value="25328"/>
 			<OctaveCurve value="2"/>
 		</PerlinNoise2>
@@ -167,8 +194,8 @@
 		<PerlinNoise2 id="perlinnoise2 04">
 			<Noise red="0.4740978928561658257" green="0.4883720930232557933" blue="0.2952947539210383776" alpha="1"/>
 			<Background red="0" green="0" blue="0" alpha="1"/>
-			<Roughness value="0.3900000000000000133"/>
-			<Scale value="0.6600000000000000311"/>
+			<Roughness value="0.5899999999999999689"/>
+			<Scale value="0.9300000000000000488"/>
 			<Stretch value="0"/>
 			<Angle value="0"/>
 			<Details value="1"/>
@@ -176,6 +203,32 @@
 			<Variation value="1"/>
 			<OctaveCurve value="3"/>
 		</PerlinNoise2>
+		<PerlinNoise2 id="perlinnoise2 05">
+			<Noise red="1" green="1" blue="1" alpha="1"/>
+			<Background red="0.1201550387596899139" green="0.1201550387596899139" blue="0.1201550387596899139" alpha="1"/>
+			<Roughness value="0.7900000000000000355"/>
+			<Scale value="2.1899999999999999467"/>
+			<Stretch value="0"/>
+			<Angle value="0"/>
+			<Details value="1"/>
+			<Contrast value="0.7299999999999999822"/>
+			<Variation value="25328"/>
+			<OctaveCurve value="2"/>
+		</PerlinNoise2>
+		<Polygon4 id="polygon4 01">
+			<Color source="perlinnoise2 01" red="0" green="0" blue="0" alpha="1"/>
+			<Background red="1" green="1" blue="1" alpha="0"/>
+			<Radius source="perlinnoise2 02" value="0.5"/>
+			<StarFactor value="0.3900000000000000133"/>
+			<Rotation value="0"/>
+			<Squash value="0.2199999999999999734"/>
+			<OuterRadius value="0"/>
+			<InnerRadius value="0"/>
+			<BevelWidth value="0.1700000000000000122"/>
+			<Sides value="3"/>
+			<FitRadius value="true"/>
+			<BevelCurve value="0"/>
+		</Polygon4>
 	</Components>
 	<GroupNames/>
 	<SettingsOverride>
@@ -239,32 +292,38 @@
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="1"/>
-		<Canvas left="-250" top="-171" zoom_factor="0"/>
-		<Viewport left="0" top="0" zoom_factor="-2"/>
+		<Canvas left="-1005" top="-233" zoom_factor="0"/>
+		<Viewport left="36" top="135" zoom_factor="1"/>
 		<LockPreview>
 			<Locked value="true"/>
-			<LockedComponent name="multiblend2 01"/>
+			<LockedComponent name="result"/>
 		</LockPreview>
 		<Item id="blend6 01">
-			<Position left="208" top="48"/>
+			<Position left="48" top="16"/>
+		</Item>
+		<Item id="blend6 02">
+			<Position left="320" top="-336"/>
 		</Item>
 		<Item id="brightnesscontrast3 01">
-			<Position left="176" top="304"/>
-		</Item>
-		<Item id="ellipse 01">
-			<Position left="416" top="-128"/>
+			<Position left="176" top="400"/>
 		</Item>
 		<Item id="ellipse 02">
-			<Position left="304" top="-320"/>
+			<Position left="560" top="-336"/>
 		</Item>
 		<Item id="ellipse 03">
 			<Position left="480" top="320"/>
 		</Item>
+		<Item id="ellipse 04">
+			<Position left="320" top="80"/>
+		</Item>
+		<Item id="levels3 01">
+			<Position left="-96" top="400"/>
+		</Item>
 		<Item id="multiblend2 01">
-			<Position left="-32" top="176"/>
+			<Position left="-288" top="128"/>
 		</Item>
 		<Item id="noisedistortion2 01">
-			<Position left="320" top="224"/>
+			<Position left="400" top="240"/>
 		</Item>
 		<Item id="noisedistortion2 02">
 			<Position left="-176" top="-176"/>
@@ -272,11 +331,17 @@
 		<Item id="noisedistortion2 04">
 			<Position left="64" top="-176"/>
 		</Item>
+		<Item id="offset4 01">
+			<Position left="128" top="224"/>
+		</Item>
+		<Item id="offset4 02">
+			<Position left="192" top="-576"/>
+		</Item>
 		<Item id="perlinnoise2 01">
-			<Position left="576" top="48"/>
+			<Position left="768" top="0"/>
 		</Item>
 		<Item id="perlinnoise2 02">
-			<Position left="688" top="-272"/>
+			<Position left="784" top="-272"/>
 		</Item>
 		<Item id="perlinnoise2 03">
 			<Position left="720" top="288"/>
@@ -284,8 +349,14 @@
 		<Item id="perlinnoise2 04">
 			<Position left="416" top="496"/>
 		</Item>
+		<Item id="perlinnoise2 05">
+			<Position left="944" top="208"/>
+		</Item>
+		<Item id="polygon4 01">
+			<Position left="464" top="-592"/>
+		</Item>
 		<Item id="result">
-			<Position left="-240" top="160"/>
+			<Position left="-512" top="192"/>
 		</Item>
 	</FilterEditor>
 </Filter>
