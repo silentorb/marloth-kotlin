@@ -74,7 +74,7 @@ fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, L
   val customMeshes = mapOf(
       MeshId.hollowCircle to createHollowCircleMesh(vertexSchemas.flat, 64),
       "line" to createLineMesh(vertexSchemas.flat),
-      "billboard" to createBillboardMesh(vertexSchemas.billboard)
+      "billboard" to createBillboardMesh(vertexSchemas.textured)
   )
       .mapValues { createModelElements(it.value) }
       .mapValues { ModelMesh(it.key, it.value) }

@@ -23,6 +23,7 @@ fun textures() = listOf(
     "animPerlin000",
     "background",
     "bricks",
+    "bushOrb",
     "checkersBlackWhite",
     "dirt",
     "cobblestone",

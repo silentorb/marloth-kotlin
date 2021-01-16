@@ -57,19 +57,26 @@ fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck, grap
     val mainElements = gatherVisualElements(definitions, deck, player, characterRig) +
         graphElementCache(graph)
 
+    val (particleGroups, solidGroups) = mainElements
+        .partition { group -> group.billboards.any() }
+
     val layers = listOf(
         SceneLayer(
             elements = gatherBackground(deck.cyclesFloat, camera.position),
             useDepth = false
         ),
         SceneLayer(
-            elements = cullElementGroups(meshes, camera, mainElements),
+            elements = cullElementGroups(meshes, camera, solidGroups),
+            useDepth = true
+        ),
+        SceneLayer(
+            elements = particleGroups.sortedByDescending { it.billboards.first().position.distance(camera.position) },
             useDepth = true
         ),
         SceneLayer(
             elements = gatherParticleElements(deck, camera.position),
             useDepth = false
-        )
+        ),
     ) + listOfNotNull(movementRangeLayer, equipmentLayer)
     // + listOfNotNull(movementRangeLayer, equipmentLayer, targetingLayer)
 

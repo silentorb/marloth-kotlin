@@ -1,0 +1,8 @@
+{
+"graph" : [
+["bush-orb","",""],
+["bush-orb","type","billboard"],
+["bush-orb","texture","bushOrb"],
+["bush-orb","scale",[1.8644128,1.8644128,1.8644128]]
+]
+}

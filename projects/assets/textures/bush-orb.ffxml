@@ -285,15 +285,15 @@
 		<Lighting elements="false" environment="false" brightness="false" saturation="false" height="false"/>
 		<Controls/>
 	</Locks>
-	<Information author="cj" name-en="bush" url="" description="" keywords="" update_notes="" major_version="8" minor_version="5"/>
+	<Information author="cj" name-en="bush-orb" url="" description-en="" keywords-en="alpha" update_notes-en="" major_version="8" minor_version="5"/>
 	<ControlsOrder>
 		<Automatic value="true"/>
 	</ControlsOrder>
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="1"/>
-		<Canvas left="-1005" top="-233" zoom_factor="0"/>
-		<Viewport left="36" top="135" zoom_factor="1"/>
+		<Canvas left="-1034" top="-223" zoom_factor="0"/>
+		<Viewport left="39" top="137" zoom_factor="1"/>
 		<LockPreview>
 			<Locked value="true"/>
 			<LockedComponent name="result"/>
@@ -356,7 +356,7 @@
 			<Position left="464" top="-592"/>
 		</Item>
 		<Item id="result">
-			<Position left="-512" top="192"/>
+			<Position left="-512" top="176"/>
 		</Item>
 	</FilterEditor>
 </Filter>

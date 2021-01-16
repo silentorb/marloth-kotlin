@@ -3,6 +3,7 @@ import json
 import pathlib
 import subprocess
 from utility import prepare_path, write_text_file, ensure_dir_exists, load_config
+import re
 
 # Filter forge source files can optionally embed meta data into the file name.
 # Meta data could be added inside the file but would increase processing
@@ -40,21 +41,34 @@ def task_xml(input, output, width, height, format):
         <Preset value="0" />
     </Task>'''.format(input=input, output=output, width=width, height=height, format=format, source_path=source_path)
 
+def get_meta(file_path):
+    with open(file_path, 'r') as file:
+        data = file.read()
+
+    match = re.search('keywords-en\\s*=\\s*"(.*?)"', data)
+    if match is None:
+        return []
+
+    print('clause: ' + match.group(1))
+    clause = match.group(1)
+    return clause.split(",")
+
 
 def name_to_task(input_dir, output_dir, name):
-    transparency = False
+    input_file = input_dir + '/' + name + '.ffxml'
+    meta = get_meta(input_file)
+    transparency = 'alpha' in meta
     tokens = name.split('.')
     width = default_length
     height = default_length
     output_name = name
     if len(tokens) > 1:
-        meta = tokens[1]
-        if 'a' in meta[2]:
+        meta_old = tokens[1]
+        if 'a' in meta_old:
             transparency = True
             output_name = output_name[:-1]
-        width = width * int(meta[:2])
+        width = width * int(meta_old[:2])
     extension = 'png' if transparency else 'jpg'
-    input_file = input_dir + '/' + name + '.ffxml'
     output_file = output_dir + '/' + output_name + '.' + extension
     return task_xml(input_file, output_file, width, height, extension.upper())
 
