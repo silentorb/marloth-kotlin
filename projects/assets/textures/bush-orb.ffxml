@@ -88,6 +88,7 @@
 			<BevelWidth value="0.3900000000000000133"/>
 			<BevelCurve value="0"/>
 		</Ellipse>
+		<Image3 id="image3 01"/>
 		<Levels3 id="levels3 01">
 			<Source source="blend6 01"/>
 			<BlackPoint value="0"/>
@@ -108,7 +109,7 @@
 			<Opacity3 source="offset4 01" value="0"/>
 			<Layer2 red="0" green="0" blue="0" alpha="1"/>
 			<Opacity2 source="levels3 01" value="0"/>
-			<Layer1 red="0" green="0" blue="0" alpha="1"/>
+			<Layer1 source="image3 01" red="0" green="0" blue="0" alpha="1"/>
 			<Opacity1 value="0"/>
 		</Multiblend2>
 		<NoiseDistortion2 id="noisedistortion2 01">
@@ -292,7 +293,7 @@
 	<FilterEditor>
 		<Groups/>
 		<ThumbnailSize value="1"/>
-		<Canvas left="-1034" top="-223" zoom_factor="0"/>
+		<Canvas left="-900" top="-279" zoom_factor="0"/>
 		<Viewport left="39" top="137" zoom_factor="1"/>
 		<LockPreview>
 			<Locked value="true"/>
@@ -315,6 +316,9 @@
 		</Item>
 		<Item id="ellipse 04">
 			<Position left="320" top="80"/>
+		</Item>
+		<Item id="image3 01">
+			<Position left="112" top="560"/>
 		</Item>
 		<Item id="levels3 01">
 			<Position left="-96" top="400"/>
