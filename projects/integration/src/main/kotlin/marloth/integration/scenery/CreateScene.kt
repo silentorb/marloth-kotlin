@@ -1,6 +1,5 @@
 package marloth.integration.scenery
 
-import marloth.clienting.gui.hud.entanglingMovementRangeLayer
 import marloth.clienting.gui.hud.mobilityMovementRangeLayer
 import marloth.clienting.rendering.*
 import silentorb.mythic.characters.rigs.ViewMode
@@ -12,7 +11,7 @@ import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.ent.singleValueCache
 import silentorb.mythic.lookinglass.*
 import simulation.main.Deck
-import simulation.misc.Definitions
+import simulation.main.World
 
 val graphElementCache = singleValueCache<Graph, ElementGroups> { graph ->
   val roots = getGraphRoots(graph)
@@ -22,7 +21,20 @@ val graphElementCache = singleValueCache<Graph, ElementGroups> { graph ->
     listOf()
 }
 
-fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck, graph: Graph): (Id) -> GameScene = { player ->
+val gridElementCache = singleValueCache<Deck, ElementGroup> { deck ->
+  ElementGroup(
+      meshes = deck.depictions
+          .filter { !isComplexDepiction(it.value) }
+          .mapNotNull {
+            convertSimpleDepiction(deck, it.key, it.value)
+          }
+  )
+}
+
+fun createScene(meshes: ModelMeshMap, world: World): (Id) -> GameScene = { player ->
+  val deck = world.deck
+  val definitions = world.definitions
+  val graph = world.staticGraph
   val flyThrough = getDebugBoolean("FLY_THROUGH_CAMERA")
   if (!deck.characters.containsKey(player))
     GameScene(
@@ -55,7 +67,8 @@ fun createScene(meshes: ModelMeshMap, definitions: Definitions, deck: Deck, grap
       null
 
     val mainElements = gatherVisualElements(definitions, deck, player, characterRig) +
-        graphElementCache(graph)
+        graphElementCache(graph) +
+        gridElementCache(world.realm.deck)
 
     val (particleGroups, solidGroups) = mainElements
         .partition { group -> group.billboards.any() }

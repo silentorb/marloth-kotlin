@@ -6,6 +6,7 @@ import silentorb.mythic.ent.LooseGraph
 import silentorb.mythic.ent.scenery.filterByAttribute
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.spatial.Matrix
+import silentorb.mythic.spatial.Vector3i
 import simulation.main.Deck
 
 fun isAtHome(grid: MapGrid, deck: Deck): (Id) -> Boolean = { id ->
@@ -15,6 +16,9 @@ fun isAtHome(grid: MapGrid, deck: Deck): (Id) -> Boolean = { id ->
   else
     false
 }
+
+fun getPlayerStart(grid: MapGrid): Vector3i? =
+    grid.cells.entries.firstOrNull { it.value.attributes.contains(CellAttribute.home) }?.key ?: Vector3i.zero
 
 fun getPlayerStart(graph: Graph): Matrix? {
   val spawners = filterByAttribute(graph, GameAttributes.playerSpawn)

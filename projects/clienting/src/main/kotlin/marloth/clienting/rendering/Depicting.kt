@@ -49,13 +49,17 @@ fun filterDepictions(depictions: Table<Depiction>, player: Id, characterRig: Cha
       depictions
 
 fun depictionTransform(bodies: Table<Body>, characterRigs: Table<CharacterRig>, id: Id): Matrix {
-  val body = bodies[id]!!
-  val characterRig = characterRigs[id]
-  val transform = Matrix.identity.translate(body.position)
-  return if (characterRig != null)
-    transform.rotate(characterRig.facingOrientation)
-  else
-    transform.rotate(body.orientation)
+  val body = bodies[id]
+  return if (body == null)
+    Matrix.identity
+  else {
+    val characterRig = characterRigs[id]
+    val transform = Matrix.identity.translate(body.position)
+    if (characterRig != null)
+      transform.rotate(characterRig.facingOrientation)
+    else
+      transform.rotate(body.orientation)
+  }
 }
 
 fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, texture: TextureName? = null): MeshElement? {
@@ -176,10 +180,10 @@ fun characterFootPosition(location: Vector3, height: Float): Vector3 {
 }
 
 fun characterPlacement(location: Vector3, height: Float, rotationZ: Float): Matrix = Matrix.identity
-      .translate(characterFootPosition(location, height))
-      .rotateZ(rotationZ)
-      .rotateZ(Pi / 2f)
-      .scale(0.7f)
+    .translate(characterFootPosition(location, height))
+    .rotateZ(rotationZ)
+    .rotateZ(Pi / 2f)
+    .scale(0.7f)
 
 fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depiction: Depiction): ElementGroup {
   val body = deck.bodies[id]!!

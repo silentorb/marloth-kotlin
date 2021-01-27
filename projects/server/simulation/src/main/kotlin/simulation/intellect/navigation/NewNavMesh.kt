@@ -6,25 +6,24 @@ import org.recast4j.recast.Heightfield
 import org.recast4j.recast.RecastBuilder
 import org.recast4j.recast.RecastBuilderConfig
 import org.recast4j.recast.geom.TriMesh
-import silentorb.mythic.ent.Graph
-import silentorb.mythic.ent.Key
-import silentorb.mythic.ent.firstFloatSortedBy
-import silentorb.mythic.ent.firstFloatSortedByDescending
+import silentorb.mythic.ent.*
 import silentorb.mythic.intellect.navigation.GeometryProvider
 import silentorb.mythic.intellect.navigation.newNavMeshTriMeshes
 import silentorb.mythic.scenery.Shape
+import simulation.main.Deck
 import simulation.misc.cellLength
 
 var originalNavMeshData: List<TriMesh> = listOf()
 var globalHeightMap: Heightfield? = null
 
-fun newNavMesh(meshShapeMap: Map<String, Shape>, meshIds: Collection<Key>, graph: Graph): NavMesh? {
+fun newNavMesh(meshShapeMap: Map<String, Shape>, nodes: Collection<Key>, graph: Graph,
+               entities: Set<Id>, deck: Deck): NavMesh? {
 //  val filteredMeshIds = if (getDebugString("NAV_MESH_FILTER") != null)
 //    meshIds.filter { deck.depictions[it]!!.mesh == getDebugString("NAV_MESH_FILTER")!! }.toSet()
 //  else
 //    meshIds
 
-  val meshes = newNavMeshTriMeshes(meshShapeMap, graph, meshIds)
+  val meshes = newNavMeshTriMeshes(meshShapeMap, graph, nodes, entities, deck)
   if (meshes.none())
     return null
 

@@ -33,9 +33,11 @@ typealias PolyominoMap = Map<String, Polyomino>
 
 data class GenerationConfig(
     val definitions: Definitions,
+    val polyominoes: PolyominoMap,
     val meshes: MeshInfoMap,
     val meshShapes: MeshShapeMap,
-    val includeEnemies: Boolean
+    val includeEnemies: Boolean,
+    val roomCount: Int
 )
 
 data class ArchitectureInput(

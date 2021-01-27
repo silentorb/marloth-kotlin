@@ -7,6 +7,7 @@ import marloth.definition.data.miscellaneousDefinitions
 import marloth.definition.misc.enemyDistributions
 import marloth.definition.misc.monsterLimit
 import marloth.scenery.enums.CreatureId
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.IdSource
@@ -26,10 +27,7 @@ import simulation.intellect.Spirit
 import simulation.intellect.SpiritAttributes
 import simulation.intellect.assessment.newKnowledge
 import simulation.main.NewHand
-import simulation.misc.Definitions
-import simulation.misc.Entities
-import simulation.misc.Factions
-import simulation.misc.NodeReference
+import simulation.misc.*
 import kotlin.math.min
 
 fun cycleHands(nextId: IdSource) =
@@ -126,13 +124,18 @@ fun populateMonsters(nextId: IdSource, definitions: Definitions, dice: Dice, gra
   return populateMonsters(definitions, locations, nextId, dice)
 }
 
-fun populateWorld(nextId: IdSource, config: GenerationConfig, dice: Dice, graph: Graph): List<NewHand> {
+fun populateWorld(nextId: IdSource, config: GenerationConfig, dice: Dice, graph: Graph, grid: MapGrid): List<NewHand> {
   val definitions = config.definitions
   val playerCount = getDebugInt("INITIAL_PLAYER_COUNT") ?: 1
   val elementGroups = nodesToElements(config.meshShapes, graph)
   val lights = elementGroups.flatMap { it.lights }
   val hands = (1..playerCount)
-      .flatMap { newPlayerAndCharacter(nextId, definitions, graph) }
+      .flatMap {
+        if (getDebugBoolean("USE_MAP_GRID"))
+          newPlayerAndCharacter(nextId, definitions, grid)
+        else
+          newPlayerAndCharacter(nextId, definitions, graph)
+      }
       .plus(graphToHands(definitions, nextId, graph))
       .plus(cycleHands(nextId))
       .plus(populateMonsters(nextId, definitions, dice, graph))

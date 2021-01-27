@@ -7,8 +7,10 @@ import silentorb.mythic.ent.Key
 import silentorb.mythic.scenery.Shape
 import simulation.main.Deck
 
-fun newNavigationState(meshShapeMap: Map<String, Shape>, meshIds: Collection<Key>, graph: Graph): NavigationState? {
-  val mesh = newNavMesh(meshShapeMap, meshIds, graph)
+fun newNavigationState(meshShapeMap: Map<String, Shape>,
+                       nodes: Collection<Key>, graph: Graph,
+                       entities: Set<Id>, deck: Deck): NavigationState? {
+  val mesh = newNavMesh(meshShapeMap, nodes, graph, entities, deck)
 
   return if (mesh == null)
     null
