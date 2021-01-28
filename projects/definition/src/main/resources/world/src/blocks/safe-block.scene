@@ -1,0 +1,12 @@
+{
+"graph" : [
+["down","parent","sides"],
+["east","parent","sides"],
+["north","parent","sides"],
+["safe-block","",""],
+["sides","parent","safe-block"],
+["south","parent","sides"],
+["up","parent","sides"],
+["west","parent","sides"]
+]
+}

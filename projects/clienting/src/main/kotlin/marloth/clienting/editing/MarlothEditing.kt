@@ -22,6 +22,7 @@ import silentorb.mythic.scenery.scenePropertiesSchema
 import simulation.entities.DepictionType
 import simulation.misc.Entities
 import simulation.misc.GameAttributes
+import simulation.misc.marlothPropertiesSchema
 import simulation.physics.CollisionGroups
 import java.nio.file.Path
 
@@ -37,6 +38,9 @@ const val worldResourcePath = "world"
 
 fun getMarlothEditorAttributes(): List<String> =
     commonEditorAttributes() + reflectProperties(GameAttributes)
+
+fun marlothEditorPropertySchema() =
+    scenePropertiesSchema() + marlothPropertiesSchema()
 
 fun marlothCollisionPresets(): Map<Int, String> =
     reflectPropertiesMap<Int>(CollisionGroups)
@@ -98,7 +102,7 @@ fun newEditor(textLibrary: TextResourceMapper, meshShapes: MeshShapeMap): Editor
       projectPath = projectPath,
       enumerations = EditorEnumerations(
           propertyDefinitions = commonPropertyDefinitions(),
-          schema = scenePropertiesSchema(),
+          schema = marlothEditorPropertySchema(),
           textures = textures(),
           attributes = getMarlothEditorAttributes(),
           meshes = reflectProperties(MeshId),
@@ -133,7 +137,7 @@ fun expandGameInstances(library: ExpansionLibrary, name: String): Graph =
 fun loadWorldGraph(meshShapes: MeshShapeMap, name: String): Graph {
   val graphLibrary = loadMarlothGraphLibrary(commonPropertyDefinitions())
   assert(graphLibrary.contains(name))
-  val library = ExpansionLibrary(graphLibrary, marlothExpanders(), scenePropertiesSchema(), meshShapes)
+  val library = ExpansionLibrary(graphLibrary, marlothExpanders(), marlothEditorPropertySchema(), meshShapes)
   return expandGameInstances(library, name)
 }
 
@@ -143,7 +147,7 @@ fun mainScene() = getDebugString("DEFAULT_SCENE") ?: defaultScene
 
 fun expandWorldGraph(editor: Editor, scene: String): Graph {
   val graphLibrary = loadAllDependencies(editor, scene)
-  val library = ExpansionLibrary(graphLibrary, marlothExpanders(), scenePropertiesSchema(), editor.enumerations.meshShapes)
+  val library = ExpansionLibrary(graphLibrary, marlothExpanders(), marlothEditorPropertySchema(), editor.enumerations.meshShapes)
   return expandGameInstances(library, scene)
 }
 
