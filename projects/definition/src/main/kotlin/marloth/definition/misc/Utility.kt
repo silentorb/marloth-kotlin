@@ -5,10 +5,7 @@ import marloth.scenery.enums.ModifierDirection
 import marloth.scenery.enums.Text
 import silentorb.mythic.editing.PropertyDefinitions
 import silentorb.mythic.editing.loadGraphLibrary
-import silentorb.mythic.ent.AnyGraph
-import silentorb.mythic.ent.GraphStores
-import silentorb.mythic.ent.SimpleGraphStore
-import silentorb.mythic.ent.reflectPropertiesMap
+import silentorb.mythic.ent.*
 import simulation.accessorize.ModifierDefinition
 import simulation.combat.general.DamageType
 import simulation.combat.general.ModifierOperation
@@ -27,9 +24,9 @@ fun newResistanceModifier(name: Text, damageType: DamageType) = ModifierDefiniti
 
 val staticDamageTypes = reflectPropertiesMap<String>(DamageTypes).keys
 
-fun loadMarlothGraphLibrary(propertyDefinitions: PropertyDefinitions) =
-    loadGraphLibrary(propertyDefinitions, "world")
+fun loadMarlothGraphLibrary(propertiesSerialization: PropertiesSerialization) =
+    loadGraphLibrary(propertiesSerialization, "world")
 
-fun loadMarlothDefinitions(propertyDefinitions: PropertyDefinitions): GraphStores =
-    loadGraphLibrary(propertyDefinitions, "world/src/entities")
+fun loadMarlothDefinitions(propertiesSerialization: PropertiesSerialization): GraphStores =
+    loadGraphLibrary(propertiesSerialization, "world/src/entities")
         .mapValues { SimpleGraphStore((it.value as AnyGraph).toSet()) }

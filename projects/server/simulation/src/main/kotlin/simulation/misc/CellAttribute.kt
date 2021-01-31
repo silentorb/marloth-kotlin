@@ -6,9 +6,6 @@ enum class CellAttribute {
   lockedRotation,
   exit,
   home,
-  traversable,
+  isTraversable,
   unique,
-
-  // Only used in development and not in game logic:
-  spiralStaircase,
 }

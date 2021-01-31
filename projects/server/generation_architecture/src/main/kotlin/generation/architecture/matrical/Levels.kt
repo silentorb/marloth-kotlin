@@ -39,8 +39,8 @@ data class BiomeConnector(
 
 fun newBiomeSide(biome: BiomeName, side: Side): Side =
     side.copy(
-        mine = BiomeConnector(biome, side.mine),
-        other = side.other
+        mineOld = BiomeConnector(biome, side.mineOld),
+        otherOld = side.otherOld
             .map { BiomeConnector(biome, it) }
             .toSet()
     )
@@ -81,20 +81,21 @@ fun applyBuilderLevels(builder: Builder): TieredBuilder = { level ->
     builder
   else {
     { input ->
-      builder(input)
-          .map { hand ->
-            val body = hand.body
-            if (body == null)
-              hand
-            else {
-              val offset = Vector3(0f, 0f, getLevelHeight(level))
-              hand.copy(
-                  body = body.copy(
-                      position = body.position + offset
-                  )
-              )
-            }
-          }
+      throw Error("No longer supported")
+//      builder(input)
+//          .map { hand ->
+//            val body = hand.body
+//            if (body == null)
+//              hand
+//            else {
+//              val offset = Vector3(0f, 0f, getLevelHeight(level))
+//              hand.copy(
+//                  body = body.copy(
+//                      position = body.position + offset
+//                  )
+//              )
+//            }
+//          }
     }
   }
 }

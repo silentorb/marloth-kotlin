@@ -42,7 +42,7 @@ fun homeBlocks(): List<BlockBuilder> {
               north = homeSides.first,
               up = Sides.headroomVertical
           ),
-          attributes = setOf(CellAttribute.home, CellAttribute.traversable, CellAttribute.unique)
+          attributes = setOf(CellAttribute.home, CellAttribute.isTraversable, CellAttribute.unique)
       ) to mergeBuilders(
           floorMesh(floor),
           floorMesh(floor, offset = Vector3(0f, 0f, cellLength - 1f)),
@@ -57,7 +57,7 @@ fun homeBlocks(): List<BlockBuilder> {
           sides = sides(
               south = homeSides.second
           ),
-          attributes = setOf(CellAttribute.home, CellAttribute.traversable, CellAttribute.unique)
+          attributes = setOf(CellAttribute.home, CellAttribute.isTraversable, CellAttribute.unique)
       ) to mergeBuilders(
           floorMesh(floor),
           floorMesh(floor, offset = Vector3(0f, 0f, cellLength - 1f)),

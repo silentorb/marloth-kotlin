@@ -4,7 +4,6 @@ import generation.architecture.building.ledgeSlopeBuilder
 import generation.architecture.connecting.Sides
 import generation.architecture.connecting.levelConnectors
 import generation.architecture.connecting.levelSides
-import generation.architecture.engine.Builder
 import generation.architecture.engine.getTurnDirection
 import generation.architecture.matrical.*
 import generation.architecture.matrical.sides
@@ -14,7 +13,6 @@ import silentorb.mythic.spatial.Vector3
 import simulation.misc.CellAttribute
 import simulation.misc.cellHalfLength
 import simulation.misc.cellLength
-import simulation.misc.floorOffset
 
 fun slopeSides(lower: Int, upperSide: Side) =
     sides(
@@ -51,7 +49,7 @@ fun ledgeSlopeBlock(ledgeTurns: Int): TieredBlock = { level ->
         slots = listOf(
             Vector3(cellLength * 0.25f, cellLength * (0.5f + ledgeTurns.toFloat() * 0.25f) - cellHalfLength, height - quarterStep)
         ),
-        attributes = setOf(CellAttribute.traversable)
+        attributes = setOf(CellAttribute.isTraversable)
     )
   }
 }
@@ -63,7 +61,7 @@ val slopeWrap = Block(
         down = Sides.slopeOctaveWrap,
         up = Sides.headroomVertical
     ),
-    attributes = setOf(CellAttribute.traversable)
+    attributes = setOf(CellAttribute.isTraversable)
 )
 
 val fullSlope: TieredBlock = { level ->
@@ -78,7 +76,7 @@ val fullSlope: TieredBlock = { level ->
       name = "slope$level",
       sides = slopeSides(lower, levelSides[upper].open)
           .plus(slotMod),
-      attributes = setOf(CellAttribute.traversable)
+      attributes = setOf(CellAttribute.isTraversable)
 //      slots = listOf(Vector3(0f, 0f, getLevelHeight(lower) + quarterStep / 2f + 0.05f) + floorOffset)
   )
 }
@@ -99,7 +97,7 @@ fun cornerSlope(name: String = "cornerSlope"): TieredBlock = { level ->
           north = lowerSides.slopeSides[1],
           up = Sides.headroomVertical
       ),
-      attributes = setOf(CellAttribute.traversable),
+      attributes = setOf(CellAttribute.isTraversable),
       slots = listOf(Vector3(0f, 0f, -(quarterStep + quarterStep / 2f)))
   )
 }

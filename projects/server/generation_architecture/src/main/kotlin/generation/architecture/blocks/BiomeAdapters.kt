@@ -31,7 +31,7 @@ fun biomeAdapterCube(
           south = firstSide,
           up = Sides.headroomVertical
       ),
-      attributes = setOf(CellAttribute.traversable) + attributes,
+      attributes = setOf(CellAttribute.isTraversable) + attributes,
       slots = squareOffsets(2)
   )
 }
@@ -53,7 +53,7 @@ fun biomeAdapterHall(
           north = secondSide,
           south = firstSide
       ),
-      attributes = setOf(CellAttribute.traversable) + attributes,
+      attributes = setOf(CellAttribute.isTraversable) + attributes,
       slots = squareOffsets(2)
   ) to singleCellRoomBuilder(floor, wall)
 }

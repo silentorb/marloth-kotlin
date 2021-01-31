@@ -1,6 +1,8 @@
 package generation.architecture.engine
 
 import generation.general.*
+import silentorb.mythic.ent.Graph
+import silentorb.mythic.ent.LooseGraph
 import silentorb.mythic.spatial.*
 import simulation.main.Hand
 import simulation.misc.absoluteCellPosition
@@ -20,7 +22,7 @@ fun transformBlockHand(position: Vector3, rotation: Quaternion) = { hand: Hand -
   }
 }
 
-fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, position: Vector3i): List<Hand> {
+fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, position: Vector3i): LooseGraph {
   val neighbors = allDirections.filter { direction ->
     val rotated = rotateDirection(block.turns ?: 0)(direction)
     val offset = directionVectors[rotated]!!
@@ -30,13 +32,13 @@ fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, p
       general = general,
       neighbors = neighbors
   )
-  val result = builder(input)
+  val result = builder(input) as LooseGraph
   val rotation = Quaternion().rotateZ((block.turns?.toFloat() ?: 0f) * quarterAngle)
   return result
-      .map(transformBlockHand(absoluteCellPosition(position), rotation))
+//      .map(transformBlockHand(absoluteCellPosition(position), rotation))
 }
 
-fun buildArchitecture(general: ArchitectureInput, builders: Map<String, Builder>): List<Hand> {
+fun buildArchitecture(general: ArchitectureInput, builders: Map<String, Builder>): LooseGraph {
   val groupedCellHands = general.blockGrid
       .mapValues { (position, block) ->
         val builder = builders[block.name] ?: throw Error("Could not find builder for block")

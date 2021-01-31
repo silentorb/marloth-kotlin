@@ -1,5 +1,7 @@
 package marloth.definition.misc
 
+import generation.general.Direction
+import generation.general.directionNames
 import silentorb.mythic.editing.PropertyDefinition
 import silentorb.mythic.editing.PropertyDefinitions
 import silentorb.mythic.editing.commonPropertyDefinitions
@@ -16,5 +18,10 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
         displayName = "Other",
         widget = dropDownWidget { sides },
         defaultValue = { sides.firstOrNull() },
+    ),
+    MarlothProperties.direction to PropertyDefinition(
+        displayName = "Direction",
+        widget = dropDownWidget { directionNames },
+        defaultValue = { Direction.east.name },
     ),
 ) + commonPropertyDefinitions()

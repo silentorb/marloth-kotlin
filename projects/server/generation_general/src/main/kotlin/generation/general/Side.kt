@@ -13,9 +13,28 @@ enum class ConnectionLogic {
   optional,
 }
 
+// The standard 4 heights are incremental quarters + 10 for floor height padding
+object StandardHeights {
+  val first = 10
+  val second = 35
+  val third = 60
+  val fourth = 85
+}
+
+data class ConnectionContract(
+    val type: String,
+    val height: Int = StandardHeights.first,
+    val biome: String? = null
+)
+
+// Only used until the block side refactoring is finished
+val tempConnectionContract = ConnectionContract("open")
+
 data class Side(
-    val mine: Any,
-    val other: Set<Any> = setOf(mine),
+    val mineOld: Any = "Nothing",
+    val otherOld: Set<Any> = setOf(mineOld),
+    val mine: ConnectionContract = tempConnectionContract,
+    val other: ConnectionContract = tempConnectionContract,
     val isTraversable: Boolean = true,
     val connectionLogic: ConnectionLogic = ConnectionLogic.optional,
     val isUniversal: Boolean = false

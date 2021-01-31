@@ -39,7 +39,7 @@ fun blockBuildersFromElements(name: String, polyomino: Polyomino): List<BlockBui
           else
             endpoint
         },
-        attributes = setOf(CellAttribute.unique, CellAttribute.traversable) + attributes.getOrDefault(cell, listOf())
+        attributes = setOf(CellAttribute.unique, CellAttribute.isTraversable) + attributes.getOrDefault(cell, listOf())
     )
   }
 

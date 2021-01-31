@@ -8,12 +8,13 @@ import simulation.entities.Depiction
 
 fun solidCubeBuilder(wall: Depiction, floor: Depiction, directions: Set<Direction> = horizontalDirections): Builder = { input ->
   val sides = input.neighbors
-  directions.minus(sides).map(cubeWall(input, wall))
-      .plus(
-          listOfNotNull(
-              if (!sides.contains(Direction.down)) floorMesh(floor)(input) else null
-          ).flatten()
-      )
+  throw Error("No longer supported")
+//  directions.minus(sides).map(cubeWall(input, wall))
+//      .plus(
+//          listOfNotNull(
+//              if (!sides.contains(Direction.down)) floorMesh(floor)(input) else null
+//          ).flatten()
+//      )
 }
 
 fun solidDiagonalBuilder(wall: Depiction, floor: Depiction): Builder = mergeBuilders(

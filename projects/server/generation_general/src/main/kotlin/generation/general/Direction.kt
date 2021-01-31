@@ -30,6 +30,7 @@ val directionVectorsReverseLookup = directionVectors.map { Pair(it.value, it.key
 val horizontalDirections = horizontalDirectionVectors.keys
 val verticalDirections = verticalDirectionVectors.keys
 val allDirections = directionVectors.keys
+val directionNames = allDirections.map { it.name }
 
 val horizontalDirectionList = listOf(Direction.east, Direction.north, Direction.west, Direction.south)
 

@@ -5,6 +5,7 @@ import marloth.clienting.rendering.characterMeshes
 import marloth.clienting.rendering.characterPlacement
 import marloth.definition.data.characterDefinitions
 import marloth.definition.misc.loadMarlothGraphLibrary
+import marloth.definition.misc.marlothEditorPropertyDefinitions
 import marloth.scenery.enums.*
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.editing.*
@@ -41,6 +42,12 @@ fun getMarlothEditorAttributes(): List<String> =
 
 fun marlothEditorPropertySchema() =
     scenePropertiesSchema() + marlothPropertiesSchema()
+
+val marlothEditorProperties =
+    commonPropertyDefinitions() + marlothEditorPropertyDefinitions()
+
+val marlothPropertiesSerialization =
+    extractPropertiesSerialization(marlothEditorProperties)
 
 fun marlothCollisionPresets(): Map<Int, String> =
     reflectPropertiesMap<Int>(CollisionGroups)
@@ -101,7 +108,8 @@ fun newEditor(textLibrary: TextResourceMapper, meshShapes: MeshShapeMap): Editor
   return Editor(
       projectPath = projectPath,
       enumerations = EditorEnumerations(
-          propertyDefinitions = commonPropertyDefinitions(),
+          propertyDefinitions = marlothEditorProperties,
+          propertiesSerialization = marlothPropertiesSerialization,
           schema = marlothEditorPropertySchema(),
           textures = textures(),
           attributes = getMarlothEditorAttributes(),
@@ -135,7 +143,7 @@ fun expandGameInstances(library: ExpansionLibrary, name: String): Graph =
     filterOutEditorOnlyNodes(expandInstances(library, name))
 
 fun loadWorldGraph(meshShapes: MeshShapeMap, name: String): Graph {
-  val graphLibrary = loadMarlothGraphLibrary(commonPropertyDefinitions())
+  val graphLibrary = loadMarlothGraphLibrary(marlothPropertiesSerialization)
   assert(graphLibrary.contains(name))
   val library = ExpansionLibrary(graphLibrary, marlothExpanders(), marlothEditorPropertySchema(), meshShapes)
   return expandGameInstances(library, name)

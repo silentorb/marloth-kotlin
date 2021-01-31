@@ -10,7 +10,7 @@ typealias BlockBuilder = Pair<Block, Builder>
 
 fun mergeBuilders(vararg builders: Builder): Builder {
   return { input ->
-    builders.flatMap { it(input) }
+    builders.flatMap { it(input) as List<Hand> }
   }
 }
 

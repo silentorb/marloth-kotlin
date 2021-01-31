@@ -3,7 +3,8 @@ package marloth.integration.misc
 import generation.architecture.engine.GenerationConfig
 import generation.architecture.engine.compileArchitectureMeshInfo
 import generation.general.mapGridFromBlockGrid
-import marloth.clienting.rendering.loadBlocks
+import marloth.clienting.editing.marlothPropertiesSerialization
+import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.generation.population.populateWorld
 import marloth.scenery.enums.MeshShapeMap
 import persistence.Database
@@ -25,37 +26,39 @@ import simulation.misc.lightHandsFromDepictions
 fun generateWorld(db: Database, definitions: Definitions, generationConfig: GenerationConfig, dice: Dice, graph: Graph, step: Long): World {
   val nextId = newIdSource(1)
   val (grid, architectureSource) = if (getDebugBoolean("USE_MAP_GRID")) {
-    val (blockGrid, architectureSource) = generateWorldBlocks(dice, generationConfig)
+    val (blockGrid, architectureSource) = generateWorldBlocks(dice, generationConfig, generationConfig.graphLibrary)
     mapGridFromBlockGrid(blockGrid) to architectureSource
   } else
     MapGrid() to listOf()
 
+  val graph2 = graph + architectureSource
+
   // The <Hand> specifier shouldn't be needed here but without it Kotlin is throwing an internal error referencing this line
-  val architectureHands = architectureSource.map(newGenericIdHand<Hand>(nextId))
-  val architectureDeck = idHandsToDeck(architectureHands)
+//  val architectureHands = architectureSource.map(newGenericIdHand<Hand>(nextId))
+//  val architectureDeck = idHandsToDeck(architectureHands)
 
-  val realm = Realm(grid, architectureDeck)
+  val realm = Realm(grid, Deck())
 
-  val lightHands = if (getDebugBoolean("USE_MAP_GRID"))
-    lightHandsFromDepictions(definitions.lightAttachments, architectureHands)
-  else
-    listOf()
+//  val lightHands = if (getDebugBoolean("USE_MAP_GRID"))
+//    lightHandsFromDepictions(definitions.lightAttachments, architectureHands)
+//  else
+//    listOf()
 
-  val deck = allHandsToDeck(nextId, populateWorld(nextId, generationConfig, dice, graph, grid), step, idHandsToDeck(lightHands))
+  val deck = allHandsToDeck(nextId, populateWorld(nextId, generationConfig, dice, graph2, grid), step, Deck())
   val navigation = if (generationConfig.includeEnemies) {
-    val meshNodes = filterByProperty2(graph, SceneProperties.collisionShape)
+    val meshNodes = filterByProperty2(graph2, SceneProperties.collisionShape)
         .map { it.source }
-    val meshEntities = architectureDeck.depictions
-        .filterValues { generationConfig.meshes.containsKey(it.mesh) }
-        .keys
-    newNavigationState(definitions.meshShapeMap, meshNodes, graph, meshEntities, architectureDeck)
+//    val meshEntities = architectureDeck.depictions
+//        .filterValues { generationConfig.meshes.containsKey(it.mesh) }
+//        .keys
+    newNavigationState(definitions.meshShapeMap, meshNodes, graph2, setOf(), Deck())
   } else
     null
 
   val persistence = queryEntries(db, persistenceTable).toSet()
 
   return World(
-      staticGraph = graph,
+      staticGraph = graph2,
       deck = deck,
       realm = realm,
       nextId = nextId(),
@@ -87,6 +90,7 @@ fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap
       meshShapes = meshInfo,
       roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 100,
       polyominoes = mapOf(),
+      graphLibrary = loadMarlothGraphLibrary(marlothPropertiesSerialization),
   )
 
   val graph2 = if (getDebugBoolean("USE_MAP_GRID"))

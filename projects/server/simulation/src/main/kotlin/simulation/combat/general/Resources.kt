@@ -17,8 +17,8 @@ object ResourceTypes {
   val money = "money"
 }
 
-fun getResources(graph: AnyGraph): List<Any> =
-    filterByAttribute(graph, GameAttributes.resource)
+//fun getResources(graph: AnyGraph): List<Any> =
+//    filterByAttribute(graph, GameAttributes.resource)
 
 data class ResourceContainer(
     val value: Int,

@@ -7,6 +7,7 @@ import silentorb.mythic.aura.SoundType
 import silentorb.mythic.breeze.AnimationInfoMap
 import silentorb.mythic.ent.GraphLibrary
 import silentorb.mythic.ent.GraphStores
+import silentorb.mythic.ent.PropertiesSerialization
 import simulation.combat.general.DamageType
 import simulation.combat.general.WeaponDefinition
 import silentorb.mythic.particles.ParticleEffectDefinitions
@@ -39,4 +40,5 @@ data class Definitions(
     val weapons: Map<AccessoryName, WeaponDefinition>,
     val meshShapeMap: Map<String, Shape>,
     val graphs: GraphStores,
+    val propertiesSerialization: PropertiesSerialization,
 )

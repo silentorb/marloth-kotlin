@@ -3,6 +3,7 @@ package generation.architecture.engine
 import generation.general.*
 import marloth.scenery.enums.MeshInfoMap
 import marloth.scenery.enums.MeshShapeMap
+import silentorb.mythic.ent.GraphLibrary
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
@@ -37,7 +38,8 @@ data class GenerationConfig(
     val meshes: MeshInfoMap,
     val meshShapes: MeshShapeMap,
     val includeEnemies: Boolean,
-    val roomCount: Int
+    val roomCount: Int,
+    val graphLibrary: GraphLibrary,
 )
 
 data class ArchitectureInput(
@@ -59,4 +61,4 @@ data class BuilderInput(
     val neighbors: Set<Direction>
 )
 
-typealias Builder = (BuilderInput) -> List<Hand>
+typealias Builder = (BuilderInput) -> Any

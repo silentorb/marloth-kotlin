@@ -70,26 +70,29 @@ tailrec fun addPathStep(
   if (incompleteSides.none())
     return grid
 
-  val sideGroups = incompleteSides.groupBy {
-    grid[it.position]!!.sides[it.direction]!!.connectionLogic
-  }
-  val prioritySides = sideGroups[ConnectionLogic.required] ?: listOf()
+  if (grid.size > 1000)
+    throw Error("Infinite loop in world generation.")
 
-  val stepCount = grid.count { it.value.attributes.contains(CellAttribute.traversable) }
-  worldGenerationLog {
-    val required = sideGroups.getOrElse(ConnectionLogic.required) { listOf() }.size
-    val optional = sideGroups.getOrElse(ConnectionLogic.optional) { listOf() }.size
-    "Grid size: ${grid.size}, Traversable: $stepCount, Required: $required, Optional: $optional"
-  }
-  return if (stepCount >= maxSteps && prioritySides.none())
+//  val sideGroups = incompleteSides.groupBy {
+//    grid[it.position]!!.sides[it.direction]!!.connectionLogic
+//  }
+//  val prioritySides = sideGroups[ConnectionLogic.required] ?: listOf()
+
+  val stepCount = grid.count { it.value.attributes.contains(CellAttribute.isTraversable) }
+//  worldGenerationLog {
+//    val required = sideGroups.getOrElse(ConnectionLogic.required) { listOf() }.size
+//    val optional = sideGroups.getOrElse(ConnectionLogic.optional) { listOf() }.size
+//    "Grid size: ${grid.size}, Traversable: $stepCount, Required: $required, Optional: $optional"
+//  }
+  return if (stepCount >= maxSteps)
     grid
   else {
-    val incompleteSide = if (prioritySides.any())
-      dice.takeOne(prioritySides)
-    else if (sideGroups.containsKey(ConnectionLogic.optional))
-      dice.takeOne(sideGroups[ConnectionLogic.optional]!!)
-    else
-      dice.takeOne(incompleteSides)
+    val incompleteSide = dice.takeOne(incompleteSides)
+
+//    else if (sideGroups.containsKey(ConnectionLogic.optional))
+//      dice.takeOne(sideGroups[ConnectionLogic.optional]!!)
+//    else
+//      dice.takeOne(incompleteSides)
 
     val offset = directionVectors[incompleteSide.direction]!!
     val position = incompleteSide.position
@@ -99,7 +102,7 @@ tailrec fun addPathStep(
     val side = currentBlock.sides[incompleteSide.direction]!!
     worldGenerationLog {
 
-      "Side: ${currentBlock.name} ${side.mine}, ${incompleteSide.position} ${incompleteSide.direction}"
+      "Side: ${currentBlock.name} ${side.mineOld}, ${incompleteSide.position} ${incompleteSide.direction}"
     }
     val blocks = if (incompleteSides.size < 2)
       if (stepCount >= maxSteps)
@@ -113,7 +116,7 @@ tailrec fun addPathStep(
       val k = 0
     }
     val block = matchConnectingBlock(dice, blocks, grid, nextPosition)
-        ?: matchConnectingBlock(dice, groupedBlocks.all, grid, nextPosition)
+//        ?: matchConnectingBlock(dice, groupedBlocks.all, grid, nextPosition)
 
     val nextState = if (block == null) {
       if (bookMark != null && side.connectionLogic == ConnectionLogic.required) {
@@ -139,7 +142,7 @@ tailrec fun addPathStep(
 
     val nextBookmark = if (block == null)
       null // Consume bookmark
-    else if (prioritySides.none()) {
+    else if (incompleteSides.none()) {
       if (block.sides.any { (direction, side) ->
             side.connectionLogic == ConnectionLogic.required &&
                 !grid.containsKey(nextPosition + directionVectors[direction]!!)

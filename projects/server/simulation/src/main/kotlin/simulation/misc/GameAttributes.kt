@@ -16,15 +16,15 @@ object GameAttributes {
   val sleepable = "sleepable"
   val victoryZone = "victoryZone"
 
-  // Block related
+  // Block side related
+  val blockSide = "blockSide"
   val anyBiome = "anyBiome"
-
 }
 
 object MarlothProperties {
   const val mine = "mine"
   const val other = "other"
-
+  const val direction = "direction"
 }
 
 fun marlothPropertiesSchema(): PropertySchema = mapOf(

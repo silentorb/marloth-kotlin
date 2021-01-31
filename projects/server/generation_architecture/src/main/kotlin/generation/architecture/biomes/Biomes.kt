@@ -23,15 +23,15 @@ object BiomeId {
 
 fun allBlockBuilders(): List<BlockBuilder> =
     homeBlocks()
-        .plus(headroomBlock to emptyBuilder)
-        .plus(biomeAdapters())
-        .plus(
-            applyBiomeBlockBuilders(
-                mapOf(
-                    BiomeId.checkers to checkersBiome(),
-                    BiomeId.forest to forestBiome()
-//                    BiomeId.tealPalace to commonMatrixBlocks,
-//                    BiomeId.village to commonMatrixBlocks
-                )
-            )
-        )
+//        .plus(headroomBlock to emptyBuilder)
+//        .plus(biomeAdapters())
+//        .plus(
+//            applyBiomeBlockBuilders(
+//                mapOf(
+//                    BiomeId.checkers to checkersBiome(),
+//                    BiomeId.forest to forestBiome()
+////                    BiomeId.tealPalace to commonMatrixBlocks,
+////                    BiomeId.village to commonMatrixBlocks
+//                )
+//            )
+//        )

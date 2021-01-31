@@ -108,17 +108,17 @@ fun cubeWallsWithFeatures(
   val featureDirections = dice.take(directions, featureCount)
   val plainDirections = directions - featureDirections
   val selectedFeatures = dice.take(features, featureCount)
-
-  placeCubeRoomWalls(wallDepiction, plainDirections)(input)
-      .plus(featureDirections.zip(selectedFeatures) { direction, feature ->
-        when (feature) {
-          WallFeature.lamp -> listOf(cubeWall(input, wallDepiction, direction, offset), cubeWallLamp(direction, offset + lampOffset))
-          WallFeature.window -> listOf(cubeWall(input, Depiction(mesh = MeshId.squareWallWindow, texture = wallDepiction.texture), direction, offset))
-          WallFeature.none -> listOf(cubeWall(input, wallDepiction, direction, offset))
-        }
-      }
-          .flatten()
-      )
+  throw Error("No longer supported")
+//  placeCubeRoomWalls(wallDepiction, plainDirections)(input)
+//      .plus(featureDirections.zip(selectedFeatures) { direction, feature ->
+//        when (feature) {
+//          WallFeature.lamp -> listOf(cubeWall(input, wallDepiction, direction, offset), cubeWallLamp(direction, offset + lampOffset))
+//          WallFeature.window -> listOf(cubeWall(input, Depiction(mesh = MeshId.squareWallWindow, texture = wallDepiction.texture), direction, offset))
+//          WallFeature.none -> listOf(cubeWall(input, wallDepiction, direction, offset))
+//        }
+//      }
+//          .flatten()
+//      )
 }
 
 fun roomWalls(depiction: Depiction) =

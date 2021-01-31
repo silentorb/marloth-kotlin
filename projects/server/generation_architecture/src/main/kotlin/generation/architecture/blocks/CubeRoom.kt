@@ -7,7 +7,6 @@ import generation.architecture.matrical.TieredBlock
 import generation.architecture.matrical.getLevelHeight
 import generation.architecture.matrical.sides
 import generation.general.Block
-import generation.general.endpoint
 import silentorb.mythic.spatial.Vector3
 import simulation.misc.CellAttribute
 
@@ -23,7 +22,7 @@ val squareRoom: TieredBlock = { level ->
           down = Sides.solid,
           up = Sides.headroomVertical
       ),
-      attributes = setOf(CellAttribute.traversable),
+      attributes = setOf(CellAttribute.isTraversable),
       slots = squareOffsets(2).map { it + Vector3(0f, 0f, getLevelHeight(level)) }
   )
 }
