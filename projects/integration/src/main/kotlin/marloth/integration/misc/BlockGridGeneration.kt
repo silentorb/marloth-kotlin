@@ -41,7 +41,7 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
   return noTurns + rotated
 }
 
-val directionMap = Direction.values().associate { it.name to it }
+val directionMap: Map<String, Direction> = Direction.values().associate { it.name to it }
 
 fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
   val sideNodes = filterByAttribute(graph, GameAttributes.blockSide)
@@ -49,7 +49,8 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
       .mapNotNull { node ->
         val mine = getGraphValue<String>(graph, node, MarlothProperties.mine)
         val other = getGraphValue<String>(graph, node, MarlothProperties.other)
-        val direction = directionMap[getGraphValue<String>(graph, node, MarlothProperties.direction)]
+        val cellDirection = getGraphValue<CellDirection>(graph, node, MarlothProperties.direction)
+        val direction = cellDirection?.direction
         if (mine == null || other == null || direction == null)
           null
         else {
@@ -67,14 +68,26 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
   else
     setOf()
 
+  val showIfSideIsEmpty = filterByProperty(graph, MarlothProperties.showIfSideIsEmpty)
+
   val block = Block(
       name = name,
       sides = sides,
       attributes = attributes,
   )
   val truncatedGraph = graph.filter { !sideNodes.contains(it.source) }
+
   val builder: Builder = { input ->
-    truncatedGraph
+    val omitted = showIfSideIsEmpty
+        .mapNotNull { entry ->
+          val cellDirection = entry.target as CellDirection
+          if (input.neighbors.keys.contains(cellDirection.direction))
+            entry.source
+          else
+            null
+        }
+
+    truncatedGraph.filter { !omitted.contains(it.source) }
   }
   return block to builder
 }
@@ -87,7 +100,8 @@ fun graphsToBlockBuilders(graphLibrary: GraphLibrary): List<BlockBuilder> {
       }
       .keys
       .map { key ->
-        graphToBlockBuilder(key, expandGameInstances(library, key))
+        val expanded = expandGameInstances(library, key)
+        graphToBlockBuilder(key, expanded)
       }
 }
 

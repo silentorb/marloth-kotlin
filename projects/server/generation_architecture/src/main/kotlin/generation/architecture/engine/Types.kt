@@ -58,7 +58,8 @@ fun newArchitectureInput(generationConfig: GenerationConfig, dice: Dice,
 
 data class BuilderInput(
     val general: ArchitectureInput,
-    val neighbors: Set<Direction>
+    val neighborOld: Set<Direction>,
+    val neighbors: Map<Direction, ConnectionContract>
 )
 
 typealias Builder = (BuilderInput) -> Any

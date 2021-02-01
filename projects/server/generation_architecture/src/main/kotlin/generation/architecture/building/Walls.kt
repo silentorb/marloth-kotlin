@@ -4,7 +4,6 @@ import generation.architecture.engine.*
 import generation.general.Direction
 import generation.general.directionVectors
 import generation.general.horizontalDirections
-import marloth.scenery.enums.MeshId
 import silentorb.mythic.spatial.*
 import simulation.entities.Depiction
 import simulation.main.Hand
@@ -103,7 +102,7 @@ fun cubeWallsWithFeatures(
     possibleDirections: Set<Direction> = horizontalDirections
 ): Builder = { input ->
   val dice = input.general.dice
-  val directions = possibleDirections - input.neighbors
+  val directions = possibleDirections - input.neighborOld
   val featureCount = dice.getInt(min(min(2, directions.size), features.size))
   val featureDirections = dice.take(directions, featureCount)
   val plainDirections = directions - featureDirections

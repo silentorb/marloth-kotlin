@@ -7,7 +7,7 @@ import generation.general.horizontalDirections
 import simulation.entities.Depiction
 
 fun solidCubeBuilder(wall: Depiction, floor: Depiction, directions: Set<Direction> = horizontalDirections): Builder = { input ->
-  val sides = input.neighbors
+  val sides = input.neighborOld
   throw Error("No longer supported")
 //  directions.minus(sides).map(cubeWall(input, wall))
 //      .plus(

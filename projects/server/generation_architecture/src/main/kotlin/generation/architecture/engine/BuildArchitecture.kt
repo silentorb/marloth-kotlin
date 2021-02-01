@@ -8,7 +8,6 @@ import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.*
 import simulation.main.Hand
 import simulation.misc.absoluteCellPosition
-import simulation.misc.cellHalfLength
 
 fun transformBlockHand(position: Vector3, rotation: Quaternion) = { hand: Hand ->
   val body = hand.body
@@ -25,14 +24,30 @@ fun transformBlockHand(position: Vector3, rotation: Quaternion) = { hand: Hand -
 }
 
 fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, position: Vector3i): LooseGraph {
-  val neighbors = allDirections.filter { direction ->
+  val neighborsOld = allDirections.filter { direction ->
     val rotated = rotateDirection(block.turns ?: 0)(direction)
     val offset = directionVectors[rotated]!!
     general.blockGrid.containsKey(position + offset)
   }.toSet()
+  val neighbors = allDirections
+      .mapNotNull { direction ->
+        val rotated = rotateDirection(block.turns ?: 0)(direction)
+        val offset = directionVectors[rotated]!!
+        val other = general.blockGrid[position + offset]
+        val reverse = oppositeDirections[direction]
+        val side = other?.sides?.getOrDefault(reverse, null)
+        val contract = side?.mine
+        if (contract != null)
+          direction to contract
+        else
+          null
+      }
+      .associate { it }
+
   val input = BuilderInput(
       general = general,
-      neighbors = neighbors
+      neighborOld = neighborsOld,
+      neighbors = neighbors,
   )
   val result = builder(input) as LooseGraph
   val zRotation = (block.turns?.toFloat() ?: 0f) * quarterAngle
