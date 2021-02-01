@@ -1,8 +1,10 @@
 package generation.architecture.engine
 
 import generation.general.*
-import silentorb.mythic.ent.Graph
-import silentorb.mythic.ent.LooseGraph
+import silentorb.mythic.ent.*
+import silentorb.mythic.ent.scenery.getGraphRoots
+import silentorb.mythic.ent.scenery.getNodeTransform
+import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.*
 import simulation.main.Hand
 import simulation.misc.absoluteCellPosition
@@ -33,9 +35,18 @@ fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, p
       neighbors = neighbors
   )
   val result = builder(input) as LooseGraph
-  val rotation = Quaternion().rotateZ((block.turns?.toFloat() ?: 0f) * quarterAngle)
-  return result
-//      .map(transformBlockHand(absoluteCellPosition(position), rotation))
+  val zRotation = (block.turns?.toFloat() ?: 0f) * quarterAngle
+  val rotation = Vector3(0f, 0f, zRotation)
+  val location = absoluteCellPosition(position)
+  val roots = getGraphRoots(result)
+  val rootTransforms = roots.flatMap { root ->
+    val transform = getNodeTransform(result, root)
+    listOf(
+        Entry(root, SceneProperties.translation, transform.translation() + location),
+        Entry(root, SceneProperties.rotation, transform.rotation() + rotation),
+    )
+  }
+  return replaceValues(result, rootTransforms)
 }
 
 fun buildArchitecture(general: ArchitectureInput, builders: Map<String, Builder>): LooseGraph {
@@ -45,5 +56,5 @@ fun buildArchitecture(general: ArchitectureInput, builders: Map<String, Builder>
         buildBlockCell(general, block, builder, position)
       }
 
-  return groupedCellHands.flatMap { it.value }
+  return groupedCellHands.values.reduce { a, b -> mergeGraphsWithRenaming(a, b) }
 }

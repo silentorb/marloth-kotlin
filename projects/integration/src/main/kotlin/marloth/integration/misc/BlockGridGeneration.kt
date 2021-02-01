@@ -3,12 +3,14 @@ package marloth.integration.misc
 import generation.architecture.engine.*
 import generation.architecture.matrical.BlockBuilder
 import generation.general.*
+import marloth.clienting.editing.expandGameInstances
+import marloth.clienting.editing.newExpansionLibrary
 import marloth.definition.misc.traversibleBlockSides
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.filterByAttribute
 import silentorb.mythic.randomly.Dice
+import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Quaternion
-import simulation.main.Hand
 import simulation.misc.CellAttribute
 import simulation.misc.GameAttributes
 import simulation.misc.MarlothProperties
@@ -77,11 +79,17 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
   return block to builder
 }
 
-fun graphsToBlockBuilders(graphLibrary: GraphLibrary): List<BlockBuilder> =
-    graphLibrary
-        .map { (key, graph) ->
-          graphToBlockBuilder(key, graph)
-        }
+fun graphsToBlockBuilders(graphLibrary: GraphLibrary): List<BlockBuilder> {
+  val library = newExpansionLibrary(graphLibrary, mapOf())
+  return graphLibrary
+      .filterValues { graph ->
+        graph.any { it.property == SceneProperties.type && it.target == GameAttributes.blockSide }
+      }
+      .keys
+      .map { key ->
+        graphToBlockBuilder(key, expandGameInstances(library, key))
+      }
+}
 
 fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig,
                         graphLibrary: GraphLibrary): Pair<BlockGrid, LooseGraph> {

@@ -25,6 +25,7 @@ object MarlothProperties {
   const val mine = "mine"
   const val other = "other"
   const val direction = "direction"
+  const val showIfSideIsEmpty = "showIfNull"
 }
 
 fun marlothPropertiesSchema(): PropertySchema = mapOf(

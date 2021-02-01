@@ -5,7 +5,7 @@ import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.spatial.toVector3
 import kotlin.math.floor
 
-const val cellLength = 10f
+const val cellLength = 5f
 
 val cellHalfLength = cellLength / 2f
 

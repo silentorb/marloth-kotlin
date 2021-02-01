@@ -21,7 +21,6 @@ import simulation.main.*
 import simulation.misc.Definitions
 import simulation.misc.MapGrid
 import simulation.misc.Realm
-import simulation.misc.lightHandsFromDepictions
 
 fun generateWorld(db: Database, definitions: Definitions, generationConfig: GenerationConfig, dice: Dice, graph: Graph, step: Long): World {
   val nextId = newIdSource(1)
@@ -46,7 +45,7 @@ fun generateWorld(db: Database, definitions: Definitions, generationConfig: Gene
 
   val deck = allHandsToDeck(nextId, populateWorld(nextId, generationConfig, dice, graph2, grid), step, Deck())
   val navigation = if (generationConfig.includeEnemies) {
-    val meshNodes = filterByProperty2(graph2, SceneProperties.collisionShape)
+    val meshNodes = filterByProperty(graph2, SceneProperties.collisionShape)
         .map { it.source }
 //    val meshEntities = architectureDeck.depictions
 //        .filterValues { generationConfig.meshes.containsKey(it.mesh) }

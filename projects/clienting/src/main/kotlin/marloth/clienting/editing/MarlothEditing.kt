@@ -5,7 +5,6 @@ import marloth.clienting.rendering.characterMeshes
 import marloth.clienting.rendering.characterPlacement
 import marloth.definition.data.characterDefinitions
 import marloth.definition.misc.loadMarlothGraphLibrary
-import marloth.definition.misc.marlothEditorPropertyDefinitions
 import marloth.scenery.enums.*
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.editing.*
@@ -19,6 +18,7 @@ import silentorb.mythic.lookinglass.ElementGroup
 import silentorb.mythic.lookinglass.MeshElement
 import silentorb.mythic.resource_loading.getUrlPath
 import silentorb.mythic.scenery.SceneProperties
+import silentorb.mythic.scenery.Shape
 import silentorb.mythic.scenery.scenePropertiesSchema
 import simulation.entities.DepictionType
 import simulation.misc.Entities
@@ -153,9 +153,12 @@ const val defaultScene = "root"
 
 fun mainScene() = getDebugString("DEFAULT_SCENE") ?: defaultScene
 
+fun newExpansionLibrary(graphLibrary: GraphLibrary, meshShapes: Map<Key, Shape>) =
+    ExpansionLibrary(graphLibrary, marlothExpanders(), marlothEditorPropertySchema(), meshShapes)
+
 fun expandWorldGraph(editor: Editor, scene: String): Graph {
   val graphLibrary = loadAllDependencies(editor, scene)
-  val library = ExpansionLibrary(graphLibrary, marlothExpanders(), marlothEditorPropertySchema(), editor.enumerations.meshShapes)
+  val library = newExpansionLibrary(graphLibrary, editor.enumerations.meshShapes)
   return expandGameInstances(library, scene)
 }
 
