@@ -6,12 +6,11 @@ import generation.architecture.matrical.BlockBuilder
 import generation.architecture.matrical.applyBiomeBlockBuilders
 
 object BiomeId {
-  const val checkers = "checkers"
-  const val exit = "exit"
-  const val forest = "forest"
-  const val home = "home"
-  const val tealPalace = "tealPalace"
-  const val village = "village"
+  val checkers = "checkers"
+  val forest = "forest"
+  val home = "home"
+  val tealPalace = "tealPalace"
+  val village = "village"
 }
 
 //val commonMatrixBlocks = listOf(

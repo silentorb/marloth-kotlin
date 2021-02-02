@@ -1,5 +1,6 @@
 package marloth.clienting.editing
 
+import generation.architecture.biomes.BiomeId
 import generation.general.CellDirection
 import generation.general.Direction
 import generation.general.StandardHeights
@@ -13,6 +14,7 @@ import silentorb.mythic.editing.components.propertyIntegerTextField
 import silentorb.mythic.editing.components.wrapSimpleWidget
 import silentorb.mythic.ent.Entry
 import silentorb.mythic.ent.Serialization
+import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.spatial.Vector3i
 import simulation.misc.MarlothProperties
 
@@ -64,14 +66,16 @@ val cellDirectionSerialization = Serialization(
     }
 )
 
+val biomeIds = reflectProperties<String>(BiomeId)
+
 fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): PropertyDefinitions = mapOf(
     MarlothProperties.mine to PropertyDefinition(
-        displayName = "Mine",
+        displayName = "My Type",
         widget = dropDownWidget { sides },
         defaultValue = { sides.firstOrNull() },
     ),
     MarlothProperties.other to PropertyDefinition(
-        displayName = "Other",
+        displayName = "Other Type",
         widget = dropDownWidget { sides },
         defaultValue = { sides.firstOrNull() },
     ),
@@ -92,5 +96,15 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
         serialization = intSerialization,
         widget = propertyIntegerTextField,
         defaultValue = { StandardHeights.first },
+    ),
+    MarlothProperties.myBiome to PropertyDefinition(
+        displayName = "My Biome",
+        widget = dropDownWidget { biomeIds },
+        defaultValue = { BiomeId.checkers },
+    ),
+    MarlothProperties.otherBiome to PropertyDefinition(
+        displayName = "Other Biome",
+        widget = dropDownWidget { biomeIds },
+        defaultValue = { BiomeId.checkers },
     ),
 ) + commonPropertyDefinitions()

@@ -1,7 +1,7 @@
 package generation.general
 
 fun rotateSides(turns: Int): (SideMap) -> SideMap = { sides ->
-  val horizontal = horizontalDirectionList.map { sides[it]!! }
+  val horizontal = horizontalDirectionList.mapNotNull { sides[it] }
   val normalizedTurns = turns % 4
 
   val spunSides = horizontal

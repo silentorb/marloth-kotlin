@@ -8,6 +8,8 @@ import marloth.clienting.editing.newExpansionLibrary
 import marloth.definition.misc.traversibleBlockSides
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.filterByAttribute
+import silentorb.mythic.ent.scenery.getGraphRoots
+import silentorb.mythic.ent.scenery.hasAttribute
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Quaternion
@@ -41,9 +43,12 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
   return noTurns + rotated
 }
 
-val directionMap: Map<String, Direction> = Direction.values().associate { it.name to it }
+val directionMap: Map<String, Direction> = Direction.values().associateBy { it.name }
 
 fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
+  val root = getGraphRoots(graph).first()
+  val myDefaultBiome = getGraphValue<String>(graph, root, MarlothProperties.myBiome)
+  val otherDefaultBiome = getGraphValue<String>(graph, root, MarlothProperties.otherBiome)
   val sideNodes = filterByAttribute(graph, GameAttributes.blockSide)
   val sides = sideNodes
       .mapNotNull { node ->
@@ -52,12 +57,15 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
         val cellDirection = getGraphValue<CellDirection>(graph, node, MarlothProperties.direction)
         val direction = cellDirection?.direction
         val height = getGraphValue<Int>(graph, node, MarlothProperties.sideHeight) ?: StandardHeights.first
+        val myBiome = getGraphValue<String>(graph, node, MarlothProperties.myBiome)
+        val otherBiome = getGraphValue<String>(graph, node, MarlothProperties.otherBiome)
+
         if (mine == null || other == null || direction == null)
           null
         else {
           direction to Side(
-              mine = ConnectionContract(mine),
-              other = ConnectionContract(other),
+              mine = ConnectionContract(mine, biome = myBiome ?: myDefaultBiome),
+              other = ConnectionContract(other, biome = otherBiome ?: otherDefaultBiome),
               height = height,
           )
         }
@@ -65,10 +73,11 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
       .associate { it }
 
   val isTraversible = sides.any { traversibleBlockSides.contains(it.value.mine.type) }
-  val attributes = if (isTraversible)
-    setOf(CellAttribute.isTraversable)
-  else
-    setOf()
+  val lockedRotation = hasAttribute(graph, root, GameAttributes.lockedRotation)
+  val attributes = setOfNotNull(
+      if (isTraversible) CellAttribute.isTraversable else null,
+      if (lockedRotation) CellAttribute.lockedRotation else null,
+  )
 
   val showIfSideIsEmpty = filterByProperty(graph, MarlothProperties.showIfSideIsEmpty)
 

@@ -25,20 +25,16 @@ fun getOtherSide(grid: BlockGrid, origin: Vector3i): (Direction) -> Side? = { di
   sides?.getValue(oppositeSide)
 }
 
-fun sidesMatch(blockSide: Side, otherSide: Side?): Boolean =
-    otherSide == null || (
-        blockSide.other.type == otherSide.mine.type &&
-            blockSide.mine.type == otherSide.other.type &&
-            blockSide.height == otherSide.height
-        )
-//    if (blockSide.other.contains(CoreSide.void))
-//      otherSide == null || (otherSide.mineOld == CoreSide.void && otherSide.otherOld.contains(blockSide.mineOld))
-//    else
-//      otherSide == null || (blockSide.otherOld.contains(otherSide.mineOld) && otherSide.otherOld.contains(blockSide.mineOld))
+fun sidesMatch(first: Side, second: Side): Boolean =
+        first.other.type == second.mine.type &&
+        first.mine.type == second.other.type &&
+        first.height == second.height &&
+        (first.mine.biome == null || first.mine.biome == second.other.biome) &&
+        (second.mine.biome == null || second.mine.biome == first.other.biome)
 
 fun sidesMatch(surroundingSides: OptionalSides): CheckBlockSide = { (direction, blockSide) ->
   val otherSide = surroundingSides[direction]
-  sidesMatch(blockSide, otherSide)
+  otherSide == null || sidesMatch(blockSide, otherSide)
 }
 
 fun verticalTurnsAlign(otherTurns: Int?, turns: Int?): Boolean =

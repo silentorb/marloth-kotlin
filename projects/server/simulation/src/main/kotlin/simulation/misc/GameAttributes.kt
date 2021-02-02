@@ -19,6 +19,7 @@ object GameAttributes {
   // Block side related
   val blockSide = "blockSide"
   val anyBiome = "anyBiome"
+  val lockedRotation = "lockedRotation"
 }
 
 object MarlothProperties {
@@ -27,6 +28,8 @@ object MarlothProperties {
   const val direction = "direction"
   const val showIfSideIsEmpty = "showIfNull"
   const val sideHeight = "sideLevel"
+  const val myBiome = "myBiome"
+  const val otherBiome = "otherBiome"
 }
 
 fun marlothPropertiesSchema(): PropertySchema = mapOf(
