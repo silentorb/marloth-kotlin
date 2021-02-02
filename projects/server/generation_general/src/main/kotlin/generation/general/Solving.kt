@@ -27,9 +27,9 @@ fun getOtherSide(grid: BlockGrid, origin: Vector3i): (Direction) -> Side? = { di
 
 fun sidesMatch(blockSide: Side, otherSide: Side?): Boolean =
     otherSide == null || (
-        blockSide.other == otherSide.mine &&
+        blockSide.other.type == otherSide.mine.type &&
             blockSide.mine.type == otherSide.other.type &&
-            blockSide.mine.height == otherSide.other.height
+            blockSide.height == otherSide.height
         )
 //    if (blockSide.other.contains(CoreSide.void))
 //      otherSide == null || (otherSide.mineOld == CoreSide.void && otherSide.otherOld.contains(blockSide.mineOld))

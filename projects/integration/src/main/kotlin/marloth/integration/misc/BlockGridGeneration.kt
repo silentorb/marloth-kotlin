@@ -56,8 +56,9 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
           null
         else {
           direction to Side(
-              mine = ConnectionContract(mine, height = height),
-              other = ConnectionContract(other, height = height),
+              mine = ConnectionContract(mine),
+              other = ConnectionContract(other),
+              height = height,
           )
         }
       }
@@ -113,11 +114,10 @@ fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig,
         blockBuildersFromElements(name, polyomino)
       }
 
-  val blockBuilders = graphsToBlockBuilders(graphLibrary)
+  val blockBuilders = explodeBlockMap(graphsToBlockBuilders(graphLibrary))
 //  val blockBuilders = explodeBlockMap(allBlockBuilders() + importedBlockBuilders)
 //  val blockBuilders = explodeBlockMap(allBlockBuilders())
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))
-//  val home = blocks.first { it.name == "home" }
   val home = blocks.first { it.name == "home-set" }
   val blockGrid = newBlockGrid(dice, home, blocks - home, generationConfig.roomCount)
   val architectureInput = newArchitectureInput(generationConfig, dice, blockGrid)

@@ -23,7 +23,6 @@ object StandardHeights {
 
 data class ConnectionContract(
     val type: String,
-    val height: Int = StandardHeights.first,
     val biome: String? = null
 )
 
@@ -35,6 +34,7 @@ data class Side(
     val otherOld: Set<Any> = setOf(mineOld),
     val mine: ConnectionContract = tempConnectionContract,
     val other: ConnectionContract = tempConnectionContract,
+    val height: Int = StandardHeights.first,
     val isTraversable: Boolean = true,
     val connectionLogic: ConnectionLogic = ConnectionLogic.optional,
     val isUniversal: Boolean = false
