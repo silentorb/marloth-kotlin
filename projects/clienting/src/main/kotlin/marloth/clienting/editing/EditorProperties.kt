@@ -2,18 +2,18 @@ package marloth.clienting.editing
 
 import generation.general.CellDirection
 import generation.general.Direction
+import generation.general.StandardHeights
 import generation.general.directionNames
 import imgui.ImGui
 import marloth.definition.misc.blockSides
 import silentorb.mythic.editing.*
 import silentorb.mythic.editing.components.dropDownWidget
 import silentorb.mythic.editing.components.integerTextField
+import silentorb.mythic.editing.components.propertyIntegerTextField
 import silentorb.mythic.editing.components.wrapSimpleWidget
 import silentorb.mythic.ent.Entry
 import silentorb.mythic.ent.Serialization
-import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Vector3i
-import simulation.misc.GameAttributes
 import simulation.misc.MarlothProperties
 
 fun cellDirectionWidget(entry: Entry): CellDirection {
@@ -86,5 +86,11 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
         serialization = cellDirectionSerialization,
         widget = propertyCellDirectionWidget,
         defaultValue = { null },
+    ),
+    MarlothProperties.sideHeight to PropertyDefinition(
+        displayName = "Side Height",
+        serialization = intSerialization,
+        widget = propertyIntegerTextField,
+        defaultValue = { StandardHeights.first },
     ),
 ) + commonPropertyDefinitions()

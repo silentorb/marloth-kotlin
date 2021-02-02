@@ -71,5 +71,6 @@ fun buildArchitecture(general: ArchitectureInput, builders: Map<String, Builder>
         buildBlockCell(general, block, builder, position)
       }
 
-  return groupedCellHands.values.reduce { a, b -> mergeGraphsWithRenaming(a, b) }
+  val merged = groupedCellHands.values.reduce { a, b -> mergeGraphsWithRenaming(a, b) }
+  return merged
 }

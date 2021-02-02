@@ -51,12 +51,13 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
         val other = getGraphValue<String>(graph, node, MarlothProperties.other)
         val cellDirection = getGraphValue<CellDirection>(graph, node, MarlothProperties.direction)
         val direction = cellDirection?.direction
+        val height = getGraphValue<Int>(graph, node, MarlothProperties.sideHeight) ?: StandardHeights.first
         if (mine == null || other == null || direction == null)
           null
         else {
           direction to Side(
-              mine = ConnectionContract(mine),
-              other = ConnectionContract(other),
+              mine = ConnectionContract(mine, height = height),
+              other = ConnectionContract(other, height = height),
           )
         }
       }
