@@ -11,6 +11,7 @@ import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3i
 import simulation.entities.Depiction
 import simulation.main.Hand
 import simulation.misc.*
@@ -88,3 +89,13 @@ fun getTurnDirection(turns: Int): Direction =
       3 -> Direction.south
       else -> throw Error("Shouldn't be here")
     }
+
+fun rotateZ(turns: Int, value: Vector3i): Vector3i {
+  val (x, y, z) = value
+  return when (turns) {
+    1 -> Vector3i(y, -x, z)
+    2 -> Vector3i(-x, -y, z)
+    3 -> Vector3i(-y, x, z)
+    else -> value
+  }
+}

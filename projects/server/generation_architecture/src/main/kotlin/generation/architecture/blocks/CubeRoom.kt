@@ -14,7 +14,7 @@ val squareRoom: TieredBlock = { level ->
   val open = levelSides[level].open
   Block(
       name = "cubeRoom$level",
-      sides = sides(
+      sidesOld = sides(
           east = open,
           north = open,
           west = open,
@@ -29,7 +29,7 @@ val squareRoom: TieredBlock = { level ->
 
 val headroomBlock: Block = Block(
     name = "headroom",
-    sides = sides(
+    sidesOld = sides(
         east = Sides.headroomHorizontal,
         north = Sides.headroomHorizontal,
         west = Sides.headroomHorizontal,

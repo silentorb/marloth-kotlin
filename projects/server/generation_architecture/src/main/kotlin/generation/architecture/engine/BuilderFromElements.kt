@@ -32,7 +32,7 @@ fun blockBuildersFromElements(name: String, polyomino: Polyomino): List<BlockBui
     val cellName = "$name-${cell}"
     Block(
         name = if (index == 0) name else cellName,
-        sides = directionVectors.mapValues { (_, offset) ->
+        sidesOld = directionVectors.mapValues { (_, offset) ->
           val otherCell = cell + offset
           if (cells.contains(otherCell))
             Side(cellName, setOf("$name-${otherCell}"), connectionLogic = ConnectionLogic.required, isTraversable = true)

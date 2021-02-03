@@ -10,7 +10,7 @@ val diagonalCornerBlock: TieredBlock = { level ->
   val openRequired = levelSides[level].openRequired
   Block(
       name = "diagonalCorner$level",
-      sides = sides(
+      sidesOld = sides(
           east = openRequired,
           north = openRequired,
           west = endpoint,

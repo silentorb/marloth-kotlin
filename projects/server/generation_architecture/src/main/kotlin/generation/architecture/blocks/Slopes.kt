@@ -37,7 +37,7 @@ fun ledgeSlopeBlock(ledgeTurns: Int): TieredBlock = { level ->
     val height = getLevelHeight(lower)
     Block(
         name = "LedgeSlope-$ledgeTurns-$level",
-        sides = sides(
+        sidesOld = sides(
             east = newLedgeSide(upper),
             west = levelSides[lower].doorway,
             north = lowerSides.slopeSides[0],
@@ -56,7 +56,7 @@ fun ledgeSlopeBlock(ledgeTurns: Int): TieredBlock = { level ->
 
 val slopeWrap = Block(
     name = "octaveWrapSpace",
-    sides = sides(
+    sidesOld = sides(
         east = levelSides[0].openRequired,
         down = Sides.slopeOctaveWrap,
         up = Sides.headroomVertical
@@ -74,7 +74,7 @@ val fullSlope: TieredBlock = { level ->
 
   Block(
       name = "slope$level",
-      sides = slopeSides(lower, levelSides[upper].open)
+      sidesOld = slopeSides(lower, levelSides[upper].open)
           .plus(slotMod),
       attributes = setOf(CellAttribute.isTraversable)
 //      slots = listOf(Vector3(0f, 0f, getLevelHeight(lower) + quarterStep / 2f + 0.05f) + floorOffset)
@@ -90,7 +90,7 @@ fun cornerSlope(name: String = "cornerSlope"): TieredBlock = { level ->
   val lowerSides = levelSides[level]
   Block(
       name = "$name$level",
-      sides = sides(
+      sidesOld = sides(
           east = lowerSides.open,
           south = lowerSides.open,
           west = lowerSides.slopeSides[0],

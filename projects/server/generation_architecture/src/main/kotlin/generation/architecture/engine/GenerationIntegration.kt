@@ -9,7 +9,5 @@ fun newBlockGrid(dice: Dice, firstBlock: Block, blocks: Set<Block>, roomCount: I
   val blockConfig = BlockConfig(
       blocks = blocks
   )
-  return windingPath(dice, blockConfig, roomCount)(mapOf(
-      Vector3i.zero to firstBlock
-  ))
+  return windingPath(dice, blockConfig, roomCount)(extractCells(firstBlock, Vector3i.zero))
 }

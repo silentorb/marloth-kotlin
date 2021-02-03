@@ -13,7 +13,7 @@ val floorOffset = Vector3(0f, 0f, -cellHalfLength)
 
 data class Cell(
     val attributes: Set<CellAttribute>,
-    val slots: List<Vector3>
+    val slots: List<Vector3> = listOf(),
 )
 
 fun absoluteCellPosition(position: Vector3i): Vector3 =

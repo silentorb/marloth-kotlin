@@ -1,6 +1,5 @@
 package generation.architecture.matrical
 
-import generation.architecture.connecting.Sides
 import generation.architecture.engine.Builder
 import generation.general.*
 import simulation.main.Hand
@@ -40,7 +39,7 @@ fun sides(
 fun restrictBiomeBlockSides(biome: BiomeName, block: Block): Block =
     block.copy(
         name = biome + "-" + block.name,
-        sides = block.sides.mapValues { (_, side) ->
+        sidesOld = block.sidesOld.mapValues { (_, side) ->
           if (side.isUniversal)
             side
           else

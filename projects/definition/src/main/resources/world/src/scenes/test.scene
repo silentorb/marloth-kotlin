@@ -1,19 +1,5 @@
 {
 "graph" : [
-["bridge","parent","test"],
-["bridge","texture","arch"],
-["bridge","type","simple-connector"],
-["bridge","connects","bridge.a+earth-block1.b"],
-["bridge","connects","bridge.b+earth-block.a"],
-["earth-block","parent","test"],
-["earth-block","type","earth-block"],
-["earth-block","translation",[15.999731,0.0,0.0]],
-["earth-block1","type","earth-block"],
-["earth-block1","parent","test"],
-["earth-block1","rotation",[0.0,0.0,0.46482283]],
-["earth-block1","translation",[-13.666361,-3.1834464,1.5994396]],
-["temp","parent","test"],
-["temp","translation",[0.0,0.0,0.0]],
 ["test","",""]
 ]
 }

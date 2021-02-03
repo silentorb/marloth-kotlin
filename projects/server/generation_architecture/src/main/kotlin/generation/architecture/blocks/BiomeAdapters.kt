@@ -24,7 +24,7 @@ fun biomeAdapterCube(
 
   Block(
       name = "$firstBiome-$secondBiome-adapterCube$level",
-      sides = sides(
+      sidesOld = sides(
           east = firstSide,
           north = secondSide,
           west = firstSide,
@@ -49,7 +49,7 @@ fun biomeAdapterHall(
 
   Block(
       name = "$firstBiome-$secondBiome-adapterHall$level",
-      sides = sides(
+      sidesOld = sides(
           north = secondSide,
           south = firstSide
       ),

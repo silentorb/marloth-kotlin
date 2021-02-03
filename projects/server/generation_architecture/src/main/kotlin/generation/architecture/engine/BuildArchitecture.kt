@@ -35,7 +35,7 @@ fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, p
         val offset = directionVectors[rotated]!!
         val other = general.blockGrid[position + offset]
         val reverse = oppositeDirections[direction]
-        val side = other?.sides?.getOrDefault(reverse, null)
+        val side = other?.cell?.sides?.getOrDefault(reverse, null)
         val contract = side?.mine
         if (contract != null)
           direction to contract
@@ -66,9 +66,10 @@ fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, p
 
 fun buildArchitecture(general: ArchitectureInput, builders: Map<String, Builder>): LooseGraph {
   val groupedCellHands = general.blockGrid
+      .filterValues { it.offset != Vector3i.zero }
       .mapValues { (position, block) ->
-        val builder = builders[block.name] ?: throw Error("Could not find builder for block")
-        buildBlockCell(general, block, builder, position)
+        val builder = builders[block.source.name] ?: throw Error("Could not find builder for block")
+        buildBlockCell(general, block.source, builder, position)
       }
 
   val merged = groupedCellHands.values.reduce { a, b -> mergeGraphsWithRenaming(a, b) }

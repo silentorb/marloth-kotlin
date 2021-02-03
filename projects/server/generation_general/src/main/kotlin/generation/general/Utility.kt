@@ -4,14 +4,19 @@ import silentorb.mythic.spatial.Vector3i
 import simulation.misc.Cell
 import simulation.misc.MapGrid
 
-typealias BlockGrid = Map<Vector3i, Block>
+data class GridCell(
+    val cell: BlockCell,
+    val offset: Vector3i,
+    val source: Block,
+)
+
+typealias BlockGrid = Map<Vector3i, GridCell>
 
 fun mapGridFromBlockGrid(blockGrid: BlockGrid): MapGrid {
   val directions = setOf(Direction.down, Direction.east, Direction.south)
   val cells = blockGrid.mapValues { (_, block) ->
     Cell(
-        attributes = block.attributes,
-        slots = block.slots
+        attributes = block.cell.attributes,
     )
   }
 

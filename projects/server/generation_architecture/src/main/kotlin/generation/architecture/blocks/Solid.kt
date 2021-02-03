@@ -11,7 +11,7 @@ val solidTieredBlock: TieredBlock = { level ->
   val solidRequired = Sides.solidRequired
   Block(
       name = "solidBlock$level",
-      sides = sides(
+      sidesOld = sides(
           up = solidRequired,
           down = endpoint,
           east = solid,
@@ -33,13 +33,13 @@ fun solidBlockSides() = sides(
 
 fun solidBlock() = Block(
     name = "solidBlock",
-    sides = solidBlockSides()
+    sidesOld = solidBlockSides()
 )
 
 fun solidDiagonal() =
     Block(
         name = "solidDiagonal",
-        sides = sides(
+        sidesOld = sides(
             up = Sides.solidDiagonalVerticalRequired,
             east = Sides.solid,
             north = Sides.solid,

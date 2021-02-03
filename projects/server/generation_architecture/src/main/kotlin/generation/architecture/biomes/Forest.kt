@@ -59,7 +59,7 @@ fun generalForestBuilder(): Builder =
 
 fun withSolidBase(block: Block) =
     block.copy(
-        sides = block.sides
+        sidesOld = block.sidesOld
             .plus(
 //                Direction.down to Sides.solid
                     Direction.down to Sides.solidRequired
@@ -72,7 +72,7 @@ fun withSolidBase(tieredBlock: TieredBlock): TieredBlock = { level ->
 
 fun withDiagonalSolidBase(block: Block) =
     block.copy(
-        sides = block.sides
+        sidesOld = block.sidesOld
             .plus(
                 Direction.down to Sides.solidDiagonalVerticalRequired
 //                    Direction.down to Sides.solidRequired

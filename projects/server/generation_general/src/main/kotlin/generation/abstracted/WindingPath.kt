@@ -15,7 +15,7 @@ data class GroupedBlocks(
 fun newGroupedBlocks(blocks: Set<Block>): GroupedBlocks {
   val polyominoes = blocks
       .filter { block ->
-        block.sides
+        block.sidesOld
             .any {
               it.value.connectionLogic == ConnectionLogic.required
             }
@@ -24,7 +24,7 @@ fun newGroupedBlocks(blocks: Set<Block>): GroupedBlocks {
 
   val narrow = blocks
       .filter { block ->
-        block.sides
+        block.sidesOld
             .minus(verticalDirections)
             .containsValue(endpoint)
       }
@@ -59,6 +59,16 @@ data class BlockState(
 const val debugWorldGenerationKey = "DEBUG_WORLD_GENERATION"
 val worldGenerationLog = conditionalDebugLog(debugWorldGenerationKey)
 
+fun extractCells(block: Block, position: Vector3i) =
+    block.cells.entries
+        .associate { (cellOffset, cell) ->
+          position + cellOffset to GridCell(
+              cell = cell,
+              offset = cellOffset,
+              source = block,
+          )
+        }
+
 tailrec fun addPathStep(
     maxSteps: Int,
     dice: Dice,
@@ -78,7 +88,7 @@ tailrec fun addPathStep(
 //  }
 //  val prioritySides = sideGroups[ConnectionLogic.required] ?: listOf()
 
-  val stepCount = grid.count { it.value.attributes.contains(CellAttribute.isTraversable) }
+  val stepCount = grid.count { it.value.cell.attributes.contains(CellAttribute.isTraversable) }
 //  worldGenerationLog {
 //    val required = sideGroups.getOrElse(ConnectionLogic.required) { listOf() }.size
 //    val optional = sideGroups.getOrElse(ConnectionLogic.optional) { listOf() }.size
@@ -98,12 +108,11 @@ tailrec fun addPathStep(
     val position = incompleteSide.position
     val nextPosition = position + offset
     assert(!grid.containsKey(nextPosition))
-    val currentBlock = grid[position]!!
+    val currentBlock = grid[position]!!.cell
     val side = currentBlock.sides[incompleteSide.direction]!!
-    worldGenerationLog {
-
-      "Side: ${currentBlock.name} ${side.mineOld}, ${incompleteSide.position} ${incompleteSide.direction}"
-    }
+//    worldGenerationLog {
+//      "Side: ${currentBlock.name} ${side.mineOld}, ${incompleteSide.position} ${incompleteSide.direction}"
+//    }
     val blocks = if (incompleteSides.size < 2)
       if (stepCount >= maxSteps)
         groupedBlocks.flexible
@@ -134,16 +143,17 @@ tailrec fun addPathStep(
       }
     } else {
       worldGenerationLog { "Block: ${block.name}" }
+      val cellAdditions = extractCells(block, nextPosition)
       state.copy(
           groupedBlocks = filterUsedUniqueBlock(block, groupedBlocks),
-          grid = grid + (nextPosition to block)
+          grid = grid + cellAdditions
       )
     }
 
     val nextBookmark = if (block == null)
       null // Consume bookmark
     else if (incompleteSides.none()) {
-      if (block.sides.any { (direction, side) ->
+      if (block.sidesOld.any { (direction, side) ->
             side.connectionLogic == ConnectionLogic.required &&
                 !grid.containsKey(nextPosition + directionVectors[direction]!!)
           })

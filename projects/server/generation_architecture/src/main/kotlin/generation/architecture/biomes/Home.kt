@@ -37,7 +37,7 @@ fun homeBlocks(): List<BlockBuilder> {
   return listOf(
       Block(
           name = "1",
-          sides = sides(
+          sidesOld = sides(
               east = levelSides[0].doorway,
               north = homeSides.first,
               up = Sides.headroomVertical
@@ -54,7 +54,7 @@ fun homeBlocks(): List<BlockBuilder> {
 
       Block(
           name = "2",
-          sides = sides(
+          sidesOld = sides(
               south = homeSides.second
           ),
           attributes = setOf(CellAttribute.home, CellAttribute.isTraversable, CellAttribute.unique)

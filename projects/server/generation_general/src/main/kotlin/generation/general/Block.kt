@@ -1,15 +1,23 @@
 package generation.general
 
 import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3i
 import simulation.misc.CellAttribute
 
 typealias SideMap = Map<Direction, Side>
 typealias OptionalSides = Map<Direction, Side?>
 
+data class BlockCell(
+    val sides: SideMap,
+    val attributes: Set<CellAttribute> = setOf(),
+)
+
 data class Block(
     val name: String = "",
-    val sides: SideMap = mapOf(),
+    val sidesOld: SideMap = mapOf(),
+    val cells: Map<Vector3i, BlockCell> = mapOf(),
     val attributes: Set<CellAttribute> = setOf(),
+    val lockedRotation: Boolean = false,
     val slots: List<Vector3> = listOf(),
     val turns: Int? = null
     ) {
@@ -19,12 +27,12 @@ data class Block(
 }
 
 fun openingCount(block: Block): Int =
-    block.sides.count { it.value != endpoint }
+    block.sidesOld.count { it.value != endpoint }
 
 fun newBlock(up: Side, down: Side, east: Side, north: Side, west: Side, south: Side,
              attributes: Set<CellAttribute> = setOf()) =
     Block(
-        sides = mapOf(
+        sidesOld = mapOf(
             Direction.up to up,
             Direction.down to down,
             Direction.east to east,
