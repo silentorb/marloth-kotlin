@@ -66,12 +66,16 @@ fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, p
 
 fun buildArchitecture(general: ArchitectureInput, builders: Map<String, Builder>): LooseGraph {
   val groupedCellHands = general.blockGrid
-      .filterValues { it.offset != Vector3i.zero }
+      .filterValues { it.offset == Vector3i.zero }
       .mapValues { (position, block) ->
         val builder = builders[block.source.name] ?: throw Error("Could not find builder for block")
         buildBlockCell(general, block.source, builder, position)
       }
 
-  val merged = groupedCellHands.values.reduce { a, b -> mergeGraphsWithRenaming(a, b) }
+  val merged = if (groupedCellHands.any())
+    groupedCellHands.values.reduce { a, b -> mergeGraphsWithRenaming(a, b) }
+  else
+    listOf()
+
   return merged
 }

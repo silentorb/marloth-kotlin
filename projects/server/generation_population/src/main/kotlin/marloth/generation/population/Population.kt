@@ -130,12 +130,7 @@ fun populateWorld(nextId: IdSource, config: GenerationConfig, dice: Dice, graph:
   val elementGroups = nodesToElements(config.meshShapes, graph)
   val lights = elementGroups.flatMap { it.lights }
   val hands = (1..playerCount)
-      .flatMap {
-        if (getDebugBoolean("USE_MAP_GRID"))
-          newPlayerAndCharacter(nextId, definitions, grid)
-        else
-          newPlayerAndCharacter(nextId, definitions, graph)
-      }
+      .flatMap { newPlayerAndCharacter(nextId, definitions, graph) }
       .plus(graphToHands(definitions, nextId, graph))
       .plus(cycleHands(nextId))
       .plus(populateMonsters(nextId, definitions, dice, graph))

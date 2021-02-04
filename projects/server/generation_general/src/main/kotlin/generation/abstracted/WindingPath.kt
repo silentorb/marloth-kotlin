@@ -172,6 +172,6 @@ fun windingPath(dice: Dice, config: BlockConfig, length: Int): (BlockGrid) -> Bl
   val groupedBlocks = newGroupedBlocks(blocks)
   val state = BlockState(groupedBlocks, grid, listOf(), mapOf())
   val nextGrid = addPathStep(length, dice, state)
-  assert(nextGrid.size > grid.size)
+  assert(nextGrid.size >= length)
   nextGrid
 }

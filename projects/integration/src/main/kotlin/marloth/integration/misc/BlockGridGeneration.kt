@@ -54,7 +54,7 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
   val myDefaultBiome = getGraphValue<String>(graph, root, MarlothProperties.myBiome)
   val otherDefaultBiome = getGraphValue<String>(graph, root, MarlothProperties.otherBiome)
   val sideNodes = filterByAttribute(graph, GameAttributes.blockSide)
-  val cells = sideNodes
+  val allSides = sideNodes
       .mapNotNull { node ->
         val mine = getGraphValue<String>(graph, node, MarlothProperties.mine)
         val other = getGraphValue<String>(graph, node, MarlothProperties.other)
@@ -73,7 +73,9 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
           )
         }
       }
-      .groupBy { it.first }
+
+  val cells = allSides
+      .groupBy { it.first.cell }
       .entries
       .associate { (offset, value) ->
         val sides = value.associate { it.first.direction to it.second }
@@ -81,7 +83,7 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
         val attributes = setOfNotNull(
             if (isTraversible) CellAttribute.isTraversable else null,
         )
-        offset.cell to BlockCell(
+        offset to BlockCell(
             sides = sides,
             attributes = attributes,
         )
@@ -127,7 +129,8 @@ fun graphsToBlockBuilders(graphLibrary: GraphLibrary): List<BlockBuilder> {
 
 fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig,
                         graphLibrary: GraphLibrary): Pair<BlockGrid, LooseGraph> {
-  val blockBuilders = explodeBlockMap(graphsToBlockBuilders(graphLibrary))
+  val coreBlocks = graphsToBlockBuilders(graphLibrary)
+  val blockBuilders = explodeBlockMap(coreBlocks)
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))
   val home = blocks.first { it.name == "home-set" }
   val blockGrid = newBlockGrid(dice, home, blocks - home, generationConfig.roomCount)

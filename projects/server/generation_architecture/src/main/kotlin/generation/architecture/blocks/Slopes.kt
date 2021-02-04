@@ -4,7 +4,7 @@ import generation.architecture.building.ledgeSlopeBuilder
 import generation.architecture.connecting.Sides
 import generation.architecture.connecting.levelConnectors
 import generation.architecture.connecting.levelSides
-import generation.architecture.engine.getTurnDirection
+import generation.general.getTurnDirection
 import generation.architecture.matrical.*
 import generation.architecture.matrical.sides
 import generation.general.*
@@ -44,7 +44,7 @@ fun ledgeSlopeBlock(ledgeTurns: Int): TieredBlock = { level ->
             south = lowerSides.slopeSides[1],
             up = Sides.headroomVertical
         ) + mapOf(
-            getTurnDirection(ledgeTurns) to upperSides.open
+            getTurnDirection(ledgeTurns)!! to upperSides.open
         ),
         slots = listOf(
             Vector3(cellLength * 0.25f, cellLength * (0.5f + ledgeTurns.toFloat() * 0.25f) - cellHalfLength, height - quarterStep)

@@ -5,7 +5,6 @@ import silentorb.mythic.randomly.Dice
 import simulation.misc.CellAttribute
 
 typealias GetBlock = (Vector3i) -> BlockCell?
-typealias CheckBlockSide = (Map.Entry<Direction, Side>) -> Boolean
 
 fun getOtherSide(getBlock: GetBlock, origin: Vector3i): (Direction) -> Side? = { direction ->
   val oppositeSide = oppositeDirections[direction]!!
@@ -16,48 +15,61 @@ fun getOtherSide(getBlock: GetBlock, origin: Vector3i): (Direction) -> Side? = {
   sides?.getOrDefault(oppositeSide, null)
 }
 
-//fun getOtherSide(grid: BlockGrid, origin: Vector3i): (Direction) -> Side? = { direction ->
-//  val oppositeSide = oppositeDirections[direction]!!
-//  val offset = directionVectors[direction]!!
-//  val position = origin + offset
-//  val block = grid[position]
-//  val sides = block?.sidesOld
-//  sides?.getValue(oppositeSide)
-//}
-
 fun sidesMatch(first: Side, second: Side): Boolean =
-        first.other.type == second.mine.type &&
+    first.other.type == second.mine.type &&
         first.mine.type == second.other.type &&
         first.height == second.height &&
         (first.mine.biome == null || first.mine.biome == second.other.biome) &&
         (second.mine.biome == null || second.mine.biome == first.other.biome)
 
-fun sidesMatch(surroundingSides: OptionalSides): CheckBlockSide = { (direction, blockSide) ->
+fun sidesMatch(surroundingSides: SideMap, direction: Direction, blockSide: Side): Boolean {
   val otherSide = surroundingSides[direction]
-  otherSide == null || sidesMatch(blockSide, otherSide)
+  return otherSide == null || sidesMatch(blockSide, otherSide)
 }
 
 fun verticalTurnsAlign(otherTurns: Int?, turns: Int?): Boolean =
     otherTurns == null || turns == null || otherTurns == turns
 
-fun checkBlockMatch(surroundingSides: OptionalSides): (Block) -> Boolean = { block ->
-  block.sidesOld.all(sidesMatch(surroundingSides))
+fun getSurroundingSides(getBlock: GetBlock, location: Vector3i): SideMap {
+  val getOther = getOtherSide(getBlock, location)
+  return allDirections
+      .mapNotNull {
+        val side = getOther(it)
+        if (side == null)
+          null
+        else
+          it to side
+      }
+      .associate { it }
 }
 
-fun getSurroundingSides(blockGrid: BlockGrid, location: Vector3i): OptionalSides {
+fun getSurroundingSides(blockGrid: BlockGrid, location: Vector3i): SideMap {
   val getBlock: GetBlock = { blockGrid[it]?.cell }
-  return allDirections.associateWith(getOtherSide(getBlock, location))
+  return getSurroundingSides(getBlock, location)
 }
 
-fun matchBlock(dice: Dice, blocks: Set<Block>, surroundingSides: OptionalSides): Block? {
+fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock): (Block) -> Boolean = { block ->
+  val matches = block.cells.all { (offset, cell) ->
+    val surroundingSides2 = if (offset == Vector3i.zero)
+      surroundingSides
+    else
+      getSurroundingSides(getBlock, offset)
+
+    surroundingSides2.all { side -> sidesMatch(cell.sides, side.key, side.value) }
+  }
+  matches
+}
+
+fun matchBlock(dice: Dice, blocks: Set<Block>, getBlock: GetBlock, surroundingSides: SideMap): Block? {
   val shuffledBlocks = dice.shuffle(blocks)
-  val result = shuffledBlocks.firstOrNull(checkBlockMatch(surroundingSides))
+  val result = shuffledBlocks.firstOrNull(checkBlockMatch(surroundingSides, getBlock))
   return result
 }
 
 fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, blockGrid: BlockGrid, location: Vector3i): Block? {
   val surroundingSides = getSurroundingSides(blockGrid, location)
-  return matchBlock(dice, blocks, surroundingSides)
+  val getBlock: GetBlock = { blockGrid[it + location]?.cell }
+  return matchBlock(dice, blocks, getBlock, surroundingSides)
 }
 
 fun openSides(blockGrid: BlockGrid, position: Vector3i): Map<Direction, Vector3i> {
