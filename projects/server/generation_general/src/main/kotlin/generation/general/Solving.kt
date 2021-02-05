@@ -24,7 +24,7 @@ fun sidesMatch(first: Side, second: Side): Boolean =
 
 fun sidesMatch(surroundingSides: SideMap, direction: Direction, blockSide: Side): Boolean {
   val otherSide = surroundingSides[direction]
-  return otherSide == null || sidesMatch(blockSide, otherSide)
+  return otherSide != null && sidesMatch(blockSide, otherSide)
 }
 
 fun verticalTurnsAlign(otherTurns: Int?, turns: Int?): Boolean =
@@ -48,7 +48,7 @@ fun getSurroundingSides(blockGrid: BlockGrid, location: Vector3i): SideMap {
   return getSurroundingSides(getBlock, location)
 }
 
-fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock): (Block) -> Boolean = { block ->
+fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock): (Block) -> Vector3i? = { block ->
   val matches = block.cells.all { (offset, cell) ->
     val surroundingSides2 = if (offset == Vector3i.zero)
       surroundingSides
@@ -57,16 +57,23 @@ fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock): (Block) -> B
 
     surroundingSides2.all { side -> sidesMatch(cell.sides, side.key, side.value) }
   }
-  matches
+  if (matches)
+    Vector3i.zero
+  else
+    null
 }
 
-fun matchBlock(dice: Dice, blocks: Set<Block>, getBlock: GetBlock, surroundingSides: SideMap): Block? {
+fun matchBlock(dice: Dice, blocks: Set<Block>, getBlock: GetBlock, surroundingSides: SideMap): Pair<Vector3i, Block?> {
   val shuffledBlocks = dice.shuffle(blocks)
-  val result = shuffledBlocks.firstOrNull(checkBlockMatch(surroundingSides, getBlock))
-  return result
+  for (block in shuffledBlocks) {
+    val offset = checkBlockMatch(surroundingSides, getBlock)(block)
+    if (offset != null)
+      return offset to block
+  }
+  return Vector3i.zero to null
 }
 
-fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, blockGrid: BlockGrid, location: Vector3i): Block? {
+fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, blockGrid: BlockGrid, location: Vector3i): Pair<Vector3i, Block?> {
   val surroundingSides = getSurroundingSides(blockGrid, location)
   val getBlock: GetBlock = { blockGrid[it + location]?.cell }
   return matchBlock(dice, blocks, getBlock, surroundingSides)

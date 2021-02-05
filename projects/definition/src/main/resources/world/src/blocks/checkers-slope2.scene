@@ -5,6 +5,7 @@
 ["0-0-0-west","mine","open"],
 ["0-0-0-west","other","open"],
 ["0-0-0-west","direction",[0,0,0,"west"]],
+["0-0-0-west","sideLevel",60],
 ["0-0-1-east","parent","sides"],
 ["0-0-1-east","type","blockSide"],
 ["0-0-1-east","mine","open"],

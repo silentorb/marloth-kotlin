@@ -124,7 +124,7 @@ tailrec fun addPathStep(
     if (nextPosition == Vector3i(1, 3, 0)) {
       val k = 0
     }
-    val block = matchConnectingBlock(dice, blocks, grid, nextPosition)
+    val (blockOffset, block) = matchConnectingBlock(dice, blocks, grid, nextPosition)
 //        ?: matchConnectingBlock(dice, groupedBlocks.all, grid, nextPosition)
 
     val nextState = if (block == null) {

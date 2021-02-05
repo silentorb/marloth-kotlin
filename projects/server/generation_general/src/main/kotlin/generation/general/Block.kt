@@ -19,7 +19,7 @@ data class Block(
     val attributes: Set<CellAttribute> = setOf(),
     val lockedRotation: Boolean = false,
     val slots: List<Vector3> = listOf(),
-    val turns: Int? = null
+    val turns: Int = 0
     ) {
   init {
     assert(slots.none { it.x > 5f || it.y > 5f || it.x < -5f || it.y < -5f })
