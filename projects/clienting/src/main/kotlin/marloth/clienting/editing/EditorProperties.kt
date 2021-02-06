@@ -18,10 +18,9 @@ import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.spatial.Vector3i
 import simulation.misc.MarlothProperties
 
-fun cellDirectionWidget(entry: Entry): CellDirection {
+val cellDirectionWidget: PropertyWidget = { _, entry, owner ->
   val value = entry.target as CellDirection
   val cell = value.cell
-  val owner = "${entry.source}.${entry.property}"
   ImGui.text("X")
   ImGui.sameLine()
   ImGui.setNextItemWidth(40f)
@@ -41,10 +40,8 @@ fun cellDirectionWidget(entry: Entry): CellDirection {
   ImGui.sameLine()
   ImGui.setNextItemWidth(80f)
   val direction = dropDownWidget(directionNames, "$owner.dir", value.direction.name)
-  return CellDirection(Vector3i(x, y, z), Direction.valueOf(direction))
+  CellDirection(Vector3i(x, y, z), Direction.valueOf(direction))
 }
-
-val propertyCellDirectionWidget: PropertyWidget = wrapSimpleWidget(::cellDirectionWidget)
 
 val cellDirectionSerialization = Serialization(
     load = {
@@ -82,14 +79,14 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
     MarlothProperties.direction to PropertyDefinition(
         displayName = "Direction",
         serialization = cellDirectionSerialization,
-        widget = propertyCellDirectionWidget,
+        widget = cellDirectionWidget,
         defaultValue = { Direction.east.name },
     ),
     MarlothProperties.showIfSideIsEmpty to PropertyDefinition(
         displayName = "Show if Side is Empty",
         serialization = cellDirectionSerialization,
-        widget = propertyCellDirectionWidget,
-        defaultValue = { null },
+        widget = cellDirectionWidget,
+        defaultValue = { CellDirection(Vector3i.zero, Direction.east) },
     ),
     MarlothProperties.sideHeight to PropertyDefinition(
         displayName = "Side Height",

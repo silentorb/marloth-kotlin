@@ -36,4 +36,7 @@ fun marlothPropertiesSchema(): PropertySchema = mapOf(
     MarlothProperties.other to PropertyInfo(
         manyToMany = true,
     ),
+    MarlothProperties.showIfSideIsEmpty to PropertyInfo(
+        manyToMany = true,
+    ),
 )

@@ -143,7 +143,7 @@ tailrec fun addPathStep(
       }
     } else {
       worldGenerationLog { "Block: ${block.name}" }
-      val cellAdditions = extractCells(block, nextPosition)
+      val cellAdditions = extractCells(block, nextPosition - blockOffset)
       state.copy(
           groupedBlocks = filterUsedUniqueBlock(block, groupedBlocks),
           grid = grid + cellAdditions

@@ -6,19 +6,20 @@ import marloth.clienting.editing.loadWorldGraph
 import marloth.clienting.input.newInputState
 import marloth.integration.front.GameApp
 import silentorb.mythic.ent.Graph
+import silentorb.mythic.ent.GraphLibrary
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.getMeshShapes
 import silentorb.mythic.physics.releaseBulletState
 import silentorb.mythic.quartz.newTimestepState
 import simulation.main.World
 
-fun newWorld(gameApp: GameApp, graph: Graph): World {
-  return generateWorld(gameApp.db, gameApp.definitions, getMeshShapes(gameApp.client.renderer), graph)
+fun newWorld(gameApp: GameApp, graph: Graph, graphLibrary: GraphLibrary = mapOf()): World {
+  return generateWorld(gameApp.db, gameApp.definitions, getMeshShapes(gameApp.client.renderer), graph, graphLibrary)
 }
 
-fun restartWorld(app: GameApp, oldWorld: World, graph: Graph): World {
+fun restartWorld(app: GameApp, oldWorld: World, graph: Graph, graphLibrary: GraphLibrary): World {
   releaseBulletState(oldWorld.bulletState)
-  return newWorld(app, graph)
+  return newWorld(app, graph, graphLibrary)
 }
 
 fun restartClientState(client: ClientState, playerMap: Map<Id, Id>): ClientState =
@@ -49,7 +50,7 @@ fun restartGame(app: GameApp, appState: AppState, scene: String): AppState {
     )
   } else {
     val previousWorld = appState.worlds.last()
-    val world = restartWorld(app, previousWorld, graph)
+    val world = restartWorld(app, previousWorld, graph, editor?.graphLibrary ?: mapOf())
     // Right now order doesn't matter for new player characters since each one is identical other than location.
     // Eventually they will need to be more carefully mapped to preserve proper association
     val players = previousWorld.deck.players.keys

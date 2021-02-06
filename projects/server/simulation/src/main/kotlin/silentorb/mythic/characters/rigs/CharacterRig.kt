@@ -103,7 +103,7 @@ fun updateCharacterRigBulletBody(bulletState: BulletState): (Id, CharacterRig) -
     val stepHeight = -groundDistance
     if (groundDistance < -0.01f) {
       val transitionStepHeight = min(0.03f, stepHeight)
-      println("$groundDistance $transitionStepHeight")
+//      println("$groundDistance $transitionStepHeight")
       btBody.translate(toGdxVector3(Vector3(0f, 0f, transitionStepHeight)))
     } else if (groundDistance > 0.1f) {
 //      val transitionStepHeight = min(0.015f, stepHeight)

@@ -29,18 +29,21 @@ fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, p
     val offset = directionVectors[rotated]!!
     general.blockGrid.containsKey(position + offset)
   }.toSet()
-  val neighbors = allDirections
-      .mapNotNull { direction ->
-        val rotated = rotateDirection(block.turns)(direction)
-        val offset = directionVectors[rotated]!!
-        val other = general.blockGrid[position + offset]
-        val reverse = oppositeDirections[direction]
-        val side = other?.cell?.sides?.getOrDefault(reverse, null)
-        val contract = side?.mine
-        if (contract != null)
-          direction to contract
-        else
-          null
+  val neighbors = block.cells.keys
+      .flatMap { cell ->
+        allDirections
+            .mapNotNull { direction ->
+              val rotated = rotateDirection(block.turns)(direction)
+              val offset = directionVectors[rotated]!!
+              val other = general.blockGrid[position + cell + offset]
+              val reverse = oppositeDirections[direction]
+              val side = other?.cell?.sides?.getOrDefault(reverse, null)
+              val contract = side?.mine
+              if (contract != null)
+                CellDirection(cell, direction) to contract
+              else
+                null
+            }
       }
       .associate { it }
 

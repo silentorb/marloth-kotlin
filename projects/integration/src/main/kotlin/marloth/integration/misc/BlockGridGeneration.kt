@@ -34,7 +34,7 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
                         sides = sides,
                     )
                   }
-              if (cells == block.cells)
+              if (turns != 0 && cells == block.cells)
                 null
               else
                 block.copy(
@@ -91,6 +91,8 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
 
   val lockedRotation = hasAttribute(graph, root, GameAttributes.lockedRotation)
   val showIfSideIsEmpty = filterByProperty(graph, MarlothProperties.showIfSideIsEmpty)
+      .groupBy { it.source }
+      .mapValues { it.value.map { it.target as CellDirection } }
 
   val block = Block(
       name = name,
@@ -101,10 +103,12 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
 
   val builder: Builder = { input ->
     val omitted = showIfSideIsEmpty
-        .mapNotNull { entry ->
-          val cellDirection = entry.target as CellDirection
-          if (input.neighbors.keys.contains(cellDirection.direction))
-            entry.source
+        .mapNotNull { (node, cellDirections) ->
+          val shouldOmit = cellDirections.any { cellDirection ->
+            input.neighbors.keys.contains(cellDirection)
+          }
+          if (shouldOmit)
+            node
           else
             null
         }

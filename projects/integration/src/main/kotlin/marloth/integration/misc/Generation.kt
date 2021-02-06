@@ -77,7 +77,9 @@ fun generateWorld(db: Database, definitions: Definitions, generationConfig: Gene
 fun newGenerationSeed(): Long =
     getDebugString("GENERATION_SEED")?.toLong() ?: System.currentTimeMillis()
 
-fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap, graph: Graph, seed: Long = newGenerationSeed()): World {
+fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap, graph: Graph,
+                  graphLibrary: GraphLibrary,
+                  seed: Long = newGenerationSeed()): World {
   val dice = Dice(seed)
   if (getDebugBoolean("LOG_SEED")) {
     println("Generation seed: ${dice.seed}")
@@ -89,7 +91,7 @@ fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap
       meshShapes = meshInfo,
       roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 100,
       polyominoes = mapOf(),
-      graphLibrary = loadMarlothGraphLibrary(marlothPropertiesSerialization),
+      graphLibrary = loadMarlothGraphLibrary(marlothPropertiesSerialization) + graphLibrary,
   )
 
   val graph2 = if (getDebugBoolean("USE_MAP_GRID"))

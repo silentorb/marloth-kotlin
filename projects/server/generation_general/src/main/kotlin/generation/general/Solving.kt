@@ -49,18 +49,22 @@ fun getSurroundingSides(blockGrid: BlockGrid, location: Vector3i): SideMap {
 }
 
 fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock): (Block) -> Vector3i? = { block ->
-  val matches = block.cells.all { (offset, cell) ->
-    val surroundingSides2 = if (offset == Vector3i.zero)
-      surroundingSides
-    else
-      getSurroundingSides(getBlock, offset)
+  val match = block.cells
+      .keys
+      .firstOrNull { baseOffset ->
+        block.cells
+            .all { (cellOffset, cell) ->
+              val appliedOffset = cellOffset - baseOffset
+              val surroundingSides2 = if (appliedOffset == Vector3i.zero)
+                surroundingSides
+              else
+                getSurroundingSides(getBlock, appliedOffset)
 
-    surroundingSides2.all { side -> sidesMatch(cell.sides, side.key, side.value) }
-  }
-  if (matches)
-    Vector3i.zero
-  else
-    null
+              surroundingSides2.all { side -> sidesMatch(cell.sides, side.key, side.value) }
+            }
+      }
+
+  match
 }
 
 fun matchBlock(dice: Dice, blocks: Set<Block>, getBlock: GetBlock, surroundingSides: SideMap): Pair<Vector3i, Block?> {
