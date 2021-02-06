@@ -11,7 +11,7 @@ import silentorb.mythic.editing.*
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.ExpansionLibrary
 import silentorb.mythic.ent.scenery.expandInstances
-import silentorb.mythic.ent.scenery.filterByAttribute
+import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.lookinglass.ElementGroup
@@ -133,7 +133,7 @@ fun updateEditingActive(commands: Commands, previousIsActive: Boolean): Boolean 
     }
 
 fun filterOutEditorOnlyNodes(graph: Graph): Graph {
-  val editorOnlyNodes = filterByAttribute(graph, CommonEditorAttributes.editorOnly)
+  val editorOnlyNodes = nodeAttributes(graph, CommonEditorAttributes.editorOnly)
   return graph
       .filter { !editorOnlyNodes.contains(it.source) }
       .toSet()

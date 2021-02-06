@@ -7,26 +7,23 @@ import silentorb.mythic.characters.rigs.isGrounded
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.Body
-import silentorb.mythic.spatial.Vector3
 import simulation.entities.updateSpinnerRotation
 import simulation.happenings.ReturnHome
 import simulation.main.Deck
-import simulation.misc.CellAttribute
-import simulation.misc.MapGrid
-import simulation.misc.getCellPoint
 import simulation.movement.getFreedoms
 
-fun updateBodies(grid: MapGrid, deck: Deck, events: Events, delta: Float): (Id, Body) -> Body {
+fun updateBodies(deck: Deck, events: Events, delta: Float): (Id, Body) -> Body {
   val returnHomeEvents = events.filterIsInstance<ReturnHome>()
   val movementEvents = events.filterIsInstance<CharacterRigMovement>()
 
   return { id, body ->
-    val position = if (returnHomeEvents.any { it.target == id }) {
-      val home = grid.cells.entries
-          .first { (_, cell) -> cell.attributes.contains(CellAttribute.home) }
-      getCellPoint(home.key) + Vector3(0f, 0f, -2f)
-    } else
-      body.position
+//    val position = if (returnHomeEvents.any { it.target == id }) {
+//      val home = grid.cells.entries
+//          .first { (_, cell) -> cell.attributes.contains(CellAttribute.home) }
+//      getCellPoint(home.key) + Vector3(0f, 0f, -2f)
+//    } else
+//      body.position
+     val position = body.position
 
     val orientation = updateSpinnerRotation(deck.spinners, delta, id, body)
 

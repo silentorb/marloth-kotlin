@@ -6,19 +6,16 @@ import marloth.definition.data.characterDefinitions
 import marloth.definition.data.miscellaneousDefinitions
 import marloth.definition.misc.enemyDistributions
 import marloth.definition.misc.monsterLimit
-import marloth.scenery.enums.CreatureId
-import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.Key
-import silentorb.mythic.ent.scenery.filterByAttribute
+import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Matrix
-import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.timing.FloatCycle
 import simulation.characters.CharacterDefinition
 import simulation.characters.newCharacter
@@ -116,7 +113,7 @@ fun populateMonsters(definitions: Definitions, locations: List<Matrix>, nextId: 
 }
 
 fun populateMonsters(nextId: IdSource, definitions: Definitions, dice: Dice, graph: Graph): List<NewHand> {
-  val spawners = filterByAttribute(graph, Entities.monsterSpawn)
+  val spawners = nodeAttributes(graph, Entities.monsterSpawn)
   val count = min(monsterLimit(), min(spawners.size, spawners.size / 2 + 1))
   val locations = dice.take(spawners, count)
       .map { getNodeTransform(graph, it) }
@@ -124,7 +121,7 @@ fun populateMonsters(nextId: IdSource, definitions: Definitions, dice: Dice, gra
   return populateMonsters(definitions, locations, nextId, dice)
 }
 
-fun populateWorld(nextId: IdSource, config: GenerationConfig, dice: Dice, graph: Graph, grid: MapGrid): List<NewHand> {
+fun populateWorld(nextId: IdSource, config: GenerationConfig, dice: Dice, graph: Graph): List<NewHand> {
   val definitions = config.definitions
   val playerCount = getDebugInt("INITIAL_PLAYER_COUNT") ?: 1
   val elementGroups = nodesToElements(config.meshShapes, graph)

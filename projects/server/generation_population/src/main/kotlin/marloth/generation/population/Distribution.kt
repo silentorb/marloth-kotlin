@@ -54,50 +54,50 @@ fun allocateVictoryKeyCells(cells: Set<Vector3i>, connections: ConnectionSet, ho
   return result
 }
 
-fun absoluteSlots(cells: CellMap): (Vector3i) -> List<Vector3> = { location ->
-  cellSlots(location, cells[location]!!)
-}
+//fun absoluteSlots(cells: CellMap): (Vector3i) -> List<Vector3> = { location ->
+//  cellSlots(location, cells[location]!!)
+//}
 
 // Only used for debug purposes
-fun getAllSlots(grid: MapGrid): List<Vector3> =
-    grid.cells
-        .filterValues { it.slots.any() }
-        .keys
-        .flatMap(absoluteSlots(grid.cells))
+//fun getAllSlots(grid: MapGrid): List<Vector3> =
+//    grid.cells
+//        .filterValues { it.slots.any() }
+//        .keys
+//        .flatMap(absoluteSlots(grid.cells))
 
-fun getGroupDistributions(dice: Dice, grid: MapGrid): Map<DistributionGroup, List<Vector3>> {
-  if (getDebugString("NO_OBJECTS") != null)
-    return mapOf()
-
-  val availableCells = grid.cells
-      .filter { it.value.slots.any() }
-      .keys
-
-  val home = grid.cells.filter { it.value.attributes.contains(CellAttribute.home) }.keys.firstOrNull()
-  assert(home != null)
-
-  val fixed = fixedDistributions()
-  val scaling = scalingDistributions()
-  assert(!scaling.containsKey(DistributionGroup.victoryKey))
-
-  val victoryKeyCount = fixed[DistributionGroup.victoryKey] ?: 0
-  val victoryKeyCells = allocateVictoryKeyCells(availableCells, grid.connections, home!!, victoryKeyCount)
-  val victoryKeyLocations = victoryKeyCells.map { dice.takeOne(absoluteSlots(grid.cells)(it)) }
-
-  val locations = availableCells
-      .minus(victoryKeyCells)
-      .flatMap(absoluteSlots(grid.cells))
-
-  val occupants = distributeToSlots(dice, locations.size, scaling, fixed)
-  val pairs = locations
-      .zip(occupants) { location, occupant -> Pair(location, occupant) }
-
-  return DistributionGroup.values()
-      .associate { group ->
-        Pair(group, pairs.filter { it.second == group }.map { it.first })
-      }
-      .plus(Pair(DistributionGroup.victoryKey, victoryKeyLocations))
-}
+//fun getGroupDistributions(dice: Dice, grid: MapGrid): Map<DistributionGroup, List<Vector3>> {
+//  if (getDebugString("NO_OBJECTS") != null)
+//    return mapOf()
+//
+//  val availableCells = grid.cells
+//      .filter { it.value.slots.any() }
+//      .keys
+//
+//  val home = grid.cells.filter { it.value.attributes.contains(CellAttribute.home) }.keys.firstOrNull()
+//  assert(home != null)
+//
+//  val fixed = fixedDistributions()
+//  val scaling = scalingDistributions()
+//  assert(!scaling.containsKey(DistributionGroup.victoryKey))
+//
+//  val victoryKeyCount = fixed[DistributionGroup.victoryKey] ?: 0
+//  val victoryKeyCells = allocateVictoryKeyCells(availableCells, grid.connections, home!!, victoryKeyCount)
+//  val victoryKeyLocations = victoryKeyCells.map { dice.takeOne(absoluteSlots(grid.cells)(it)) }
+//
+//  val locations = availableCells
+//      .minus(victoryKeyCells)
+//      .flatMap(absoluteSlots(grid.cells))
+//
+//  val occupants = distributeToSlots(dice, locations.size, scaling, fixed)
+//  val pairs = locations
+//      .zip(occupants) { location, occupant -> Pair(location, occupant) }
+//
+//  return DistributionGroup.values()
+//      .associate { group ->
+//        Pair(group, pairs.filter { it.second == group }.map { it.first })
+//      }
+//      .plus(Pair(DistributionGroup.victoryKey, victoryKeyLocations))
+//}
 
 //fun populateRooms(config: GenerationConfig, nextId: IdSource, dice: Dice, grid: MapGrid): List<IdHand> {
 //  return if (getDebugBoolean("DEBUG_CELL_SLOTS")) {

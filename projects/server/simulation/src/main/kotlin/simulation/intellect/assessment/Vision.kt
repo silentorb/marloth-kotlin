@@ -11,8 +11,6 @@ import silentorb.mythic.spatial.quadOut
 import simulation.characters.fieldOfView360
 import simulation.main.Deck
 import simulation.main.World
-import simulation.misc.MapGrid
-import simulation.misc.isAtHome
 import simulation.physics.CollisionGroups
 
 const val viewingRange = 30f
@@ -66,9 +64,9 @@ fun nearMod(distance: Float): Float =
 fun areEnemies(deck: Deck, first: Id, second: Id): Boolean =
     deck.characters[first]!!.faction != deck.characters[second]!!.faction
 
-fun isHiddenByHome(grid: MapGrid, deck: Deck, viewer: Id, target: Id): Boolean =
-    areEnemies(deck, viewer, target)
-        && isAtHome(grid, deck)(target)
+//fun isHiddenByHome(grid: MapGrid, deck: Deck, viewer: Id, target: Id): Boolean =
+//    areEnemies(deck, viewer, target)
+//        && isAtHome(grid, deck)(target)
 
 fun canSee(world: World, lightRatings: Table<Float>, viewer: Id): (Id) -> Boolean = { target ->
   val deck = world.deck
@@ -84,7 +82,7 @@ fun canSee(world: World, lightRatings: Table<Float>, viewer: Id): (Id) -> Boolea
   val result = distance <= viewingRange
       && isInAngleOfView(deck.characterRigs[viewer]!!.facingVector, viewerBody, targetBody, fieldOfView)
       && lightRatings[target]!! + nearMod(distance) >= minimumLightRating
-      && !isHiddenByHome(realm.grid, deck, viewer, target)
+//      && !isHiddenByHome(realm.grid, deck, viewer, target)
       && firstRayHit(bulletState.dynamicsWorld, viewerBody.position + Vector3(0f, 0f, 0.4f), targetBody.position, CollisionGroups.tangibleMask)?.collisionObject as? Id ?: 0L == target
   result
 }

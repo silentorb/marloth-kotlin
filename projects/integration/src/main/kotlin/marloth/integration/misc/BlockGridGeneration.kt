@@ -5,9 +5,9 @@ import generation.architecture.matrical.BlockBuilder
 import generation.general.*
 import marloth.clienting.editing.expandGameInstances
 import marloth.clienting.editing.newExpansionLibrary
-import marloth.definition.misc.traversibleBlockSides
+import marloth.definition.misc.traversableBlockSides
 import silentorb.mythic.ent.*
-import silentorb.mythic.ent.scenery.filterByAttribute
+import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.ent.scenery.getGraphRoots
 import silentorb.mythic.ent.scenery.hasAttribute
 import silentorb.mythic.randomly.Dice
@@ -53,14 +53,16 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
   val root = getGraphRoots(graph).first()
   val myDefaultBiome = getGraphValue<String>(graph, root, MarlothProperties.myBiome)
   val otherDefaultBiome = getGraphValue<String>(graph, root, MarlothProperties.otherBiome)
-  val sideNodes = filterByAttribute(graph, GameAttributes.blockSide)
+  val sideNodes = nodeAttributes(graph, GameAttributes.blockSide)
   val allSides = sideNodes
       .mapNotNull { node ->
         val mine = getGraphValue<String>(graph, node, MarlothProperties.mine)
         val other = getGraphValue<String>(graph, node, MarlothProperties.other)
         val cellDirection = getGraphValue<CellDirection>(graph, node, MarlothProperties.direction)
-        if (mine == null || other == null || cellDirection == null)
+        if (cellDirection == null)
           null
+        else if (mine == null || other == null)
+          cellDirection to null
         else {
           val height = getGraphValue<Int>(graph, node, MarlothProperties.sideHeight) ?: StandardHeights.first
           val myBiome = getGraphValue<String>(graph, node, MarlothProperties.myBiome)
@@ -78,16 +80,25 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
       .groupBy { it.first.cell }
       .entries
       .associate { (offset, value) ->
-        val sides = value.associate { it.first.direction to it.second }
-        val isTraversible = sides.any { traversibleBlockSides.contains(it.value.mine.type) }
+        // Null sides are used to indicate the existence of a non-traversable cell
+        val sides = value
+            .filter { it.second != null }
+            .associate { it.first.direction to it.second!! }
+
+        val isTraversable = sides.any { traversableBlockSides.contains(it.value.mine.type) }
         val attributes = setOfNotNull(
-            if (isTraversible) CellAttribute.isTraversable else null,
+            if (isTraversable) CellAttribute.isTraversable else null,
         )
         offset to BlockCell(
             sides = sides,
+            isTraversable = isTraversable,
             attributes = attributes,
         )
       }
+
+  val traversable = cells
+      .filterValues { it.isTraversable }
+      .keys
 
   val lockedRotation = hasAttribute(graph, root, GameAttributes.lockedRotation)
   val showIfSideIsEmpty = filterByProperty(graph, MarlothProperties.showIfSideIsEmpty)
@@ -97,6 +108,7 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
   val block = Block(
       name = name,
       cells = cells,
+      traversable = traversable,
       lockedRotation = lockedRotation,
   )
   val truncatedGraph = graph.filter { !sideNodes.contains(it.source) }

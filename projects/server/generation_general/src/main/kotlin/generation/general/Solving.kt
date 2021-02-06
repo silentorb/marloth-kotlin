@@ -1,7 +1,7 @@
 package generation.general
 
-import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.randomly.Dice
+import silentorb.mythic.spatial.Vector3i
 import simulation.misc.CellAttribute
 
 typealias GetBlock = (Vector3i) -> BlockCell?
@@ -49,8 +49,7 @@ fun getSurroundingSides(blockGrid: BlockGrid, location: Vector3i): SideMap {
 }
 
 fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock): (Block) -> Vector3i? = { block ->
-  val match = block.cells
-      .keys
+  val match = block.traversable
       .firstOrNull { baseOffset ->
         block.cells
             .all { (cellOffset, cell) ->
@@ -67,17 +66,17 @@ fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock): (Block) -> V
   match
 }
 
-fun matchBlock(dice: Dice, blocks: Set<Block>, getBlock: GetBlock, surroundingSides: SideMap): Pair<Vector3i, Block?> {
+fun matchBlock(dice: Dice, blocks: Set<Block>, getBlock: GetBlock, surroundingSides: SideMap): Pair<Vector3i, Block>? {
   val shuffledBlocks = dice.shuffle(blocks)
   for (block in shuffledBlocks) {
     val offset = checkBlockMatch(surroundingSides, getBlock)(block)
     if (offset != null)
       return offset to block
   }
-  return Vector3i.zero to null
+  return null
 }
 
-fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, blockGrid: BlockGrid, location: Vector3i): Pair<Vector3i, Block?> {
+fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, blockGrid: BlockGrid, location: Vector3i): Pair<Vector3i, Block>? {
   val surroundingSides = getSurroundingSides(blockGrid, location)
   val getBlock: GetBlock = { blockGrid[it + location]?.cell }
   return matchBlock(dice, blocks, getBlock, surroundingSides)
@@ -114,7 +113,7 @@ fun getIncompleteBlockSides(blockGrid: BlockGrid): List<AbsoluteSide> =
 
 fun filterUsedUniqueBlocks(grid: BlockGrid, blocks: Set<Block>): Set<Block> {
   val uniqueNames = grid
-      .filter { it.value.cell.attributes.contains(CellAttribute.unique) }
+      .filter { it.value.source.attributes.contains(CellAttribute.unique) }
       .values
       .map { it.source.name }
       .toSet()

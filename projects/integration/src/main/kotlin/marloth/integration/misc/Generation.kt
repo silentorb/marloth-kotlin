@@ -2,7 +2,6 @@ package marloth.integration.misc
 
 import generation.architecture.engine.GenerationConfig
 import generation.architecture.engine.compileArchitectureMeshInfo
-import generation.general.mapGridFromBlockGrid
 import marloth.clienting.editing.marlothPropertiesSerialization
 import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.generation.population.populateWorld
@@ -17,39 +16,29 @@ import silentorb.mythic.physics.newBulletState
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
 import simulation.intellect.navigation.newNavigationState
-import simulation.main.*
+import simulation.main.Deck
+import simulation.main.World
+import simulation.main.allHandsToDeck
+import simulation.main.newGlobalState
 import simulation.misc.Definitions
-import simulation.misc.MapGrid
 import simulation.misc.Realm
 
 fun generateWorld(db: Database, definitions: Definitions, generationConfig: GenerationConfig, dice: Dice, graph: Graph, step: Long): World {
   val nextId = newIdSource(1)
-  val (grid, architectureSource) = if (getDebugBoolean("USE_MAP_GRID")) {
+  val architectureSource = if (getDebugBoolean("USE_MAP_GRID")) {
     val (blockGrid, architectureSource) = generateWorldBlocks(dice, generationConfig, generationConfig.graphLibrary)
-    mapGridFromBlockGrid(blockGrid) to architectureSource
+    architectureSource
   } else
-    MapGrid() to listOf()
+    listOf()
 
   val graph2 = graph + architectureSource
 
-  // The <Hand> specifier shouldn't be needed here but without it Kotlin is throwing an internal error referencing this line
-//  val architectureHands = architectureSource.map(newGenericIdHand<Hand>(nextId))
-//  val architectureDeck = idHandsToDeck(architectureHands)
+  val realm = Realm(Deck())
 
-  val realm = Realm(grid, Deck())
-
-//  val lightHands = if (getDebugBoolean("USE_MAP_GRID"))
-//    lightHandsFromDepictions(definitions.lightAttachments, architectureHands)
-//  else
-//    listOf()
-
-  val deck = allHandsToDeck(nextId, populateWorld(nextId, generationConfig, dice, graph2, grid), step, Deck())
+  val deck = allHandsToDeck(nextId, populateWorld(nextId, generationConfig, dice, graph2), step, Deck())
   val navigation = if (generationConfig.includeEnemies) {
     val meshNodes = filterByProperty(graph2, SceneProperties.collisionShape)
         .map { it.source }
-//    val meshEntities = architectureDeck.depictions
-//        .filterValues { generationConfig.meshes.containsKey(it.mesh) }
-//        .keys
     newNavigationState(definitions.meshShapeMap, meshNodes, graph2, setOf(), Deck())
   } else
     null

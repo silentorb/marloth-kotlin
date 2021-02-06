@@ -15,10 +15,10 @@ import simulation.main.Hand
 import simulation.misc.*
 import simulation.physics.CollisionGroups
 
-fun applyBiomesToGrid(grid: MapGrid, biomeGrid: BiomeGrid): CellBiomeMap =
-    grid.cells.mapValues { (cell, _) ->
-      biomeGrid(absoluteCellPosition(cell))
-    }
+//fun applyBiomesToGrid(grid: MapGrid, biomeGrid: BiomeGrid): CellBiomeMap =
+//    grid.cells.mapValues { (cell, _) ->
+//      biomeGrid(absoluteCellPosition(cell))
+//    }
 
 fun splitBlockBuilders(blockBuilders: Collection<BlockBuilder>): Pair<Set<Block>, Map<String, Builder>> =
     Pair(

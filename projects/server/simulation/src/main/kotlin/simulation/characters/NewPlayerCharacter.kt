@@ -48,26 +48,26 @@ fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, location: 
       .plus(newPlayerIdHand(id))
 }
 
-fun newPlayerCharacter(id: Id, definitions: Definitions, grid: MapGrid, profession: ProfessionId, cellPosition: Vector3i): List<NewHand> {
-  val neighbor = cellNeighbors(grid.connections, cellPosition).firstOrNull()
-  return if (neighbor == null)
-    listOf()
-  else
-    listOf(
-        newCharacter(id, definitions,
-            definition = definitions.professions[profession]!!,
-            faction = Factions.misfits,
-            position = absoluteCellPosition(cellPosition) + Vector3(0f, 0f, 1f),
-            angle = getYawAngle((neighbor - cellPosition).toVector3())
-        )
-    )
-}
+//fun newPlayerCharacter(id: Id, definitions: Definitions, grid: MapGrid, profession: ProfessionId, cellPosition: Vector3i): List<NewHand> {
+//  val neighbor = cellNeighbors(grid.connections, cellPosition).firstOrNull()
+//  return if (neighbor == null)
+//    listOf()
+//  else
+//    listOf(
+//        newCharacter(id, definitions,
+//            definition = definitions.professions[profession]!!,
+//            faction = Factions.misfits,
+//            position = absoluteCellPosition(cellPosition) + Vector3(0f, 0f, 1f),
+//            angle = getYawAngle((neighbor - cellPosition).toVector3())
+//        )
+//    )
+//}
 
-fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, grid: MapGrid, cellPosition: Vector3i, profession: ProfessionId): List<NewHand> {
-  val id = nextId()
-  return newPlayerCharacter(id, definitions, grid, profession, cellPosition)
-      .plus(newPlayerIdHand(id))
-}
+//fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, grid: MapGrid, cellPosition: Vector3i, profession: ProfessionId): List<NewHand> {
+//  val id = nextId()
+//  return newPlayerCharacter(id, definitions, grid, profession, cellPosition)
+//      .plus(newPlayerIdHand(id))
+//}
 
 fun newPlayerCharacters(nextId: IdSource, definitions: Definitions, graph: Graph, events: Events): List<NewHand> {
   return events.filterIsInstance<NewPlayerCharacter>()
@@ -110,11 +110,11 @@ fun newPlayerAndCharacter(definitions: Definitions, staticGraph: Graph): GraphSt
 //        }
 //}
 
-fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, grid: MapGrid): List<NewHand> {
-  val debugProfession = getDebugProfession()
-  val playerStart = getPlayerStart(grid)
-  return if (debugProfession != null && playerStart != null)
-    newPlayerAndCharacter(nextId, definitions, grid, playerStart, debugProfession)
-  else
-    listOf(newPlayerIdHand(nextId()))
-}
+//fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, grid: MapGrid): List<NewHand> {
+//  val debugProfession = getDebugProfession()
+//  val playerStart = getPlayerStart(grid)
+//  return if (debugProfession != null && playerStart != null)
+//    newPlayerAndCharacter(nextId, definitions, grid, playerStart, debugProfession)
+//  else
+//    listOf(newPlayerIdHand(nextId()))
+//}

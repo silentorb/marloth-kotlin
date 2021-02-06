@@ -96,41 +96,41 @@ data class PlaceVictoryKeyEvent(
     val cell: Vector3i
 )
 
-fun eventsFromVictoryKeys(world: World): Events {
-  val deck = world.deck
-  val grid = world.realm.grid
+//fun eventsFromVictoryKeys(world: World): Events {
+//  val deck = world.deck
+//  val grid = world.realm.grid
+//
+//  val keys = getAllVictoryKeys(deck.accessories)
+//  val carriedKeys = keys.filterValues { deck.characters.containsKey(it.owner) }
+//  return carriedKeys.mapNotNull { (item, accessory) ->
+//    if (isAtHome(grid, deck)(accessory.owner)) {
+//      listOf(
+//          PlaceVictoryKeyEvent(
+//              item = item,
+//              cell = getPointCell(deck.bodies[accessory.owner]!!.position)
+//          ),
+//          ChangeItemOwnerEvent(
+//              item = item,
+//              newOwner = 0
+//          )
+//      )
+//    } else
+//      null
+//  }
+//      .flatten()
+//}
 
-  val keys = getAllVictoryKeys(deck.accessories)
-  val carriedKeys = keys.filterValues { deck.characters.containsKey(it.owner) }
-  return carriedKeys.mapNotNull { (item, accessory) ->
-    if (isAtHome(grid, deck)(accessory.owner)) {
-      listOf(
-          PlaceVictoryKeyEvent(
-              item = item,
-              cell = getPointCell(deck.bodies[accessory.owner]!!.position)
-          ),
-          ChangeItemOwnerEvent(
-              item = item,
-              newOwner = 0
-          )
-      )
-    } else
-      null
-  }
-      .flatten()
-}
-
-fun placeVictoryKeys(grid: MapGrid, deck: Deck, events: Events): List<IdHand> {
-  val placementEvents = events.filterIsInstance<PlaceVictoryKeyEvent>()
-  return placementEvents.map { event ->
-    val victoryKeyStats = getVictoryKeyStats(grid, deck)
-    val spacing = 1f
-    val startOffset = -(victoryKeyStats.total.toFloat() * spacing) / 2f
-    val offset = Vector3(0f, startOffset + 1f * victoryKeyStats.collected.toFloat(), 0f) + floorOffset
-    val location = getCellPoint(event.cell) + offset
-    IdHand(
-        id = event.item,
-        hand = newSpatialVictoryKey(location)
-    )
-  }
-}
+//fun placeVictoryKeys(grid: MapGrid, deck: Deck, events: Events): List<IdHand> {
+//  val placementEvents = events.filterIsInstance<PlaceVictoryKeyEvent>()
+//  return placementEvents.map { event ->
+////    val victoryKeyStats = getVictoryKeyStats(grid, deck)
+//    val spacing = 1f
+//    val startOffset = -(victoryKeyStats.total.toFloat() * spacing) / 2f
+//    val offset = Vector3(0f, startOffset + 1f * victoryKeyStats.collected.toFloat(), 0f) + floorOffset
+//    val location = getCellPoint(event.cell) + offset
+//    IdHand(
+//        id = event.item,
+//        hand = newSpatialVictoryKey(location)
+//    )
+//  }
+//}

@@ -17,7 +17,7 @@ val diagonalCornerBlock: TieredBlock = { level ->
           south = endpoint,
           up = Sides.headroomVertical
       ),
-      attributes = setOf(CellAttribute.categoryDiagonal, CellAttribute.isTraversable)
+      attributes = setOf(CellAttribute.isTraversable)
   )
 }
 

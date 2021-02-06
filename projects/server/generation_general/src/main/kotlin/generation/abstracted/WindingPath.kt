@@ -8,34 +8,25 @@ import simulation.misc.CellAttribute
 
 data class GroupedBlocks(
     val all: Set<Block>,
-    val expansive: Set<Block>,
-    val flexible: Set<Block>
+    val flexible: Set<Block>,
 )
 
 fun newGroupedBlocks(blocks: Set<Block>): GroupedBlocks {
-  val polyominoes = blocks
+  val flexible = blocks
       .filter { block ->
-        block.sidesOld
-            .any {
-              it.value.connectionLogic == ConnectionLogic.required
+        val traversableCount = block.cells.values
+            .sumBy { cell ->
+              cell.sides.count {
+                it.value.isTraversable
+              }
             }
+        traversableCount >= 4
       }
       .toSet()
-
-  val narrow = blocks
-      .filter { block ->
-        block.sidesOld
-            .minus(verticalDirections)
-            .containsValue(endpoint)
-      }
-      .toSet()
-
-  val expansive = blocks - narrow
 
   return GroupedBlocks(
       all = blocks,
-      expansive = expansive,
-      flexible = expansive - polyominoes
+      flexible = flexible,
   )
 }
 
@@ -43,8 +34,7 @@ fun filterUsedUniqueBlock(block: Block?, groupedBlocks: GroupedBlocks): GroupedB
     if (block != null && block.attributes.contains(CellAttribute.unique))
       GroupedBlocks(
           all = groupedBlocks.all - block,
-          expansive = groupedBlocks.expansive - block,
-          flexible = groupedBlocks.flexible - block
+          flexible = groupedBlocks.flexible - block,
       )
     else
       groupedBlocks
@@ -72,8 +62,7 @@ fun extractCells(block: Block, position: Vector3i) =
 tailrec fun addPathStep(
     maxSteps: Int,
     dice: Dice,
-    state: BlockState,
-    bookMark: Triple<Vector3i, Block, BlockState>? = null
+    state: BlockState
 ): BlockGrid {
   val (groupedBlocks, grid, blacklist) = state
   val incompleteSides = getIncompleteBlockSides(grid) - blacklist
@@ -83,15 +72,8 @@ tailrec fun addPathStep(
   if (grid.size > 1000)
     throw Error("Infinite loop in world generation.")
 
-//  val sideGroups = incompleteSides.groupBy {
-//    grid[it.position]!!.sides[it.direction]!!.connectionLogic
-//  }
-//  val prioritySides = sideGroups[ConnectionLogic.required] ?: listOf()
-
-  val stepCount = grid.count { it.value.cell.attributes.contains(CellAttribute.isTraversable) }
+  val stepCount = grid.count { it.value.cell.isTraversable }
 //  worldGenerationLog {
-//    val required = sideGroups.getOrElse(ConnectionLogic.required) { listOf() }.size
-//    val optional = sideGroups.getOrElse(ConnectionLogic.optional) { listOf() }.size
 //    "Grid size: ${grid.size}, Traversable: $stepCount, Required: $required, Optional: $optional"
 //  }
   return if (stepCount >= maxSteps)
@@ -99,49 +81,29 @@ tailrec fun addPathStep(
   else {
     val incompleteSide = dice.takeOne(incompleteSides)
 
-//    else if (sideGroups.containsKey(ConnectionLogic.optional))
-//      dice.takeOne(sideGroups[ConnectionLogic.optional]!!)
-//    else
-//      dice.takeOne(incompleteSides)
-
     val offset = directionVectors[incompleteSide.direction]!!
     val position = incompleteSide.position
     val nextPosition = position + offset
     assert(!grid.containsKey(nextPosition))
     val currentBlock = grid[position]!!.cell
-    val side = currentBlock.sides[incompleteSide.direction]!!
+//    val side = currentBlock.sides[incompleteSide.direction]!!
 //    worldGenerationLog {
 //      "Side: ${currentBlock.name} ${side.mineOld}, ${incompleteSide.position} ${incompleteSide.direction}"
 //    }
     val blocks = if (incompleteSides.size < 2)
-      if (stepCount >= maxSteps)
-        groupedBlocks.flexible
-      else
-        groupedBlocks.expansive
+      groupedBlocks.flexible
     else
       groupedBlocks.all
 
-    if (nextPosition == Vector3i(1, 3, 0)) {
-      val k = 0
-    }
-    val (blockOffset, block) = matchConnectingBlock(dice, blocks, grid, nextPosition)
-//        ?: matchConnectingBlock(dice, groupedBlocks.all, grid, nextPosition)
+    val matchResult = matchConnectingBlock(dice, blocks, grid, nextPosition)
+        ?: matchConnectingBlock(dice, groupedBlocks.all - blocks, grid, nextPosition)
 
-    val nextState = if (block == null) {
-      if (bookMark != null && side.connectionLogic == ConnectionLogic.required) {
-        val (initialLocation, initialBlock, bookMarkState) = bookMark
-        val previousBlocks = bookMarkState.blacklistBlockLocations[initialLocation] ?: listOf()
-        val newBlackListEntry = initialLocation to previousBlocks + initialBlock
-        worldGenerationLog { "Rolling back to $initialLocation ${initialBlock.name}" }
-        bookMarkState.copy(
-            blacklistBlockLocations = bookMarkState.blacklistBlockLocations + newBlackListEntry
-        )
-      } else {
+    val nextState = if (matchResult == null) {
         state.copy(
             blacklistSides = state.blacklistSides + incompleteSide
         )
-      }
-    } else {
+   } else {
+      val (blockOffset, block) = matchResult
       worldGenerationLog { "Block: ${block.name}" }
       val cellAdditions = extractCells(block, nextPosition - blockOffset)
       state.copy(
@@ -150,20 +112,7 @@ tailrec fun addPathStep(
       )
     }
 
-    val nextBookmark = if (block == null)
-      null // Consume bookmark
-    else if (incompleteSides.none()) {
-      if (block.sidesOld.any { (direction, side) ->
-            side.connectionLogic == ConnectionLogic.required &&
-                !grid.containsKey(nextPosition + directionVectors[direction]!!)
-          })
-        bookMark ?: Triple(nextPosition, block, state) // Place or persist bookmark
-      else
-        null // Remove finished bookmark
-    } else
-      bookMark // Persist bookmark
-
-    addPathStep(maxSteps, dice, nextState, nextBookmark)
+    addPathStep(maxSteps, dice, nextState)
   }
 }
 

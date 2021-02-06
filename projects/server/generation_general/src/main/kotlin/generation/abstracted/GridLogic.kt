@@ -1,7 +1,6 @@
 package generation.abstracted
 
 import silentorb.mythic.spatial.Vector3i
-import simulation.misc.MapGrid
 
 val upVector = Vector3i(0, 0, 1)
 val downVector = Vector3i(0, 0, -1)
@@ -32,7 +31,7 @@ fun gatherCellsAlongPath(from: Vector3i, direction: Vector3i, distance: Int): Li
     twoLayers
 }
 
-fun isCellPathOpen(grid: MapGrid, from: Vector3i, direction: Vector3i): Boolean {
-//  val cells = gatherCellsAlongPath(from, direction, distance)
-  return grid.cells.containsKey(from + direction)
-}
+//fun isCellPathOpen(grid: MapGrid, from: Vector3i, direction: Vector3i): Boolean {
+////  val cells = gatherCellsAlongPath(from, direction, distance)
+//  return grid.cells.containsKey(from + direction)
+//}

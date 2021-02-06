@@ -3,7 +3,6 @@ package simulation.happenings
 import silentorb.mythic.ent.Id
 import simulation.main.Deck
 import simulation.main.World
-import simulation.misc.isAtHome
 
 fun canUse(world: World, action: Id): Boolean {
   val deck = world.deck

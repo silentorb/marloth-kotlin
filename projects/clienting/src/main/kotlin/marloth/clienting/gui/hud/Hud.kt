@@ -1,6 +1,7 @@
 package marloth.clienting.gui.hud
 
 import marloth.clienting.ClientState
+import marloth.clienting.gui.Colors
 import marloth.clienting.gui.DeviceMode
 import marloth.clienting.gui.TextResources
 import marloth.clienting.gui.ViewId
@@ -11,13 +12,11 @@ import silentorb.mythic.bloom.*
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugString
-import marloth.clienting.gui.Colors
 import silentorb.mythic.ent.Id
 import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
 import simulation.happenings.Notification
 import simulation.main.World
-import simulation.misc.getVictoryKeyStats
 import simulation.misc.highPercentage
 import kotlin.math.roundToInt
 
@@ -126,7 +125,6 @@ fun interactionDialog(primaryInteractText: String, textResources: TextResources,
 fun hudLayout(textResources: TextResources, world: World, clientState: ClientState, player: Id, view: ViewId?): Flower? {
   val deck = world.deck
   val definitions = world.definitions
-  val grid = world.realm.grid
   val guiState = clientState.guiStates[player]
   val notifications = guiState?.notifications ?: listOf()
   val character = deck.characters[player]
@@ -176,7 +174,7 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
                 }
         )
 
-    val victoryKeyStats = getVictoryKeyStats(grid, deck)
+//    val victoryKeyStats = getVictoryKeyStats(grid, deck)
     val viewMode = characterRig?.viewMode ?: ViewMode.firstPerson
     val debugInfo = listOfNotNull(
 //            "LR: ${floatToRoundedString(lightRating(deck, player))}",

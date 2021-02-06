@@ -5,10 +5,10 @@ import silentorb.mythic.spatial.Vector3i
 import simulation.misc.CellAttribute
 
 typealias SideMap = Map<Direction, Side>
-typealias OptionalSides = Map<Direction, Side?>
 
 data class BlockCell(
     val sides: SideMap,
+    val isTraversable: Boolean,
     val attributes: Set<CellAttribute> = setOf(),
 )
 
@@ -18,27 +18,12 @@ data class Block(
     val cells: Map<Vector3i, BlockCell> = mapOf(),
     val attributes: Set<CellAttribute> = setOf(),
     val lockedRotation: Boolean = false,
+    // Used as a solving optimization when iterating through possible connecting cells within a polyomino
+    val traversable: Set<Vector3i> = setOf(),
     val slots: List<Vector3> = listOf(),
     val turns: Int = 0
-    ) {
+) {
   init {
     assert(slots.none { it.x > 5f || it.y > 5f || it.x < -5f || it.y < -5f })
   }
 }
-
-fun openingCount(block: Block): Int =
-    block.sidesOld.count { it.value != endpoint }
-
-fun newBlock(up: Side, down: Side, east: Side, north: Side, west: Side, south: Side,
-             attributes: Set<CellAttribute> = setOf()) =
-    Block(
-        sidesOld = mapOf(
-            Direction.up to up,
-            Direction.down to down,
-            Direction.east to east,
-            Direction.north to north,
-            Direction.west to west,
-            Direction.south to south
-        ),
-        attributes = attributes
-    )

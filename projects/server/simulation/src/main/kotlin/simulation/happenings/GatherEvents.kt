@@ -41,7 +41,7 @@ fun withSimulationEvents(definitions: Definitions, previousDeck: Deck, world: Wo
       commandsToEvents(definitions, deck, commands),
       eventsFromMissiles(toSpatialCombatWorld(world), collisions),
       eventsFromItemPickups(world, collisions),
-      eventsFromVictoryKeys(world),
+//      eventsFromVictoryKeys(world),
       eventsFromRespawnCountdowns(previousDeck, world.deck),
       if (getDebugBoolean("ENABLE_MOBILITY")) mobilityEvents(world.definitions, world.deck, commands) else listOf()
   )

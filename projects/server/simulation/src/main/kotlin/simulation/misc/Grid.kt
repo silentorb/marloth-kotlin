@@ -11,23 +11,23 @@ val cellHalfLength = cellLength / 2f
 
 val floorOffset = Vector3(0f, 0f, -cellHalfLength)
 
-data class Cell(
-    val attributes: Set<CellAttribute>,
-    val slots: List<Vector3> = listOf(),
-)
+//data class Cell(
+//    val attributes: Set<CellAttribute>,
+//    val slots: List<Vector3> = listOf(),
+//)
 
 fun absoluteCellPosition(position: Vector3i): Vector3 =
     position.toVector3() * cellLength
 
 typealias ConnectionPair = Pair<Vector3i, Vector3i>
 
-typealias CellMap = Map<Vector3i, Cell>
+//typealias CellMap = Map<Vector3i, Cell>
 typealias ConnectionSet = Set<ConnectionPair>
 
-data class MapGrid(
-    val cells: CellMap = mapOf(),
-    val connections: ConnectionSet = setOf()
-)
+//data class MapGrid(
+//    val cells: CellMap = mapOf(),
+//    val connections: ConnectionSet = setOf()
+//)
 
 fun containsConnection(connections: ConnectionSet, first: Vector3i, second: Vector3i): Boolean =
     connections.contains(Pair(first, second)) || connections.contains(Pair(second, first))
@@ -55,7 +55,7 @@ fun getPointCell(point: Vector3): Vector3i {
 fun getCellPoint(cell: Vector3i): Vector3 =
     absoluteCellPosition(cell)
 
-fun cellSlots(location: Vector3i, cell: Cell): List<Vector3> {
-  val point = getCellPoint(location)
-  return cell.slots.map { point + it }
-}
+//fun cellSlots(location: Vector3i, cell: Cell): List<Vector3> {
+//  val point = getCellPoint(location)
+//  return cell.slots.map { point + it }
+//}

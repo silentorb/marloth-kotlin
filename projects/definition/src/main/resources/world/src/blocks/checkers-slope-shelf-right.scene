@@ -14,8 +14,9 @@
 ["0-0-0-south","parent","sides"],
 ["0-0-0-south","type","blockSide"],
 ["0-0-0-south","direction",[0,0,0,"south"]],
-["0-0-0-south","mine","slopeRight"],
-["0-0-0-south","other","slopeLeft"],
+["0-0-0-south","mine","open"],
+["0-0-0-south","other","open"],
+["0-0-0-south","sideLevel",60],
 ["0-0-0-west","parent","sides"],
 ["0-0-0-west","type","blockSide"],
 ["0-0-0-west","mine","open"],
@@ -24,6 +25,12 @@
 ["checkers-slope","",""],
 ["checkers-slope-base","parent","checkers-slope"],
 ["checkers-slope-base","type","checkers-slope-base"],
+["shelf","type","solid-box"],
+["shelf","texture","checkersBlackWhite"],
+["shelf","mesh","largeBrick"],
+["shelf","parent","checkers-slope"],
+["shelf","translation",[-0.0154025555,-1.325592,3.1554363]],
+["shelf","scale",[0.476,-0.44304612,0.47955805]],
 ["sides","parent","checkers-slope"]
 ]
 }
