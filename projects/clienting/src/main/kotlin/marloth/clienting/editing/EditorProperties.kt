@@ -38,26 +38,29 @@ val cellDirectionWidget: PropertyWidget = { _, entry, owner ->
   ImGui.sameLine()
   ImGui.setNextItemWidth(80f)
   val direction = dropDownWidget(directionNames, "$owner.dir", value.direction.name)
-  CellDirection(Vector3i(x, y, z), Direction.valueOf(direction))
+  if (direction == null)
+    null
+  else
+    CellDirection(Vector3i(x, y, z), Direction.valueOf(direction))
 }
 
 val cellDirectionSerialization = Serialization(
     load = {
-        val value = it as? List<Any>
-        if (value == null || value.size != 4)
-            throw Error("Invalid CellDirection syntax")
-        else
-            CellDirection(
-                cell = Vector3i(value[0] as Int, value[1] as Int, value[2] as Int),
-                direction = Direction.valueOf(value[3] as String)
-            )
+      val value = it as? List<Any>
+      if (value == null || value.size != 4)
+        throw Error("Invalid CellDirection syntax")
+      else
+        CellDirection(
+            cell = Vector3i(value[0] as Int, value[1] as Int, value[2] as Int),
+            direction = Direction.valueOf(value[3] as String)
+        )
     },
     save = {
-        val cellDirection = it as? CellDirection
-        if (cellDirection == null)
-            listOf()
-        else
-            listOf(it.cell.x, it.cell.y, it.cell.z, cellDirection.direction.name)
+      val cellDirection = it as? CellDirection
+      if (cellDirection == null)
+        listOf()
+      else
+        listOf(it.cell.x, it.cell.y, it.cell.z, cellDirection.direction.name)
     }
 )
 
