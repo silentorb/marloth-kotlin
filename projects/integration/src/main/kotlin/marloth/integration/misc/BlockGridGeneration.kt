@@ -1,11 +1,13 @@
 package marloth.integration.misc
 
+import generation.architecture.biomes.Biomes
 import generation.architecture.engine.*
 import generation.architecture.matrical.BlockBuilder
 import generation.general.*
 import marloth.clienting.editing.expandGameInstances
 import marloth.clienting.editing.newExpansionLibrary
 import marloth.definition.misc.traversableBlockSides
+import marloth.scenery.enums.Textures
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.ent.scenery.getGraphRoots
@@ -48,6 +50,15 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
 }
 
 val directionMap: Map<String, Direction> = Direction.values().associateBy { it.name }
+
+val defaultBiomeTextures: Map<String, Map<String, String>> = mapOf(
+    Biomes.checkers to mapOf(
+        "default" to Textures.checkersBlackWhite,
+    ),
+    Biomes.forest to mapOf(
+        "default" to Textures.grass,
+    ),
+)
 
 fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder? {
   val root = getGraphRoots(graph).first()
@@ -113,6 +124,25 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder? {
     )
     val truncatedGraph = graph.filter { !sideNodes.contains(it.source) }
 
+    val texturelessMeshes = truncatedGraph
+        .filter { entry ->
+          entry.property == SceneProperties.mesh && truncatedGraph.none {
+            it.source == entry.source && it.property == SceneProperties.texture
+          }
+        }
+        .map { it.source }
+
+    val defaultTexture = defaultBiomeTextures[biome]?.getOrDefault("default", null)
+    val textureAdditions =
+        if (defaultTexture != null) {
+          texturelessMeshes
+              .map { Entry(it, SceneProperties.texture, defaultTexture) }
+        }
+    else
+          listOf()
+    
+    val finalGraph = truncatedGraph + textureAdditions
+
     val builder: Builder = { input ->
       val omitted = showIfSideIsEmpty
           .mapNotNull { (node, cellDirections) ->
@@ -125,7 +155,7 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder? {
               null
           }
 
-      truncatedGraph.filter { !omitted.contains(it.source) }
+      finalGraph.filter { !omitted.contains(it.source) }
     }
     return block to builder
   }

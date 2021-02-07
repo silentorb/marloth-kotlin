@@ -8,7 +8,7 @@ import generation.architecture.matrical.*
 import generation.general.Block
 import generation.general.Direction
 import marloth.scenery.enums.MeshId
-import marloth.scenery.enums.TextureIdOld
+import marloth.scenery.enums.Textures
 import silentorb.mythic.spatial.Vector3
 import simulation.entities.Depiction
 import simulation.misc.CellAttribute
@@ -19,20 +19,20 @@ val homeSides = uniqueConnection("homeSides")
 fun homeBlocks(): List<BlockBuilder> {
   val floor = Depiction(
       mesh = MeshId.floorSquare,
-      texture = TextureIdOld.redTile
+      texture = Textures.redTile
   )
   val wall = Depiction(
 //      mesh = MeshId.dirtWall
       mesh = MeshId.wallSquareShort,
-      texture = TextureIdOld.redTile
+      texture = Textures.redTile
   )
   val window = Depiction(
       mesh = MeshId.squareWallWindow,
-      texture = TextureIdOld.redTile
+      texture = Textures.redTile
   )
   val doorway = Depiction(
       mesh = MeshId.squareWallDoorway,
-      texture = TextureIdOld.redTile
+      texture = Textures.redTile
   )
   return listOf(
       Block(

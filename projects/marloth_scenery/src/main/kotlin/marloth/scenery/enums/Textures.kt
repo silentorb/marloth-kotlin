@@ -1,6 +1,6 @@
 package marloth.scenery.enums
 
-object TextureIdOld {
+object Textures {
   val arch = "arch"
   val algae = "algae"
   val animPerlin000 = "animPerlin000"
@@ -24,11 +24,11 @@ fun textures() = listOf(
     "background",
     "bricks",
     "bushOrb",
-    "checkersBlackWhite",
+    Textures.checkersBlackWhite,
     "dirt",
     "cobblestone",
     "diamondTiles",
-    "grass",
+    Textures.grass,
     "perlinParticle",
     "redTile",
     "water",

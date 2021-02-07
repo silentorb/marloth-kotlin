@@ -8,42 +8,42 @@ import generation.architecture.matrical.*
 import generation.general.Block
 import generation.general.Direction
 import marloth.scenery.enums.MeshId
-import marloth.scenery.enums.TextureIdOld
+import marloth.scenery.enums.Textures
 import silentorb.mythic.spatial.Vector3
 import simulation.entities.Depiction
 
 fun grassFloor(): Depiction =
     Depiction(
         mesh = MeshId.floorSquare,
-        texture = TextureIdOld.grass
+        texture = Textures.grass
 //        mesh = MeshId.grassFloor
     )
 
 fun grassDiagonalFloor(): Depiction =
     Depiction(
         mesh = MeshId.floorDiagonal,
-        texture = TextureIdOld.grass
+        texture = Textures.grass
 //        mesh = MeshId.grassDiagonalFloor
     )
 
 fun dirtFloor(): Depiction =
     Depiction(
         mesh = MeshId.floorSquare,
-        texture = TextureIdOld.bricks
+        texture = Textures.bricks
 //        mesh = MeshId.dirtFloor
     )
 
 fun dirtDiagonalFloor(): Depiction =
     Depiction(
         mesh = MeshId.floorDiagonal,
-        texture = TextureIdOld.bricks
+        texture = Textures.bricks
 //        mesh = MeshId.dirtDiagonalFloor
     )
 
 fun forestWall(): Depiction =
     Depiction(
         mesh = MeshId.wallSquareShort,
-        texture = TextureIdOld.bricks
+        texture = Textures.bricks
 //        mesh = MeshId.dirtWall
     )
 
@@ -85,7 +85,7 @@ fun withDiagonalSolidBase(tieredBlock: TieredBlock): TieredBlock = { level ->
 
 fun forestBiome(): Blueprint {
   val floor = grassFloor()
-  val texture = TextureIdOld.grass
+  val texture = Textures.grass
   return Blueprint(
       even = listOf(
           slopeWrap to emptyBuilder,
