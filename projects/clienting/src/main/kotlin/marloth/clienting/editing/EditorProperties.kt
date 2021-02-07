@@ -11,13 +11,14 @@ import silentorb.mythic.editing.*
 import silentorb.mythic.editing.components.dropDownWidget
 import silentorb.mythic.editing.components.integerTextField
 import silentorb.mythic.editing.components.propertyIntegerTextField
+import silentorb.mythic.editing.components.stagingValue
 import silentorb.mythic.ent.Serialization
 import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.spatial.Vector3i
 import simulation.misc.MarlothProperties
 
 val cellDirectionWidget: PropertyWidget = { _, entry, owner ->
-  val value = entry.target as CellDirection
+  val value = entry.target as? CellDirection ?: stagingValue(owner) { CellDirection(Vector3i.zero, Direction.east) }
   val cell = value.cell
   ImGui.text("X")
   ImGui.sameLine()
@@ -38,7 +39,7 @@ val cellDirectionWidget: PropertyWidget = { _, entry, owner ->
   ImGui.sameLine()
   ImGui.setNextItemWidth(80f)
   val direction = dropDownWidget(directionNames, "$owner.dir", value.direction.name)
-  if (direction == null)
+  if (direction == null || (x == value.cell.x && y == value.cell.y && z == value.cell.z && direction == value.direction.name))
     null
   else
     CellDirection(Vector3i(x, y, z), Direction.valueOf(direction))
