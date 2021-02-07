@@ -2,7 +2,6 @@ package simulation.misc
 
 import silentorb.mythic.ent.PropertyInfo
 import silentorb.mythic.ent.PropertySchema
-import silentorb.mythic.scenery.SceneProperties
 
 object Entities {
   val farmer = "farmer"
@@ -28,8 +27,7 @@ object MarlothProperties {
   const val direction = "direction"
   const val showIfSideIsEmpty = "showIfNull"
   const val sideHeight = "sideLevel"
-  const val myBiome = "myBiome"
-  const val otherBiome = "otherBiome"
+  const val biome = "biome"
 }
 
 fun marlothPropertiesSchema(): PropertySchema = mapOf(

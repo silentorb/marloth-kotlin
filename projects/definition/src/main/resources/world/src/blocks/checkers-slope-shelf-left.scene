@@ -23,6 +23,7 @@
 ["0-0-0-west","other","open"],
 ["0-0-0-west","direction",[0,0,0,"west"]],
 ["checkers-slope","",""],
+["checkers-slope","biome","checkers"],
 ["checkers-slope-base","parent","checkers-slope"],
 ["checkers-slope-base","type","checkers-slope-base"],
 ["shelf","type","solid-box"],

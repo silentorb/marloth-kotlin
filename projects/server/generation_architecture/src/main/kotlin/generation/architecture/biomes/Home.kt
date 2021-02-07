@@ -67,5 +67,5 @@ fun homeBlocks(): List<BlockBuilder> {
           handBuilder(cubeWallLamp(Direction.west, plainWallLampOffset()))
       )
   )
-      .map(applyBiomedBlockBuilder(BiomeId.home))
+      .map(applyBiomedBlockBuilder(Biomes.home))
 }

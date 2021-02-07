@@ -8,20 +8,20 @@ import simulation.misc.CellAttribute
 
 fun biomeAdapters(): List<BlockBuilder> {
   val intermediary = listOf(
-      BiomeId.checkers,
-      BiomeId.forest
+      Biomes.checkers,
+      Biomes.forest
   )
   val edges = listOf(
-      BiomeId.tealPalace,
-      BiomeId.village
+      Biomes.tealPalace,
+      Biomes.village
   )
   return listOf(
-      BlockBuilder(biomeAdapterCube(BiomeId.forest, BiomeId.home, setOf(CellAttribute.unique))(0)!!, generalForestBuilder())
+      BlockBuilder(biomeAdapterCube(Biomes.forest, Biomes.home, setOf(CellAttribute.unique))(0)!!, generalForestBuilder())
   )
       .plus(
           perHeights(0..3,
               listOf(
-                  biomeAdapterCube(BiomeId.checkers, BiomeId.forest) to applyBuilderLevels(generalCheckersBuilder())
+                  biomeAdapterCube(Biomes.checkers, Biomes.forest) to applyBuilderLevels(generalCheckersBuilder())
               )
           )
       )

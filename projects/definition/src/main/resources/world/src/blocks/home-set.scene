@@ -37,6 +37,7 @@
 ["floor","texture","redTile"],
 ["home-set","",""],
 ["home-set","type","lockedRotation"],
+["home-set","biome","home"],
 ["player-spawn","parent","home-set"],
 ["player-spawn","type","player-spawn"],
 ["player-spawn","translation",[0.025415208,0.040254116,2.484945]],

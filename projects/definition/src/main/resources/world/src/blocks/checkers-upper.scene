@@ -25,6 +25,7 @@
 ["0-0-0-west","direction",[0,0,0,"west"]],
 ["0-0-0-west","sideLevel",60],
 ["checkers-upper","",""],
+["checkers-upper","biome","checkers"],
 ["floor","mesh","floorSquare"],
 ["floor","type","solid-box"],
 ["floor","parent","checkers-upper"],

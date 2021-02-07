@@ -1,6 +1,8 @@
 package generation.architecture.engine
 
-import generation.general.*
+import generation.general.BlockGrid
+import generation.general.CellDirection
+import generation.general.Direction
 import marloth.scenery.enums.MeshInfoMap
 import marloth.scenery.enums.MeshShapeMap
 import silentorb.mythic.ent.GraphLibrary
@@ -8,7 +10,6 @@ import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
-import simulation.main.Hand
 import simulation.misc.CellAttribute
 import simulation.misc.Definitions
 
@@ -59,7 +60,7 @@ fun newArchitectureInput(generationConfig: GenerationConfig, dice: Dice,
 data class BuilderInput(
     val general: ArchitectureInput,
     val neighborOld: Set<Direction>,
-    val neighbors: Map<CellDirection, ConnectionContract>
+    val neighbors: Map<CellDirection, String>
 )
 
 typealias Builder = (BuilderInput) -> Any

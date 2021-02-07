@@ -1,5 +1,6 @@
 package generation.general
 
+import generation.abstracted.GroupedBlocks
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3i
 import simulation.misc.CellAttribute
@@ -16,11 +17,9 @@ fun getOtherSide(getBlock: GetBlock, origin: Vector3i): (Direction) -> Side? = {
 }
 
 fun sidesMatch(first: Side, second: Side): Boolean =
-    first.other.type == second.mine.type &&
-        first.mine.type == second.other.type &&
-        first.height == second.height &&
-        (first.mine.biome == null || first.mine.biome == second.other.biome) &&
-        (second.mine.biome == null || second.mine.biome == first.other.biome)
+    first.other == second.mine &&
+        first.mine == second.other &&
+        first.height == second.height
 
 fun sidesMatch(surroundingSides: SideMap, direction: Direction, blockSide: Side): Boolean {
   val otherSide = surroundingSides[direction]
@@ -76,10 +75,29 @@ fun matchBlock(dice: Dice, blocks: Set<Block>, getBlock: GetBlock, surroundingSi
   return null
 }
 
-fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, blockGrid: BlockGrid, location: Vector3i): Pair<Vector3i, Block>? {
-  val surroundingSides = getSurroundingSides(blockGrid, location)
-  val getBlock: GetBlock = { blockGrid[it + location]?.cell }
+fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, grid: BlockGrid, location: Vector3i): Pair<Vector3i, Block>? {
+  val surroundingSides = getSurroundingSides(grid, location)
+  val getBlock: GetBlock = { grid[it + location]?.cell }
   return matchBlock(dice, blocks, getBlock, surroundingSides)
+}
+
+fun fallbackBiomeMatchConnectingBlock(dice: Dice, biomeBlocks: Map<String, GroupedBlocks>, grid: BlockGrid,
+                                      location: Vector3i, biome: String): Pair<Vector3i, Block>? {
+  val options = directionVectors.values
+      .mapNotNull { offset -> grid[location + offset]?.source?.biome }
+      .distinct()
+      .minus(biome)
+
+  for (option in options) {
+    val blocks = biomeBlocks[option]
+    if (blocks != null) {
+     val result = matchConnectingBlock(dice, blocks.all, grid, location)
+      if (result != null)
+        return result
+    }
+  }
+
+  return null
 }
 
 fun openSides(blockGrid: BlockGrid, position: Vector3i): Map<Direction, Vector3i> {

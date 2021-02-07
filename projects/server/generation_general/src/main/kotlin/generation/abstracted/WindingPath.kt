@@ -11,7 +11,7 @@ data class GroupedBlocks(
     val flexible: Set<Block>,
 )
 
-fun newGroupedBlocks(blocks: Set<Block>): GroupedBlocks {
+fun newGroupedBlocks(blocks: Collection<Block>): GroupedBlocks {
   val flexible = blocks
       .filter { block ->
         val traversableCount = block.cells.values
@@ -25,7 +25,7 @@ fun newGroupedBlocks(blocks: Set<Block>): GroupedBlocks {
       .toSet()
 
   return GroupedBlocks(
-      all = blocks,
+      all = blocks.toSet(),
       flexible = flexible,
   )
 }
@@ -40,9 +40,10 @@ fun filterUsedUniqueBlock(block: Block?, groupedBlocks: GroupedBlocks): GroupedB
       groupedBlocks
 
 data class BlockState(
-    val groupedBlocks: GroupedBlocks,
     val grid: BlockGrid,
     val blacklistSides: List<AbsoluteSide>,
+    val biomeBlocks: Map<String, GroupedBlocks>,
+    val biomeGrid: BiomeGrid,
     val blacklistBlockLocations: Map<Vector3i, List<Block>>
 )
 
@@ -64,7 +65,7 @@ tailrec fun addPathStep(
     dice: Dice,
     state: BlockState
 ): BlockGrid {
-  val (groupedBlocks, grid, blacklist) = state
+  val (grid, blacklist) = state
   val incompleteSides = getIncompleteBlockSides(grid) - blacklist
   if (incompleteSides.none())
     return grid
@@ -90,6 +91,11 @@ tailrec fun addPathStep(
 //    worldGenerationLog {
 //      "Side: ${currentBlock.name} ${side.mineOld}, ${incompleteSide.position} ${incompleteSide.direction}"
 //    }
+    val biome = state.biomeGrid(nextPosition)
+    val groupedBlocks = state.biomeBlocks[biome]
+    if (groupedBlocks == null)
+      throw Error("Biome mismatch")
+
     val blocks = if (incompleteSides.size < 2)
       groupedBlocks.flexible
     else
@@ -97,17 +103,18 @@ tailrec fun addPathStep(
 
     val matchResult = matchConnectingBlock(dice, blocks, grid, nextPosition)
         ?: matchConnectingBlock(dice, groupedBlocks.all - blocks, grid, nextPosition)
+        ?: fallbackBiomeMatchConnectingBlock(dice, state.biomeBlocks, grid, nextPosition, biome)
 
     val nextState = if (matchResult == null) {
-        state.copy(
-            blacklistSides = state.blacklistSides + incompleteSide
-        )
-   } else {
+      state.copy(
+          blacklistSides = state.blacklistSides + incompleteSide
+      )
+    } else {
       val (blockOffset, block) = matchResult
       worldGenerationLog { "Block: ${block.name}" }
       val cellAdditions = extractCells(block, nextPosition - blockOffset)
       state.copy(
-          groupedBlocks = filterUsedUniqueBlock(block, groupedBlocks),
+          biomeBlocks = state.biomeBlocks + (biome to filterUsedUniqueBlock(block, groupedBlocks)),
           grid = grid + cellAdditions
       )
     }
@@ -118,8 +125,21 @@ tailrec fun addPathStep(
 
 fun windingPath(dice: Dice, config: BlockConfig, length: Int): (BlockGrid) -> BlockGrid = { grid ->
   val blocks = filterUsedUniqueBlocks(grid, config.blocks)
-  val groupedBlocks = newGroupedBlocks(blocks)
-  val state = BlockState(groupedBlocks, grid, listOf(), mapOf())
+  val groupedBlocks = config.biomes
+      .associateWith { biome ->
+        newGroupedBlocks(blocks.filter { it.biome == biome })
+      }
+      .filterValues { it.flexible.any() }
+
+  val biomeAnchors = newBiomeAnchors(groupedBlocks.keys, dice, length)
+  val biomeGrid = biomeGridFromAnchors(biomeAnchors)
+  val state = BlockState(
+      grid = grid,
+      biomeBlocks = groupedBlocks,
+      blacklistSides = listOf(),
+      blacklistBlockLocations = mapOf(),
+      biomeGrid = biomeGrid,
+  )
   val nextGrid = addPathStep(length, dice, state)
   assert(nextGrid.size >= length)
   nextGrid

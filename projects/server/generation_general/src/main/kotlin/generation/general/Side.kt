@@ -21,19 +21,14 @@ object StandardHeights {
   val fourth = 85
 }
 
-data class ConnectionContract(
-    val type: String,
-    val biome: String? = null
-)
-
 // Only used until the block side refactoring is finished
-val tempConnectionContract = ConnectionContract("open")
+val tempConnectionContract = "open"
 
 data class Side(
     val mineOld: Any = "Nothing",
     val otherOld: Set<Any> = setOf(mineOld),
-    val mine: ConnectionContract = tempConnectionContract,
-    val other: ConnectionContract = tempConnectionContract,
+    val mine: String = tempConnectionContract,
+    val other: String = tempConnectionContract,
     val height: Int = StandardHeights.first,
     val isTraversable: Boolean = true,
     val connectionLogic: ConnectionLogic = ConnectionLogic.optional,

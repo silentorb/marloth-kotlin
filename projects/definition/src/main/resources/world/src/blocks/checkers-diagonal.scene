@@ -11,6 +11,7 @@
 ["0-0-0-north","other","open"],
 ["0-0-0-north","direction",[0,0,0,"north"]],
 ["checkers-block","",""],
+["checkers-block","biome","checkers"],
 ["floor","parent","checkers-block"],
 ["floor","scale",[0.5,0.5,0.5]],
 ["floor","texture","checkersBlackWhite"],

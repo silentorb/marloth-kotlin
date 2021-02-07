@@ -14,7 +14,9 @@ data class VoronoiAnchor<T>(
     val value: T
 )
 
-fun <T>voronoiAnchors(values: List<T>, count: Int, dice: Dice, start: Vector3, end: Vector3): List<VoronoiAnchor<T>> =
+typealias VoronoiAnchors<T> = List<VoronoiAnchor<T>>
+
+fun <T>voronoiAnchors(values: List<T>, count: Int, dice: Dice, start: Vector3, end: Vector3): VoronoiAnchors<T> =
     (1..count)
         .map {
           VoronoiAnchor(

@@ -49,85 +49,86 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
 
 val directionMap: Map<String, Direction> = Direction.values().associateBy { it.name }
 
-fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder {
+fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder? {
   val root = getGraphRoots(graph).first()
-  val myDefaultBiome = getGraphValue<String>(graph, root, MarlothProperties.myBiome)
-  val otherDefaultBiome = getGraphValue<String>(graph, root, MarlothProperties.otherBiome)
-  val sideNodes = nodeAttributes(graph, GameAttributes.blockSide)
-  val allSides = sideNodes
-      .mapNotNull { node ->
-        val mine = getGraphValue<String>(graph, node, MarlothProperties.mine)
-        val other = getGraphValue<String>(graph, node, MarlothProperties.other)
-        val cellDirection = getGraphValue<CellDirection>(graph, node, MarlothProperties.direction)
-        if (cellDirection == null)
-          null
-        else if (mine == null || other == null)
-          cellDirection to null
-        else {
-          val height = getGraphValue<Int>(graph, node, MarlothProperties.sideHeight) ?: StandardHeights.first
-          val myBiome = getGraphValue<String>(graph, node, MarlothProperties.myBiome)
-          val otherBiome = getGraphValue<String>(graph, node, MarlothProperties.otherBiome)
+  val biome = getGraphValue<String>(graph, root, MarlothProperties.biome)
+  return if (biome == null)
+    null
+  else {
+    val sideNodes = nodeAttributes(graph, GameAttributes.blockSide)
+    val allSides = sideNodes
+        .mapNotNull { node ->
+          val mine = getGraphValue<String>(graph, node, MarlothProperties.mine)
+          val other = getGraphValue<String>(graph, node, MarlothProperties.other)
+          val cellDirection = getGraphValue<CellDirection>(graph, node, MarlothProperties.direction)
+          if (cellDirection == null)
+            null
+          else if (mine == null || other == null)
+            cellDirection to null
+          else {
+            val height = getGraphValue<Int>(graph, node, MarlothProperties.sideHeight) ?: StandardHeights.first
+            cellDirection to Side(
+                mine = mine,
+                other = other,
+                height = height,
+            )
+          }
+        }
 
-          cellDirection to Side(
-              mine = ConnectionContract(mine, biome = myBiome ?: myDefaultBiome),
-              other = ConnectionContract(other, biome = otherBiome ?: otherDefaultBiome),
-              height = height,
+    val cells = allSides
+        .groupBy { it.first.cell }
+        .entries
+        .associate { (offset, value) ->
+          // Null sides are used to indicate the existence of a non-traversable cell
+          val sides = value
+              .filter { it.second != null }
+              .associate { it.first.direction to it.second!! }
+
+          val isTraversable = sides.any { traversableBlockSides.contains(it.value.mine) }
+          val attributes = setOfNotNull(
+              if (isTraversable) CellAttribute.isTraversable else null,
+          )
+          offset to BlockCell(
+              sides = sides,
+              isTraversable = isTraversable,
+              attributes = attributes,
           )
         }
-      }
 
-  val cells = allSides
-      .groupBy { it.first.cell }
-      .entries
-      .associate { (offset, value) ->
-        // Null sides are used to indicate the existence of a non-traversable cell
-        val sides = value
-            .filter { it.second != null }
-            .associate { it.first.direction to it.second!! }
+    val traversable = cells
+        .filterValues { it.isTraversable }
+        .keys
 
-        val isTraversable = sides.any { traversableBlockSides.contains(it.value.mine.type) }
-        val attributes = setOfNotNull(
-            if (isTraversable) CellAttribute.isTraversable else null,
-        )
-        offset to BlockCell(
-            sides = sides,
-            isTraversable = isTraversable,
-            attributes = attributes,
-        )
-      }
+    val lockedRotation = hasAttribute(graph, root, GameAttributes.lockedRotation)
+    val showIfSideIsEmpty = filterByProperty(graph, MarlothProperties.showIfSideIsEmpty)
+        .groupBy { it.source }
+        .mapValues { it.value.map { it.target as CellDirection } }
 
-  val traversable = cells
-      .filterValues { it.isTraversable }
-      .keys
+    val block = Block(
+        name = name,
+        cells = cells,
+        traversable = traversable,
+        lockedRotation = lockedRotation,
+        biome = biome,
+    )
+    val truncatedGraph = graph.filter { !sideNodes.contains(it.source) }
 
-  val lockedRotation = hasAttribute(graph, root, GameAttributes.lockedRotation)
-  val showIfSideIsEmpty = filterByProperty(graph, MarlothProperties.showIfSideIsEmpty)
-      .groupBy { it.source }
-      .mapValues { it.value.map { it.target as CellDirection } }
-
-  val block = Block(
-      name = name,
-      cells = cells,
-      traversable = traversable,
-      lockedRotation = lockedRotation,
-  )
-  val truncatedGraph = graph.filter { !sideNodes.contains(it.source) }
-
-  val builder: Builder = { input ->
-    val omitted = showIfSideIsEmpty
-        .mapNotNull { (node, cellDirections) ->
-          val shouldOmit = cellDirections.any { cellDirection ->
-            input.neighbors.keys.contains(cellDirection)
+    val builder: Builder = { input ->
+      val omitted = showIfSideIsEmpty
+          .mapNotNull { (node, cellDirections) ->
+            val shouldOmit = cellDirections.any { cellDirection ->
+              input.neighbors.keys.contains(cellDirection)
+            }
+            if (shouldOmit)
+              node
+            else
+              null
           }
-          if (shouldOmit)
-            node
-          else
-            null
-        }
 
-    truncatedGraph.filter { !omitted.contains(it.source) }
+      truncatedGraph.filter { !omitted.contains(it.source) }
+    }
+    return block to builder
   }
-  return block to builder
 }
 
 fun graphsToBlockBuilders(graphLibrary: GraphLibrary): List<BlockBuilder> {
@@ -137,7 +138,7 @@ fun graphsToBlockBuilders(graphLibrary: GraphLibrary): List<BlockBuilder> {
         graph.any { it.property == SceneProperties.type && it.target == GameAttributes.blockSide }
       }
       .keys
-      .map { key ->
+      .mapNotNull { key ->
         val expanded = expandGameInstances(library, key)
         graphToBlockBuilder(key, expanded)
       }
@@ -148,7 +149,10 @@ fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig,
   val coreBlocks = graphsToBlockBuilders(graphLibrary)
   val blockBuilders = explodeBlockMap(coreBlocks)
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))
-  val home = blocks.first { it.name == "home-set" }
+  val home = blocks.firstOrNull { it.name == "home-set" }
+  if (home == null)
+    throw Error("Could not find home-set block")
+
   val blockGrid = newBlockGrid(dice, home, blocks - home, generationConfig.roomCount)
   val architectureInput = newArchitectureInput(generationConfig, dice, blockGrid)
   val architectureSource = buildArchitecture(architectureInput, builders)

@@ -21,6 +21,7 @@ data class Block(
     // Used as a solving optimization when iterating through possible connecting cells within a polyomino
     val traversable: Set<Vector3i> = setOf(),
     val slots: List<Vector3> = listOf(),
+    val biome: String = "",
     val turns: Int = 0
 ) {
   init {

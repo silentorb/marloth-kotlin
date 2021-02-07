@@ -21,6 +21,7 @@
 ["0-0-0-west","other","open"],
 ["0-0-0-west","direction",[0,0,0,"west"]],
 ["checkers-block","",""],
+["checkers-block","biome","checkers"],
 ["checkers-block-walls","parent","checkers-block"],
 ["checkers-block-walls","type","checkers-block-walls"],
 ["floor","mesh","floorSquare"],
