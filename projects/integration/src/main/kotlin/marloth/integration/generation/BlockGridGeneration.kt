@@ -13,6 +13,7 @@ import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.ent.scenery.getGraphRoots
 import silentorb.mythic.ent.scenery.hasAttribute
+import silentorb.mythic.ent.scenery.removeNodesAndChildren
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Vector3i
@@ -155,7 +156,7 @@ fun builderFromGraph(graph: Graph): Builder {
             null
         }
 
-    graph.filter { !omitted.contains(it.source) }
+    removeNodesAndChildren(graph, omitted)
   }
 }
 

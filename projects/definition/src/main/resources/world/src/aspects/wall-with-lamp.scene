@@ -1,14 +1,14 @@
 {
 "graph" : [
+["wall","mesh","wallSquareShort"],
+["wall","type","solid-box"],
+["wall","parent","wall-with-lamp"],
+["wall","texture","placeholderWall"],
 ["wall-lamp","parent","wall-with-lamp"],
 ["wall-lamp","type","wall-lamp"],
 ["wall-lamp","rotation",[0.0,0.0,1.5707964]],
 ["wall-lamp","translation",[0.0,0.94517773,4.226741]],
 ["wall-lamp","type","lightDistribution"],
-["wall-with-lamp","",""],
-["wall1","mesh","wallSquareShort"],
-["wall1","type","solid-box"],
-["wall1","parent","wall-with-lamp"],
-["wall1","texture","placeholderWall"]
+["wall-with-lamp","",""]
 ]
 }

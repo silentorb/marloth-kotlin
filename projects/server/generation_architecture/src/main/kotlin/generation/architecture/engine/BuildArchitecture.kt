@@ -9,59 +9,53 @@ import silentorb.mythic.spatial.*
 import simulation.main.Hand
 import simulation.misc.absoluteCellPosition
 
-fun transformBlockHand(position: Vector3, rotation: Quaternion) = { hand: Hand ->
-  val body = hand.body
-  if (body == null)
-    hand
-  else {
-    hand.copy(
-        body = body.copy(
-            position = position + rotation.transform(body.position),
-            orientation = rotation * body.orientation
-        )
-    )
-  }
-}
+fun gatherNeighbors(grid: BlockGrid, block: Block, position: Vector3i): Map<CellDirection, String> =
+    block.cells.keys
+        .flatMap { cell ->
+          val cellOffset = position + cell
+          allDirections
+              .mapNotNull { direction ->
+                val rotated = rotateDirection(block.turns)(direction)
+                val offset = directionVectors[rotated]!!
+                val other = grid[cellOffset + offset]
+                val reverse = oppositeDirections[rotated]
+                val side = other?.cell?.sides?.getOrDefault(reverse, null)
+                val contract = side?.mine
+                if (contract != null)
+                  CellDirection(cell, direction) to contract
+                else
+                  null
+              }
+        }
+        .associate { it }
 
-fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, position: Vector3i): Graph {
-  val grid = general.blockGrid
-  val neighbors = block.cells.keys
-      .flatMap { cell ->
-        val cellOffset = position + cell
-        allDirections
-            .mapNotNull { direction ->
-              val rotated = rotateDirection(block.turns)(direction)
-              val offset = directionVectors[rotated]!!
-              val other = grid[cellOffset + offset]
-              val reverse = oppositeDirections[rotated]
-              val side = other?.cell?.sides?.getOrDefault(reverse, null)
-              val contract = side?.mine
-              if (contract != null)
-                CellDirection(cell, direction) to contract
-              else
-                null
-            }
-      }
-      .associate { it }
-
-  val input = BuilderInput(
-      general = general,
-      neighborOld = setOf(),
-      neighbors = neighbors,
-  )
-  val result = builder(input) as Graph
+fun transformBlockOutput(block: Block, position: Vector3i, graph: Graph): Graph {
   val zRotation = (block.turns.toFloat()) * quarterAngle
   val rotation = Vector3(0f, 0f, zRotation)
   val location = absoluteCellPosition(position)
-  val roots = getGraphRoots(result)
+  val roots = getGraphRoots(graph)
   val rootTransforms = roots.flatMap { root ->
-    val transform = getNodeTransform(result, root)
+    val transform = getNodeTransform(graph, root)
     listOf(
         Entry(root, SceneProperties.translation, transform.translation() + location),
         Entry(root, SceneProperties.rotation, transform.rotation() + rotation),
     )
   }
-  return replaceValues(result, rootTransforms)
+  return replaceValues(graph, rootTransforms)
+}
+
+fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, location: Vector3i): Graph {
+  val grid = general.blockGrid
+  val neighbors = gatherNeighbors(grid, block, location)
+  val input = BuilderInput(
+      general = general,
+      neighborOld = setOf(),
+      neighbors = neighbors,
+  )
+  val graph = builder(input) as Graph
+  val result = transformBlockOutput(block, location, graph)
+  val k = result.filter {it.property == SceneProperties.mesh}
+  return result
 }
 
 fun buildArchitecture(general: ArchitectureInput, builders: Map<String, Builder>): Graph {

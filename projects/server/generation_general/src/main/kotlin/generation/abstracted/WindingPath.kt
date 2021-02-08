@@ -5,6 +5,9 @@ import silentorb.mythic.debugging.conditionalDebugLog
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3i
 import simulation.misc.CellAttribute
+import simulation.misc.cellLength
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 data class GroupedBlocks(
     val all: Set<Block>,
@@ -92,6 +95,7 @@ tailrec fun addPathStep(
 //      "Side: ${currentBlock.name} ${side.mineOld}, ${incompleteSide.position} ${incompleteSide.direction}"
 //    }
     val biome = state.biomeGrid(nextPosition)
+    println("biome $biome")
     val groupedBlocks = state.biomeBlocks[biome]
     if (groupedBlocks == null)
       throw Error("Biome mismatch")
@@ -106,6 +110,7 @@ tailrec fun addPathStep(
         ?: fallbackBiomeMatchConnectingBlock(dice, state.biomeBlocks, grid, nextPosition, biome)
 
     val nextState = if (matchResult == null) {
+      println(" no match")
       state.copy(
           blacklistSides = state.blacklistSides + incompleteSide
       )
@@ -131,7 +136,11 @@ fun windingPath(seed: Long, dice: Dice, config: BlockConfig, length: Int, grid: 
       }
       .filterValues { it.flexible.any() }
 
-  val biomeAnchors = newBiomeAnchors(groupedBlocks.keys, dice, length)
+  val biomeAnchors = newBiomeAnchors(groupedBlocks.keys, dice,
+      worldRadius = length.toFloat().pow(1f / 4f) * cellLength,
+      biomeSize = 15f,
+      minGap = 2f
+  )
   val biomeGrid = biomeGridFromAnchors(biomeAnchors)
   val state = BlockState(
       grid = grid,

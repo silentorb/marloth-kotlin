@@ -21,7 +21,6 @@ data class VoronoiAnchor2d<T>(
 )
 
 typealias VoronoiAnchors<T> = List<VoronoiAnchor<T>>
-typealias VoronoiAnchors2d<T> = List<VoronoiAnchor2d<T>>
 
 fun <T>voronoiAnchors(values: List<T>, count: Int, dice: Dice, start: Vector3, end: Vector3): VoronoiAnchors<T> =
     (1..count)
