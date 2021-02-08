@@ -1,7 +1,6 @@
 package simulation.misc
 
 import silentorb.mythic.ent.Graph
-import silentorb.mythic.ent.LooseGraph
 import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.spatial.Matrix
@@ -26,6 +25,6 @@ fun getPlayerStart(graph: Graph): Matrix? {
     null
 }
 
-fun getNodePositionsByAttribute(graph: LooseGraph, attribute: String): List<Matrix> =
+fun getNodePositionsByAttribute(graph: Graph, attribute: String): List<Matrix> =
     nodeAttributes(graph, attribute)
         .map { getNodeTransform(graph, it) }

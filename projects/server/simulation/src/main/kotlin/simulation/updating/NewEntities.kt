@@ -10,7 +10,6 @@ import silentorb.mythic.timing.FloatTimer
 import simulation.abilities.newEntangleEntities
 import simulation.characters.newPlayerCharacters
 import simulation.combat.newDamageVisualEffects
-import simulation.entities.newRespawnCountdowns
 import simulation.entities.pruningEventsToIdHands
 import simulation.happenings.NewHandEvent
 import simulation.main.*

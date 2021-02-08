@@ -1,4 +1,4 @@
-package marloth.integration.misc
+package marloth.integration.generation
 
 import generation.architecture.biomes.Biomes
 import generation.architecture.engine.*
@@ -14,6 +14,7 @@ import silentorb.mythic.ent.scenery.getGraphRoots
 import silentorb.mythic.ent.scenery.hasAttribute
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
+import silentorb.mythic.spatial.Vector3i
 import simulation.misc.CellAttribute
 import simulation.misc.GameAttributes
 import simulation.misc.MarlothProperties
@@ -60,14 +61,8 @@ val defaultBiomeTextures: Map<String, Map<String, String>> = mapOf(
     ),
 )
 
-fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder? {
-  val root = getGraphRoots(graph).first()
-  val biome = getGraphValue<String>(graph, root, MarlothProperties.biome)
-  return if (biome == null)
-    null
-  else {
-    val sideNodes = nodeAttributes(graph, GameAttributes.blockSide)
-    val allSides = sideNodes
+fun gatherSides(graph: Graph, sideNodes: List<String>) =
+    sideNodes
         .mapNotNull { node ->
           val mine = getGraphValue<String>(graph, node, MarlothProperties.mine)
           val other = getGraphValue<String>(graph, node, MarlothProperties.other)
@@ -86,7 +81,8 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder? {
           }
         }
 
-    val cells = allSides
+fun cellsFromSides(allSides: List<Pair<CellDirection, Side?>>) =
+    allSides
         .groupBy { it.first.cell }
         .entries
         .associate { (offset, value) ->
@@ -106,57 +102,75 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder? {
           )
         }
 
-    val traversable = cells
-        .filterValues { it.isTraversable }
-        .keys
-
-    val lockedRotation = hasAttribute(graph, root, GameAttributes.lockedRotation)
-    val showIfSideIsEmpty = filterByProperty(graph, MarlothProperties.showIfSideIsEmpty)
-        .groupBy { it.source }
-        .mapValues { it.value.map { it.target as CellDirection } }
-
-    val block = Block(
-        name = name,
-        cells = cells,
-        traversable = traversable,
-        lockedRotation = lockedRotation,
-        biome = biome,
-    )
-    val truncatedGraph = graph.filter { !sideNodes.contains(it.source) }
-
-    val texturelessMeshes = truncatedGraph
-        .filter { entry ->
-          entry.property == SceneProperties.mesh && truncatedGraph.none {
-            it.source == entry.source && it.property == SceneProperties.texture
-          }
+fun prepareBlockGraph(graph: Graph, sideNodes: List<String>, biome: String): Graph {
+  val truncatedGraph = graph.filter { !sideNodes.contains(it.source) }
+  val texturelessMeshes = truncatedGraph
+      .filter { entry ->
+        entry.property == SceneProperties.mesh && truncatedGraph.none {
+          it.source == entry.source && it.property == SceneProperties.texture
         }
-        .map { it.source }
+      }
+      .map { it.source }
 
-    val defaultTexture = defaultBiomeTextures[biome]?.getOrDefault("default", null)
-    val textureAdditions =
-        if (defaultTexture != null) {
-          texturelessMeshes
-              .map { Entry(it, SceneProperties.texture, defaultTexture) }
-        }
-    else
-          listOf()
-    
-    val finalGraph = truncatedGraph + textureAdditions
+  val defaultTexture = defaultBiomeTextures[biome]?.getOrDefault("default", null)
+  val textureAdditions =
+      if (defaultTexture != null) {
+        texturelessMeshes
+            .map { Entry(it, SceneProperties.texture, defaultTexture) }
+      } else
+        listOf()
 
-    val builder: Builder = { input ->
-      val omitted = showIfSideIsEmpty
-          .mapNotNull { (node, cellDirections) ->
-            val shouldOmit = cellDirections.any { cellDirection ->
-              input.neighbors.keys.contains(cellDirection)
-            }
-            if (shouldOmit)
-              node
-            else
-              null
+  return truncatedGraph + textureAdditions
+}
+
+fun blockFromGraph(graph: Graph, cells: Map<Vector3i, BlockCell>, root: String, name: String, biome: String): Block {
+  val traversable = cells
+      .filterValues { it.isTraversable }
+      .keys
+
+  val lockedRotation = hasAttribute(graph, root, GameAttributes.lockedRotation)
+  return Block(
+      name = name,
+      cells = cells,
+      traversable = traversable,
+      lockedRotation = lockedRotation,
+      biome = biome,
+  )
+}
+
+fun builderFromGraph(graph: Graph): Builder {
+  val showIfSideIsEmpty = filterByProperty(graph, MarlothProperties.showIfSideIsEmpty)
+      .groupBy { it.source }
+      .mapValues { i -> i.value.map { it.target as CellDirection } }
+
+  return { input ->
+    val omitted = showIfSideIsEmpty
+        .mapNotNull { (node, cellDirections) ->
+          val shouldOmit = cellDirections.any { cellDirection ->
+            input.neighbors.keys.contains(cellDirection)
           }
+          if (shouldOmit)
+            node
+          else
+            null
+        }
 
-      finalGraph.filter { !omitted.contains(it.source) }
-    }
+    graph.filter { !omitted.contains(it.source) }
+  }
+}
+
+fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder? {
+  val root = getGraphRoots(graph).first()
+  val biome = getGraphValue<String>(graph, root, MarlothProperties.biome)
+  return if (biome == null)
+    null
+  else {
+    val sideNodes = nodeAttributes(graph, GameAttributes.blockSide)
+    val sides = gatherSides(graph, sideNodes)
+    val cells = cellsFromSides(sides)
+    val block = blockFromGraph(graph, cells, root, name, biome)
+    val finalGraph = prepareBlockGraph(graph, sideNodes, biome)
+    val builder: Builder = builderFromGraph(finalGraph)
     return block to builder
   }
 }
@@ -175,7 +189,7 @@ fun graphsToBlockBuilders(graphLibrary: GraphLibrary): List<BlockBuilder> {
 }
 
 fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig,
-                        graphLibrary: GraphLibrary): Pair<BlockGrid, LooseGraph> {
+                        graphLibrary: GraphLibrary): Pair<BlockGrid, Graph> {
   val coreBlocks = graphsToBlockBuilders(graphLibrary)
   val blockBuilders = explodeBlockMap(coreBlocks)
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))

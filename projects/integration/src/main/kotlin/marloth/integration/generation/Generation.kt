@@ -1,10 +1,12 @@
-package marloth.integration.misc
+package marloth.integration.generation
 
 import generation.architecture.engine.GenerationConfig
 import generation.architecture.engine.compileArchitectureMeshInfo
 import marloth.clienting.editing.marlothPropertiesSerialization
 import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.generation.population.populateWorld
+import marloth.integration.misc.newGameModeConfig
+import marloth.integration.misc.persistenceTable
 import marloth.scenery.enums.MeshShapeMap
 import persistence.Database
 import persistence.queryEntries
@@ -25,13 +27,11 @@ import simulation.misc.Realm
 
 fun generateWorld(db: Database, definitions: Definitions, generationConfig: GenerationConfig, dice: Dice, graph: Graph, step: Long): World {
   val nextId = newIdSource(1)
-  val architectureSource = if (getDebugBoolean("USE_MAP_GRID")) {
+  val graph2: Graph = if (getDebugBoolean("USE_MAP_GRID")) {
     val (blockGrid, architectureSource) = generateWorldBlocks(dice, generationConfig, generationConfig.graphLibrary)
-    architectureSource
+    graph + architectureSource
   } else
-    listOf()
-
-  val graph2 = graph + architectureSource
+    graph
 
   val realm = Realm(Deck())
 

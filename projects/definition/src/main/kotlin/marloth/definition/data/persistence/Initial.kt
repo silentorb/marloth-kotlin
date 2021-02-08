@@ -1,8 +1,8 @@
 package marloth.definition.data.persistence
 
 import silentorb.mythic.ent.Entry
-import silentorb.mythic.ent.LooseGraph
+import silentorb.mythic.ent.Graph
 
-fun initialHistoricalData(): LooseGraph = listOf(
+fun initialHistoricalData(): Graph = listOf(
     Entry("namelessCity", PersistenceProperties.leader, "kingBob")
 )

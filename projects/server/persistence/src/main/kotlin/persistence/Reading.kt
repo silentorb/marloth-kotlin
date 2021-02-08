@@ -1,7 +1,7 @@
 package persistence
 
 import silentorb.mythic.ent.Entry
-import silentorb.mythic.ent.LooseGraph
+import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.PropertySchema
 import java.sql.ResultSet
 
@@ -51,7 +51,7 @@ fun readEntryRecord(properties: PropertySchema, result: ResultSet): Entry {
   return Entry(source, property, target)
 }
 
-fun queryEntries(db: Database, table: Table): LooseGraph {
+fun queryEntries(db: Database, table: Table): Graph {
   val tableName = table.name
   val properties = table.properties
 

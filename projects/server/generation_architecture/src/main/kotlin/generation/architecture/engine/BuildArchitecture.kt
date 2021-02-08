@@ -23,7 +23,7 @@ fun transformBlockHand(position: Vector3, rotation: Quaternion) = { hand: Hand -
   }
 }
 
-fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, position: Vector3i): LooseGraph {
+fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, position: Vector3i): Graph {
   val grid = general.blockGrid
   val neighbors = block.cells.keys
       .flatMap { cell ->
@@ -49,7 +49,7 @@ fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, p
       neighborOld = setOf(),
       neighbors = neighbors,
   )
-  val result = builder(input) as LooseGraph
+  val result = builder(input) as Graph
   val zRotation = (block.turns.toFloat()) * quarterAngle
   val rotation = Vector3(0f, 0f, zRotation)
   val location = absoluteCellPosition(position)
@@ -64,7 +64,7 @@ fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, p
   return replaceValues(result, rootTransforms)
 }
 
-fun buildArchitecture(general: ArchitectureInput, builders: Map<String, Builder>): LooseGraph {
+fun buildArchitecture(general: ArchitectureInput, builders: Map<String, Builder>): Graph {
   val groupedCellHands = general.blockGrid
       .filterValues { it.offset == Vector3i.zero }
       .mapValues { (position, block) ->

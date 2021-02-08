@@ -1,7 +1,6 @@
 package simulation.main
 
-import silentorb.mythic.ent.LooseGraph
-import silentorb.mythic.happenings.Events
+import silentorb.mythic.ent.Graph
 import simulation.misc.*
 
 data class GlobalState(
@@ -17,7 +16,7 @@ fun newGlobalState(): GlobalState =
         gameOver = null
     )
 
-fun checkGameOver(deck: Deck, graph: LooseGraph): GameOver? {
+fun checkGameOver(deck: Deck, graph: Graph): GameOver? {
   val victoryLocations = getNodePositionsByAttribute(graph, GameAttributes.victoryZone).map { it.translation() }
   val playersInRange = deck.players.keys
       .mapNotNull { deck.bodies[it] }
@@ -42,7 +41,7 @@ fun updateDoom(frame: Long, doom: Long): Long {
     doom
 }
 
-fun updateGlobalState(deck: Deck, graph: LooseGraph, state: GlobalState): GlobalState {
+fun updateGlobalState(deck: Deck, graph: Graph, state: GlobalState): GlobalState {
   return GlobalState(
       doom = updateDoom(state.frame, state.doom),
       frame = state.frame + 1L,

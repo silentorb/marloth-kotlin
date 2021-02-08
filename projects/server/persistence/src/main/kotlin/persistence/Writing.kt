@@ -1,7 +1,7 @@
 package persistence
 
 import silentorb.mythic.ent.Entry
-import silentorb.mythic.ent.LooseGraph
+import silentorb.mythic.ent.Graph
 import java.sql.PreparedStatement
 
 fun executeSql(db: Database, sql: String) {
@@ -50,7 +50,7 @@ ON CONFLICT(source, property, target) DO UPDATE SET touched = date('now')
   executeSqlWithStringArguments(db, sql, listOf(source, property, target.toString()))
 }
 
-fun insertEntries(db: Database, tableName: String, graph: LooseGraph) {
+fun insertEntries(db: Database, tableName: String, graph: Graph) {
   val valuesClause = graph.joinToString(",\n") { "VALUES (?, ?, ?)" }
   val values = graph.flatMap { listOf(it.source, it.property, it.target.toString()) }
   val sql = """

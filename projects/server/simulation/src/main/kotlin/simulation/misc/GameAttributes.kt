@@ -19,6 +19,7 @@ object GameAttributes {
   val blockSide = "blockSide"
   val anyBiome = "anyBiome"
   val lockedRotation = "lockedRotation"
+  val lightDistribution = "lightDistribution"
 }
 
 object MarlothProperties {

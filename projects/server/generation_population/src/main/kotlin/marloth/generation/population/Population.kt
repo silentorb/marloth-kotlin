@@ -7,9 +7,9 @@ import marloth.definition.data.miscellaneousDefinitions
 import marloth.definition.misc.enemyDistributions
 import marloth.definition.misc.monsterLimit
 import silentorb.mythic.debugging.getDebugInt
-import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.Key
+import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.ent.scenery.nodesToElements

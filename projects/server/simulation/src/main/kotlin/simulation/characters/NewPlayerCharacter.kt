@@ -5,11 +5,7 @@ import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.toSpatialEntries
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.Vector3i
-import silentorb.mythic.spatial.getYawAngle
-import silentorb.mythic.spatial.toVector3
 import simulation.entities.Player
-import simulation.main.IdHand
 import simulation.main.NewHand
 import simulation.misc.*
 

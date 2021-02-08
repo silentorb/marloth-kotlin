@@ -1,9 +1,9 @@
 package simulation.intellect.navigation
 
 import org.recast4j.detour.NavMeshQuery
-import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Key
+import silentorb.mythic.ent.Graph
 import silentorb.mythic.scenery.Shape
 import simulation.main.Deck
 

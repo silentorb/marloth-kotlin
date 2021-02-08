@@ -4,9 +4,9 @@ import org.recast4j.recast.AreaModification
 import org.recast4j.recast.ConvexVolume
 import org.recast4j.recast.geom.InputGeomProvider
 import org.recast4j.recast.geom.TriMesh
-import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Key
+import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.ent.scenery.getShape
 import silentorb.mythic.physics.getBodyTransform

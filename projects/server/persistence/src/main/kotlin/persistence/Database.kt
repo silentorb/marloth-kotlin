@@ -1,19 +1,15 @@
 package persistence
 
 import org.sqlite.SQLiteDataSource
-import silentorb.mythic.ent.Entry
-import silentorb.mythic.ent.LooseGraph
-import silentorb.mythic.ent.PropertySchema
+import silentorb.mythic.ent.Graph
 import java.io.File
-import java.sql.PreparedStatement
-import java.sql.ResultSet
 import javax.sql.DataSource
 
 data class Database(
     val source: DataSource
 )
 
-fun newDatabase(filepath: String, initialPersistence: () -> LooseGraph): Database {
+fun newDatabase(filepath: String, initialPersistence: () -> Graph): Database {
   val source = SQLiteDataSource()
   source.url = "jdbc:sqlite:$filepath"
   val db = Database(source)

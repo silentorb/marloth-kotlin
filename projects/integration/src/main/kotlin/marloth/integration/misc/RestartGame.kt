@@ -5,6 +5,7 @@ import marloth.clienting.editing.expandWorldGraph
 import marloth.clienting.editing.loadWorldGraph
 import marloth.clienting.input.newInputState
 import marloth.integration.front.GameApp
+import marloth.integration.generation.generateWorld
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.GraphLibrary
 import silentorb.mythic.ent.Id
