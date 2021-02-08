@@ -98,6 +98,12 @@ fun newEditorGraphLibrary(textLibrary: TextResourceMapper): GraphLibrary =
           ) + editorLabel(key, textLibrary(definition.name))
         } + spawners()
 
+object PlaceholderTextures {
+  val floor = "placeholderFloor"
+  val wall = "placeholderWall"
+  val ceiling = "placeholderCeiling"
+}
+
 fun newEditor(textLibrary: TextResourceMapper, meshShapes: MeshShapeMap): Editor {
   val debugProjectPath = getDebugString("EDITOR_PROJECT_PATH")
   val projectPath = if (debugProjectPath != null)
@@ -111,7 +117,7 @@ fun newEditor(textLibrary: TextResourceMapper, meshShapes: MeshShapeMap): Editor
           propertyDefinitions = marlothEditorProperties,
           propertiesSerialization = marlothPropertiesSerialization,
           schema = marlothEditorPropertySchema(),
-          textures = textures(),
+          textures = textures() + reflectProperties(PlaceholderTextures),
           attributes = getMarlothEditorAttributes(),
           meshes = reflectProperties(MeshId),
           meshShapes = meshShapes,

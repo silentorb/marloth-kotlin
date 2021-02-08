@@ -34,6 +34,7 @@ data class Polyomino(
 typealias PolyominoMap = Map<String, Polyomino>
 
 data class GenerationConfig(
+    val seed: Long,
     val definitions: Definitions,
     val polyominoes: PolyominoMap,
     val meshes: MeshInfoMap,

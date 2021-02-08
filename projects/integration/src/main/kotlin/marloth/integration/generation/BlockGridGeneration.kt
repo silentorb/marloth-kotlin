@@ -4,6 +4,7 @@ import generation.architecture.biomes.Biomes
 import generation.architecture.engine.*
 import generation.architecture.matrical.BlockBuilder
 import generation.general.*
+import marloth.clienting.editing.PlaceholderTextures
 import marloth.clienting.editing.expandGameInstances
 import marloth.clienting.editing.newExpansionLibrary
 import marloth.definition.misc.traversableBlockSides
@@ -50,14 +51,16 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
   return noTurns + rotated
 }
 
-val directionMap: Map<String, Direction> = Direction.values().associateBy { it.name }
-
 val defaultBiomeTextures: Map<String, Map<String, String>> = mapOf(
     Biomes.checkers to mapOf(
-        "default" to Textures.checkersBlackWhite,
+        PlaceholderTextures.floor to Textures.checkersBlackWhite,
+        PlaceholderTextures.wall to Textures.checkersBlackWhite,
+        PlaceholderTextures.ceiling to Textures.checkersBlackWhite,
     ),
     Biomes.forest to mapOf(
-        "default" to Textures.grass,
+        PlaceholderTextures.floor to Textures.grass,
+        PlaceholderTextures.wall to Textures.grass,
+        PlaceholderTextures.ceiling to Textures.grass,
     ),
 )
 
@@ -104,23 +107,20 @@ fun cellsFromSides(allSides: List<Pair<CellDirection, Side?>>) =
 
 fun prepareBlockGraph(graph: Graph, sideNodes: List<String>, biome: String): Graph {
   val truncatedGraph = graph.filter { !sideNodes.contains(it.source) }
-  val texturelessMeshes = truncatedGraph
-      .filter { entry ->
-        entry.property == SceneProperties.mesh && truncatedGraph.none {
-          it.source == entry.source && it.property == SceneProperties.texture
-        }
-      }
-      .map { it.source }
+  val defaultTexture = defaultBiomeTextures[biome]
 
-  val defaultTexture = defaultBiomeTextures[biome]?.getOrDefault("default", null)
-  val textureAdditions =
-      if (defaultTexture != null) {
-        texturelessMeshes
-            .map { Entry(it, SceneProperties.texture, defaultTexture) }
-      } else
-        listOf()
+  return if (defaultTexture == null)
+    truncatedGraph
+  else {
+    val placeholderEntries = graph.filter { entry ->
+      entry.property == SceneProperties.texture && defaultTexture.containsKey(entry.target)
+    }
 
-  return truncatedGraph + textureAdditions
+    val replacements = placeholderEntries
+        .map { entry -> entry.copy(target = defaultTexture[entry.target]!!) }
+
+    truncatedGraph - placeholderEntries + replacements
+  }
 }
 
 fun blockFromGraph(graph: Graph, cells: Map<Vector3i, BlockCell>, root: String, name: String, biome: String): Block {
@@ -197,8 +197,9 @@ fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig,
   if (home == null)
     throw Error("Could not find home-set block")
 
-  val blockGrid = newBlockGrid(dice, home, blocks - home, generationConfig.roomCount)
+  val blockGrid = newBlockGrid(generationConfig.seed, dice, home, blocks - home, generationConfig.roomCount)
   val architectureInput = newArchitectureInput(generationConfig, dice, blockGrid)
   val architectureSource = buildArchitecture(architectureInput, builders)
-  return Pair(blockGrid, architectureSource)
+  val graph = filterDistributionGroups(architectureSource)
+  return Pair(blockGrid, graph)
 }

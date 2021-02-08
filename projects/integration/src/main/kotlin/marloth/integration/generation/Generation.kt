@@ -74,6 +74,7 @@ fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap
     println("Generation seed: ${dice.seed}")
   }
   val generationConfig = GenerationConfig(
+      seed = seed,
       definitions = definitions,
       meshes = compileArchitectureMeshInfo(meshInfo),
       includeEnemies = getDebugString("MONSTER_LIMIT") != "0",

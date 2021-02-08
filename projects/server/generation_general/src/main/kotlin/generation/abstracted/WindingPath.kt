@@ -123,7 +123,7 @@ tailrec fun addPathStep(
   }
 }
 
-fun windingPath(dice: Dice, config: BlockConfig, length: Int): (BlockGrid) -> BlockGrid = { grid ->
+fun windingPath(seed: Long, dice: Dice, config: BlockConfig, length: Int, grid: BlockGrid): BlockGrid {
   val blocks = filterUsedUniqueBlocks(grid, config.blocks)
   val groupedBlocks = config.biomes
       .associateWith { biome ->
@@ -140,7 +140,12 @@ fun windingPath(dice: Dice, config: BlockConfig, length: Int): (BlockGrid) -> Bl
       blacklistBlockLocations = mapOf(),
       biomeGrid = biomeGrid,
   )
-  val nextGrid = addPathStep(length, dice, state)
-  assert(nextGrid.size >= length)
-  nextGrid
+  for (i in 0..10) {
+    val nextGrid = addPathStep(length, dice, state)
+    if (nextGrid.size >= length)
+      return nextGrid
+    else
+      println("Failed to generate world with seed $seed")
+  }
+  throw Error("Reached maximum failed world generation attempts")
 }
