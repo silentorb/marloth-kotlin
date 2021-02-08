@@ -1,10 +1,7 @@
 package generation.general
 
 import silentorb.mythic.randomly.Dice
-import silentorb.mythic.spatial.Vector3
-import silentorb.mythic.spatial.Vector3i
-import silentorb.mythic.spatial.nearestFast
-import silentorb.mythic.spatial.toVector3
+import silentorb.mythic.spatial.*
 import simulation.misc.cellHalfLength
 
 typealias BiomeGrid = (Vector3i) -> String
@@ -37,21 +34,21 @@ fun <T> newVoronoiGrid(biomes: List<T>, dice: Dice, bounds: WorldBoundary): Voro
   return voronoiAnchors(values, anchorCount, dice, bounds.start, bounds.end)
 }
 
-fun newBiomeAnchors(biomes: Set<String>, dice: Dice, cellCount: Int): VoronoiAnchors<String> {
+fun newBiomeAnchors(biomes: Set<String>, dice: Dice, cellCount: Int): VoronoiAnchors2d<String> {
   val padding = 1
   val length = (cellCount / 2).toFloat()
   val bounds = WorldBoundary(
       Vector3(-length, -length, -length),
       Vector3(length, length, length)
   )
-  return newVoronoiGrid(biomes.toList(), dice, bounds)
+  return newVoronoiGrid(biomes.toList(), dice, bounds).map { VoronoiAnchor2d(it.position.xy(), it.value) }
 }
 
-fun biomeGridFromAnchors(anchors: VoronoiAnchors<String>): BiomeGrid {
+fun biomeGridFromAnchors(anchors: VoronoiAnchors2d<String>): BiomeGrid {
   val items = anchors.map { Pair(it.position, it.value) }
-  val nearest = nearestFast(items)
+  val nearest = nearestFast2d(items)
   return { cell ->
-    nearest(cell.toVector3())
+    nearest(cell.toVector3().xy())
   }
 }
 

@@ -3,6 +3,7 @@ package generation.general
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.nearestFast
 import silentorb.mythic.randomly.Dice
+import silentorb.mythic.spatial.Vector2
 
 // Within 0..1
 typealias FloatUnit = Float
@@ -14,7 +15,13 @@ data class VoronoiAnchor<T>(
     val value: T
 )
 
+data class VoronoiAnchor2d<T>(
+    val position: Vector2,
+    val value: T
+)
+
 typealias VoronoiAnchors<T> = List<VoronoiAnchor<T>>
+typealias VoronoiAnchors2d<T> = List<VoronoiAnchor2d<T>>
 
 fun <T>voronoiAnchors(values: List<T>, count: Int, dice: Dice, start: Vector3, end: Vector3): VoronoiAnchors<T> =
     (1..count)
