@@ -40,7 +40,7 @@ data class GenerationConfig(
     val meshes: MeshInfoMap,
     val meshShapes: MeshShapeMap,
     val includeEnemies: Boolean,
-    val roomCount: Int,
+    val cellCount: Int,
     val graphLibrary: GraphLibrary,
 )
 

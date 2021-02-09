@@ -198,7 +198,7 @@ fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig,
   if (home == null)
     throw Error("Could not find home-set block")
 
-  val blockGrid = newBlockGrid(generationConfig.seed, dice, home, blocks - home, generationConfig.roomCount)
+  val blockGrid = newBlockGrid(generationConfig.seed, dice, home, blocks - home, generationConfig.cellCount)
   val architectureInput = newArchitectureInput(generationConfig, dice, blockGrid)
   val architectureSource = buildArchitecture(architectureInput, builders)
   val graph = filterDistributionGroups(architectureSource)

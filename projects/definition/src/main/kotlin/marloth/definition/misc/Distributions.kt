@@ -34,9 +34,3 @@ fun scalingDistributions(): DistributionMap = mapOf(
 )
 
 fun monsterLimit() = getDebugInt("MONSTER_LIMIT") ?: 1000
-
-fun fixedDistributions(): DistributionMap =
-    mapOf(
-        DistributionGroup.monster to min(3, monsterLimit()),
-        DistributionGroup.victoryKey to (getDebugInt("VICTORY_KEY_COUNT") ?: 3)
-    )

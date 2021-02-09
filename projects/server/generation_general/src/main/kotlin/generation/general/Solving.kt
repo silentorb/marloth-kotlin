@@ -93,7 +93,6 @@ fun fallbackBiomeMatchConnectingBlock(dice: Dice, biomeBlocks: Map<String, Group
     if (blocks != null) {
      val result = matchConnectingBlock(dice, blocks.all, grid, location)
       if (result != null) {
-        println(" fallback biome $option")
         return result
       }
     }

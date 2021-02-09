@@ -30,6 +30,9 @@
 ["floor","translation",[0.0,0.0,0.5]],
 ["floor","scale",[0.5,0.5,0.5]],
 ["floor","texture","checkersBlackWhite"],
+["monster","parent","checkers-block"],
+["monster","type","monster"],
+["monster","translation",[0.0,0.0,1.3158576]],
 ["sides","parent","checkers-block"]
 ]
 }

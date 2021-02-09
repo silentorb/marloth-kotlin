@@ -79,7 +79,7 @@ fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap
       meshes = compileArchitectureMeshInfo(meshInfo),
       includeEnemies = getDebugString("MONSTER_LIMIT") != "0",
       meshShapes = meshInfo,
-      roomCount = getDebugInt("BASE_ROOM_COUNT") ?: 100,
+      cellCount = getDebugInt("BASE_ROOM_COUNT") ?: 100,
       polyominoes = mapOf(),
       graphLibrary = loadMarlothGraphLibrary(marlothPropertiesSerialization) + graphLibrary,
   )

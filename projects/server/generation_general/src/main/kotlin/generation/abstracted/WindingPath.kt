@@ -95,7 +95,6 @@ tailrec fun addPathStep(
 //      "Side: ${currentBlock.name} ${side.mineOld}, ${incompleteSide.position} ${incompleteSide.direction}"
 //    }
     val biome = state.biomeGrid(nextPosition)
-    println("biome $biome")
     val groupedBlocks = state.biomeBlocks[biome]
     if (groupedBlocks == null)
       throw Error("Biome mismatch")
@@ -110,7 +109,6 @@ tailrec fun addPathStep(
         ?: fallbackBiomeMatchConnectingBlock(dice, state.biomeBlocks, grid, nextPosition, biome)
 
     val nextState = if (matchResult == null) {
-      println(" no match")
       state.copy(
           blacklistSides = state.blacklistSides + incompleteSide
       )

@@ -1,11 +1,18 @@
 {
 "graph" : [
+["collision","parent","wall-lamp"],
+["collision","type","solid-static"],
+["collision","collisionShape","sphere"],
+["collision","radius",1.0],
+["collision","translation",[0.4931416,0.0,0.8847925]],
+["collision","scale",[0.9392009,0.9392009,0.9392009]],
 ["lamp","light","point"],
 ["lamp","parent","wall-lamp"],
 ["lamp","rgba","#fff5d8ff"],
 ["lamp","translation",[0.45234454,0.0,0.5453807]],
 ["lamp","range",10.0],
-["wall-lamp","",""],
-["wall-lamp","mesh","wallLamp"]
+["mesh","parent","wall-lamp"],
+["mesh","mesh","wallLamp"],
+["wall-lamp","",""]
 ]
 }

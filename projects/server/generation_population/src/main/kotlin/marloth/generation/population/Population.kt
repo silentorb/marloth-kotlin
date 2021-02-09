@@ -105,16 +105,15 @@ fun populateMonsters(definitions: Definitions, locations: List<Matrix>, nextId: 
     val distributions = distributeToSlots(dice, locations.size, enemyDistributions(), mapOf())
     locations
         .zip(distributions) { location, definitionName ->
-          println("Monster location: $location")
           val definition = definitions.professions[definitionName]!!
           placeMonster(definitions, definition, nextId, location)
         }
   }
 }
 
-fun populateMonsters(nextId: IdSource, definitions: Definitions, dice: Dice, graph: Graph): List<NewHand> {
+fun populateMonsters(nextId: IdSource, definitions: Definitions, dice: Dice, graph: Graph, cellCount: Int): List<NewHand> {
   val spawners = nodeAttributes(graph, Entities.monsterSpawn)
-  val count = min(monsterLimit(), min(spawners.size, spawners.size / 2 + 1))
+  val count = min(monsterLimit(), min(spawners.size, cellCount / 10))
   val locations = dice.take(spawners, count)
       .map { getNodeTransform(graph, it) }
 
@@ -130,7 +129,7 @@ fun populateWorld(nextId: IdSource, config: GenerationConfig, dice: Dice, graph:
       .flatMap { newPlayerAndCharacter(nextId, definitions, graph) }
       .plus(graphToHands(definitions, nextId, graph))
       .plus(cycleHands(nextId))
-      .plus(populateMonsters(nextId, definitions, dice, graph))
+      .plus(populateMonsters(nextId, definitions, dice, graph, config.cellCount))
       .plus(lights.map {
         NewHand(listOf(
             it.copy(isDynamic = false)

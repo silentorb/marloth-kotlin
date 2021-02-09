@@ -25,6 +25,9 @@
 ["checkers-slope","biome","checkers"],
 ["checkers-slope-base","parent","checkers-slope"],
 ["checkers-slope-base","type","checkers-slope-base"],
+["monster","parent","checkers-slope"],
+["monster","type","monster"],
+["monster","translation",[0.0,0.0,2.6542482]],
 ["sides","parent","checkers-slope"]
 ]
 }

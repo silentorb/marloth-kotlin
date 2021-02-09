@@ -1,5 +1,11 @@
 {
 "graph" : [
+["collision","parent","lamppost"],
+["collision","type","solid-static"],
+["collision","collisionShape","cylinder"],
+["collision","radius",0.3],
+["collision","translation",[0.0,0.0,1.85498]],
+["collision","height",4.0],
 ["lamppost","",""],
 ["lamppost","mesh","lampPost"],
 ["light","parent","lamppost"],
