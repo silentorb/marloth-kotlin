@@ -113,7 +113,7 @@ fun populateMonsters(definitions: Definitions, locations: List<Matrix>, nextId: 
 
 fun populateMonsters(nextId: IdSource, definitions: Definitions, dice: Dice, graph: Graph, cellCount: Int): List<NewHand> {
   val spawners = nodeAttributes(graph, Entities.monsterSpawn)
-  val count = min(monsterLimit(), min(spawners.size, cellCount / 10))
+  val count = min(monsterLimit(), min(spawners.size, cellCount / 15))
   val locations = dice.take(spawners, count)
       .map { getNodeTransform(graph, it) }
 

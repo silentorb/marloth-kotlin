@@ -7,7 +7,6 @@ import silentorb.mythic.spatial.Vector3i
 import simulation.misc.CellAttribute
 import simulation.misc.cellLength
 import kotlin.math.pow
-import kotlin.math.sqrt
 
 data class GroupedBlocks(
     val all: Set<Block>,
@@ -42,12 +41,19 @@ fun filterUsedUniqueBlock(block: Block?, groupedBlocks: GroupedBlocks): GroupedB
     else
       groupedBlocks
 
+enum class BranchingMode {
+  linear,
+  open,
+}
+
 data class BlockState(
     val grid: BlockGrid,
-    val blacklistSides: List<AbsoluteSide>,
+    val blacklistSides: List<CellDirection>,
     val biomeBlocks: Map<String, GroupedBlocks>,
     val biomeGrid: BiomeGrid,
-    val blacklistBlockLocations: Map<Vector3i, List<Block>>
+    val blacklistBlockLocations: Map<Vector3i, List<Block>>,
+    val branchingMode: BranchingMode,
+    val lastCell: Vector3i? = null,
 )
 
 const val debugWorldGenerationKey = "DEBUG_WORLD_GENERATION"
@@ -63,15 +69,29 @@ fun extractCells(block: Block, position: Vector3i) =
           )
         }
 
+fun getNextPosition(incompleteSide: CellDirection): Vector3i {
+  val offset = directionVectors[incompleteSide.direction]!!
+  val position = incompleteSide.cell
+  return position + offset
+}
+
 tailrec fun addPathStep(
     maxSteps: Int,
     dice: Dice,
     state: BlockState
-): BlockGrid {
+): BlockState {
   val (grid, blacklist) = state
-  val incompleteSides = getIncompleteBlockSides(grid) - blacklist
+  val incompleteSides = if (state.branchingMode == BranchingMode.linear && state.lastCell != null) {
+    val sides = getIncompleteBlockSides(grid, state.lastCell) - blacklist
+    if (sides.any())
+      sides
+    else
+      getIncompleteBlockSides(grid) - blacklist
+  } else
+    getIncompleteBlockSides(grid) - blacklist
+
   if (incompleteSides.none())
-    return grid
+    return state
 
   if (grid.size > 1000)
     throw Error("Infinite loop in world generation.")
@@ -81,15 +101,11 @@ tailrec fun addPathStep(
 //    "Grid size: ${grid.size}, Traversable: $stepCount, Required: $required, Optional: $optional"
 //  }
   return if (stepCount >= maxSteps)
-    grid
+    state
   else {
     val incompleteSide = dice.takeOne(incompleteSides)
-
-    val offset = directionVectors[incompleteSide.direction]!!
-    val position = incompleteSide.position
-    val nextPosition = position + offset
+    val nextPosition = getNextPosition(incompleteSide)
     assert(!grid.containsKey(nextPosition))
-    val currentBlock = grid[position]!!.cell
 //    val side = currentBlock.sides[incompleteSide.direction]!!
 //    worldGenerationLog {
 //      "Side: ${currentBlock.name} ${side.mineOld}, ${incompleteSide.position} ${incompleteSide.direction}"
@@ -118,7 +134,8 @@ tailrec fun addPathStep(
       val cellAdditions = extractCells(block, nextPosition - blockOffset)
       state.copy(
           biomeBlocks = state.biomeBlocks + (biome to filterUsedUniqueBlock(block, groupedBlocks)),
-          grid = grid + cellAdditions
+          grid = grid + cellAdditions,
+          lastCell = nextPosition,
       )
     }
 
@@ -146,11 +163,15 @@ fun windingPath(seed: Long, dice: Dice, config: BlockConfig, length: Int, grid: 
       blacklistSides = listOf(),
       blacklistBlockLocations = mapOf(),
       biomeGrid = biomeGrid,
+      branchingMode = BranchingMode.linear
   )
+  val firstLength = length
+  val secondLength = 0
   for (i in 0..10) {
-    val nextGrid = addPathStep(length, dice, state)
-    if (nextGrid.size >= length)
-      return nextGrid
+    val intermediateState = addPathStep(firstLength, dice, state)
+    val nextState = addPathStep(secondLength, dice, intermediateState.copy(branchingMode = BranchingMode.open))
+    if (nextState.grid.size >= length)
+      return nextState.grid
     else
       println("Failed to generate world with seed $seed")
   }

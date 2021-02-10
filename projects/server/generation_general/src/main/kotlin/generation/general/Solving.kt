@@ -112,22 +112,17 @@ fun openSides(blockGrid: BlockGrid, position: Vector3i): Map<Direction, Vector3i
 
 typealias UsableConnectionTypes = (Vector3i) -> (Direction) -> Side
 
-data class AbsoluteSide(
-    val position: Vector3i,
-    val direction: Direction
-)
-
-fun getIncompleteBlockSides(blockGrid: BlockGrid, position: Vector3i): List<AbsoluteSide> {
+fun getIncompleteBlockSides(blockGrid: BlockGrid, position: Vector3i): List<CellDirection> {
   val options = openSides(blockGrid, position)
   return options.map {
-    AbsoluteSide(
-        position = position,
-        direction = it.key
+    CellDirection(
+        cell = position,
+        direction = it.key,
     )
   }
 }
 
-fun getIncompleteBlockSides(blockGrid: BlockGrid): List<AbsoluteSide> =
+fun getIncompleteBlockSides(blockGrid: BlockGrid): List<CellDirection> =
     blockGrid.keys.flatMap { getIncompleteBlockSides(blockGrid, it) }
 
 fun filterUsedUniqueBlocks(grid: BlockGrid, blocks: Set<Block>): Set<Block> {
