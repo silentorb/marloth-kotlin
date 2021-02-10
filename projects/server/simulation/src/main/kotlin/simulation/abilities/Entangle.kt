@@ -7,9 +7,11 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.timing.FloatTimer
 import simulation.accessorize.AccessoryStack
+import simulation.accessorize.hasAnyAccessory
 import simulation.happenings.NewHandEvent
 import simulation.main.Deck
 import simulation.main.Hand
+import simulation.main.NewHand
 
 val isEntangleImmune = hasAccessory(AccessoryId.entangleImmune)
 val isEntangled = hasAccessory(AccessoryId.entangled)
@@ -25,31 +27,31 @@ fun entangledDuration(level: Int): Float =
 fun entangleEvents(deck: Deck, accessory: Accessory): (Id) -> Events = { target ->
   val immunityDuration = 3f
 
-  if (isEntangleImmune(deck.accessories, target))
+  if (hasAnyAccessory(setOf(AccessoryId.entangling, AccessoryId.entangleImmune), deck.accessories, target))
     listOf()
   else
     listOf(
-        NewHandEvent(
-            hand = Hand(
-                accessory = AccessoryStack(
+        NewHand(
+            components = listOf(
+                AccessoryStack(
                     value = Accessory(
                         type = AccessoryId.entangling,
                         level = accessory.level,
                     ),
                     owner = target,
                 ),
-                timerFloat = FloatTimer(1f)
-            )
+                FloatTimer(1f)
+            ),
         ),
-        NewHandEvent(
-            hand = Hand(
-                accessory = AccessoryStack(
+        NewHand(
+            components = listOf(
+                AccessoryStack(
                     value = Accessory(
                         type = AccessoryId.entangleImmune,
                     ),
                     owner = target
                 ),
-                timerFloat = FloatTimer(entangledDuration(accessory.level) + immunityDuration)
+                FloatTimer(entangledDuration(accessory.level) + immunityDuration),
             )
         )
     )

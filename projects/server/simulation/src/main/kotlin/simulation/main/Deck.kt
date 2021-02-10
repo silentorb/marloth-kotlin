@@ -26,9 +26,11 @@ import simulation.happenings.Trigger
 import simulation.intellect.Spirit
 import simulation.intellect.assessment.Knowledge
 import simulation.intellect.navigation.NavigationDirection
+import simulation.misc.Definitions
 import simulation.misc.NodeReference
 import simulation.updating.applyHands
 import simulation.updating.finalizeHands
+import simulation.updating.incorporateNewAccessories
 
 // Deck is basically a database full of tables
 
@@ -70,10 +72,10 @@ data class Deck(
     val triggers: Table<Trigger> = mapOf(),
 )
 
-fun allHandsToDeck(nextId: IdSource, newHands: List<NewHand>, time: Long = -1L, deck: Deck): Deck {
+fun allHandsToDeck(definitions: Definitions, nextId: IdSource, newHands: List<NewHand>, time: Long = -1L, deck: Deck): Deck {
   val hands = newHands.flatMap(finalizeHands(nextId))
   return deck.copy(
-      accessories = deck.accessories + applyHands(hands),
+      accessories = incorporateNewAccessories(definitions, deck.accessories, applyHands(hands)),
       actions = deck.actions + applyHands(hands),
       ambientSounds = deck.ambientSounds + applyHands(hands),
       animations = deck.animations + applyHands(hands),
@@ -121,7 +123,7 @@ fun addEntitiesToWorldDeck(world: World, transform: (IdSource) -> List<NewHand>)
   val nextId = newIdSource(world.nextId)
   val hands = transform(nextId)
   return world.copy(
-      deck = allHandsToDeck(nextId, hands, world.step, world.deck),
+      deck = allHandsToDeck(world.definitions, nextId, hands, world.step, world.deck),
       nextId = nextId()
   )
 }

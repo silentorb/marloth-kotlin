@@ -26,7 +26,8 @@ fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
           hand = Hand(
               body = Body(
                   position = origin,
-                  velocity = vector * weapon.velocity
+                  velocity = vector * weapon.velocity,
+                  scale = Vector3(0.5f)
               ),
               dynamicBody = DynamicBody(
                   gravity = false,
@@ -34,7 +35,7 @@ fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
                   resistance = 1f
               ),
               collisionShape = CollisionObject(
-                  shape = Sphere(0.2f),
+                  shape = Sphere(0.5f),
                   groups = CollisionGroups.dynamic,
                   mask = CollisionGroups.standardMask
               ),

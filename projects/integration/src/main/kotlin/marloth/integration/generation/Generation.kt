@@ -35,7 +35,7 @@ fun generateWorld(db: Database, definitions: Definitions, generationConfig: Gene
 
   val realm = Realm(Deck())
 
-  val deck = allHandsToDeck(nextId, populateWorld(nextId, generationConfig, dice, graph2), step, Deck())
+  val deck = allHandsToDeck(definitions, nextId, populateWorld(nextId, generationConfig, dice, graph2), step, Deck())
   val navigation = if (generationConfig.includeEnemies) {
     val meshNodes = filterByProperty(graph2, SceneProperties.collisionShape)
         .map { it.source }

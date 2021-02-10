@@ -37,11 +37,15 @@ data class AccessoryDefinition(
     val debugName: String? = null,
     val maxLevel: Int = 1,
     val charges: Int? = null,
-    val components: List<Any> = listOf()
+    val components: List<Any> = listOf(),
+    val many: Boolean = true
 )
 
 fun hasAccessory(type: AccessoryName, accessories: Table<AccessoryStack>, actor: Id): Boolean =
     accessories.values.any { it.owner == actor && it.value.type == type }
+
+fun hasAnyAccessory(types: Collection<AccessoryName>, accessories: Table<AccessoryStack>, actor: Id): Boolean =
+    accessories.values.any { it.owner == actor && types.contains(it.value.type) }
 
 fun getAccessory(type: AccessoryName, accessories: Table<AccessoryStack>, actor: Id): Map.Entry<Id, AccessoryStack>? =
     accessories.entries.firstOrNull { it.value.owner == actor && it.value.value.type == type }

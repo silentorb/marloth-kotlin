@@ -147,12 +147,15 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
         .mapNotNull { (accessory, accessoryRecord) ->
           val cooldown = deck.actions[accessory]?.cooldown
           if (cooldown != null && cooldown != 0f) {
-            val actionDefinition = definitions.actions[accessoryRecord.value.type]!!
-            val accessoryDefinition = definitions.accessories[accessoryRecord.value.type]!!
-            Cooldown(
-                name = textResources(accessoryDefinition.name)!!,
-                value = 1f - cooldown / actionDefinition.cooldown
-            )
+            val accessoryDefinition = definitions.accessories[accessoryRecord.value.type]
+            val definitionCooldown = definitions.actions[accessoryRecord.value.type]?.cooldown
+            if (accessoryDefinition != null && definitionCooldown != null)
+              Cooldown(
+                  name = textResources(accessoryDefinition.name)!!,
+                  value = 1f - cooldown / definitionCooldown,
+              )
+            else
+              null
           } else
             null
         }

@@ -22,7 +22,7 @@ fun staticDefinitions(clientDefinitions: ClientDefinitions, applicationInfo: App
 
   return Definitions(
       actions = actionAccessories.mapValues { it.value.action },
-      accessories = modifiers() + actionAccessories.mapValues { it.value.accessory },
+      accessories = modifiers() + actionAccessories.mapValues { it.value.accessory } + accessories(),
       animations = clientDefinitions.animations + animationPlaceholders(),
       applicationInfo = applicationInfo,
       damageTypes = staticDamageTypes.toSet(),
