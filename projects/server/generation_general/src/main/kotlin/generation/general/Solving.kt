@@ -17,8 +17,8 @@ fun getOtherSide(getBlock: GetBlock, origin: Vector3i): (Direction) -> Side? = {
 }
 
 fun sidesMatch(first: Side, second: Side): Boolean =
-    first.other == second.mine &&
-        first.mine == second.other &&
+    first.other.contains(second.mine) &&
+        second.other.contains(first.mine) &&
         first.height == second.height
 
 fun sidesMatch(surroundingSides: SideMap, direction: Direction, blockSide: Side): Boolean {

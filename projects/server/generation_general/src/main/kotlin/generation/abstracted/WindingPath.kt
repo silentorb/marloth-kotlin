@@ -2,6 +2,7 @@ package generation.abstracted
 
 import generation.general.*
 import silentorb.mythic.debugging.conditionalDebugLog
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3i
 import simulation.misc.CellAttribute
@@ -165,8 +166,13 @@ fun windingPath(seed: Long, dice: Dice, config: BlockConfig, length: Int, grid: 
       biomeGrid = biomeGrid,
       branchingMode = BranchingMode.linear
   )
-  val firstLength = length
-  val secondLength = 0
+
+  val (firstLength, secondLength) =
+      if (getDebugBoolean("LINEAR_MAP"))
+        length to 0
+      else
+        0 to length
+
   for (i in 0..10) {
     val intermediateState = addPathStep(firstLength, dice, state)
     val nextState = addPathStep(secondLength, dice, intermediateState.copy(branchingMode = BranchingMode.open))

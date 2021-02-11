@@ -28,7 +28,7 @@ data class Side(
     val mineOld: Any = "Nothing",
     val otherOld: Set<Any> = setOf(mineOld),
     val mine: String = tempConnectionContract,
-    val other: String = tempConnectionContract,
+    val other: Set<String> = setOf(tempConnectionContract), // other is a disjunction set
     val height: Int = StandardHeights.first,
     val isTraversable: Boolean = true,
     val connectionLogic: ConnectionLogic = ConnectionLogic.optional,
