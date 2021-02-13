@@ -125,6 +125,7 @@
 ["home-set","",""],
 ["home-set","type","lockedRotation"],
 ["home-set","biome","home"],
+["home-set","translation",[0.0,0.0,-2.5]],
 ["n1-0-1","type","blockSide"],
 ["n1-0-1","parent","sides"],
 ["n1-0-1","direction",[-1,0,0,"south"]],

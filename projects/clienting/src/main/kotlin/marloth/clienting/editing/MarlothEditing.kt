@@ -8,11 +8,13 @@ import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.scenery.enums.*
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.editing.*
+import silentorb.mythic.editing.components.gizmoMenuToggleState
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.ExpansionLibrary
 import silentorb.mythic.ent.scenery.expandInstances
 import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.ent.scenery.getNodeTransform
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.lookinglass.ElementGroup
 import silentorb.mythic.lookinglass.MeshElement
@@ -104,6 +106,16 @@ object PlaceholderTextures {
   val ceiling = "placeholderCeiling"
 }
 
+fun marlothEditorMenus() =
+    panelMenus() +
+        mapOf(
+            listOf(Contexts.viewport, Menus.display, MarlothEditorCommands.toggleBlockBounds) to MenuItem(
+                label = "Block bounds",
+                command = Command(EditorCommands.toggleGizmoVisibility, blockBoundsEnabledKey),
+                getState = gizmoMenuToggleState(blockBoundsEnabledKey),
+            )
+        )
+
 fun newEditor(textLibrary: TextResourceMapper, meshShapes: MeshShapeMap): Editor {
   val debugProjectPath = getDebugString("EDITOR_PROJECT_PATH")
   val projectPath = if (debugProjectPath != null)
@@ -124,6 +136,8 @@ fun newEditor(textLibrary: TextResourceMapper, meshShapes: MeshShapeMap): Editor
           collisionPresets = marlothCollisionPresets(),
           expanders = marlothExpanders(),
           depictions = marlothEditorDepictions(),
+          menus = marlothEditorMenus(),
+          gizmoPainters = listOf(blockBoundsPainter),
       ),
       fileItems = loadProjectTree(projectPath, "world"),
       persistentState = loadEditorStateOrDefault(),
