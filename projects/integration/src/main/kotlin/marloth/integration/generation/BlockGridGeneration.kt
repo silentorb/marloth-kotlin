@@ -66,40 +66,6 @@ val defaultBiomeTextures: Map<String, Map<String, String>> = mapOf(
     ),
 )
 
-tailrec fun expandSideGroups(sideGroups: Map<String, Set<String>>, value: Collection<String>, step: Int = 0): Collection<String> {
-  if (step > 20)
-    throw Error("Infinite loop detected with expanding side type groups")
-
-  val groups = sideGroups.keys.intersect(value)
-  return if (groups.none())
-    value
-  else {
-    val next = (value - groups) + groups.flatMap { sideGroups[it]!! }
-    expandSideGroups(sideGroups, next, step + 1)
-  }
-}
-
-fun gatherSides(graph: Graph, sideNodes: List<String>) =
-    sideNodes
-        .mapNotNull { node ->
-          val mine = getGraphValue<String>(graph, node, MarlothProperties.mine)
-          val initialOther = getGraphValues<String>(graph, node, MarlothProperties.other)
-          val other = expandSideGroups(sideGroups, initialOther)
-          val cellDirection = getGraphValue<CellDirection>(graph, node, MarlothProperties.direction)
-          if (cellDirection == null)
-            null
-          else if (mine == null || other.none())
-            cellDirection to null
-          else {
-            val height = getGraphValue<Int>(graph, node, MarlothProperties.sideHeight) ?: StandardHeights.first
-            cellDirection to Side(
-                mine = mine,
-                other = other.toSet(),
-                height = height,
-            )
-          }
-        }
-
 fun cellsFromSides(allSides: List<Pair<CellDirection, Side?>>) =
     allSides
         .groupBy { it.first.cell }
@@ -182,7 +148,7 @@ fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder? {
     null
   else {
     val sideNodes = nodeAttributes(graph, GameAttributes.blockSide)
-    val sides = gatherSides(graph, sideNodes)
+    val sides = gatherSides(sideGroups, graph, sideNodes)
     val cells = cellsFromSides(sides)
     val block = blockFromGraph(graph, cells, root, name, biome)
     val finalGraph = prepareBlockGraph(graph, sideNodes, biome)

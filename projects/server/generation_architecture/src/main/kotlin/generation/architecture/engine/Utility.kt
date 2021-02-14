@@ -1,9 +1,11 @@
 package generation.architecture.engine
 
 import generation.architecture.matrical.BlockBuilder
-import generation.general.BiomeGrid
-import generation.general.Block
+import generation.general.*
 import marloth.scenery.enums.MeshInfoMap
+import silentorb.mythic.ent.Graph
+import silentorb.mythic.ent.getGraphValue
+import silentorb.mythic.ent.getGraphValues
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.scenery.MeshName
@@ -78,3 +80,37 @@ fun applyTurnsOld(turns: Int): Float =
 
 fun applyTurns(turns: Int): Float =
     turns.toFloat() * Pi * 0.5f
+
+tailrec fun expandSideGroups(sideGroups: Map<String, Set<String>>, value: Collection<String>, step: Int = 0): Collection<String> {
+  if (step > 20)
+    throw Error("Infinite loop detected with expanding side type groups")
+
+  val groups = sideGroups.keys.intersect(value)
+  return if (groups.none())
+    value
+  else {
+    val next = (value - groups) + groups.flatMap { sideGroups[it]!! }
+    expandSideGroups(sideGroups, next, step + 1)
+  }
+}
+
+fun gatherSides(sideGroups: Map<String, Set<String>>, graph: Graph, sideNodes: List<String>) =
+    sideNodes
+        .mapNotNull { node ->
+          val mine = getGraphValue<String>(graph, node, MarlothProperties.mine)
+          val initialOther = getGraphValues<String>(graph, node, MarlothProperties.other)
+          val other = expandSideGroups(sideGroups, initialOther)
+          val cellDirection = getGraphValue<CellDirection>(graph, node, MarlothProperties.direction)
+          if (cellDirection == null)
+            null
+          else if (mine == null || other.none())
+            cellDirection to null
+          else {
+            val height = getGraphValue<Int>(graph, node, MarlothProperties.sideHeight) ?: StandardHeights.first
+            cellDirection to Side(
+                mine = mine,
+                other = other.toSet(),
+                height = height,
+            )
+          }
+        }

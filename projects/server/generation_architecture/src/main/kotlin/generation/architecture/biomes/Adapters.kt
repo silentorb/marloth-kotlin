@@ -13,7 +13,6 @@ fun biomeAdapters(): List<BlockBuilder> {
   )
   val edges = listOf(
       Biomes.tealPalace,
-      Biomes.village
   )
   return listOf(
       BlockBuilder(biomeAdapterCube(Biomes.forest, Biomes.home, setOf(CellAttribute.unique))(0)!!, generalForestBuilder())

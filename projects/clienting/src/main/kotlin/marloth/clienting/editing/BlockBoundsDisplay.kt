@@ -1,6 +1,10 @@
 package marloth.clienting.editing
 
+import generation.architecture.engine.gatherSides
+import generation.general.horizontalDirectionVectors
+import generation.general.rotateDirection
 import imgui.ImColor
+import marloth.definition.misc.sideGroups
 import silentorb.mythic.editing.drawGizmoLine
 import silentorb.mythic.editing.getCachedGraph
 import silentorb.mythic.editing.gizmoPainterToggle
@@ -10,17 +14,18 @@ import silentorb.mythic.ent.filterByProperty
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.ent.scenery.getShape
 import silentorb.mythic.ent.scenery.hasAttribute
+import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.scenery.Shape
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
+import silentorb.mythic.spatial.toVector3
 import simulation.misc.GameAttributes
 import simulation.misc.cellHalfLength
 import simulation.misc.cellLength
 import simulation.misc.getCellPoint
 import kotlin.math.ceil
 import kotlin.math.floor
-import kotlin.math.round
 
 val blockBoundsEnabledKey = "blockBounds"
 
@@ -78,7 +83,36 @@ val blockBoundsPainter = gizmoPainterToggle(blockBoundsEnabledKey) { environment
     val meshNodes = filterByProperty(graph, SceneProperties.mesh).map { it.source }
     val cells = getOverlappingCells(editor.enumerations.meshShapes, graph, meshNodes)
         .distinct()
-//    val cells = listOf(Vector3i(0, 0, 0))
+
+    val sideNodes = nodeAttributes(graph, GameAttributes.blockSide)
+    val sides = gatherSides(sideGroups, graph, sideNodes)
+        .filter { it.second != null }
+
+    val heightLines = sides
+        .mapNotNull { (cellDirection, side) ->
+          val height = side!!.height
+          val dir = horizontalDirectionVectors[cellDirection.direction]?.toVector3()
+          if (dir == null)
+            null
+          else {
+            val heightOffset = Vector3(0f, 0f, height.toFloat() * cellLength / 100f - cellHalfLength)
+            val rightAngleDirection = horizontalDirectionVectors[rotateDirection(1)(cellDirection.direction)]!!.toVector3()
+            val middle = getCellPoint(cellDirection.cell) + dir * cellHalfLength + heightOffset
+            val hookOffset = dir * 0.25f
+            val a = middle + rightAngleDirection * cellHalfLength
+            val b =  middle - rightAngleDirection * cellHalfLength
+            val ac = a + hookOffset
+            val ad = a - hookOffset
+            val bc = b + hookOffset
+            val bd = b - hookOffset
+            listOf(
+                a to b,
+                ac to ad,
+                bc to bd,
+            )
+          }
+        }
+        .flatten()
 
     val lines = cells
         .flatMap { cell ->
@@ -91,7 +125,11 @@ val blockBoundsPainter = gizmoPainterToggle(blockBoundsEnabledKey) { environment
     val drawList = environment.drawList
 
     for ((start, end) in lines) {
-      drawGizmoLine(drawList, transform, start, end, ImColor.intToColor(128, 128, 128, 255))
+      drawGizmoLine(drawList, transform, start, end, ImColor.intToColor(128, 128, 128, 128))
+    }
+
+    for ((start, end) in heightLines) {
+      drawGizmoLine(drawList, transform, start, end, ImColor.intToColor(255, 255, 255, 128))
     }
   }
 }
