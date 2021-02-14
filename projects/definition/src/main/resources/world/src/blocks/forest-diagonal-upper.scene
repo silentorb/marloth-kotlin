@@ -20,7 +20,7 @@
 ["floor","translation",[0.0,0.0,3.0]],
 ["forest-diagonal-upper","",""],
 ["forest-diagonal-upper","biome","forest"],
-["forest-diagonal-upper","translation",[0.0,0.0,-2.5]],
+["forest-diagonal-upper","translation",[0.0,0.0,-2.75]],
 ["sides","parent","forest-diagonal-upper"],
 ["wall","rotation",[0.0,0.0,1.5707964]],
 ["wall","mesh","wallSquareShort"],

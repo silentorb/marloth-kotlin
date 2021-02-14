@@ -22,7 +22,7 @@
 ["0-0-0-west","direction",[0,0,0,"west"]],
 ["checkers-block","",""],
 ["checkers-block","biome","checkers"],
-["checkers-block","translation",[0.0,0.0,-2.5]],
+["checkers-block","translation",[0.0,0.0,-2.75]],
 ["checkers-block-walls","parent","checkers-block"],
 ["checkers-block-walls","type","checkers-block-walls"],
 ["floor","mesh","floorSquare"],

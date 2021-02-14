@@ -22,7 +22,7 @@
 ["0-0-0-west","direction",[0,0,0,"west"]],
 ["checkers-block","",""],
 ["checkers-block","biome","forest"],
-["checkers-block","translation",[0.0,0.0,-2.5]],
+["checkers-block","translation",[0.0,0.0,-2.75]],
 ["floor","mesh","floorSquare"],
 ["floor","type","solid-box"],
 ["floor","parent","checkers-block"],

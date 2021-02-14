@@ -15,8 +15,11 @@ import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.ent.scenery.getShape
 import silentorb.mythic.ent.scenery.hasAttribute
 import silentorb.mythic.ent.scenery.nodeAttributes
+import silentorb.mythic.scenery.Box
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.scenery.Shape
+import silentorb.mythic.scenery.ShapeTransform
+import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.spatial.toVector3
@@ -36,6 +39,35 @@ object MarlothEditorCommands {
 fun locationAxisToCellAxis(value: Float): Float =
     value / cellLength
 
+val boxPoints = (-1..1 step 2).flatMap { x ->
+  (-1..1 step 2).flatMap { y ->
+    (-1..1 step 2).map { z ->
+      Vector3(x.toFloat(), y.toFloat(), z.toFloat())
+    }
+  }
+}
+
+fun getShapeBounds(shape: Shape, transform: Matrix): Pair<Vector3, Vector3> =
+    when (shape) {
+      is Box -> {
+        val localTransform = transform.scale(shape.halfExtents)
+        val points = boxPoints.map { point ->
+          point.transform(localTransform)
+        }
+        val a = Vector3(points.minOf { it.x }, points.minOf { it.y }, points.minOf { it.z })
+        val b = Vector3(points.maxOf { it.x }, points.maxOf { it.y }, points.maxOf { it.z })
+        a to b
+      }
+      is ShapeTransform -> {
+        getShapeBounds(shape, transform * shape.transform)
+      }
+      else -> {
+        val location = transform.translation()
+        val radius = shape.radius * transform.getScale().x
+        (location - radius) to (location + radius)
+      }
+    }
+
 fun getOverlappingCells(meshShapes: Map<Key, Shape>, graph: Graph, nodes: Collection<Key>): List<Vector3i> =
     nodes.flatMap { node ->
       val transform = getNodeTransform(graph, node)
@@ -43,14 +75,13 @@ fun getOverlappingCells(meshShapes: Map<Key, Shape>, graph: Graph, nodes: Collec
       if (shape == null)
         listOf()
       else {
-        val location = transform.translation()
-        val radius = shape.radius * transform.getScale().x
-        val minX = ceil(locationAxisToCellAxis(location.x - radius)).toInt()
-        val minY = ceil(locationAxisToCellAxis(location.y - radius)).toInt()
-        val minZ = ceil(locationAxisToCellAxis(location.z - radius)).toInt()
-        val maxX = floor(locationAxisToCellAxis(location.x + radius)).toInt()
-        val maxY = floor(locationAxisToCellAxis(location.y + radius)).toInt()
-        val maxZ = floor(locationAxisToCellAxis(location.z + radius)).toInt()
+        val (min, max) = getShapeBounds(shape, transform)
+        val minX = ceil(locationAxisToCellAxis(min.x)).toInt()
+        val minY = ceil(locationAxisToCellAxis(min.y)).toInt()
+        val minZ = ceil(locationAxisToCellAxis(min.z)).toInt()
+        val maxX = floor(locationAxisToCellAxis(max.x)).toInt()
+        val maxY = floor(locationAxisToCellAxis(max.y)).toInt()
+        val maxZ = floor(locationAxisToCellAxis(max.z)).toInt()
         (minZ..maxZ).flatMap { z ->
           (minY..maxY).flatMap { y ->
             (minX..maxX).map { x ->
@@ -100,7 +131,7 @@ val blockBoundsPainter = gizmoPainterToggle(blockBoundsEnabledKey) { environment
             val middle = getCellPoint(cellDirection.cell) + dir * cellHalfLength + heightOffset
             val hookOffset = dir * 0.25f
             val a = middle + rightAngleDirection * cellHalfLength
-            val b =  middle - rightAngleDirection * cellHalfLength
+            val b = middle - rightAngleDirection * cellHalfLength
             val ac = a + hookOffset
             val ad = a - hookOffset
             val bc = b + hookOffset

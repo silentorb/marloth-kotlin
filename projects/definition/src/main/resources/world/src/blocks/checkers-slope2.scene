@@ -26,7 +26,7 @@
 ["0-0-1-south","sideLevel",60],
 ["checkers-slope","",""],
 ["checkers-slope","biome","checkers"],
-["checkers-slope","translation",[0.0,0.0,-2.5]],
+["checkers-slope","translation",[0.0,0.0,-2.75]],
 ["floor","mesh","floorSquare"],
 ["floor","type","solid-box"],
 ["floor","parent","checkers-slope"],

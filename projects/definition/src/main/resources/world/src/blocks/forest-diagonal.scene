@@ -18,7 +18,7 @@
 ["floor","texture","grass"],
 ["forest-diagonal","",""],
 ["forest-diagonal","biome","forest"],
-["forest-diagonal","translation",[0.0,0.0,-2.5]],
+["forest-diagonal","translation",[0.0,0.0,-2.75]],
 ["lamppost","type","lamppost"],
 ["lamppost","type","lightDistribution"],
 ["lamppost","parent","forest-diagonal"],

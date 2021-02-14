@@ -24,7 +24,7 @@
 ["0-0-0-west","other","open"],
 ["checkers-slope","",""],
 ["checkers-slope","biome","checkers"],
-["checkers-slope","translation",[0.0,0.0,-2.5]],
+["checkers-slope","translation",[0.0,0.0,-2.75]],
 ["checkers-slope-base","parent","checkers-slope"],
 ["checkers-slope-base","type","checkers-slope-base"],
 ["shelf","type","solid-box"],

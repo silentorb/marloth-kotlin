@@ -32,7 +32,7 @@
 ["road4","parent","city-street"],
 ["road4","translation",[-0.49818826,9.060044,2.0337088]],
 ["road4","rotation",[0.0,0.0,0.056295905]],
-["road4","scale",[2.9659016,1.0,1.0]],
+["road4","scale",[2.0658839,1.0,1.0]],
 ["roof","collisionShape","mesh"],
 ["roof","mesh","wallSquareShort"],
 ["roof","type","solid-static"],
