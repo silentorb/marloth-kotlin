@@ -59,7 +59,7 @@ fun getShapeBounds(shape: Shape, transform: Matrix): Pair<Vector3, Vector3> =
         a to b
       }
       is ShapeTransform -> {
-        getShapeBounds(shape, transform * shape.transform)
+        getShapeBounds(shape.shape, transform * shape.transform)
       }
       else -> {
         val location = transform.translation()
