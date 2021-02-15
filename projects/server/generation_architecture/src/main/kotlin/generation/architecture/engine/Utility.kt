@@ -94,13 +94,16 @@ tailrec fun expandSideGroups(sideGroups: Map<String, Set<String>>, value: Collec
   }
 }
 
+fun getCellDirection(graph: Graph, node: String): CellDirection? =
+    getGraphValue<CellDirection>(graph, node, MarlothProperties.direction)
+
 fun gatherSides(sideGroups: Map<String, Set<String>>, graph: Graph, sideNodes: List<String>) =
     sideNodes
         .mapNotNull { node ->
           val mine = getGraphValue<String>(graph, node, MarlothProperties.mine)
           val initialOther = getGraphValues<String>(graph, node, MarlothProperties.other)
           val other = expandSideGroups(sideGroups, initialOther)
-          val cellDirection = getGraphValue<CellDirection>(graph, node, MarlothProperties.direction)
+          val cellDirection = getCellDirection(graph, node)
           if (cellDirection == null)
             null
           else if (mine == null || other.none())

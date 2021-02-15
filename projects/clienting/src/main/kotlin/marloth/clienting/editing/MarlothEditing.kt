@@ -113,8 +113,22 @@ fun marlothEditorMenus() =
                 label = "Block bounds",
                 command = Command(EditorCommands.toggleGizmoVisibility, blockBoundsEnabledKey),
                 getState = gizmoMenuToggleState(blockBoundsEnabledKey),
-            )
+            ),
+            listOf(Contexts.nodes, Menus.edit, MarlothEditorCommands.fillOccupiedCells) to MenuItem(
+                label = "Fill cells",
+                commandType = MarlothEditorCommands.fillOccupiedCells,
+            ),
         )
+
+fun marlothGraphEditors(): GraphEditors = mapOf(
+    MarlothEditorCommands.fillOccupiedCells to { editor, command, graph ->
+      val selection = getNodeSelection(editor)
+      if (selection.size != 1)
+        graph
+      else
+        fillOccupied(editor.enumerations.meshShapes, graph, selection.first())
+    }
+)
 
 fun newEditor(textLibrary: TextResourceMapper, meshShapes: MeshShapeMap): Editor {
   val debugProjectPath = getDebugString("EDITOR_PROJECT_PATH")
@@ -138,6 +152,7 @@ fun newEditor(textLibrary: TextResourceMapper, meshShapes: MeshShapeMap): Editor
           depictions = marlothEditorDepictions(),
           menus = marlothEditorMenus(),
           gizmoPainters = listOf(blockBoundsPainter),
+          graphEditors = defaultGraphEditors() + marlothGraphEditors(),
       ),
       fileItems = loadProjectTree(projectPath, "world"),
       persistentState = loadEditorStateOrDefault(),
