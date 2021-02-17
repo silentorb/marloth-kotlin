@@ -1,13 +1,13 @@
 {
 "graph" : [
 ["dungeon","",""],
-["floor","mesh","floorSquare"],
+["floor","mesh","floorSquareOld"],
 ["floor","translation",[-30.728329,9.056245,-3.2734268]],
 ["floor","parent","dungeon"],
 ["floor","type","solid-box"],
 ["floor","texture","bricks"],
 ["floor","scale",[4.3828325,4.3828325,4.3828325]],
-["floor1","mesh","floorSquare"],
+["floor1","mesh","floorSquareOld"],
 ["floor1","type","solid-box"],
 ["floor1","texture","bricks"],
 ["floor1","parent","dungeon"],

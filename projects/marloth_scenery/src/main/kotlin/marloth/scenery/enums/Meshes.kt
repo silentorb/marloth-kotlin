@@ -52,6 +52,7 @@ object MeshId {
   val quarterSlopeOld = "quarterSlopeOld"
   val spiralStaircaseColumn = "spiralStaircaseColumn"
   val floorSquare = "floorSquare"
+  val floorSquareOld = "floorSquareOld"
   val floorDiagonal = "floorDiagonal"
   val squareWallHalfHeight = "squareWallHalfHeight"
   val squareWallDoorway = "squareWallDoorway"

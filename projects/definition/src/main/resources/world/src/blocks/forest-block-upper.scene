@@ -27,7 +27,7 @@
 ["checkers-block","",""],
 ["checkers-block","biome","forest"],
 ["checkers-block","translation",[0.0,0.0,2.5]],
-["floor","mesh","floorSquare"],
+["floor","mesh","floorSquareOld"],
 ["floor","type","solid-box"],
 ["floor","parent","checkers-block"],
 ["floor","scale",[0.5,0.5,0.5]],

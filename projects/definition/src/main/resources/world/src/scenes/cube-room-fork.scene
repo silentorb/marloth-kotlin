@@ -1,13 +1,13 @@
 {
 "graph" : [
 ["cube-room-fork","",""],
-["floor","mesh","floorSquare"],
+["floor","mesh","floorSquareOld"],
 ["floor","collisionShape","box"],
 ["floor","translation",[0.0,0.0,-0.36697802]],
 ["floor","type","solid-static"],
 ["floor","parent","cube-room-fork"],
 ["floor","texture","bricks"],
-["floor1","mesh","floorSquare"],
+["floor1","mesh","floorSquareOld"],
 ["floor1","collisionShape","box"],
 ["floor1","type","solid-static"],
 ["floor1","parent","cube-room-fork"],

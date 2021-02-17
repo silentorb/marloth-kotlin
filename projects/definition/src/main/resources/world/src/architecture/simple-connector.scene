@@ -7,7 +7,7 @@
 ["b","parent","simple-connector"],
 ["b","translation",[5.0,0.0,0.5]],
 ["simple-connector","",""],
-["simple-connector","mesh","floorSquare"],
+["simple-connector","mesh","floorSquareOld"],
 ["simple-connector","type","simpleBridge"],
 ["simple-connector","type","solid-box"]
 ]

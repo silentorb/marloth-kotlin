@@ -27,7 +27,7 @@
 ["checkers-upper","",""],
 ["checkers-upper","biome","checkers"],
 ["checkers-upper","translation",[0.0,0.0,-2.75]],
-["floor","mesh","floorSquare"],
+["floor","mesh","floorSquareOld"],
 ["floor","type","solid-box"],
 ["floor","parent","checkers-upper"],
 ["floor","scale",[0.5,0.5,0.5]],

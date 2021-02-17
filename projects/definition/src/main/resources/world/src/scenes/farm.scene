@@ -7,7 +7,7 @@
 ["earth-block","rotation",[0.0,6.0668364,0.3430967]],
 ["earth-block","translation",[21.816402,1.4273252,-0.6899306]],
 ["farm","",""],
-["floor1","mesh","floorSquare"],
+["floor1","mesh","floorSquareOld"],
 ["floor1","collisionShape","box"],
 ["floor1","type","solid-static"],
 ["floor1","rotation",[0.0,0.0,1.5768936]],

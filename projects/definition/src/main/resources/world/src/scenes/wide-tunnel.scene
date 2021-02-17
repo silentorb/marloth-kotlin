@@ -1,11 +1,11 @@
 {
 "graph" : [
-["floor","mesh","floorSquare"],
+["floor","mesh","floorSquareOld"],
 ["floor","parent","tunnel"],
 ["floor","texture","bricks"],
 ["floor","type","solid-box"],
 ["floor","scale",[1.0,2.5,1.0]],
-["floor1","mesh","floorSquare"],
+["floor1","mesh","floorSquareOld"],
 ["floor1","texture","bricks"],
 ["floor1","type","solid-box"],
 ["floor1","parent","tunnel"],

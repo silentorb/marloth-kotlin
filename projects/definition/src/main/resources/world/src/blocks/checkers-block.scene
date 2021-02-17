@@ -25,7 +25,7 @@
 ["checkers-block","translation",[0.0,0.0,-2.75]],
 ["checkers-block-walls","parent","checkers-block"],
 ["checkers-block-walls","type","checkers-block-walls"],
-["floor","mesh","floorSquare"],
+["floor","mesh","floorSquareOld"],
 ["floor","type","solid-box"],
 ["floor","parent","checkers-block"],
 ["floor","translation",[0.0,0.0,0.5]],
