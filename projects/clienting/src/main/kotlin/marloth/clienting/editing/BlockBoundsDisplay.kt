@@ -1,6 +1,8 @@
 package marloth.clienting.editing
 
+import generation.architecture.building.directionRotation
 import generation.architecture.engine.gatherSides
+import generation.architecture.engine.getCellDirection
 import generation.general.CellDirection
 import generation.general.Side
 import generation.general.horizontalDirectionVectors
@@ -10,16 +12,15 @@ import marloth.definition.misc.sideGroups
 import silentorb.mythic.editing.*
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.filterByProperty
+import silentorb.mythic.ent.getGraphValue
 import silentorb.mythic.ent.scenery.hasAttribute
 import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.scenery.SceneProperties
+import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.spatial.toVector3
-import simulation.misc.GameAttributes
-import simulation.misc.cellHalfLength
-import simulation.misc.cellLength
-import simulation.misc.getCellPoint
+import simulation.misc.*
 
 val blockBoundsEnabledKey = "blockBounds"
 
@@ -43,7 +44,25 @@ val cellLines = listOf(
     Vector3(-1f, -1f, 1f) to Vector3(1f, -1f, 1f),
 ).map { it.first * cellHalfLength to it.second * cellHalfLength }
 
-fun getSideHeightLines(sides: List<Pair<CellDirection, Side>>) =
+val eastSidePoints = listOf(
+    Vector3(1f, -1f, -1f),
+    Vector3(1f, -1f, 1f),
+    Vector3(1f, 1f, 1f),
+    Vector3(1f, 1f, -1f),
+)
+
+data class LineSegment(
+    val start: Vector3,
+    val end: Vector3,
+    val color: Int,
+)
+
+object LineColors {
+  val height = ImColor.intToColor(255, 255, 255, 128)
+  val selectedHeight = ImColor.intToColor(255, 255, 255, 200)
+}
+
+fun getSideHeightLines(selection: Collection<CellDirection>, sides: List<Pair<CellDirection, Side>>): List<LineSegment> =
     sides
         .mapNotNull { (cellDirection, side) ->
           val height = side!!.height
@@ -61,25 +80,33 @@ fun getSideHeightLines(sides: List<Pair<CellDirection, Side>>) =
             val ad = a - hookOffset
             val bc = b + hookOffset
             val bd = b - hookOffset
+            val color = if(selection.contains(cellDirection))
+              LineColors.selectedHeight
+            else
+              LineColors.height
+
             listOf(
-                a to b,
-                ac to ad,
-                bc to bd,
+                LineSegment(a, b, color),
+                LineSegment(ac, ad, color),
+                LineSegment(bc, bd, color),
             )
           }
         }
         .flatten()
 
-fun getCellLines(cells: List<Vector3i>) =
+fun getCellLines(cells: List<Vector3i>, color: Int): List<LineSegment> =
     cells
         .flatMap { cell ->
           val offset = getCellPoint(cell)
-          cellLines.map { line -> line.first + offset to line.second + offset }
+          cellLines.map { line ->
+            LineSegment(line.first + offset, line.second + offset, color)
+          }
         }
         .distinct()
 
 fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
   val editor = environment.editor
+  val selection = getNodeSelection(editor)
   val meshNodes = filterByProperty(graph, SceneProperties.mesh).map { it.source }
   val cells = getCellOccupancy(editor.enumerations.meshShapes, graph, meshNodes)
       .distinct()
@@ -88,29 +115,40 @@ fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
   val sides = gatherSides(sideGroups, graph, sideNodes)
       .filter { it.second != null } as List<Pair<CellDirection, Side>>
 
-  val heightLines = getSideHeightLines(sides)
+  val variableSides = selection.mapNotNull { node ->
+    getGraphValue<CellDirection>(graph, node, MarlothProperties.showIfSideIsEmpty)
+  }
+
+  val selectedSides = selection.mapNotNull { node ->
+    getCellDirection(graph, node)
+  }
+
+  val heightLines = getSideHeightLines(selectedSides, sides)
   val (primaryCells, secondaryCells) = cells.partition { cell ->
     sides.any { it.first.cell == cell }
   }
-  val primaryLines = getCellLines(primaryCells)
-  val secondaryLines = getCellLines(secondaryCells - primaryCells)
+  val mediumColor = ImColor.intToColor(128, 128, 128, 160)
+  val lightColor = ImColor.intToColor(128, 128, 128, 96)
+
+  val primaryLines = getCellLines(primaryCells, mediumColor)
+  val secondaryLines = getCellLines(secondaryCells - primaryCells, lightColor)
+  val selectedLines = getCellLines(selectedSides.map {it.cell}, ImColor.intToColor(255, 255, 255, 200))
 
   val transform = environment.transform
   val drawList = environment.drawList
 
-  val mediumColor = ImColor.intToColor(128, 128, 128, 160)
-  val lightColor = ImColor.intToColor(128, 128, 128, 96)
-
-  for ((start, end) in primaryLines) {
-    drawGizmoLine(drawList, transform, start, end, mediumColor)
+  for (side in variableSides) {
+    val sideTransform = Matrix.identity.rotateZ(directionRotation(side.direction))
+    val center = getCellPoint(side.cell)
+    val points = eastSidePoints.map {
+      center + it.transform(sideTransform) * cellHalfLength
+    }
+    drawGizmoSolidPolygon(drawList, transform, points, ImColor.intToColor(0, 128, 128, 64))
   }
 
-  for ((start, end) in secondaryLines) {
-    drawGizmoLine(drawList, transform, start, end, lightColor)
-  }
-
-  for ((start, end) in heightLines) {
-    drawGizmoLine(drawList, transform, start, end, ImColor.intToColor(255, 255, 255, 128))
+  val lines = primaryLines + secondaryLines + heightLines + selectedLines
+  for ((start, end, color) in lines) {
+    drawGizmoLine(drawList, transform, start, end, color)
   }
 }
 
