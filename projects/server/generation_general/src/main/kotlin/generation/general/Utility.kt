@@ -50,7 +50,7 @@ fun rotateZ(turns: Int, value: Direction): Direction =
 
 fun rotateZ(turns: Int, value: Vector3i): Vector3i {
   val (x, y, z) = value
-  return when (turns) {
+  return when ((turns + 4) % 4) {
     3 -> Vector3i(y, -x, z)
     2 -> Vector3i(-x, -y, z)
     1 -> Vector3i(-y, x, z)

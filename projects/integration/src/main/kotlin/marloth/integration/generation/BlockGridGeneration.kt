@@ -22,6 +22,11 @@ import simulation.misc.CellAttribute
 import simulation.misc.GameAttributes
 import simulation.misc.MarlothProperties
 
+fun getTraversable(cells: Map<Vector3i, BlockCell>) =
+    cells
+        .filterValues { it.isTraversable }
+        .keys
+
 fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder> {
   assert(blockBuilders.all { it.first.name.isNotEmpty() })
   val (needsRotatedVariations, noTurns) = blockBuilders
@@ -45,6 +50,7 @@ fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder>
               else
                 block.copy(
                     cells = cells,
+                    traversable = getTraversable(cells),
                     turns = turns
                 ) to builder
             }
@@ -106,15 +112,11 @@ fun prepareBlockGraph(graph: Graph, sideNodes: List<String>, biome: String): Gra
 }
 
 fun blockFromGraph(graph: Graph, cells: Map<Vector3i, BlockCell>, root: String, name: String, biome: String): Block {
-  val traversable = cells
-      .filterValues { it.isTraversable }
-      .keys
-
   val lockedRotation = hasAttribute(graph, root, GameAttributes.lockedRotation)
   return Block(
       name = name,
       cells = cells,
-      traversable = traversable,
+      traversable = getTraversable(cells),
       lockedRotation = lockedRotation,
       biome = biome,
   )

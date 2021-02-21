@@ -30,6 +30,7 @@ object MeshId {
 
   val arcWall8thA = "arcWall8thA"
   val arcWall8thB = "arcWall8thB"
+  val bridgeArched = "bridgeArched"
   val circleFloor = "circleFloor"
   val cornerSlope = "cornerSlope"
   val curvingStairStep = "curvingStairStep"

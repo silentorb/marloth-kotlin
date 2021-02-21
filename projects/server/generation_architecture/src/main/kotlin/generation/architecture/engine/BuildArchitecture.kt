@@ -21,8 +21,10 @@ fun gatherNeighbors(grid: BlockGrid, block: Block, position: Vector3i): Map<Cell
                 val reverse = oppositeDirections[rotated]
                 val side = other?.cell?.sides?.getOrDefault(reverse, null)
                 val contract = side?.mine
-                if (contract != null)
-                  CellDirection(cell, direction) to contract
+                if (contract != null) {
+                  val rotatedCell = rotateZ(-block.turns, cell)
+                  CellDirection(rotatedCell, direction) to contract
+                }
                 else
                   null
               }

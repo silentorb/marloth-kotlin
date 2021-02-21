@@ -133,13 +133,13 @@ tailrec fun addPathStep(
       val (blockOffset, block) = matchResult
       worldGenerationLog { "Block: ${block.name}" }
       val cellAdditions = extractCells(block, nextPosition - blockOffset)
-      state.copy(
+      assert(cellAdditions.containsKey(nextPosition))
+     state.copy(
           biomeBlocks = state.biomeBlocks + (biome to filterUsedUniqueBlock(block, groupedBlocks)),
           grid = grid + cellAdditions,
           lastCell = nextPosition,
       )
     }
-
     addPathStep(maxSteps, dice, nextState)
   }
 }

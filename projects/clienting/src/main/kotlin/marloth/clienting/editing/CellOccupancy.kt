@@ -46,6 +46,13 @@ fun getShapeBounds(shape: Shape, transform: Matrix): Pair<Vector3, Vector3> =
       }
     }
 
+fun lesserToGreater(a: Int, b: Int) =
+    if (a > b)
+      b to a
+    else
+      a to b
+
+
 fun getCellOccupancy(meshShapes: Map<Key, Shape>, graph: Graph, nodes: Collection<Key>): List<Vector3i> =
     nodes.flatMap { node ->
       val transform = getNodeTransform(graph, node)
@@ -54,12 +61,18 @@ fun getCellOccupancy(meshShapes: Map<Key, Shape>, graph: Graph, nodes: Collectio
         listOf()
       else {
         val (min, max) = getShapeBounds(shape, transform)
-        val minX = ceil(locationAxisToCellAxis(min.x)).toInt()
-        val minY = ceil(locationAxisToCellAxis(min.y)).toInt()
-        val minZ = ceil(locationAxisToCellAxis(min.z)).toInt()
-        val maxX = floor(locationAxisToCellAxis(max.x)).toInt()
-        val maxY = floor(locationAxisToCellAxis(max.y)).toInt()
-        val maxZ = floor(locationAxisToCellAxis(max.z)).toInt()
+        val (minX, maxX) = lesserToGreater(
+            ceil(locationAxisToCellAxis(min.x)).toInt(),
+            floor(locationAxisToCellAxis(max.x)).toInt()
+        )
+        val (minY, maxY) = lesserToGreater(
+            ceil(locationAxisToCellAxis(min.y)).toInt(),
+            floor(locationAxisToCellAxis(max.y)).toInt()
+        )
+        val (minZ, maxZ) = lesserToGreater(
+            ceil(locationAxisToCellAxis(min.z)).toInt(),
+            floor(locationAxisToCellAxis(max.z)).toInt()
+        )
         (minZ..maxZ).flatMap { z ->
           (minY..maxY).flatMap { y ->
             (minX..maxX).map { x ->

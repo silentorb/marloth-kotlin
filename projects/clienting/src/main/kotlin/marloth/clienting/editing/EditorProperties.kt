@@ -82,7 +82,7 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
         displayName = "Direction",
         serialization = cellDirectionSerialization,
         widget = cellDirectionWidget,
-        defaultValue = { Direction.east.name },
+        defaultValue = { CellDirection(Vector3i.zero, Direction.east) },
     ),
     MarlothProperties.showIfSideIsEmpty to PropertyDefinition(
         displayName = "Show if Side is Empty",
