@@ -2,6 +2,7 @@ package generation.general
 
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
+import simulation.misc.BlockRotations
 import simulation.misc.CellAttribute
 
 typealias SideMap = Map<Direction, Side>
@@ -17,11 +18,11 @@ data class Block(
     val sidesOld: SideMap = mapOf(),
     val cells: Map<Vector3i, BlockCell> = mapOf(),
     val attributes: Set<CellAttribute> = setOf(),
-    val lockedRotation: Boolean = false,
+    val rotations: BlockRotations = BlockRotations.none,
     // Used as a solving optimization when iterating through possible connecting cells within a polyomino
     val traversable: Set<Vector3i> = setOf(),
     val slots: List<Vector3> = listOf(),
-    val biome: String = "",
+    val biomes: Set<String> = setOf(),
     val turns: Int = 0
 ) {
   init {

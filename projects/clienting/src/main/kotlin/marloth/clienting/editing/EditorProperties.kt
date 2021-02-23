@@ -8,13 +8,11 @@ import generation.general.directionNames
 import imgui.ImGui
 import marloth.definition.misc.blockSides
 import silentorb.mythic.editing.*
-import silentorb.mythic.editing.components.dropDownWidget
-import silentorb.mythic.editing.components.integerTextField
-import silentorb.mythic.editing.components.propertyIntegerTextField
-import silentorb.mythic.editing.components.stagingValue
+import silentorb.mythic.editing.components.*
 import silentorb.mythic.ent.Serialization
 import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.spatial.Vector3i
+import simulation.misc.BlockRotations
 import simulation.misc.MarlothProperties
 
 val cellDirectionWidget: PropertyWidget = { _, entry, owner ->
@@ -66,6 +64,8 @@ val cellDirectionSerialization = Serialization(
 )
 
 val biomeIds = reflectProperties<String>(Biomes)
+val blockRotationOptions =  BlockRotations.values().associate { it to it.name }
+val blockRotationsWidget: PropertyWidget = labeledDropDownWidget { blockRotationOptions }
 
 fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): PropertyDefinitions = mapOf(
     MarlothProperties.mine to PropertyDefinition(
@@ -100,5 +100,10 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
         displayName = "Biome",
         widget = dropDownWidget { biomeIds },
         defaultValue = { Biomes.checkers },
+    ),
+    MarlothProperties.blockRotations to PropertyDefinition(
+        displayName = "Block Rotations",
+        widget = blockRotationsWidget,
+        defaultValue = { BlockRotations.all },
     ),
 ) + commonPropertyDefinitions()

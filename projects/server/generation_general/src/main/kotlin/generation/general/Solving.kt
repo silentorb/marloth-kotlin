@@ -84,7 +84,7 @@ fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, grid: BlockGrid, locati
 fun fallbackBiomeMatchConnectingBlock(dice: Dice, biomeBlocks: Map<String, GroupedBlocks>, grid: BlockGrid,
                                       location: Vector3i, biome: String): Pair<Vector3i, Block>? {
   val options = directionVectors.values
-      .mapNotNull { offset -> grid[location + offset]?.source?.biome }
+      .mapNotNull { offset -> grid[location + offset]?.source?.biomes }
       .distinct()
       .minus(biome)
 

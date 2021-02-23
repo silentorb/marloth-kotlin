@@ -13,11 +13,11 @@ import marloth.scenery.enums.Textures
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.ent.scenery.getGraphRoots
-import silentorb.mythic.ent.scenery.hasAttribute
 import silentorb.mythic.ent.scenery.removeNodesAndChildren
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Vector3i
+import simulation.misc.BlockRotations
 import simulation.misc.CellAttribute
 import simulation.misc.GameAttributes
 import simulation.misc.MarlothProperties
@@ -27,36 +27,36 @@ fun getTraversable(cells: Map<Vector3i, BlockCell>) =
         .filterValues { it.isTraversable }
         .keys
 
+fun rotateBlockBuilder(turns: Int, blockBuilder: BlockBuilder): BlockBuilder =
+    if (turns == 0)
+      blockBuilder
+    else {
+      val (block, builder) = blockBuilder
+      val cells = block.cells.entries
+          .associate { (offset, cell) ->
+            val sides = rotateSides(turns)(cell.sides)
+            rotateZ(turns, offset) to cell.copy(
+                sides = sides,
+            )
+          }
+
+      block.copy(
+          cells = cells,
+          traversable = getTraversable(cells),
+          turns = turns
+      ) to builder
+    }
+
 fun explodeBlockMap(blockBuilders: Collection<BlockBuilder>): List<BlockBuilder> {
   assert(blockBuilders.all { it.first.name.isNotEmpty() })
-  val (needsRotatedVariations, noTurns) = blockBuilders
-      .partition { (block, _) ->
-        !block.lockedRotation
+  return blockBuilders
+      .flatMap { blockBuilder ->
+        when (blockBuilder.first.rotations) {
+          BlockRotations.none -> listOf(blockBuilder)
+          BlockRotations.once -> listOf(blockBuilder, rotateBlockBuilder(1, blockBuilder))
+          BlockRotations.all -> (0..3).mapNotNull { rotateBlockBuilder(it, blockBuilder) }
+        }
       }
-
-  val rotated = needsRotatedVariations
-      .flatMap { (block, builder) ->
-        (0..3)
-            .mapNotNull { turns ->
-              val cells = block.cells.entries
-                  .associate { (offset, cell) ->
-                    val sides = rotateSides(turns)(cell.sides)
-                    rotateZ(turns, offset) to cell.copy(
-                        sides = sides,
-                    )
-                  }
-              if (turns != 0 && cells == block.cells)
-                null
-              else
-                block.copy(
-                    cells = cells,
-                    traversable = getTraversable(cells),
-                    turns = turns
-                ) to builder
-            }
-      }
-
-  return noTurns + rotated
 }
 
 val defaultBiomeTextures: Map<String, Map<String, String>> = mapOf(
@@ -93,9 +93,11 @@ fun cellsFromSides(allSides: List<Pair<CellDirection, Side?>>) =
           )
         }
 
-fun prepareBlockGraph(graph: Graph, sideNodes: List<String>, biome: String): Graph {
+fun prepareBlockGraph(graph: Graph, sideNodes: List<String>, biomes: Collection<String>): Graph {
   val truncatedGraph = graph.filter { !sideNodes.contains(it.source) }
-  val defaultTexture = defaultBiomeTextures[biome]
+  val defaultTexture = biomes
+      .mapNotNull { defaultBiomeTextures[it] }
+      .firstOrNull()
 
   return if (defaultTexture == null)
     truncatedGraph
@@ -111,14 +113,14 @@ fun prepareBlockGraph(graph: Graph, sideNodes: List<String>, biome: String): Gra
   }
 }
 
-fun blockFromGraph(graph: Graph, cells: Map<Vector3i, BlockCell>, root: String, name: String, biome: String): Block {
-  val lockedRotation = hasAttribute(graph, root, GameAttributes.lockedRotation)
+fun blockFromGraph(graph: Graph, cells: Map<Vector3i, BlockCell>, root: String, name: String, biomes: Collection<String>): Block {
+  val rotation = getGraphValue<BlockRotations>(graph, root, MarlothProperties.blockRotations)
   return Block(
       name = name,
       cells = cells,
       traversable = getTraversable(cells),
-      lockedRotation = lockedRotation,
-      biome = biome,
+      rotations = rotation ?: BlockRotations.none,
+      biomes = biomes.toSet(),
   )
 }
 
@@ -145,15 +147,15 @@ fun builderFromGraph(graph: Graph): Builder {
 
 fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder? {
   val root = getGraphRoots(graph).first()
-  val biome = getGraphValue<String>(graph, root, MarlothProperties.biome)
-  return if (biome == null)
+  val biomes = getGraphValues<String>(graph, root, MarlothProperties.biome)
+  return if (biomes.none())
     null
   else {
     val sideNodes = nodeAttributes(graph, GameAttributes.blockSide)
     val sides = gatherSides(sideGroups, graph, sideNodes)
     val cells = cellsFromSides(sides)
-    val block = blockFromGraph(graph, cells, root, name, biome)
-    val finalGraph = prepareBlockGraph(graph, sideNodes, biome)
+    val block = blockFromGraph(graph, cells, root, name, biomes)
+    val finalGraph = prepareBlockGraph(graph, sideNodes, biomes)
     val builder: Builder = builderFromGraph(finalGraph)
     return block to builder
   }

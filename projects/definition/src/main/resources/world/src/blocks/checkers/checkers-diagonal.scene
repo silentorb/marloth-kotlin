@@ -13,6 +13,7 @@
 ["checkers-block","",""],
 ["checkers-block","biome","checkers"],
 ["checkers-block","translation",[0.0,0.0,-2.75]],
+["checkers-block","blockRotations","all"],
 ["floor","parent","checkers-block"],
 ["floor","scale",[0.5,0.5,0.5]],
 ["floor","texture","checkersBlackWhite"],

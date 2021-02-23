@@ -123,7 +123,6 @@
 ["floor1","translation",[0.0,-2.8644924,1.4590399]],
 ["floor1","scale",[0.4475768,0.13953757,0.5]],
 ["home-set","",""],
-["home-set","type","lockedRotation"],
 ["home-set","biome","home"],
 ["home-set","translation",[0.0,0.0,-2.75]],
 ["n1-0-1","type","blockSide"],

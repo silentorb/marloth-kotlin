@@ -22,6 +22,12 @@ object GameAttributes {
   val lightDistribution = "lightDistribution"
 }
 
+enum class BlockRotations {
+  all,
+  none,
+  once
+}
+
 object MarlothProperties {
   const val mine = "mine"
   const val other = "other"
@@ -29,9 +35,13 @@ object MarlothProperties {
   const val showIfSideIsEmpty = "showIfNull"
   const val sideHeight = "sideLevel"
   const val biome = "biome"
+  const val blockRotations = "blockRotations"
 }
 
 fun marlothPropertiesSchema(): PropertySchema = mapOf(
+    MarlothProperties.biome to PropertyInfo(
+        manyToMany = true,
+    ),
     MarlothProperties.other to PropertyInfo(
         manyToMany = true,
     ),

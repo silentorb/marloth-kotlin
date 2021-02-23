@@ -27,6 +27,7 @@
 ["checkers-slope","",""],
 ["checkers-slope","biome","checkers"],
 ["checkers-slope","translation",[0.0,0.0,-2.75]],
+["checkers-slope","blockRotations","all"],
 ["floor","mesh","floorSquareOld"],
 ["floor","type","solid-box"],
 ["floor","parent","checkers-slope"],
