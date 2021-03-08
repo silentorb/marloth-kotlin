@@ -2,7 +2,6 @@ package marloth.definition.data
 
 import marloth.definition.misc.newResistanceModifier
 import marloth.scenery.enums.AccessoryId
-import marloth.scenery.enums.Text
 import marloth.scenery.enums.DamageTypes
 import marloth.scenery.enums.TextId
 import simulation.accessorize.AccessoryName

@@ -6,7 +6,6 @@ import silentorb.mythic.ent.scenery.getGraphRoots
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.*
-import simulation.main.Hand
 import simulation.misc.absoluteCellPosition
 
 fun gatherNeighbors(grid: BlockGrid, block: Block, position: Vector3i): Map<CellDirection, String> =

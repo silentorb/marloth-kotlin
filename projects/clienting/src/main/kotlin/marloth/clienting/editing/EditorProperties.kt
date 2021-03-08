@@ -104,6 +104,7 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
     MarlothProperties.blockRotations to PropertyDefinition(
         displayName = "Block Rotations",
         widget = blockRotationsWidget,
+        serialization = enumSerialization { BlockRotations.valueOf(it) },
         defaultValue = { BlockRotations.all },
     ),
 ) + commonPropertyDefinitions()

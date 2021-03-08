@@ -3,7 +3,6 @@ package marloth.definition.misc
 import marloth.scenery.enums.DamageTypes
 import marloth.scenery.enums.ModifierDirection
 import marloth.scenery.enums.Text
-import silentorb.mythic.editing.PropertyDefinitions
 import silentorb.mythic.editing.loadGraphLibrary
 import silentorb.mythic.ent.*
 import simulation.accessorize.ModifierDefinition

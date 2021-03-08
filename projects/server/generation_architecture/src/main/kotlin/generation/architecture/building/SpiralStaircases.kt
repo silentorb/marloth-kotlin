@@ -1,15 +1,5 @@
 package generation.architecture.building
 
-import generation.general.TextureGroup
-import generation.general.biomeTexture
-import silentorb.mythic.spatial.Matrix
-import silentorb.mythic.spatial.Pi
-import silentorb.mythic.spatial.Quaternion
-import silentorb.mythic.spatial.Vector3
-import marloth.scenery.enums.MeshId
-import simulation.misc.cellLength
-import simulation.misc.floorOffset
-
 //val curvedStaircases = blockBuilder() { input ->
 //  val biome = input.biome
 //  val config = input.general.config

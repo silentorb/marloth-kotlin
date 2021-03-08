@@ -2,7 +2,6 @@ package marloth.integration.generation
 
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Key
-import silentorb.mythic.ent.scenery.gatherChildren
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.ent.scenery.nodesWithAttribute
 import silentorb.mythic.ent.scenery.removeNodesAndChildren

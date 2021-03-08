@@ -3,7 +3,6 @@ package marloth.definition.data
 import marloth.scenery.enums.*
 import simulation.characters.CharacterDefinition
 import simulation.characters.fieldOfView360
-import simulation.characters.maxCharacterLevel
 import simulation.entities.DepictionType
 
 fun monsterDefinitions(): Map<String, CharacterDefinition> =

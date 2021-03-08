@@ -1,7 +1,6 @@
 package generation.general
 
 import silentorb.mythic.spatial.Vector3i
-import simulation.misc.ConnectionSet
 
 data class CellDirection(
     val cell: Vector3i,

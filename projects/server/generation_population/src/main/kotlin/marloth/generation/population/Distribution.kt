@@ -1,16 +1,7 @@
 package marloth.generation.population
 
-import generation.abstracted.distributeToSlots
-import generation.architecture.engine.GenerationConfig
-import marloth.definition.misc.*
-import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.debugging.getDebugString
-import silentorb.mythic.ent.IdSource
-import silentorb.mythic.randomly.Dice
-import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.spatial.toVector3
-import simulation.main.IdHand
 import simulation.misc.*
 import kotlin.math.min
 

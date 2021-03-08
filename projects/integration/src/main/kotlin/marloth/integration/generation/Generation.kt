@@ -27,7 +27,7 @@ import simulation.misc.Realm
 
 fun generateWorld(db: Database, definitions: Definitions, generationConfig: GenerationConfig, dice: Dice, graph: Graph, step: Long): World {
   val nextId = newIdSource(1)
-  val graph2: Graph = if (getDebugBoolean("USE_MAP_GRID")) {
+  val graph2: Graph = if (!getDebugBoolean("STATIC_MAP")) {
     val (blockGrid, architectureSource) = generateWorldBlocks(dice, generationConfig, generationConfig.graphLibrary)
     graph + architectureSource
   } else
@@ -69,6 +69,7 @@ fun newGenerationSeed(): Long =
 fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap, graph: Graph,
                   graphLibrary: GraphLibrary,
                   seed: Long = newGenerationSeed()): World {
+  println("Generation seed $seed")
   val dice = Dice(seed)
   if (getDebugBoolean("LOG_SEED")) {
     println("Generation seed: ${dice.seed}")
@@ -84,7 +85,7 @@ fun generateWorld(db: Database, definitions: Definitions, meshInfo: MeshShapeMap
       graphLibrary = loadMarlothGraphLibrary(marlothPropertiesSerialization) + graphLibrary,
   )
 
-  val graph2 = if (getDebugBoolean("USE_MAP_GRID"))
+  val graph2 = if (!getDebugBoolean("STATIC_MAP"))
     setOf()
   else
     graph

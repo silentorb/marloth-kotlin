@@ -3,7 +3,6 @@ package marloth.integration.debug
 import marloth.integration.front.GameHooks
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugFloat
-import silentorb.mythic.editing.renderEditorGui
 import simulation.updating.getIdle
 
 fun newDebugHooks(hooks: GameHooks): GameHooks {

@@ -3,7 +3,6 @@ package generation.architecture.matrical
 import generation.architecture.engine.Builder
 import generation.general.Block
 import generation.general.Side
-import silentorb.mythic.spatial.Vector3
 import simulation.misc.BiomeName
 import simulation.misc.cellLength
 

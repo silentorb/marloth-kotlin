@@ -6,9 +6,6 @@ import marloth.definition.misc.loadMarlothDefinitions
 import marloth.definition.misc.staticDamageTypes
 import marloth.definition.particles.particleEffects
 import marloth.definition.texts.englishTextResources
-import silentorb.mythic.editing.PropertyDefinitions
-import silentorb.mythic.editing.commonPropertyDefinitions
-import silentorb.mythic.editing.extractPropertiesSerialization
 import silentorb.mythic.ent.PropertiesSerialization
 import simulation.misc.ApplicationInfo
 import simulation.misc.Definitions

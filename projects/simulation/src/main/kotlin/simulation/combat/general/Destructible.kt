@@ -1,0 +1,85 @@
+package simulation.combat.general
+
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.emptyId
+import silentorb.mythic.happenings.Events
+import simulation.characters.getNourishmentExpense
+import simulation.characters.getRoundedAccumulation
+import simulation.characters.healthTimeDrainDuration
+import simulation.misc.highIntScale
+
+data class DestructibleBaseStats(
+    val health: Int,
+    val damageMultipliers: DamageMultipliers = mapOf()
+)
+
+
+data class Destructible(
+    val base: DestructibleBaseStats,
+    val health: Int,
+    val maxHealth: Int,
+    val healthAccumulator: Int = 0,
+    val drainDuration: Int = 0,
+    val damageMultipliers: DamageMultipliers = mapOf(),
+    val lastDamageSource: Id = 0
+)
+
+// This is intended to be used outside of combat.
+// It overrides any other health modifying events.
+data class RestoreHealth(
+    val target: Id
+)
+
+fun updateDestructibleCache(damageTypes: Set<DamageType>, modifierQuery: DamageModifierQuery): (Id, Destructible) -> Destructible = { id, destructible ->
+  val multiplers = calculateDamageMultipliers(damageTypes, modifierQuery, id, destructible.base.damageMultipliers)
+  destructible.copy(
+      damageMultipliers = multiplers
+  )
+}
+
+fun damageDestructible(damages: List<Damage>): (Destructible) -> Destructible = { destructible ->
+  if (damages.none()) {
+    destructible
+  } else {
+    val healthMod = aggregateHealthModifiers(destructible, damages)
+    val nextHealth = modifyResource(destructible.health, destructible.maxHealth, healthMod)
+    destructible.copy(
+        health = nextHealth,
+        lastDamageSource = damages.firstOrNull { it.source != emptyId }?.source ?: destructible.lastDamageSource
+    )
+  }
+}
+
+val restoreDestructibleHealth: (Destructible) -> Destructible = { destructible ->
+  destructible.copy(
+      health = destructible.maxHealth
+  )
+}
+
+fun updateDestructibleHealth(events: Events): (Id, Destructible) -> Destructible {
+  val damageEvents = events.filterIsInstance<DamageEvent>()
+  val restoreEvents = events.filterIsInstance<RestoreHealth>()
+
+  return { id, destructible ->
+    val result = if (restoreEvents.any { it.target == id }) {
+      restoreDestructibleHealth(destructible)
+    } else {
+      val damages =
+          damageEvents
+              .filter { it.target == id }
+              .map { it.damage }
+
+      damageDestructible(damages)(destructible)
+    }
+    if (destructible.drainDuration != 0) {
+      val healthAccumulator = result.healthAccumulator - getNourishmentExpense(healthTimeDrainDuration, 1)
+      val healthAccumulation = getRoundedAccumulation(healthAccumulator)
+      result.copy(
+          health = modifyResource(result.health, result.maxHealth, healthAccumulation),
+          healthAccumulator = healthAccumulator - healthAccumulation * highIntScale,
+      )
+    } else
+      result
+
+  }
+}

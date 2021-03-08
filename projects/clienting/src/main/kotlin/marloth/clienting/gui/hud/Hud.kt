@@ -17,7 +17,6 @@ import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
 import simulation.happenings.Notification
 import simulation.main.World
-import simulation.misc.highPercentage
 import kotlin.math.roundToInt
 
 private val textStyle = TextStyles.smallGray
@@ -29,6 +28,10 @@ data class Cooldown(
 
 fun floatToRoundedString(value: Float): String =
     ((value * 100).roundToInt().toFloat() / 100).toString()
+
+fun resourceString(value: Int, max: Int): String {
+  return "$value / $max"
+}
 
 fun resourceString(resource: ResourceContainer): String {
   val value = resource.value
@@ -72,9 +75,11 @@ fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flower {
   val accessoryPoints = character.accessoryPoints + if (character.accessoryOptions != null) 1 else 0
   val equipment = deck.accessories.filter { it.value.owner == actor }.values
   val rows = listOfNotNull(
-      label(textStyle, "Health: ${resourceString(destructible.health)}"),
+      label(textStyle, "Health: ${resourceString(destructible.health, destructible.maxHealth)}"),
 //      label(textStyle, "Nourishment: ${highPercentage(character.nourishment)}"),
-      label(textStyle, "Energy: ${highPercentage(character.energy)}"),
+      label(textStyle, "Energy: ${character.energy}"),
+      label(textStyle, "Health AC: ${destructible.healthAccumulator}"),
+      label(textStyle, "Energy AC: ${character.energyAccumulator}"),
 //      if (getDebugBoolean("HUD_DRAW_RAW_NOURISHMENT")) label(textStyle, "RawNourish: ${character.nourishment}") else null,
 //      label(textStyle, "Doom: ${world.global.doom}")
 //      label(textStyle, "Sanity: ${resourceString(data.madness)}")

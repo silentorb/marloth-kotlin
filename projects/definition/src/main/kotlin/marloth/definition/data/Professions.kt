@@ -2,7 +2,6 @@ package marloth.definition.data
 
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.SoundId
-import marloth.scenery.enums.Text
 import marloth.scenery.enums.TextId
 import silentorb.mythic.ent.reflectPropertiesMap
 import simulation.characters.CharacterDefinition
