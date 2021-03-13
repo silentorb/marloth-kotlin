@@ -25,7 +25,7 @@ fun updatePhysics(events: Events): (World) -> World = { world ->
   )
   val linearForces = events.filterIsInstance<LinearImpulse>()
   val nextPhysicsWorld = updateBulletPhysics(linearForces)(physicsWorld)
-  updateCharacterRigBulletBodies(nextPhysicsWorld.bulletState, deck.characterRigs)
+  updateCharacterRigBulletBodies(nextPhysicsWorld.bulletState, deck.characterRigs, deck.bodies)
   val nextDeck = nextPhysicsWorld.deck
   world.copy(
       bulletState = nextPhysicsWorld.bulletState,

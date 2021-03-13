@@ -10,6 +10,7 @@ import marloth.clienting.gui.menus.black
 import marloth.clienting.gui.menus.general.verticalList
 import silentorb.mythic.bloom.*
 import silentorb.mythic.characters.rigs.ViewMode
+import silentorb.mythic.characters.rigs.isGrounded
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.Id
@@ -199,9 +200,18 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
           "${floatToRoundedString(body.position.x)} ${floatToRoundedString(body.position.y)} ${floatToRoundedString(body.position.z)}"
         else
           null,
-        if (getDebugBoolean("HUD_DRAW_MOUSE_LOCATION")) clientState.input.deviceStates.first().mousePosition.toString() else null
-//          if (character.isGrounded) "Grounded" else "Air",
-//          character.groundDistance.toString()
+        if (getDebugBoolean("HUD_DRAW_MOUSE_LOCATION"))
+          clientState.input.deviceStates.first().mousePosition.toString()
+        else
+          null,
+        if (characterRig != null && getDebugBoolean("HUD_DRAW_GROUNDED"))
+          if (isGrounded(characterRig)) "Grounded" else "Air"
+        else
+          null,
+        if (getDebugBoolean("HUD_DRAW_GROUND_DISTANCE"))
+          characterRig?.groundDistance?.toString() ?: "?"
+        else
+          null,
     )
     compose(listOfNotNull(
         if (interactable != null) interactionDialog(getInteractKeyText(guiState!!.primarydeviceMode), textResources, interactable) else null,

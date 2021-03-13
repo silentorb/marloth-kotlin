@@ -13,17 +13,20 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.*
 import silentorb.mythic.spatial.*
 import simulation.main.Deck
+import simulation.updating.simulationDelta
+import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.min
 
 const val defaultCharacterRadius = 0.3f
 const val defaultCharacterHeight = 1.2f
-const val characterGroundBuffer = 0.01f
 
 const val groundedLinearDamping = 0.9f
 const val airLinearDamping = 0f
 const val airControlReduction = 0.4f
 
-const val maxFootStepHeight = 0.35f
+const val maxFootStepHeight = 0.25f
+const val characterGroundBuffer = maxFootStepHeight
 
 fun maxPositiveLookVelocityXChange() = 0.06f
 fun maxNegativeLookVelocityXChange() = 0.15f
@@ -51,15 +54,14 @@ private const val noHitValue = 1f
 private fun castFootStepRay(walkableMask: Int, dynamicsWorld: btDiscreteDynamicsWorld, bodyPosition: Vector3, footHeight: Float,
                             shapeHeight: Float): (Vector3) -> Float? {
   val basePosition = bodyPosition + Vector3(0f, 0f, -shapeHeight / 2f + footHeight)
-  val rayLength = footHeight * 2f
+  val rayLength = shapeHeight
   val endOffset = Vector3(0f, 0f, -rayLength)
   return { it: Vector3 ->
     val start = basePosition + it
     val end = start + endOffset
-    null
     val result = firstRayHit(dynamicsWorld, start, end, walkableMask)
     if (result != null)
-      start.z - result.hitPoint.z
+      start.z - result.hitPoint.z - footHeight
     else
       null
   }
@@ -86,28 +88,51 @@ fun updateCharacterStepHeight(
 
     return if (distances.any()) {
       val distance = distances.firstFloatSortedBy { it }
-      (centerDistance - footHeight) to (distance - footHeight)
+      centerDistance to distance
     } else
       noHitValue to noHitValue
   }
 }
 
 fun isGrounded(characterRig: CharacterRig) =
-    characterRig.groundDistance <= characterGroundBuffer
+    characterRig.groundDistance <= 0.5f
+//false
 
-fun updateCharacterRigBulletBody(bulletState: BulletState): (Id, CharacterRig) -> Unit = { id, characterRig ->
+fun updateCharacterRigBulletBody(
+    bulletState: BulletState,
+    bodies: Table<Body>
+): (Id, CharacterRig) -> Unit = { id, characterRig ->
   val groundDistance = characterRig.groundDistance
+  val centerGroundDistance = characterRig.centerGroundDistance
   val btBody = bulletState.dynamicBodies[id]!!
   val isGrounded = isGrounded(characterRig)
-  if (isGrounded && (groundDistance < -0.01f || groundDistance > 0.1f)) {
+  val body = bodies[id]
+  val horizontalVelocity = if (body == null)
+    0f
+  else
+    body.velocity.xy().length()
+
+  if (isGrounded && (groundDistance < -0.01f || groundDistance > 0.01f)) {
     val stepHeight = -groundDistance
-    if (groundDistance < -0.01f) {
-      val transitionStepHeight = min(0.03f, stepHeight)
+//    val heightAdjustmentRange = horizontalVelocity * 0.015f * 0.1f
+    val heightAdjustmentRange = 0.015f
+//    val transitionStepHeight = clipByRange(heightAdjustmentRange, stepHeight)
+    if (stepHeight > 0f) {
+      val transitionStepHeight = if (abs(stepHeight) < 0.01f)
+        stepHeight
+      else
+        stepHeight * 0.5f * simulationDelta
+
+//      println("$horizontalVelocity $heightAdjustmentRange")
 //      println("$groundDistance $transitionStepHeight")
       btBody.translate(toGdxVector3(Vector3(0f, 0f, transitionStepHeight)))
-    } else if (groundDistance > 0.1f) {
-//      val transitionStepHeight = min(0.015f, stepHeight)
-//      btBody.translate(toGdxVector3(Vector3(0f, 0f, transitionStepHeight)))
+    } else if (stepHeight < 0f) {
+      val transitionStepHeight = if (abs(stepHeight) < 0.01f)
+        stepHeight
+      else
+        max(-0.05f, stepHeight * 0.3f)
+
+      btBody.translate(toGdxVector3(Vector3(0f, 0f, transitionStepHeight)))
     }
   }
 
@@ -125,8 +150,8 @@ fun updateCharacterRigBulletBody(bulletState: BulletState): (Id, CharacterRig) -
   btBody.gravity = gravity
 }
 
-fun updateCharacterRigBulletBodies(bulletState: BulletState, characterRigs: Table<CharacterRig>) {
-  characterRigs.forEach(updateCharacterRigBulletBody(bulletState))
+fun updateCharacterRigBulletBodies(bulletState: BulletState, characterRigs: Table<CharacterRig>, bodies: Table<Body>) {
+  characterRigs.forEach(updateCharacterRigBulletBody(bulletState, bodies))
 }
 
 fun characterOrientationZ(characterRig: CharacterRig) =
