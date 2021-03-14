@@ -134,7 +134,9 @@ tailrec fun addPathStep(
       worldGenerationLog { "Block: ${block.name}" }
       val cellAdditions = extractCells(block, nextPosition - blockOffset)
       assert(cellAdditions.containsKey(nextPosition))
-     state.copy(
+      assert(cellAdditions.any { it.value.offset == Vector3i.zero })
+      assert(cellAdditions.none { grid.containsKey(it.key)})
+      state.copy(
           biomeBlocks = state.biomeBlocks + (biome to filterUsedUniqueBlock(block, groupedBlocks)),
           grid = grid + cellAdditions,
           lastCell = nextPosition,

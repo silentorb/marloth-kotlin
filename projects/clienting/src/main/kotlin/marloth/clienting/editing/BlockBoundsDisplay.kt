@@ -3,11 +3,9 @@ package marloth.clienting.editing
 import generation.architecture.building.directionRotation
 import generation.architecture.engine.gatherSides
 import generation.architecture.engine.getCellDirection
-import generation.general.CellDirection
-import generation.general.Side
-import generation.general.horizontalDirectionVectors
-import generation.general.rotateDirection
+import generation.general.*
 import imgui.ImColor
+import imgui.ImDrawList
 import marloth.definition.misc.sideGroups
 import silentorb.mythic.editing.*
 import silentorb.mythic.ent.Graph
@@ -94,7 +92,7 @@ fun getSideHeightLines(selection: Collection<CellDirection>, sides: List<Pair<Ce
         }
         .flatten()
 
-fun getCellLines(cells: List<Vector3i>, color: Int): List<LineSegment> =
+fun getCellLines(cells: Collection<Vector3i>, color: Int): List<LineSegment> =
     cells
         .flatMap { cell ->
           val offset = getCellPoint(cell)
@@ -103,6 +101,15 @@ fun getCellLines(cells: List<Vector3i>, color: Int): List<LineSegment> =
           }
         }
         .distinct()
+
+private val mediumColor = ImColor.intToColor(128, 128, 128, 160)
+private val lightColor = ImColor.intToColor(128, 128, 128, 96)
+
+fun drawlines(drawList: ImDrawList, transform: ScreenTransform, lines: Collection<LineSegment>) {
+  for ((start, end, color) in lines) {
+    drawGizmoLine(drawList, transform, start, end, color)
+  }
+}
 
 fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
   val editor = environment.editor
@@ -127,8 +134,6 @@ fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
   val (primaryCells, secondaryCells) = cells.partition { cell ->
     sides.any { it.first.cell == cell }
   }
-  val mediumColor = ImColor.intToColor(128, 128, 128, 160)
-  val lightColor = ImColor.intToColor(128, 128, 128, 96)
 
   val primaryLines = getCellLines(primaryCells, mediumColor)
   val secondaryLines = getCellLines(secondaryCells - primaryCells, lightColor)
@@ -147,8 +152,22 @@ fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
   }
 
   val lines = primaryLines + secondaryLines + heightLines + selectedLines
-  for ((start, end, color) in lines) {
-    drawGizmoLine(drawList, transform, start, end, color)
+  drawlines(drawList, transform, lines)
+}
+
+fun drawWorldBlockBounds(environment: GizmoEnvironment, blockGrid: BlockGrid) {
+  val transform = environment.transform
+  val drawList = environment.drawList
+
+  val lines = getCellLines(blockGrid.keys, lightColor)
+  drawlines(drawList, transform, lines)
+
+  for ((cell, block) in blockGrid) {
+    val center = getCellPoint(cell)
+    val offset = block.offset
+    val text = "${cell.x}, ${cell.y}, ${cell.z}\n${block.source.name}\n${block.source.turns}\n" +
+        "${offset.x}, ${offset.y}, ${offset.z}"
+    drawGizmoText(drawList, transform, center, text, mediumColor)
   }
 }
 
@@ -156,5 +175,9 @@ val blockBoundsPainter = gizmoPainterToggle(blockBoundsEnabledKey) { environment
   val graph = getCachedGraph(environment.editor)
   if (hasAttribute(graph, GameAttributes.blockSide)) {
     drawBlockBounds(environment, graph)
+  }
+  val blockGrid = staticDebugBlockGrid
+  if (blockGrid != null) {
+    drawWorldBlockBounds(environment, blockGrid)
   }
 }

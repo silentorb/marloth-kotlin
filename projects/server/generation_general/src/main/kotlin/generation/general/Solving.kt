@@ -53,12 +53,16 @@ fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock): (Block) -> V
         block.cells
             .all { (cellOffset, cell) ->
               val appliedOffset = cellOffset - baseOffset
-              val surroundingSides2 = if (appliedOffset == Vector3i.zero)
-                surroundingSides
-              else
-                getSurroundingSides(getBlock, appliedOffset)
+              if (getBlock(appliedOffset) != null)
+                false
+              else {
+                val surroundingSides2 = if (appliedOffset == Vector3i.zero)
+                  surroundingSides
+                else
+                  getSurroundingSides(getBlock, appliedOffset)
 
-              surroundingSides2.all { side -> sidesMatch(cell.sides, side.key, side.value) }
+                surroundingSides2.all { side -> sidesMatch(cell.sides, side.key, side.value) }
+              }
             }
       }
 

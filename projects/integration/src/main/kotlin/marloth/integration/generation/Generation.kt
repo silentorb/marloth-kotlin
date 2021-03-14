@@ -2,7 +2,9 @@ package marloth.integration.generation
 
 import generation.architecture.engine.GenerationConfig
 import generation.architecture.engine.compileArchitectureMeshInfo
+import generation.general.BlockGrid
 import marloth.clienting.editing.marlothPropertiesSerialization
+import marloth.clienting.editing.staticDebugBlockGrid
 import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.generation.population.populateWorld
 import marloth.integration.misc.newGameModeConfig
@@ -29,6 +31,9 @@ fun generateWorld(db: Database, definitions: Definitions, generationConfig: Gene
   val nextId = newIdSource(1)
   val graph2: Graph = if (!getDebugBoolean("STATIC_MAP")) {
     val (blockGrid, architectureSource) = generateWorldBlocks(dice, generationConfig, generationConfig.graphLibrary)
+    if (getDebugBoolean("ENABLE_EDITOR")) {
+      staticDebugBlockGrid = blockGrid
+    }
     graph + architectureSource
   } else
     graph

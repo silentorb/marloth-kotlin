@@ -1,6 +1,15 @@
 package generation.general
 
 import silentorb.mythic.spatial.Vector3
+import silentorb.mythic.spatial.Vector3i
+
+data class GridCell(
+    val cell: BlockCell,
+    val offset: Vector3i,
+    val source: Block,
+)
+
+typealias BlockGrid = Map<Vector3i, GridCell>
 
 data class WorldBoundary(
     val start: Vector3,

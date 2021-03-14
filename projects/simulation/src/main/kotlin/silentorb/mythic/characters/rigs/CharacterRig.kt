@@ -25,7 +25,7 @@ const val groundedLinearDamping = 0.9f
 const val airLinearDamping = 0f
 const val airControlReduction = 0.4f
 
-const val maxFootStepHeight = 0.25f
+const val maxFootStepHeight = 0.15f
 const val characterGroundBuffer = maxFootStepHeight
 
 fun maxPositiveLookVelocityXChange() = 0.06f
@@ -95,7 +95,7 @@ fun updateCharacterStepHeight(
 }
 
 fun isGrounded(characterRig: CharacterRig) =
-    characterRig.groundDistance <= 0.5f
+    characterRig.groundDistance <= 0.25f
 //false
 
 fun updateCharacterRigBulletBody(

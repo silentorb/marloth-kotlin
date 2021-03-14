@@ -1,10 +1,7 @@
 package marloth.clienting
 
 import marloth.clienting.audio.updateClientAudio
-import marloth.clienting.editing.editorFonts
-import marloth.clienting.editing.expandDefaultWorldGraph
-import marloth.clienting.editing.newEditor
-import marloth.clienting.editing.updateEditingActive
+import marloth.clienting.editing.*
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.EventUnion
 import marloth.clienting.gui.ViewId
@@ -175,7 +172,8 @@ fun updateClient(
     val editor = previousEditor ?: newEditor(textLibrary, getMeshShapes(client.renderer))
     val editorCommands = prepareEditorUpdate(deviceStates, editor)
     val editorEvents = getEditorEvents(editor)(editorCommands, listOf())
-    updateEditor(deviceStates, editorCommands, editor) to editorEvents
+    val editorWithWorld = updateEditorSyncing(worlds.lastOrNull(), editor)
+    updateEditor(deviceStates, editorCommands, editorWithWorld) to editorEvents
   } else
     previousEditor to listOf()
 

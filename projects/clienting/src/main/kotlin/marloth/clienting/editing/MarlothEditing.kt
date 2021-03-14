@@ -1,5 +1,6 @@
 package marloth.clienting.editing
 
+import generation.general.BlockGrid
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.rendering.characterMeshes
 import marloth.clienting.rendering.characterPlacement
@@ -38,6 +39,8 @@ val editorFonts = listOf(
 )
 
 const val worldResourcePath = "world"
+
+var staticDebugBlockGrid: BlockGrid? = null
 
 fun getMarlothEditorAttributes(): List<String> =
     commonEditorAttributes() + reflectProperties(GameAttributes)
