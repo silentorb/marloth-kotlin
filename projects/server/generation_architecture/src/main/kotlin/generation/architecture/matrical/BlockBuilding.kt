@@ -36,17 +36,18 @@ fun sides(
     Direction.south to south
 )
 
-fun restrictBiomeBlockSides(biome: BiomeName, block: Block): Block =
-    block.copy(
-        name = biome + "-" + block.name,
-        sidesOld = block.sidesOld.mapValues { (_, side) ->
-          if (side.isUniversal)
-            side
-          else
-            newBiomeSide(biome, side)
-        }
-    )
+//fun restrictBiomeBlockSides(biome: BiomeName, block: Block): Block =
+//    block.copy(
+//        name = biome + "-" + block.name,
+//        sidesOld = block.sidesOld.mapValues { (_, side) ->
+//          if (side.isUniversal)
+//            side
+//          else
+//            newBiomeSide(biome, side)
+//        }
+//    )
 
 fun applyBiomedBlockBuilder(biome: BiomeName): (BlockBuilder) -> BlockBuilder = { blockBuilder ->
-  restrictBiomeBlockSides(biome, blockBuilder.first) to blockBuilder.second
+//  restrictBiomeBlockSides(biome, blockBuilder.first) to blockBuilder.second
+  throw Error("No longer supported")
 }

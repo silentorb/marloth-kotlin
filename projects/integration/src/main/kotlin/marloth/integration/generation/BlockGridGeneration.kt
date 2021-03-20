@@ -11,8 +11,8 @@ import marloth.definition.misc.sideGroups
 import marloth.definition.misc.traversableBlockSides
 import marloth.scenery.enums.Textures
 import silentorb.mythic.ent.*
-import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.ent.scenery.getGraphRoots
+import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.ent.scenery.removeNodesAndChildren
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
@@ -113,29 +113,43 @@ fun prepareBlockGraph(graph: Graph, sideNodes: List<String>, biomes: Collection<
   }
 }
 
-fun blockFromGraph(graph: Graph, cells: Map<Vector3i, BlockCell>, root: String, name: String, biomes: Collection<String>): Block {
+fun blockFromGraph(graph: Graph, cells: Map<Vector3i, BlockCell>, root: String, name: String,
+                   biomes: Collection<String>,
+                   heightOffset: Int): Block {
   val rotation = getGraphValue<BlockRotations>(graph, root, MarlothProperties.blockRotations)
   return Block(
-      name = name,
+      name = name + if (heightOffset != 0) heightOffset else "",
       cells = cells,
       traversable = getTraversable(cells),
       rotations = rotation ?: BlockRotations.none,
       biomes = biomes.toSet(),
+      heightOffset = heightOffset,
   )
 }
 
-fun builderFromGraph(graph: Graph): Builder {
+fun shouldOmit(cellDirections: List<CellDirection>, keys: Set<CellDirection>): Boolean =
+    cellDirections.any { cellDirection ->
+      keys.contains(cellDirection)
+    }
+
+fun builderFromGraph(graph: Graph, zShifts: Collection<CellDirection>): Builder {
   val showIfSideIsEmpty = filterByProperty(graph, MarlothProperties.showIfSideIsEmpty)
       .groupBy { it.source }
-      .mapValues { i -> i.value.map { it.target as CellDirection } }
 
   return { input ->
     val omitted = showIfSideIsEmpty
-        .mapNotNull { (node, cellDirections) ->
-          val shouldOmit = cellDirections.any { cellDirection ->
-            input.neighbors.keys.contains(cellDirection)
+        .mapValues { i ->
+          i.value.map { entry ->
+            val cellDirection = entry.target as CellDirection
+//            val rotated = rotateZ(input.turns, entry.target as CellDirection)
+            if (zShifts.contains(cellDirection))
+              cellDirection.copy(cell = cellDirection.cell + Vector3i(0, 0, -1))
+            else
+              cellDirection
           }
-          if (shouldOmit)
+        }
+        .mapNotNull { (node, cellDirections) ->
+          if (shouldOmit(cellDirections, input.neighbors.keys))
             node
           else
             null
@@ -145,19 +159,57 @@ fun builderFromGraph(graph: Graph): Builder {
   }
 }
 
-fun graphToBlockBuilder(name: String, graph: Graph): BlockBuilder? {
+fun adjustSideHeights(sides: List<Pair<CellDirection, Side?>>, height: Int): List<Pair<CellDirection, Side?>> =
+    if (height == 0)
+      sides
+    else {
+      sides
+          .map { (cellDirection, side) ->
+            if (side == null)
+              cellDirection to side
+            else {
+              val lowerCellHeight = side.height + height < 0
+              val nextCellDirection = if (lowerCellHeight)
+                cellDirection.copy(
+                    cell = cellDirection.cell + Vector3i(0, 0, -1)
+                )
+              else
+                cellDirection
+
+              val nextSide = side.copy(
+                  height = (side.height + height + 100) % 100,
+              )
+
+              nextCellDirection to nextSide
+            }
+          }
+    }
+
+fun graphToBlockBuilder(name: String, graph: Graph): List<BlockBuilder> {
   val root = getGraphRoots(graph).first()
   val biomes = getGraphValues<String>(graph, root, MarlothProperties.biome)
-  return if (biomes.none())
-    null
+  return if (biomes.none() || biomes.contains(Biomes.hedgeMaze))
+    listOf()
   else {
+    val heights = listOf(0) + getGraphValues(graph, root, MarlothProperties.heightVariant)
     val sideNodes = nodeAttributes(graph, GameAttributes.blockSide)
     val sides = gatherSides(sideGroups, graph, sideNodes)
-    val cells = cellsFromSides(sides)
-    val block = blockFromGraph(graph, cells, root, name, biomes)
-    val finalGraph = prepareBlockGraph(graph, sideNodes, biomes)
-    val builder: Builder = builderFromGraph(finalGraph)
-    return block to builder
+    return heights.map { height ->
+      val adjustedSides = adjustSideHeights(sides, height)
+      val cells = cellsFromSides(adjustedSides)
+      assert(cells.keys.contains(Vector3i.zero))
+      val block = blockFromGraph(graph, cells, root, name, biomes, height)
+      val finalGraph = prepareBlockGraph(graph, sideNodes, biomes)
+      val offsets = sides
+          .filter {
+            val sideHeight = it.second?.height
+            sideHeight != null && sideHeight + height < 0 }
+          .map { (cellDirection, _) ->
+            cellDirection
+          }
+          .toSet()
+      block to builderFromGraph(finalGraph, offsets)
+    }
   }
 }
 
@@ -168,7 +220,7 @@ fun graphsToBlockBuilders(graphLibrary: GraphLibrary): List<BlockBuilder> {
         graph.any { it.property == SceneProperties.type && it.target == GameAttributes.blockSide }
       }
       .keys
-      .mapNotNull { key ->
+      .flatMap { key ->
         val expanded = expandGameInstances(library, key)
         graphToBlockBuilder(key, expanded)
       }

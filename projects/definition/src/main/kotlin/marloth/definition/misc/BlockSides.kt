@@ -5,8 +5,10 @@ import silentorb.mythic.ent.reflectProperties
 object BlockSides {
   val open = "open"
   val partialOpen = "partialOpen"
-  val slopeLeft = "slopeLeft"
-  val slopeRight = "slopeRight"
+  val slopeLeftHalf = "slopeLeftHalf"
+  val slopeRightHalf = "slopeRightHalf"
+  val slopeLeftQuarter = "slopeLeftQuarter"
+  val slopeRightQuarter = "slopeRightQuarter"
 }
 
 

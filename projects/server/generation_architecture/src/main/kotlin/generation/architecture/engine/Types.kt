@@ -2,7 +2,6 @@ package generation.architecture.engine
 
 import generation.general.BlockGrid
 import generation.general.CellDirection
-import generation.general.Direction
 import marloth.scenery.enums.MeshInfoMap
 import marloth.scenery.enums.MeshShapeMap
 import silentorb.mythic.ent.GraphLibrary
@@ -60,8 +59,9 @@ fun newArchitectureInput(generationConfig: GenerationConfig, dice: Dice,
 
 data class BuilderInput(
     val general: ArchitectureInput,
-    val neighborOld: Set<Direction>,
-    val neighbors: Map<CellDirection, String>
+    val neighbors: Map<CellDirection, String>,
+    val turns: Int,
+    val height: Int,
 )
 
 typealias Builder = (BuilderInput) -> Any

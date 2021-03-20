@@ -133,6 +133,8 @@ tailrec fun addPathStep(
       val (blockOffset, block) = matchResult
       worldGenerationLog { "Block: ${block.name}" }
       val cellAdditions = extractCells(block, nextPosition - blockOffset)
+      if (!cellAdditions.containsKey(nextPosition))
+        matchConnectingBlock(dice, groupedBlocks.all - blocks, grid, nextPosition)
       assert(cellAdditions.containsKey(nextPosition))
       assert(cellAdditions.any { it.value.offset == Vector3i.zero })
       assert(cellAdditions.none { grid.containsKey(it.key)})

@@ -96,6 +96,12 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
         widget = propertyIntegerTextField,
         defaultValue = { StandardHeights.first },
     ),
+    MarlothProperties.heightVariant to PropertyDefinition(
+        displayName = "Height Variant",
+        serialization = intSerialization,
+        widget = propertyIntegerTextField,
+        defaultValue = { 25 },
+    ),
     MarlothProperties.biome to PropertyDefinition(
         displayName = "Biome",
         widget = dropDownWidget { biomeIds },

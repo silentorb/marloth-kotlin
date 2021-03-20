@@ -102,11 +102,10 @@ fun cubeWallsWithFeatures(
     possibleDirections: Set<Direction> = horizontalDirections
 ): Builder = { input ->
   val dice = input.general.dice
-  val directions = possibleDirections - input.neighborOld
-  val featureCount = dice.getInt(min(min(2, directions.size), features.size))
-  val featureDirections = dice.take(directions, featureCount)
-  val plainDirections = directions - featureDirections
-  val selectedFeatures = dice.take(features, featureCount)
+//  val featureCount = dice.getInt(min(min(2, directions.size), features.size))
+//  val featureDirections = dice.take(directions, featureCount)
+//  val plainDirections = directions - featureDirections
+//  val selectedFeatures = dice.take(features, featureCount)
   throw Error("No longer supported")
 //  placeCubeRoomWalls(wallDepiction, plainDirections)(input)
 //      .plus(featureDirections.zip(selectedFeatures) { direction, feature ->

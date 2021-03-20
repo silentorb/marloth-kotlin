@@ -36,6 +36,7 @@ object MarlothProperties {
   const val sideHeight = "sideLevel"
   const val biome = "biome"
   const val blockRotations = "blockRotations"
+  const val heightVariant = "heightVariant"
 }
 
 fun marlothPropertiesSchema(): PropertySchema = mapOf(
@@ -46,6 +47,9 @@ fun marlothPropertiesSchema(): PropertySchema = mapOf(
         manyToMany = true,
     ),
     MarlothProperties.showIfSideIsEmpty to PropertyInfo(
+        manyToMany = true,
+    ),
+    MarlothProperties.heightVariant to PropertyInfo(
         manyToMany = true,
     ),
 )

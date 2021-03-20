@@ -38,10 +38,6 @@ data class BiomeConnector(
 
 fun newBiomeSide(biome: BiomeName, side: Side): Side =
     side.copy(
-        mineOld = BiomeConnector(biome, side.mineOld),
-        otherOld = side.otherOld
-            .map { BiomeConnector(biome, it) }
-            .toSet()
     )
 
 fun tieredBlocks(blockBuilders: TieredBlockBuilders): (Int) -> List<BlockBuilder> = { level ->

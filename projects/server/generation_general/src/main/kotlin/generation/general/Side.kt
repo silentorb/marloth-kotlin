@@ -25,14 +25,10 @@ object StandardHeights {
 val tempConnectionContract = "open"
 
 data class Side(
-    val mineOld: Any = "Nothing",
-    val otherOld: Set<Any> = setOf(mineOld),
     val mine: String = tempConnectionContract,
-    val other: Set<String> = setOf(tempConnectionContract), // other is a disjunction set
+    val other: Set<String> = setOf(tempConnectionContract),
     val height: Int = StandardHeights.first,
-    val isTraversable: Boolean = true,
-    val connectionLogic: ConnectionLogic = ConnectionLogic.optional,
-    val isUniversal: Boolean = false
+    val isTraversable: Boolean = true
 )
 
-val endpoint = Side(CoreSide.end, setOf(CoreSide.void), isUniversal = true, isTraversable = false)
+val endpoint = Side(isTraversable = false)

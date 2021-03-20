@@ -1,7 +1,5 @@
 {
 "graph" : [
-["checkers-block-walls","parent","checkers-slope"],
-["checkers-block-walls","type","checkers-block-walls"],
 ["checkers-slope","",""],
 ["floor","mesh","floorSquareOld"],
 ["floor","type","solid-box"],

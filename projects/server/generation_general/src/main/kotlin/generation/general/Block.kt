@@ -23,7 +23,8 @@ data class Block(
     val traversable: Set<Vector3i> = setOf(),
     val slots: List<Vector3> = listOf(),
     val biomes: Set<String> = setOf(),
-    val turns: Int = 0
+    val turns: Int = 0,
+    val heightOffset: Int = 0,
 ) {
   init {
     assert(slots.none { it.x > 5f || it.y > 5f || it.x < -5f || it.y < -5f })

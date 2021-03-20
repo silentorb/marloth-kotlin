@@ -2,7 +2,6 @@ package generation.architecture.blocks
 
 import generation.architecture.building.ledgeSlopeBuilder
 import generation.architecture.connecting.Sides
-import generation.architecture.connecting.levelConnectors
 import generation.architecture.connecting.levelSides
 import generation.general.getTurnDirection
 import generation.architecture.matrical.*
@@ -24,7 +23,7 @@ fun slopeSides(lower: Int, upperSide: Side) =
     )
 
 fun newLedgeSide(level: Int) =
-    Side(levelConnectors[level].doorway, setOf(levelConnectors[level].open), connectionLogic = ConnectionLogic.required)
+    Side()
 
 fun ledgeSlopeBlock(ledgeTurns: Int): TieredBlock = { level ->
   val lower = level

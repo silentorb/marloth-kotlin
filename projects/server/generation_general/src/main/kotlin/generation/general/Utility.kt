@@ -23,3 +23,8 @@ fun rotateZ(turns: Int, value: Vector3i): Vector3i {
     else -> value
   }
 }
+
+fun rotateZ(turns: Int, cellDirection: CellDirection): CellDirection =
+    cellDirection.copy(
+        direction = rotateZ(turns, cellDirection.direction)
+    )
