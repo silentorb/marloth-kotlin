@@ -3,6 +3,6 @@
 ["quarter-heights.scene","",""],
 ["quarter-heights.scene","heightVariant",25],
 ["quarter-heights.scene","heightVariant",50],
-["quarter-heights.scene","heightVariant",75]
+["quarter-heights.scene","heightVariant",-25]
 ]
 }
