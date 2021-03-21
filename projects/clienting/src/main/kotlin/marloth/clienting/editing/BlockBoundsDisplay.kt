@@ -166,8 +166,8 @@ fun drawWorldBlockBounds(environment: GizmoEnvironment, blockGrid: BlockGrid) {
     val center = getCellPoint(cell)
     val offset = block.offset
     val text = "${cell.x}, ${cell.y}, ${cell.z}\n${block.source.name}\n${block.source.turns}\n" +
-//        "${offset.x}, ${offset.y}, ${offset.z}"
-        "${block.source.heightOffset}"
+        "${offset.x}, ${offset.y}, ${offset.z}"
+//        "${block.source.heightOffset}"
     drawGizmoText(drawList, transform, center, text, mediumColor)
   }
 }

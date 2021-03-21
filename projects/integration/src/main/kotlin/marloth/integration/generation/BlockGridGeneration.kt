@@ -72,26 +72,42 @@ val defaultBiomeTextures: Map<String, Map<String, String>> = mapOf(
     ),
 )
 
-fun cellsFromSides(allSides: List<Pair<CellDirection, Side?>>) =
-    allSides
-        .groupBy { it.first.cell }
-        .entries
-        .associate { (offset, value) ->
-          // Null sides are used to indicate the existence of a non-traversable cell
-          val sides = value
-              .filter { it.second != null }
-              .associate { it.first.direction to it.second!! }
+fun cellsFromSides(sides: List<Pair<CellDirection, Side?>>): Map<Vector3i, BlockCell> {
+  val cells = sides
+      .groupBy { it.first.cell }
+      .entries
+      .associate { (offset, value) ->
+        // Null sides are used to indicate the existence of a non-traversable cell
+        val sides = value
+            .filter { it.second != null }
+            .associate { it.first.direction to it.second!! }
 
-          val isTraversable = sides.any { traversableBlockSides.contains(it.value.mine) }
-          val attributes = setOfNotNull(
-              if (isTraversable) CellAttribute.isTraversable else null,
-          )
-          offset to BlockCell(
-              sides = sides,
-              isTraversable = isTraversable,
-              attributes = attributes,
-          )
-        }
+        val isTraversable = sides.any { traversableBlockSides.contains(it.value.mine) }
+        val attributes = setOfNotNull(
+            if (isTraversable) CellAttribute.isTraversable else null,
+        )
+        offset to BlockCell(
+            sides = sides,
+            isTraversable = isTraversable,
+            attributes = attributes,
+        )
+      }
+
+  val headroomCells = cells
+      .filter { (cell, blockCell) ->
+        !cells.containsKey(cell + Vector3i(0, 0, 1)) && blockCell.sides.any { it.value.height > 10 }
+      }
+      .keys
+      .associate {
+        val cell = it + Vector3i(0, 0, 1)
+         cell to BlockCell(
+             sides = mapOf(),
+             isTraversable = false,
+         )
+      }
+
+  return cells + headroomCells
+}
 
 fun prepareBlockGraph(graph: Graph, sideNodes: List<String>, biomes: Collection<String>): Graph {
   val truncatedGraph = graph.filter { !sideNodes.contains(it.source) }
@@ -141,7 +157,6 @@ fun builderFromGraph(graph: Graph, zShifts: Collection<CellDirection>): Builder 
         .mapValues { i ->
           i.value.map { entry ->
             val cellDirection = entry.target as CellDirection
-//            val rotated = rotateZ(input.turns, entry.target as CellDirection)
             if (zShifts.contains(cellDirection))
               cellDirection.copy(cell = cellDirection.cell + Vector3i(0, 0, -1))
             else
@@ -203,7 +218,8 @@ fun graphToBlockBuilder(name: String, graph: Graph): List<BlockBuilder> {
       val offsets = sides
           .filter {
             val sideHeight = it.second?.height
-            sideHeight != null && sideHeight + height < 0 }
+            sideHeight != null && sideHeight + height < 0
+          }
           .map { (cellDirection, _) ->
             cellDirection
           }
