@@ -12,6 +12,7 @@ import silentorb.mythic.bloom.old.newBloomState
 import silentorb.mythic.editing.closeImGui
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.Renderer
+import silentorb.mythic.lookinglass.logGpuProfiling
 import silentorb.mythic.lookinglass.texturing.TextureLoadingState
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.typography.loadFontSets
@@ -43,6 +44,7 @@ data class Client(
   fun getWindowInfo() = platform.display.getInfo()
 
   fun shutdown() {
+    logGpuProfiling()
     closeImGui()
     platform.display.shutdown()
     platform.audio.stop()

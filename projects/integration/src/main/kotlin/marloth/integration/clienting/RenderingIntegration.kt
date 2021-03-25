@@ -45,7 +45,9 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
 //        currentMarching = updateMarchingMain(sceneRenderer, client.impModels, idleTime, scene.layers, currentMarching)
         renderSceneLayers(sceneRenderer,sceneRenderer.camera, scene.layers)
       } else {
-        renderSceneLayers(sceneRenderer, sceneRenderer.camera, scene.layers)
+        profileGpu("main") {
+          renderSceneLayers(sceneRenderer, sceneRenderer.camera, scene.layers)
+        }
       }
       labRender(appState)(sceneRenderer, scene.main)
       applyFilters(sceneRenderer, filters)
