@@ -9,6 +9,7 @@ import marloth.clienting.gui.menus.logic.commandsToClientEvents
 import marloth.clienting.gui.menus.logic.eventsFromGuiState
 import marloth.clienting.gui.menus.logic.getMenuItemEvents
 import marloth.clienting.gui.menus.logic.updateGuiState
+import marloth.clienting.input.DebugCommands
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.gatherInputCommands
 import marloth.definition.misc.ClientDefinitions
@@ -21,6 +22,8 @@ import silentorb.mythic.bloom.old.flattenAllBoxes
 import silentorb.mythic.bloom.old.getHoverBoxes
 import silentorb.mythic.bloom.old.hasAttributes
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.debugging.getDebugString
+import silentorb.mythic.debugging.toggleDebugBoolean
 import silentorb.mythic.editing.Editor
 import silentorb.mythic.editing.EditorCommands
 import silentorb.mythic.editing.checkSaveEditor
@@ -54,10 +57,30 @@ fun updateMousePointerVisibility(platform: Platform, clientState: ClientState) {
   }
 }
 
+fun toggleDebugBooleanByNumber(number: Int){
+  val key = getDebugString("TOGGLE_KEY_TARGET$number")
+  if (key != null) {
+    toggleDebugBoolean(key)
+  }
+}
+
+val handleDebugToggleCommands = handleCommands<Any> { command, _ ->
+  when (command.type) {
+    DebugCommands.toggleValue1 -> toggleDebugBooleanByNumber(1)
+    DebugCommands.toggleValue2 -> toggleDebugBooleanByNumber(2)
+    DebugCommands.toggleValue3 -> toggleDebugBooleanByNumber(3)
+    DebugCommands.toggleValue4 -> toggleDebugBooleanByNumber(4)
+  }
+}
+
 fun applyCommandsToExternalSystem(client: Client, events: List<ClientEvent>) {
   val eventTypes = events.map { it.type }
   if (eventTypes.contains(GuiCommandType.quit)) {
     client.platform.process.close()
+  }
+
+  if (getDebugBoolean("ENABLE_DEBUGGING")) {
+    handleDebugToggleCommands(events, 0)
   }
 }
 

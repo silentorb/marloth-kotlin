@@ -9,3 +9,5 @@ projects/imp
 projects/imp_intellij
 projects/mythic
 .env
+gltrace*
+*.trace

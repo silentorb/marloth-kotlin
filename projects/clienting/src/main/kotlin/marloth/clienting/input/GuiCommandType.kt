@@ -3,6 +3,7 @@ package marloth.clienting.input
 import marloth.clienting.gui.hud.toggleTargetingCommand
 import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.CharacterRigCommands
+import silentorb.mythic.ent.reflectProperties
 
 enum class GuiCommandType {
   characterInfo,
@@ -17,6 +18,13 @@ enum class GuiCommandType {
   quit
 }
 
+object DebugCommands {
+  val toggleValue1 = "toggleValue1"
+  val toggleValue2 = "toggleValue2"
+  val toggleValue3 = "toggleValue3"
+  val toggleValue4 = "toggleValue4"
+}
+
 private fun standardStrokes() = setOf(
     GuiCommandType.characterInfo,
     GuiCommandType.editor,
@@ -25,7 +33,7 @@ private fun standardStrokes() = setOf(
     GuiCommandType.menuBack,
     GuiCommandType.newGame,
     GuiCommandType.quit
-)
+) + reflectProperties<String>(DebugCommands).toSet()
 
 val commandStrokes =
     mapOf(

@@ -7,6 +7,9 @@ import marloth.clienting.gatherFontSets
 import marloth.clienting.gui.hud.cooldownMeshKey
 import marloth.clienting.gui.hud.createCooldownCircleMesh
 import marloth.clienting.rendering.createMeshes
+import org.lwjgl.opengl.GLUtil
+import org.lwjgl.system.Callback
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.drawing.setGlobalFonts
 import silentorb.mythic.glowing.Glow
 import silentorb.mythic.glowing.prepareScreenFrameBuffer
@@ -42,12 +45,17 @@ fun gatherTextures(display: PlatformDisplay, displayOptions: DisplayOptions): Li
   }
 }
 
+var debugProc: Callback? = null
+
 fun newRenderer(
     dimensions: Vector2i,
     options: DisplayOptions,
     fontSource: () -> List<FontSet>
 ): Renderer {
   val glow = Glow()
+  if (getDebugBoolean("DEBUG_OPENGL")) {
+    debugProc = GLUtil.setupDebugMessageCallback();
+  }
   glow.state.clearColor = Vector4(0f, 0f, 0f, 1f)
   val vertexSchemas: VertexSchemas = createVertexSchemas()
   val (loadedMeshes, loadedArmatures) = createMeshes(vertexSchemas)

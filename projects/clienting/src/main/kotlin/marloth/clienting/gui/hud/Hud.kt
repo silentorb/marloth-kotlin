@@ -12,8 +12,10 @@ import silentorb.mythic.bloom.*
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.characters.rigs.isGrounded
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.debugging.getDebugOverrides
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.Id
+import silentorb.mythic.lookinglass.gpuProfileMeasurements
 import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
 import simulation.happenings.Notification
@@ -69,6 +71,19 @@ fun notificationsFlower(notifications: List<Notification>): Flower =
         )
     )
 
+private var gpuTimeLast: Long = 0L
+private var gpuTimeHold: Int = 0
+
+fun getGpuTime(): Long =
+    if (gpuTimeHold > 0) {
+      --gpuTimeHold
+      gpuTimeLast
+    } else {
+      gpuTimeHold = 6
+      gpuTimeLast = gpuProfileMeasurements["main"]?.last ?: 0
+      gpuTimeLast
+    }
+
 fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flower {
   val deck = world.deck
   val destructible = deck.destructibles[actor]!!
@@ -79,8 +94,8 @@ fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flower {
       label(textStyle, "Health: ${resourceString(destructible.health, destructible.maxHealth)}"),
 //      label(textStyle, "Nourishment: ${highPercentage(character.nourishment)}"),
       label(textStyle, "Energy: ${character.energy}"),
-      label(textStyle, "Health AC: ${destructible.healthAccumulator}"),
-      label(textStyle, "Energy AC: ${character.energyAccumulator}"),
+//      label(textStyle, "Health AC: ${destructible.healthAccumulator}"),
+//      label(textStyle, "Energy AC: ${character.energyAccumulator}"),
 //      if (getDebugBoolean("HUD_DRAW_RAW_NOURISHMENT")) label(textStyle, "RawNourish: ${character.nourishment}") else null,
 //      label(textStyle, "Doom: ${world.global.doom}")
 //      label(textStyle, "Sanity: ${resourceString(data.madness)}")
@@ -195,7 +210,7 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
 //        "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}",
 //            floatToRoundedString(deck.thirdPersonRigs[player]!!.rotation.x)
 //            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()
-        if (getDebugString() != "") getDebugString() else null,
+//        if (getDebugString() != "") getDebugString() else null,
         if (getDebugBoolean("HUD_DRAW_LOCATION"))
           "${floatToRoundedString(body.position.x)} ${floatToRoundedString(body.position.y)} ${floatToRoundedString(body.position.z)}"
         else
@@ -212,7 +227,14 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
           characterRig?.groundDistance?.toString() ?: "?"
         else
           null,
-    )
+        if (getDebugBoolean("HUD_DRAW_GPU_RENDER_TIME")) {
+          val time = getGpuTime()
+          "GPU: " + String.format("%,d", time).padStart(14, ' ')
+        } else
+          null,
+    ) + getDebugOverrides()
+        .map { (key, value) -> "$key: $value" }
+
     compose(listOfNotNull(
         if (interactable != null) interactionDialog(getInteractKeyText(guiState!!.primarydeviceMode), textResources, interactable) else null,
         playerStats(world, player, debugInfo),
