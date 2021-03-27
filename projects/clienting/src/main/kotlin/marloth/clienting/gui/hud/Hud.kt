@@ -80,7 +80,7 @@ fun getGpuTime(): Long =
       gpuTimeLast
     } else {
       gpuTimeHold = 6
-      gpuTimeLast = gpuProfileMeasurements["main"]?.last ?: 0
+      gpuTimeLast = gpuProfileMeasurements["all"]?.last ?: 0
       gpuTimeLast
     }
 

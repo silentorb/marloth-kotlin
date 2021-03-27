@@ -79,7 +79,7 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> GameScene = { playe
             useDepth = false
         ),
         SceneLayer(
-            elements = cullElementGroups(meshes, camera, solidGroups),
+            elements = depthSort(camera, cullElementGroups(meshes, camera, solidGroups)),
             useDepth = true
         ),
         SceneLayer(
@@ -97,10 +97,15 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> GameScene = { playe
       layer.elements.flatMap { it.lights }
     }
 
+    val lights = if (getDebugBoolean("RENDER_NO_LIGHTS"))
+      listOf()
+    else
+      mapLights(deck, player).plus(elementLights)
+
     GameScene(
         main = Scene(
             camera = camera,
-            lights = mapLights(deck, player).plus(elementLights),
+            lights = lights,
             lightingConfig = defaultLightingConfig()
         ),
         layers = layers,
