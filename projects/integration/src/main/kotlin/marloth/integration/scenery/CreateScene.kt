@@ -80,7 +80,8 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> GameScene = { playe
         ),
         SceneLayer(
             elements = depthSort(camera, cullElementGroups(meshes, camera, solidGroups)),
-            useDepth = true
+            useDepth = true,
+            deferred = true,
         ),
         SceneLayer(
             elements = particleGroups.sortedByDescending { it.billboards.first().position.distance(camera.position) },
