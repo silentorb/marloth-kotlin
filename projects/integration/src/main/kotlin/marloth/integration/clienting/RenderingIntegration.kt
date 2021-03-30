@@ -47,7 +47,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
         } else {
           renderSceneLayers(sceneRenderer, sceneRenderer.camera, scene.layers)
         }
-        labRender(appState)(sceneRenderer, scene.main)
+        labRender(appState)(sceneRenderer, scene)
         applyFilters(sceneRenderer, filters)
         if (boxIterator.hasNext()) {
           val box = boxIterator.next()

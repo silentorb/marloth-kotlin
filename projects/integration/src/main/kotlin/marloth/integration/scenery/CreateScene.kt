@@ -31,18 +31,16 @@ val gridElementCache = singleValueCache<Deck, ElementGroup> { deck ->
   )
 }
 
-fun createScene(meshes: ModelMeshMap, world: World): (Id) -> GameScene = { player ->
+fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
   val deck = world.deck
   val definitions = world.definitions
   val graph = world.staticGraph
   val flyThrough = getDebugBoolean("FLY_THROUGH_CAMERA")
   if (!deck.characters.containsKey(player))
-    GameScene(
-        main = Scene(
-            camera = emptyCamera(),
-            lights = listOf(),
-            lightingConfig = defaultLightingConfig()
-        ),
+    Scene(
+        camera = emptyCamera(),
+        lights = listOf(),
+        lightingConfig = defaultLightingConfig(),
         layers = listOf(),
         filters = listOf()
     )
@@ -81,7 +79,7 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> GameScene = { playe
         SceneLayer(
             elements = depthSort(camera, cullElementGroups(meshes, camera, solidGroups)),
             useDepth = true,
-            deferred = true,
+            shadingMode = ShadingMode.deferred,
         ),
         SceneLayer(
             elements = particleGroups.sortedByDescending { it.billboards.first().position.distance(camera.position) },
@@ -103,12 +101,10 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> GameScene = { playe
     else
       mapLights(deck, player).plus(elementLights)
 
-    GameScene(
-        main = Scene(
-            camera = camera,
-            lights = lights,
-            lightingConfig = defaultLightingConfig()
-        ),
+    Scene(
+        camera = camera,
+        lights = lights,
+        lightingConfig = defaultLightingConfig(),
         layers = layers,
         filters = getScreenFilters(deck, player)
     )
