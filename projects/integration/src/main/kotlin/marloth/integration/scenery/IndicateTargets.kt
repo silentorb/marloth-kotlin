@@ -2,6 +2,7 @@ package marloth.integration.scenery
 
 import marloth.scenery.enums.Textures
 import silentorb.mythic.ent.Id
+import silentorb.mythic.lookinglass.DepthMode
 import silentorb.mythic.lookinglass.ElementGroup
 import silentorb.mythic.lookinglass.SceneLayer
 import silentorb.mythic.lookinglass.TexturedBillboard
@@ -29,7 +30,7 @@ fun getTargetingLayer(deck: Deck, player: Id): SceneLayer? {
                   )
               )
           ),
-          useDepth = false
+          depth = DepthMode.global
       )
     } else
       null

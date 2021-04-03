@@ -5,10 +5,7 @@ import marloth.scenery.enums.MeshId
 import silentorb.mythic.characters.rigs.defaultCharacterRadius
 import silentorb.mythic.ent.Id
 import silentorb.mythic.glowing.DrawMethod
-import silentorb.mythic.lookinglass.ElementGroup
-import silentorb.mythic.lookinglass.Material
-import silentorb.mythic.lookinglass.MeshElement
-import silentorb.mythic.lookinglass.SceneLayer
+import silentorb.mythic.lookinglass.*
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector4
@@ -34,7 +31,7 @@ fun movementRangeLayer(color: Vector4, transform: Matrix) =
                 )
             )
         ),
-        useDepth = false
+        depth = DepthMode.global
     )
 
 fun movementRangeLayer(definitions: Definitions, deck: Deck, actor: Id, duration: Float, color: Vector4): SceneLayer {

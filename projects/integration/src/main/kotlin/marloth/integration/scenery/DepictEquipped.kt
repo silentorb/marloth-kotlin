@@ -3,9 +3,7 @@ package marloth.integration.scenery
 import marloth.scenery.enums.AccessoryId
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.ent.Id
-import silentorb.mythic.lookinglass.ElementGroup
-import silentorb.mythic.lookinglass.MeshElement
-import silentorb.mythic.lookinglass.SceneLayer
+import silentorb.mythic.lookinglass.*
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.spatial.*
@@ -81,8 +79,8 @@ fun getPlayerEquipmentLayer(definitions: Definitions, deck: Deck, player: Id, ca
 
     SceneLayer(
         elements = elements,
-        useDepth = true,
-        resetDepth = true
+        depth = DepthMode.local,
+        shadingMode = ShadingMode.forward
     )
   } else
     null

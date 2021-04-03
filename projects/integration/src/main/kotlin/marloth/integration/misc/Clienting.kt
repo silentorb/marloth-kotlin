@@ -70,9 +70,7 @@ fun newRenderer(
       armatures = armatures,
       vertexSchemas = vertexSchemas,
       multisampler = multisampler,
-      offscreenBuffers = (0..0).map {
-        prepareScreenFrameBuffer(dimensions.x, dimensions.y, true)
-      }
+      offscreenBuffer = prepareScreenFrameBuffer(dimensions.x, dimensions.y, true)
   )
 }
 

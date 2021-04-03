@@ -10,6 +10,7 @@ import silentorb.mythic.ent.scenery.getGraphRoots
 import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.ent.singleValueCache
 import silentorb.mythic.lookinglass.*
+import silentorb.mythic.scenery.Light
 import simulation.main.Deck
 import simulation.main.World
 
@@ -30,6 +31,13 @@ val gridElementCache = singleValueCache<Deck, ElementGroup> { deck ->
           }
   )
 }
+
+fun gatherLightsFromLayers(layers: List<SceneLayer>): List<Light> =
+    layers
+        .flatMap { layer ->
+          layer.elements.flatMap { it.lights } +
+              gatherLightsFromLayers(layer.children)
+        }
 
 fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
   val deck = world.deck
@@ -73,28 +81,34 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
 
     val layers = listOf(
         SceneLayer(
-            elements = gatherBackground(deck.cyclesFloat, camera.position),
-            useDepth = false
-        ),
-        SceneLayer(
-            elements = depthSort(camera, cullElementGroups(meshes, camera, solidGroups)),
-            useDepth = true,
+            depth = DepthMode.global,
             shadingMode = ShadingMode.deferred,
+            children = listOfNotNull(
+                SceneLayer(
+                    elements = depthSort(camera, cullElementGroups(meshes, camera, solidGroups)),
+                ),
+//                equipmentLayer,
+            )
         ),
+//        SceneLayer(
+//            elements = gatherBackground(deck.cyclesFloat, camera.position),
+//            useDepth = true,
+//            shadingMode = ShadingMode.none,
+//        ),
         SceneLayer(
             elements = particleGroups.sortedByDescending { it.billboards.first().position.distance(camera.position) },
-            useDepth = true
+            depth = DepthMode.global,
+            shadingMode = ShadingMode.forward,
         ),
         SceneLayer(
             elements = gatherParticleElements(deck, camera.position),
-            useDepth = false
+            depth = DepthMode.none,
+            shadingMode = ShadingMode.forward,
         ),
     ) + listOfNotNull(movementRangeLayer, equipmentLayer)
     // + listOfNotNull(movementRangeLayer, equipmentLayer, targetingLayer)
 
-    val elementLights = layers.flatMap { layer ->
-      layer.elements.flatMap { it.lights }
-    }
+    val elementLights = gatherLightsFromLayers(layers)
 
     val lights = if (getDebugBoolean("RENDER_NO_LIGHTS"))
       listOf()
