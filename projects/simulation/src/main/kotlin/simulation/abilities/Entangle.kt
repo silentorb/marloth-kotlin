@@ -1,6 +1,6 @@
 package simulation.abilities
 
-import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.AccessoryIdOld
 import simulation.accessorize.Accessory
 import simulation.accessorize.hasAccessory
 import silentorb.mythic.ent.Id
@@ -12,8 +12,8 @@ import simulation.main.Deck
 import simulation.main.Hand
 import simulation.main.NewHand
 
-val isEntangleImmune = hasAccessory(AccessoryId.entangleImmune)
-val isEntangled = hasAccessory(AccessoryId.entangled)
+val isEntangleImmune = hasAccessory(AccessoryIdOld.entangleImmune)
+val isEntangled = hasAccessory(AccessoryIdOld.entangled)
 
 fun entangledDuration(level: Int): Float =
     when (level) {
@@ -26,7 +26,7 @@ fun entangledDuration(level: Int): Float =
 fun entangleEvents(deck: Deck, accessory: Accessory): (Id) -> Events = { target ->
   val immunityDuration = 3f
 
-  if (hasAnyAccessory(setOf(AccessoryId.entangling, AccessoryId.entangleImmune), deck.accessories, target))
+  if (hasAnyAccessory(setOf(AccessoryIdOld.entangling, AccessoryIdOld.entangleImmune), deck.accessories, target))
     listOf()
   else
     listOf(
@@ -34,7 +34,7 @@ fun entangleEvents(deck: Deck, accessory: Accessory): (Id) -> Events = { target 
             components = listOf(
                 AccessoryStack(
                     value = Accessory(
-                        type = AccessoryId.entangling,
+                        type = AccessoryIdOld.entangling,
                         level = accessory.level,
                     ),
                     owner = target,
@@ -46,7 +46,7 @@ fun entangleEvents(deck: Deck, accessory: Accessory): (Id) -> Events = { target 
             components = listOf(
                 AccessoryStack(
                     value = Accessory(
-                        type = AccessoryId.entangleImmune,
+                        type = AccessoryIdOld.entangleImmune,
                     ),
                     owner = target
                 ),
@@ -59,13 +59,13 @@ fun entangleEvents(deck: Deck, accessory: Accessory): (Id) -> Events = { target 
 fun newEntangleEntities(previous: Deck): List<Hand> =
     previous.accessories
         .filter { (key, accessory) ->
-          accessory.value.type == AccessoryId.entangling && previous.timersFloat[key]!!.duration <= 0f
+          accessory.value.type == AccessoryIdOld.entangling && previous.timersFloat[key]!!.duration <= 0f
         }
         .map { (_, accessory) ->
           Hand(
               accessory = AccessoryStack(
                   value = Accessory(
-                      type = AccessoryId.entangled,
+                      type = AccessoryIdOld.entangled,
                       level = accessory.value.level
                   ),
                   owner = accessory.owner,

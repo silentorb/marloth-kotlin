@@ -1,6 +1,6 @@
 package simulation.movement
 
-import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.AccessoryIdOld
 import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
@@ -28,7 +28,7 @@ fun newMobilityModifierEvent(actor: Id, source: Id, duration: Float) =
         components = listOf(
             AccessoryStack(
                 value = Accessory(
-                    type = AccessoryId.mobile,
+                    type = AccessoryIdOld.mobile,
                     source = source,
                 ),
                 owner = actor,
@@ -47,7 +47,7 @@ fun mobilityEvents(definitions: Definitions, deck: Deck, commands: List<Command>
       .filter(canUseMobility(deck))
       .flatMap { actor ->
         val accessory = deck.accessories.entries
-            .first { it.value.value.type == AccessoryId.mobility && it.value.owner == actor }
+            .first { it.value.value.type == AccessoryIdOld.mobility && it.value.owner == actor }
 
         val duration = definitions.actions[accessory.value.value.type]!!.duration
 

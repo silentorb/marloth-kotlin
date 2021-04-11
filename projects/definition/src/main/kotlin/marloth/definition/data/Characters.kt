@@ -1,6 +1,6 @@
 package marloth.definition.data
 
-import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.AccessoryIdOld
 import marloth.scenery.enums.DevText
 import simulation.characters.CharacterDefinition
 import simulation.entities.ClearAreaTask
@@ -32,7 +32,7 @@ fun characterDefinitions(): Map<String, CharacterDefinition> = mapOf(
         depictionType = DepictionType.child,
         wares = listOf(
             Ware(
-                type = AccessoryId.cookie,
+                type = AccessoryIdOld.cookie,
                 price = 10,
                 quantity = 10,
             )

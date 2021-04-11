@@ -72,7 +72,9 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
     else
       null
 
-    val mainElements = gatherVisualElements(definitions, deck, player, characterRig) +
+    val playerRig = deck.players[player]?.rig ?: 0L
+
+    val mainElements = gatherVisualElements(definitions, deck, playerRig, characterRig) +
         graphElementCache(graph) +
         gridElementCache(world.realm.deck)
 

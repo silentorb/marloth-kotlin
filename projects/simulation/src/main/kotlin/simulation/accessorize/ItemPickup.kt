@@ -1,6 +1,6 @@
 package simulation.accessorize
 
-import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.AccessoryIdOld
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
@@ -31,7 +31,7 @@ fun eventsFromItemPickups(world: World, collisions: CollisionMap): Events {
           }
       if (available) {
         when {
-          itemAccessory.value.type == AccessoryId.victoryKey -> listOf(
+          itemAccessory.value.type == AccessoryIdOld.victoryKey -> listOf(
               PruneEntityEvent(
                   id = itemPickup,
                   hand = newVictoryKey(owner = character)

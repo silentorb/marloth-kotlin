@@ -1,6 +1,6 @@
 package simulation.intellect.design
 
-import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.AccessoryIdOld
 import silentorb.mythic.ent.Id
 import simulation.abilities.isEntangleImmune
 import simulation.happenings.getActions
@@ -16,7 +16,7 @@ fun actionsForTarget(world: World, actor: Id, target: Id): List<Id> {
       .filter { (_, accessoryRecord) ->
         val action = definitions.actions[accessoryRecord.value.type]!!
         action.range >= distance &&
-            (accessoryRecord.value.type != AccessoryId.entangle || !isEntangleImmune(deck.accessories, target))
+            (accessoryRecord.value.type != AccessoryIdOld.entangle || !isEntangleImmune(deck.accessories, target))
       }
       .keys
       .toList()

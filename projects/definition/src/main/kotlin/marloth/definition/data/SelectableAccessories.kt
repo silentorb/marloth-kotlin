@@ -1,10 +1,10 @@
 package marloth.definition.data
 
-import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.AccessoryIdOld
 import simulation.accessorize.AccessoryName
 
 fun selectableAccessories(): Set<AccessoryName> = setOf(
-    AccessoryId.dash,
-    AccessoryId.entangle,
-    AccessoryId.graveDigger
+    AccessoryIdOld.dash,
+    AccessoryIdOld.entangle,
+    AccessoryIdOld.graveDigger
 )

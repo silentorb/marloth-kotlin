@@ -1,6 +1,6 @@
 package simulation.abilities
 
-import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.AccessoryIdOld
 import simulation.accessorize.Accessory
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
@@ -25,7 +25,7 @@ fun dashEvents(definitions: Definitions, accessory: Accessory, actor: Id): Event
           components = listOf(
               AccessoryStack(
                   value = Accessory(
-                      type = AccessoryId.dashing,
+                      type = AccessoryIdOld.dashing,
                       level = accessory.level,
                   ),
                   owner = actor,

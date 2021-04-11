@@ -42,9 +42,9 @@ val simplePainterMap = reflectProperties<String>(MeshId).mapNotNull { meshId ->
     )
 
 
-fun filterDepictions(depictions: Table<Depiction>, player: Id, characterRig: CharacterRig): Table<Depiction> =
+fun filterDepictions(depictions: Table<Depiction>, playerRig: Id, characterRig: CharacterRig): Table<Depiction> =
     if (characterRig.viewMode == ViewMode.firstPerson && !getDebugBoolean("FLY_THROUGH_CAMERA"))
-      depictions.filter { it.key != player }
+      depictions.filter { it.key != playerRig }
     else
       depictions
 
@@ -267,7 +267,7 @@ fun gatherParticleElements(deck: Deck, cameraPosition: Vector3): ElementGroups {
       }
 }
 
-fun depictionSwitch(definitions: Definitions, deck: Deck, player: Id, depiction: Id, depictionRecord: Depiction): ElementGroup? {
+fun depictionSwitch(definitions: Definitions, deck: Deck, depiction: Id, depictionRecord: Depiction): ElementGroup? {
   return when (depictionRecord.type) {
     DepictionType.hound,
     DepictionType.sentinel -> convertCharacterDepiction(definitions, deck, depiction, depictionRecord)
@@ -275,14 +275,14 @@ fun depictionSwitch(definitions: Definitions, deck: Deck, player: Id, depiction:
   }
 }
 
-fun gatherVisualElements(definitions: Definitions, deck: Deck, player: Id, characterRig: CharacterRig): ElementGroups {
+fun gatherVisualElements(definitions: Definitions, deck: Deck, playerRig: Id, characterRig: CharacterRig): ElementGroups {
   val initialPass = deck.depictions.map { (id, depiction) ->
-    Pair(id, depictionSwitch(definitions, deck, player, id, depiction))
+    Pair(id, depictionSwitch(definitions, deck, id, depiction))
   }
   val initial = initialPass.mapNotNull { it.second }
   val remaining = deck.depictions.minus(initialPass.filter { it.second != null }.map { it.first })
   val (complex, simple) =
-      filterDepictions(remaining, player, characterRig)
+      filterDepictions(remaining, playerRig, characterRig)
           .entries.partition { isComplexDepiction(it.value) }
 
   val complexElements = complex.map {

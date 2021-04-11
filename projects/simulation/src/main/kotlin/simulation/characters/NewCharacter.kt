@@ -22,6 +22,25 @@ import simulation.misc.Definitions
 import simulation.misc.Factions
 import simulation.physics.CollisionGroups
 
+fun commonCharacterElements(position: Vector3, angle: Float) =
+    listOf(
+        Body(
+            position = position,
+            velocity = Vector3(),
+            orientation = Quaternion()
+        ),
+        DynamicBody(
+            gravity = true,
+            mass = 45f,
+            resistance = 4f
+        ),
+        CharacterRig(
+            facingRotation = Vector2(angle, 0f),
+            facingOrientation = characterRigOrentation(Vector2(angle, 0f)),
+            viewMode = ViewMode.firstPerson
+        ),
+    )
+
 fun newCharacter(
     id: Id,
     definitions: Definitions,
@@ -52,74 +71,60 @@ fun newCharacter(
   return NewHand(
       id = id,
       children = accessories,
-      components = listOfNotNull(
-          if (definition.ambientSounds.any())
-            AmbientAudioEmitter(
-                delay = position.length() % 2.0
-            )
-          else
-            null,
-          Body(
-              position = position,
-              velocity = Vector3(),
-              orientation = Quaternion()
-          ),
-          CharacterAnimation(
-              animations = listOf(
-                  SingleAnimation(
-                      animationId = AnimationId.stand,
-                      animationOffset = 0f
+      components = commonCharacterElements(position, angle) +
+          listOfNotNull(
+              if (definition.ambientSounds.any())
+                AmbientAudioEmitter(
+                    delay = position.length() % 2.0
+                )
+              else
+                null,
+              CharacterAnimation(
+                  animations = listOf(
+                      SingleAnimation(
+                          animationId = AnimationId.stand,
+                          animationOffset = 0f
+                      )
                   )
-              )
-          ),
-          DynamicBody(
-              gravity = true,
-              mass = 45f,
-              resistance = 4f
-          ),
-          Character(
-              faction = faction,
-              isAlive = true,
-              definition = definition,
-              money = definition.money,
-              energy = definition.health,
-              wares = definition.wares.associateBy { nextWareId() },
-              availableContracts = definition.availableContracts.associateBy { nextWareId() },
-          ),
-          CharacterRig(
-              facingRotation = Vector2(angle, 0f),
-              facingOrientation = characterRigOrentation(Vector2(angle, 0f)),
-              viewMode = ViewMode.firstPerson
-          ),
-          CollisionObject(
-              shape = Capsule(defaultCharacterRadius, defaultCharacterHeight),
-              groups = CollisionGroups.dynamic,
-              mask = CollisionGroups.standardMask
-          ),
-          Depiction(
-              type = definition.depictionType
-          ),
-          Destructible(
-              base = DestructibleBaseStats(
+              ),
+              Character(
+                  faction = faction,
+                  isAlive = true,
+                  definition = definition,
+                  money = definition.money,
+                  energy = definition.health,
+                  wares = definition.wares.associateBy { nextWareId() },
+                  availableContracts = definition.availableContracts.associateBy { nextWareId() },
+              ),
+              CollisionObject(
+                  shape = Capsule(defaultCharacterRadius, defaultCharacterHeight),
+                  groups = CollisionGroups.dynamic,
+                  mask = CollisionGroups.standardMask
+              ),
+              Depiction(
+                  type = definition.depictionType
+              ),
+              Destructible(
+                  base = DestructibleBaseStats(
+                      health = definition.health,
+                      damageMultipliers = definition.damageMultipliers
+                  ),
                   health = definition.health,
+                  maxHealth = definition.health,
+                  drainDuration = healthTimeDrainDuration,
                   damageMultipliers = definition.damageMultipliers
               ),
-              health = definition.health,
-              maxHealth = definition.health,
-              drainDuration = healthTimeDrainDuration,
-              damageMultipliers = definition.damageMultipliers
-          ),
 
-          if (definition.wares.any() || definition.availableContracts.any()) {
-            Interactable(
-                primaryCommand = WidgetCommand(
-                    text = TextId.menu_talk,
-                    commandType = ClientCommand.showConversationView
+              if (definition.wares.any() || definition.availableContracts.any()) {
+                Interactable(
+                    primaryCommand = WidgetCommand(
+                        text = TextId.menu_talk,
+                        commandType = ClientCommand.showConversationView
+                    )
                 )
-            )
-          } else
-            null,
-      )
+              } else
+                null,
+          )
   )
 }
 

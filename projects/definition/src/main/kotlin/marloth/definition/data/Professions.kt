@@ -1,6 +1,6 @@
 package marloth.definition.data
 
-import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.AccessoryIdOld
 import marloth.scenery.enums.SoundId
 import marloth.scenery.enums.TextId
 import silentorb.mythic.ent.reflectPropertiesMap
@@ -11,7 +11,7 @@ object Professions {
   val soldier = CharacterDefinition(
       name = TextId.id_soldier,
       health = 200,
-      accessories = listOf(AccessoryId.shotgun, AccessoryId.graveDigger, AccessoryId.mobility),
+      accessories = listOf(AccessoryIdOld.shotgun, AccessoryIdOld.graveDigger, AccessoryIdOld.mobility),
       depictionType = DepictionType.child,
       deathSound = SoundId.girlScream,
       damageMultipliers = mapOf()
@@ -20,7 +20,7 @@ object Professions {
   val magician = CharacterDefinition(
       name = TextId.id_magician,
       health = 200,
-      accessories = listOf(AccessoryId.rocketLauncher, AccessoryId.mobility),
+      accessories = listOf(AccessoryIdOld.rocketLauncher, Accessories.shadowSpirit),
       depictionType = DepictionType.child,
       deathSound = SoundId.girlScream,
       damageMultipliers = mapOf(),
@@ -32,7 +32,7 @@ object Professions {
 private val debug = CharacterDefinition(
     name = TextId.unnamed,
     health = 20000,
-    accessories = listOf(AccessoryId.rocketLauncher),
+    accessories = listOf(AccessoryIdOld.rocketLauncher),
     depictionType = DepictionType.child,
     speed = 16f,
     deathSound = SoundId.girlScream,

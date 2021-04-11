@@ -7,6 +7,7 @@ object CollisionGroups {
   val trigger = 4
   val affectsCamera = 8
   val opaque = 16
+  val spirit = 32
   
   val solidStatic = static or opaque
 
@@ -15,4 +16,6 @@ object CollisionGroups {
   val standardMask = dynamic or static or trigger
 
   val staticMask = dynamic or trigger
+
+  val spiritMask = spirit or static
 }

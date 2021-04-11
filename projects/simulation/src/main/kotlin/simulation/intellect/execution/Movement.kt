@@ -1,6 +1,6 @@
 package simulation.intellect.execution
 
-import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.AccessoryIdOld
 import marloth.scenery.enums.CharacterRigCommands
 import org.recast4j.detour.DefaultQueryFilter
 import org.recast4j.detour.StraightPathItem
@@ -78,7 +78,7 @@ fun getPathTargetPosition(world: World, actor: Id, targetPosition: Vector3): Vec
 
 fun tryUseDash(world: World, actor: Id): Events {
   val deck = world.deck
-  val dash = getAccessory(AccessoryId.dash, deck.accessories, actor)?.key
+  val dash = getAccessory(AccessoryIdOld.dash, deck.accessories, actor)?.key
   return if (dash != null && canUse(world, dash))
     listOf(
         TryActionEvent(

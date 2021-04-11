@@ -1,6 +1,6 @@
 package marloth.integration.scenery
 
-import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.AccessoryIdOld
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.*
@@ -32,7 +32,7 @@ fun getPlayerEquipmentLayer(definitions: Definitions, deck: Deck, player: Id, ca
   val equippedMesh = getEquippedMesh(definitions, deck, player)
   val victoryKey = deck.accessories.entries
       .firstOrNull { (_, accessory) ->
-        accessory.value.type == AccessoryId.victoryKey && accessory.owner == player
+        accessory.value.type == AccessoryIdOld.victoryKey && accessory.owner == player
       }
   return if (equippedMesh != null || victoryKey != null) {
     val body = deck.bodies[player]!!

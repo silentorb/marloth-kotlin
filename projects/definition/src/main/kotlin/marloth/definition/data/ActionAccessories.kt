@@ -72,7 +72,7 @@ fun spiritRocketLauncher(): ActionAccessory {
 
 fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
-    AccessoryId.dash to ActionAccessory(
+    AccessoryIdOld.dash to ActionAccessory(
         accessory = AccessoryDefinition(
             name = TextId.id_dash,
             maxLevel = 3
@@ -84,7 +84,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         )
     ),
 
-    AccessoryId.entangle to ActionAccessory(
+    AccessoryIdOld.entangle to ActionAccessory(
         accessory = AccessoryDefinition(
             name = TextId.id_entangle,
             maxLevel = 3
@@ -97,41 +97,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         )
     ),
 
-    AccessoryId.mobility to ActionAccessory(
-        accessory = AccessoryDefinition(
-            name = TextId.id_mobility
-        ),
-        action = ActionDefinition(
-            cooldown = 3f,
-            duration = 2f,
-            equipmentSlot = EquipmentSlot.automatic
-        )
-    ),
-
-    AccessoryId.pistol to ActionAccessory(
-        accessory = AccessoryDefinition(
-            name = TextId.id_pistol,
-            equippedMesh = MeshId.pistol
-        ),
-        action = ActionDefinition(
-            cooldown = 2f,
-            range = 10f,
-            animation = AnimationId.shootPistol,
-            equipmentSlot = EquipmentSlot.attack
-        ),
-        weapon = WeaponDefinition(
-            attackMethod = AttackMethod.raycast,
-            damages = listOf(
-                DamageDefinition(
-                    type = DamageTypes.physical,
-                    amount = 70
-                )
-            ),
-            sound = SoundId.pistolFire
-        )
-    ),
-
-    AccessoryId.grenadeLauncher to ActionAccessory(
+    AccessoryIdOld.grenadeLauncher to ActionAccessory(
         accessory = AccessoryDefinition(
             name = TextId.id_grenadeLauncher,
             equippedMesh = MeshId.grenadeLauncher
@@ -157,11 +123,45 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         )
     ),
 
-    AccessoryId.rocketLauncher to rocketLauncher(),
-    AccessoryId.spiritRocketLauncher to spiritRocketLauncher(),
-    AccessoryId.cookie to cookie(),
+    AccessoryIdOld.mobility to ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = TextId.id_mobility
+        ),
+        action = ActionDefinition(
+            cooldown = 3f,
+            duration = 2f,
+            equipmentSlot = EquipmentSlot.automatic
+        )
+    ),
 
-    AccessoryId.claws to ActionAccessory(
+    AccessoryIdOld.pistol to ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = TextId.id_pistol,
+            equippedMesh = MeshId.pistol
+        ),
+        action = ActionDefinition(
+            cooldown = 2f,
+            range = 10f,
+            animation = AnimationId.shootPistol,
+            equipmentSlot = EquipmentSlot.attack
+        ),
+        weapon = WeaponDefinition(
+            attackMethod = AttackMethod.raycast,
+            damages = listOf(
+                DamageDefinition(
+                    type = DamageTypes.physical,
+                    amount = 70
+                )
+            ),
+            sound = SoundId.pistolFire
+        )
+    ),
+
+    AccessoryIdOld.rocketLauncher to rocketLauncher(),
+    AccessoryIdOld.spiritRocketLauncher to spiritRocketLauncher(),
+    AccessoryIdOld.cookie to cookie(),
+
+    AccessoryIdOld.claws to ActionAccessory(
         accessory = AccessoryDefinition(
             name = TextId.unnamed,
             equippedMesh = null
@@ -184,7 +184,18 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         )
     ),
 
-    AccessoryId.shotgun to ActionAccessory(
+    Accessories.shadowSpirit to ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = DevText("Shadow Spirit")
+        ),
+        action = ActionDefinition(
+            cooldown = 2f,
+            duration = 10f,
+            equipmentSlot = EquipmentSlot.mobility
+        )
+    ),
+
+    AccessoryIdOld.shotgun to ActionAccessory(
         accessory = AccessoryDefinition(
             name = TextId.unnamed,
             equippedMesh = MeshId.shotgun
@@ -206,6 +217,6 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             ),
             sound = SoundId.pistolFire
         )
-    )
+    ),
 
 )

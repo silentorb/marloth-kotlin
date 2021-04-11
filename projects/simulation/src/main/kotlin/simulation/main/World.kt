@@ -11,7 +11,7 @@ import simulation.misc.GameModeConfig
 
 data class World(
     val realm: Realm,
-    val nextId: Id,
+    val nextId: SharedNextId,
     val deck: Deck,
     val global: GlobalState,
     val dice: Dice,
@@ -30,21 +30,21 @@ data class World(
 
 typealias WorldPair = Pair<World, World>
 
-fun newIdSourceFromWorld(world: World): Pair<IdSource, (World) -> World> {
-  var availableIds = world.availableIds
-  var nextId = world.nextId
-  return Pair({
-    if (availableIds.any()) {
-      val result = availableIds.last()
-      availableIds = availableIds.minus(result)
-      result
-    } else {
-      nextId++
-    }
-  }, { newWorld ->
-    newWorld.copy(
-        availableIds = availableIds,
-        nextId = nextId
-    )
-  })
-}
+//fun newIdSourceFromWorld(world: World): Pair<IdSource, (World) -> World> {
+//  var availableIds = world.availableIds
+//  var nextId = world.nextId
+//  return Pair({
+//    if (availableIds.any()) {
+//      val result = availableIds.last()
+//      availableIds = availableIds.minus(result)
+//      result
+//    } else {
+//      nextId++
+//    }
+//  }, { newWorld ->
+//    newWorld.copy(
+//        availableIds = availableIds,
+//        nextId = nextId
+//    )
+//  })
+//}

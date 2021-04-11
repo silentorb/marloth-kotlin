@@ -54,7 +54,7 @@ fun generateWorld(db: Database, definitions: Definitions, generationConfig: Gene
       staticGraph = graph2,
       deck = deck,
       realm = realm,
-      nextId = nextId(),
+      nextId = SharedNextId(nextId()),
       dice = Dice(),
       global = newGlobalState(),
       availableIds = setOf(),

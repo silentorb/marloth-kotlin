@@ -15,6 +15,7 @@ import simulation.combat.general.updateDestructibleHealth
 import simulation.entities.updateAmbientAudio
 import simulation.entities.updateCharacterAnimation
 import simulation.entities.updateContracts
+import simulation.entities.updatePlayer
 import simulation.happenings.updateActions
 import simulation.intellect.assessment.lightRatings
 import simulation.intellect.assessment.updateKnowledge
@@ -49,6 +50,7 @@ fun updateEntities(definitions: Definitions, world: World, navigation: Navigatio
           knowledge = mapTable(deck.knowledge, updateKnowledge(world, lightRatings(world.deck), delta)),
           navigationDirections = if (navigation != null) updateNavigationDirections(navigation) else mapOf(),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(definitions.particleEffects, dice, delta)),
+          players = mapTable(deck.players, updatePlayer(events)),
           sounds = mapTableValues(deck.sounds, updateSound(delta)),
           spirits = mapTable(deck.spirits, updateSpirit(world, delta)),
           thirdPersonRigs = mapTable(deck.thirdPersonRigs, updateThirdPersonCamera(world.bulletState.dynamicsWorld, CollisionGroups.affectsCamera, events, deck.bodies, deck.characterRigs, deck.targets, freedomTable, delta)),

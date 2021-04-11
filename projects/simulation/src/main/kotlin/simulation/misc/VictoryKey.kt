@@ -1,6 +1,6 @@
 package simulation.misc
 
-import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.AccessoryIdOld
 import marloth.scenery.enums.MeshId
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
@@ -27,14 +27,14 @@ import simulation.physics.CollisionGroups
 
 fun getAllVictoryKeys(accessories: Table<AccessoryStack>): Table<AccessoryStack> =
     accessories
-        .filterValues { it.value.type == AccessoryId.victoryKey }
+        .filterValues { it.value.type == AccessoryIdOld.victoryKey }
 
 // Needs body
 fun newVictoryKey(owner: Id = 0) =
     Hand(
         accessory = AccessoryStack(
             value = Accessory(
-                type = AccessoryId.victoryKey,
+                type = AccessoryIdOld.victoryKey,
             ),
             owner = owner
         ),

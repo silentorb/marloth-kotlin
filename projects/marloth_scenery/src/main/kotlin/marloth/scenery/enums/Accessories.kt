@@ -1,6 +1,6 @@
 package marloth.scenery.enums
 
-object AccessoryId {
+object AccessoryIdOld {
   const val candle = "candle"
   const val claws = "claws"
   const val cookie = "cookie"

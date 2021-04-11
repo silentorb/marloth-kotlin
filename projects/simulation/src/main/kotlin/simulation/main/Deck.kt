@@ -120,11 +120,10 @@ val idHandsToDeck = genericIdHandsToDeck(deckReflection)
 val removeEntities = genericRemoveEntities(deckReflection)
 
 fun addEntitiesToWorldDeck(world: World, transform: (IdSource) -> List<NewHand>): World {
-  val nextId = newIdSource(world.nextId)
+  val nextId = world.nextId.source()
   val hands = transform(nextId)
   return world.copy(
       deck = allHandsToDeck(world.definitions, nextId, hands, world.step, world.deck),
-      nextId = nextId()
   )
 }
 

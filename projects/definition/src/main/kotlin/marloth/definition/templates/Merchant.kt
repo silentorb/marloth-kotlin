@@ -1,8 +1,5 @@
 package marloth.definition.templates
 
-import marloth.scenery.enums.AccessoryId
-import simulation.entities.*
-
 //fun newMerchant(nextId: IdSource, definitions: Definitions, position: Vector3, wares: List<Ware>): List<IdHand> {
 //  val character = nextId()
 //  return newCharacter(nextId, character, definitions,

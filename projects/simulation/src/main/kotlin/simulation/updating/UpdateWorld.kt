@@ -12,6 +12,7 @@ import simulation.combat.general.getDamageMultiplierModifiers
 import simulation.combat.general.updateDestructibleCache
 import simulation.combat.toCombatDefinitions
 import simulation.combat.toModifierDeck
+import simulation.entities.remapPlayerRigCommands
 import simulation.happenings.gatherNextCommands
 import simulation.intellect.navigation.NavigationState
 import simulation.intellect.navigation.updateNavigation
@@ -49,22 +50,22 @@ fun updateDeck(definitions: Definitions, events: Events, world: World,
     )
 
 fun updateWorld(definitions: Definitions, events: Events, commands: Commands, delta: Float, world: World): World {
-  val withPhysics = updatePhysics(events)(world)
+  val remappedEvents = remapPlayerRigCommands(world.deck.players, events)
+  val withPhysics = updatePhysics(remappedEvents)(world)
   val moveSpeedTable = newMoveSpeedTable(definitions, withPhysics.deck)
   val navigation = if (withPhysics.navigation != null)
     updateNavigation(withPhysics.deck, moveSpeedTable, delta, withPhysics.navigation)
   else
     null
 
-  val nextId = newIdSource(withPhysics.nextId)
-  val deck = updateDeck(definitions, events, withPhysics, navigation, nextId)(withPhysics.deck)
+  val nextId = withPhysics.nextId.source()
+  val deck = updateDeck(definitions, remappedEvents, withPhysics, navigation, nextId)(withPhysics.deck)
   applyBodyChanges(withPhysics.bulletState, withPhysics.deck.bodies, deck.bodies)
 
   return withPhysics.copy(
       deck = deck,
       global = updateGlobalState(deck, world.staticGraph, withPhysics.global),
       navigation = navigation,
-      nextId = nextId(),
       nextCommands = gatherNextCommands(world, commands),
       step = world.step + 1L,
   )

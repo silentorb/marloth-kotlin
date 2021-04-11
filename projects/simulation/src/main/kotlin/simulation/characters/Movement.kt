@@ -1,6 +1,6 @@
 package simulation.characters
 
-import marloth.scenery.enums.AccessoryId
+import marloth.scenery.enums.AccessoryIdOld
 import simulation.accessorize.getAccessory
 import silentorb.mythic.ent.Id
 import simulation.abilities.dashBonus
@@ -13,7 +13,7 @@ fun getMoveSpeed(definitions: Definitions, deck: Deck): (Id) -> Float = { actor 
   val character = deck.characters[actor]!!
   val definition = character.definition
   val baseSpeed = definition.speed
-  val accessory = getAccessory(AccessoryId.dashing, deck.accessories, actor)?.value
+  val accessory = getAccessory(AccessoryIdOld.dashing, deck.accessories, actor)?.value
   val dashBonus = if (accessory != null)
     dashBonus(accessory.value.level)
   else

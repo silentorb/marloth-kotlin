@@ -19,7 +19,8 @@ fun newPlayerIdHand(id: Id) =
         id = id,
         components = listOf(
             Player(
-                name = "Unknown Hero"
+                name = "Unknown Hero",
+                rig = id,
             )
         )
     )
