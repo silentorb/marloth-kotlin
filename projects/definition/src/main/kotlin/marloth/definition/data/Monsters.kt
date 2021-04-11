@@ -12,7 +12,7 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
             health = 100,
             accessories = listOf(AccessoryIdOld.pistol, AccessoryIdOld.mobility),
             depictionType = DepictionType.person,
-            speed = 2.5f,
+            runSpeed = 2.5f,
             deathSound = SoundId.hogDeath,
             ambientSounds = listOf(
             )
@@ -22,7 +22,7 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
             health = 100,
             accessories = listOf(AccessoryIdOld.spiritRocketLauncher, AccessoryIdOld.entangle),
             depictionType = DepictionType.sentinel,
-            speed = 0f,
+            runSpeed = 0f,
             deathSound = null,
             ambientSounds = listOf(),
             fieldOfView = fieldOfView360
@@ -32,7 +32,7 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
             health = 100,
             accessories = listOf(AccessoryIdOld.claws, AccessoryIdOld.dash, AccessoryIdOld.mobility),
             depictionType = DepictionType.hound,
-            speed = 5f,
+            runSpeed = 5f,
             deathSound = null,
             ambientSounds = listOf()
         )

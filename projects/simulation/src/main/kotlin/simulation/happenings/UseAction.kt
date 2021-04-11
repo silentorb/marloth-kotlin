@@ -25,18 +25,15 @@ fun eventsFromTryAction(world: World, event: TryActionEvent): Events {
   val isWeapon = definitions.weapons.containsKey(type)
   val actionDefinition = definitions.actions[type]
   val specificEvents =
-      if (isWeapon)
-        listOf(startAttack(definitions.actions[type]!!, actor, action, type, event.targetLocation))
-      else when (accessory.value.type) {
-        AccessoryIdOld.dash -> dashEvents(definitions, accessory.value, actor)
-        AccessoryIdOld.entangle -> withResolvedTarget(world, actor, target, entangleEvents(deck, accessory.value))
-        else -> if (actionDefinition != null)
-          when(actionDefinition.type) {
+      when {
+        isWeapon -> listOf(startAttack(definitions.actions[type]!!, actor, action, type, event.targetLocation))
+        actionDefinition != null -> when (actionDefinition.type) {
+          Actions.dash -> dashEvents(definitions, accessory.value, actor)
+          Actions.entangle -> withResolvedTarget(world, actor, target, entangleEvents(deck, accessory.value))
           Actions.shadowSpirit -> onShadowSpirit(world, actionDefinition, actor)
           else -> listOf()
         }
-        else
-          listOf()
+        else -> listOf()
       }
 
   return specificEvents + UseAction(

@@ -34,7 +34,7 @@ private val debug = CharacterDefinition(
     health = 20000,
     accessories = listOf(AccessoryIdOld.rocketLauncher),
     depictionType = DepictionType.child,
-    speed = 16f,
+    runSpeed = 16f,
     deathSound = SoundId.girlScream,
     damageMultipliers = mapOf()
 )

@@ -7,6 +7,7 @@ import silentorb.mythic.characters.rigs.isGrounded
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.Body
+import simulation.characters.isAliveOrNotACharacter
 import simulation.entities.updateSpinnerRotation
 import simulation.happenings.ReturnHome
 import simulation.main.Deck
@@ -30,7 +31,7 @@ fun updateBodies(deck: Deck, events: Events, delta: Float): (Id, Body) -> Body {
     val characterRig = deck.characterRigs[id]
     val velocity = if (
         characterRig != null && isGrounded(characterRig) &&
-        deck.characters[id]!!.isAlive && (!hasFreedom(getFreedoms(deck)(id), Freedom.walking) ||
+        isAliveOrNotACharacter(deck.characters, id) && (!hasFreedom(getFreedoms(deck)(id), Freedom.walking) ||
         movementEvents.none { it.actor == id })
         && body.velocity.length() > 0.00001f
 //        && body.velocity.length() < 0.1f

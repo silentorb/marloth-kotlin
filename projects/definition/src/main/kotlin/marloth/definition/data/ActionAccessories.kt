@@ -4,6 +4,7 @@ import marloth.scenery.enums.*
 import simulation.accessorize.AccessoryDefinition
 import simulation.accessorize.AccessoryName
 import silentorb.mythic.performing.ActionDefinition
+import simulation.abilities.Actions
 import simulation.accessorize.Nutrient
 import simulation.characters.EquipmentSlot
 import simulation.combat.general.AttackMethod
@@ -78,6 +79,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             maxLevel = 3
         ),
         action = ActionDefinition(
+            type = Actions.dash,
             cooldown = 4f,
             duration = 1.3f,
             equipmentSlot = EquipmentSlot.mobility
@@ -90,6 +92,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             maxLevel = 3
         ),
         action = ActionDefinition(
+            type = Actions.entangle,
             cooldown = 4f,
             range = 20f,
             animation = AnimationId.cast,
@@ -186,9 +189,10 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     Accessories.shadowSpirit to ActionAccessory(
         accessory = AccessoryDefinition(
-            name = DevText("Shadow Spirit")
+            name = DevText("Shadow Spirit"),
         ),
         action = ActionDefinition(
+            type = Actions.shadowSpirit,
             cooldown = 2f,
             duration = 10f,
             equipmentSlot = EquipmentSlot.mobility

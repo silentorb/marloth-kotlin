@@ -50,8 +50,7 @@ fun updateDeck(definitions: Definitions, events: Events, world: World,
     )
 
 fun updateWorld(definitions: Definitions, events: Events, commands: Commands, delta: Float, world: World): World {
-  val remappedEvents = remapPlayerRigCommands(world.deck.players, events)
-  val withPhysics = updatePhysics(remappedEvents)(world)
+  val withPhysics = updatePhysics(events)(world)
   val moveSpeedTable = newMoveSpeedTable(definitions, withPhysics.deck)
   val navigation = if (withPhysics.navigation != null)
     updateNavigation(withPhysics.deck, moveSpeedTable, delta, withPhysics.navigation)
@@ -59,7 +58,7 @@ fun updateWorld(definitions: Definitions, events: Events, commands: Commands, de
     null
 
   val nextId = withPhysics.nextId.source()
-  val deck = updateDeck(definitions, remappedEvents, withPhysics, navigation, nextId)(withPhysics.deck)
+  val deck = updateDeck(definitions, events, withPhysics, navigation, nextId)(withPhysics.deck)
   applyBodyChanges(withPhysics.bulletState, withPhysics.deck.bodies, deck.bodies)
 
   return withPhysics.copy(

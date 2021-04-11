@@ -10,9 +10,8 @@ import simulation.misc.Definitions
 typealias MoveSpeedTable = Map<Id, Float>
 
 fun getMoveSpeed(definitions: Definitions, deck: Deck): (Id) -> Float = { actor ->
-  val character = deck.characters[actor]!!
-  val definition = character.definition
-  val baseSpeed = definition.speed
+  val rig = deck.characterRigs[actor]!!
+  val baseSpeed = rig.runSpeed
   val accessory = getAccessory(AccessoryIdOld.dashing, deck.accessories, actor)?.value
   val dashBonus = if (accessory != null)
     dashBonus(accessory.value.level)

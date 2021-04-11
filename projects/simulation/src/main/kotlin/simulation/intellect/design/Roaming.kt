@@ -38,7 +38,7 @@ fun updateRoamingTargetPosition(world: World, actor: Id, knowledge: Knowledge, p
   val definitions = world.definitions
   val character = world.deck.characters[actor]!!
   val characterDefinition = character.definition
-  return if (characterDefinition.speed == 0f)
+  return if (characterDefinition.runSpeed == 0f)
     null
   else if (pursuit.targetPosition == null) // || !pathIsAccessible(world, knowledge, pursuit.path))
     startRoaming(world, actor, knowledge)

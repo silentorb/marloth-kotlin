@@ -1,5 +1,7 @@
 package simulation.abilities
 
 object Actions {
-  val shadowSpirit = "shadowSpirit"
+  const val dash = "dash"
+  const val shadowSpirit = "shadowSpirit"
+  const val entangle = "entangle"
 }

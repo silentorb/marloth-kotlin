@@ -31,6 +31,7 @@ import silentorb.mythic.quartz.updateTimestep
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4i
 import simulation.entities.Player
+import simulation.entities.remapPlayerRigCommands
 import simulation.happenings.withSimulationEvents
 import simulation.main.Deck
 import simulation.main.World
@@ -121,7 +122,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
   else
     mouseLookEvents(dimensions, previousClient.input.deviceStates.lastOrNull(), clientState.input.deviceStates.last(), firstPlayer(clientState))
 
-  val clientEvents = clientState.events + gameCommands + mouseEvents
+  val clientEvents = remapPlayerRigCommands(world.deck.players, clientState.events + gameCommands + mouseEvents)
   val allEvents = withSimulationEvents(definitions, previous.deck, world, clientEvents) + world.nextCommands
   val nextWorld = updateWorld(definitions, allEvents, clientState.commands + world.nextCommands, simulationDelta, world)
   val finalWorld = nextWorld.copy(

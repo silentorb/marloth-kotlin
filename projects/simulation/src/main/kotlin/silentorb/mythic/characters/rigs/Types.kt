@@ -22,7 +22,8 @@ data class CharacterRig(
     val centerGroundDistance: Float = 0f,
     val groundDistance: Float = 0f,
     val firstPersonLookVelocity: Vector2 = Vector2(),
-    val viewMode: ViewMode= ViewMode.firstPerson
+    val viewMode: ViewMode= ViewMode.firstPerson,
+    val runSpeed: Float,
 ) {
   val facingVector: Vector3
     get() = getFacingVector(facingOrientation)

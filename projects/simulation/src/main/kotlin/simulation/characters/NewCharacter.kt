@@ -22,7 +22,7 @@ import simulation.misc.Definitions
 import simulation.misc.Factions
 import simulation.physics.CollisionGroups
 
-fun commonCharacterElements(position: Vector3, angle: Float) =
+fun commonCharacterElements(position: Vector3, angle: Float, runSpeed: Float) =
     listOf(
         Body(
             position = position,
@@ -37,7 +37,8 @@ fun commonCharacterElements(position: Vector3, angle: Float) =
         CharacterRig(
             facingRotation = Vector2(angle, 0f),
             facingOrientation = characterRigOrentation(Vector2(angle, 0f)),
-            viewMode = ViewMode.firstPerson
+            viewMode = ViewMode.firstPerson,
+            runSpeed = runSpeed,
         ),
     )
 
@@ -71,7 +72,7 @@ fun newCharacter(
   return NewHand(
       id = id,
       children = accessories,
-      components = commonCharacterElements(position, angle) +
+      components = commonCharacterElements(position, angle, definition.runSpeed) +
           listOfNotNull(
               if (definition.ambientSounds.any())
                 AmbientAudioEmitter(

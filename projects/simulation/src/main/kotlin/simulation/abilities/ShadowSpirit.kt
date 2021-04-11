@@ -24,7 +24,7 @@ fun onShadowSpirit(world: World, actionDefinition: ActionDefinition, actor: Id):
 
   val hand = NewHand(
       id = shadowSpirit,
-      components = commonCharacterElements(position, angle) + listOf(
+      components = commonCharacterElements(position, angle, 10f) + listOf(
           CollisionObject(
               shape = Capsule(defaultCharacterRadius, defaultCharacterHeight),
               groups = CollisionGroups.spirit,

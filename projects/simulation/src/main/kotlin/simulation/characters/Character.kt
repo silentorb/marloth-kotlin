@@ -25,7 +25,7 @@ data class CharacterDefinition(
     val name: Text,
     val level: Int = 1,
     val health: Int = 100,
-    val speed: Float = 8f,
+    val runSpeed: Float = 8f,
     val accessories: List<AccessoryName> = listOf(),
     val depictionType: DepictionType,
     val deathSound: SoundName? = SoundId.girlScream,
@@ -102,4 +102,9 @@ fun isEnemy(characters: Table<Character>, faction: Id): (Id) -> Boolean = { id -
 
 fun isAlly(characters: Table<Character>, faction: Id): (Id) -> Boolean = { id ->
   characters[id]!!.faction == faction
+}
+
+fun isAliveOrNotACharacter(characters: Table<Character>, id: Id): Boolean {
+  val character = characters[id]
+  return character != null && character.isAlive
 }

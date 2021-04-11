@@ -24,8 +24,8 @@ fun canUseMobility(deck: Deck): (Id) -> Boolean = { actor ->
 }
 
 fun getFreedoms(deck: Deck): (Id) -> Freedoms = { actor ->
-  val character = deck.characters[actor]!!
-  if (!character.isAlive)
+  val character = deck.characters[actor]
+  if (character != null && !character.isAlive)
     Freedom.none
   else {
     val isPerforming = isPerforming(deck.performances, actor)
