@@ -16,7 +16,6 @@ import simulation.main.Deck
 import simulation.updating.simulationDelta
 import kotlin.math.abs
 import kotlin.math.max
-import kotlin.math.min
 
 const val defaultCharacterRadius = 0.3f
 const val defaultCharacterHeight = 1.2f
@@ -180,16 +179,17 @@ fun updateCharacterRig(
   val collisionObjects = deck.collisionObjects
   val thirdPersonRigs = deck.thirdPersonRigs
   val allCommands = events.filterIsInstance<Command>()
-  val mouseLookEvents = events.filterIsInstance<MouseLookEvent>()
 
   return { id, characterRig ->
     val commands = allCommands.filter { it.target == id }
     val freedoms = freedomTable[id] ?: Freedom.none
     val isFirstPerson = characterRig.viewMode == ViewMode.firstPerson
 
-    val mouseLookEvent = mouseLookEvents.firstOrNull { it.character == id }
+    val mouseLookOffset = allCommands
+        .firstOrNull { it.type == mouseLookEvent }
+        ?.value as? Vector2
 
-    val firstPersonLookVelocity = if (hasFreedom(freedoms, Freedom.turning) && isFirstPerson && mouseLookEvent == null) {
+    val firstPersonLookVelocity = if (hasFreedom(freedoms, Freedom.turning) && isFirstPerson && mouseLookOffset == null) {
       val momentumAxis = if (deck.spirits.containsKey(id))
         spiritGamepadMomentumAxis()
       else
@@ -201,7 +201,7 @@ fun updateCharacterRig(
     val facingRotation = if (!hasFreedom(freedoms, Freedom.turning))
       characterRig.facingRotation
     else if (isFirstPerson)
-      updateFirstPersonFacingRotation(characterRig.facingRotation, mouseLookEvent?.offset, firstPersonLookVelocity, delta)
+      updateFirstPersonFacingRotation(characterRig.facingRotation, mouseLookOffset, firstPersonLookVelocity, delta)
     else
       updateThirdPersonFacingRotation(characterRig.facingRotation, thirdPersonRigs[id]!!, delta)
 

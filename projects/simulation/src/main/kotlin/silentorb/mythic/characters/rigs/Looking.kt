@@ -6,10 +6,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.spatial.Vector2
 
-data class MouseLookEvent(
-    val character: Id,
-    val offset: Vector2
-)
+const val mouseLookEvent = "mouseLookEvent"
 
 fun spiritGamepadMomentumAxis() =
     MomentumAxis(

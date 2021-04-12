@@ -20,7 +20,7 @@ fun onShadowSpirit(world: World, actionDefinition: ActionDefinition, actor: Id):
   val deck = world.deck
   val realBody = deck.bodies[actor]!!
   val realRig = deck.characterRigs[actor]!!
-  val position = realBody.position + Vector3(0f, 0f, 0f)
+  val position = realBody.position + Vector3(1f, 0f, 0f)
   val angle = realRig.facingRotation.y
 
   val hand = NewHand(

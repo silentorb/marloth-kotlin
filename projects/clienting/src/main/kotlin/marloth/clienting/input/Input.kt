@@ -2,7 +2,7 @@ package marloth.clienting.input
 
 import marloth.clienting.ClientState
 import marloth.clienting.PlayerViews
-import silentorb.mythic.characters.rigs.MouseLookEvent
+import silentorb.mythic.characters.rigs.mouseLookEvent
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.*
@@ -158,9 +158,10 @@ fun mouseLookEvents(dimensions: Vector2i, previousState: InputDeviceState?, next
       val previousMousePosition = previousState?.mousePosition ?: Vector2.zero
       val offset = nextState.mousePosition - previousMousePosition
       if (offset != Vector2.zero && character != null) {
-        listOf(MouseLookEvent(
-            character = character,
-            offset = -offset / dimensions.toVector2()
+        listOf(Command(
+            type = mouseLookEvent,
+            target = character,
+            value = -offset / dimensions.toVector2()
         ))
       } else
         listOf()

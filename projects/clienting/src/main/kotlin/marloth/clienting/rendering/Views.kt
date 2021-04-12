@@ -9,6 +9,7 @@ import silentorb.mythic.scenery.ProjectionType
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
+import simulation.characters.isAliveOrNotACharacter
 import simulation.main.Deck
 
 // This is assuming the anchor point is around the torso of the character, not the feet.
@@ -52,11 +53,10 @@ fun thirdPersonCamera(body: Body, thirdPersonRig: ThirdPersonRig): Camera {
 }
 
 fun createPlayerCamera(deck: Deck, player: Id): Camera {
-  val character = deck.characters[player]!!
   val characterRig = deck.characterRigs[player]!!
   val body = deck.bodies[player]!!
   return if (characterRig.viewMode == ViewMode.firstPerson)
-    if (character.isAlive)
+    if (isAliveOrNotACharacter(deck.characters, player))
       firstPersonCamera(body, characterRig)
     else
       deadFirstPersonCamera(body, characterRig)
