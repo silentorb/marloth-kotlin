@@ -44,6 +44,7 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
   val definitions = world.definitions
   val graph = world.staticGraph
   val flyThrough = getDebugBoolean("FLY_THROUGH_CAMERA")
+  val rigPlayer = deck.players[player]?.rig ?: 0L
   if (!deck.characters.containsKey(player))
     Scene(
         camera = emptyCamera(),
@@ -53,9 +54,9 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
         filters = listOf()
     )
   else {
-    val camera = createPlayerCamera(deck, player)
+    val camera = createPlayerCamera(deck, rigPlayer)
 
-    val characterRig = deck.characterRigs[player]!!
+    val characterRig = deck.characterRigs[rigPlayer]!!
     val equipmentLayer = if (characterRig.viewMode == ViewMode.firstPerson && !flyThrough)
       getPlayerEquipmentLayer(definitions, deck, player, camera)
     else
@@ -72,9 +73,7 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
     else
       null
 
-    val playerRig = deck.players[player]?.rig ?: 0L
-
-    val mainElements = gatherVisualElements(definitions, deck, playerRig, characterRig) +
+    val mainElements = gatherVisualElements(definitions, deck, rigPlayer, characterRig) +
         graphElementCache(graph) +
         gridElementCache(world.realm.deck)
 
