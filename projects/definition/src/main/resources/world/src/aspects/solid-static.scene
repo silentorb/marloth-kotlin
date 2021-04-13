@@ -1,7 +1,7 @@
 {
 "graph" : [
 ["solid-state","",""],
-["solid-state","collisionMask",6],
+["solid-state","collisionMask",38],
 ["solid-state","collisionGroups",17]
 ]
 }

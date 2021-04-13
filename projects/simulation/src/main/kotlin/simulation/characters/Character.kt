@@ -106,5 +106,5 @@ fun isAlly(characters: Table<Character>, faction: Id): (Id) -> Boolean = { id ->
 
 fun isAliveOrNotACharacter(characters: Table<Character>, id: Id): Boolean {
   val character = characters[id]
-  return character != null && character.isAlive
+  return character == null || character.isAlive
 }

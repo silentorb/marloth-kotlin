@@ -15,7 +15,7 @@ object CollisionGroups {
 
   val standardMask = dynamic or static or trigger
 
-  val staticMask = dynamic or trigger
+  val staticMask = dynamic or trigger or spirit
 
   val spiritMask = spirit or static
 }
