@@ -199,6 +199,17 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         )
     ),
 
+    Accessories.cancelShadowSpirit to ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = DevText("Return"),
+        ),
+        action = ActionDefinition(
+            type = Actions.cancelShadowSpirit,
+            cooldown = 0f,
+            equipmentSlot = EquipmentSlot.mobility
+        )
+    ),
+
     AccessoryIdOld.shotgun to ActionAccessory(
         accessory = AccessoryDefinition(
             name = TextId.unnamed,

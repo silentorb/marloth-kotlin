@@ -6,6 +6,7 @@ import simulation.accessorize.AccessoryDefinition
 import simulation.accessorize.AccessoryName
 
 object Accessories {
+    val cancelShadowSpirit = "cancelShadowSpirit"
     val shadowSpirit = "shadowSpirit"
 }
 

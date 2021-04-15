@@ -207,6 +207,10 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
           "${body.position.x.toInt() / 5} ${body.position.y.toInt() / 5} ${body.position.z.toInt() / 5}"
         else
           null,
+        if (getDebugBoolean("HUD_DRAW_PLAYER_ROTATION"))
+          "${characterRig?.facingRotation?.x} ${characterRig?.facingRotation?.y}"
+        else
+          null,
 //        "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}",
 //            floatToRoundedString(deck.thirdPersonRigs[player]!!.rotation.x)
 //            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()

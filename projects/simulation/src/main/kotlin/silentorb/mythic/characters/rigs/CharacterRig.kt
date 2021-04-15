@@ -185,7 +185,7 @@ fun updateCharacterRig(
     val freedoms = freedomTable[id] ?: Freedom.none
     val isFirstPerson = characterRig.viewMode == ViewMode.firstPerson
 
-    val mouseLookOffset = allCommands
+    val mouseLookOffset = commands
         .firstOrNull { it.type == mouseLookEvent }
         ?.value as? Vector2
 

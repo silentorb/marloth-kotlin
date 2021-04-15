@@ -12,6 +12,7 @@ import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.scenery.Capsule
 import silentorb.mythic.spatial.*
 import simulation.accessorize.Accessory
+import simulation.accessorize.AccessoryDefinition
 import simulation.accessorize.AccessoryStack
 import simulation.combat.general.Destructible
 import simulation.combat.general.DestructibleBaseStats
@@ -22,6 +23,12 @@ import simulation.misc.Definitions
 import simulation.misc.Factions
 import simulation.physics.CollisionGroups
 
+val characterDynamicBody = DynamicBody(
+    gravity = true,
+    mass = 45f,
+    resistance = 4f
+)
+
 fun commonCharacterElements(position: Vector3, angle: Float, runSpeed: Float) =
     listOf(
         Body(
@@ -29,11 +36,7 @@ fun commonCharacterElements(position: Vector3, angle: Float, runSpeed: Float) =
             velocity = Vector3(),
             orientation = Quaternion()
         ),
-        DynamicBody(
-            gravity = true,
-            mass = 45f,
-            resistance = 4f
-        ),
+        characterDynamicBody,
         CharacterRig(
             facingRotation = Vector2(angle, 0f),
             facingOrientation = characterRigOrentation(Vector2(angle, 0f)),
@@ -41,6 +44,22 @@ fun commonCharacterElements(position: Vector3, angle: Float, runSpeed: Float) =
             runSpeed = runSpeed,
         ),
     )
+
+fun newAccessory(definitions: Definitions, type: String, owner: Id): NewHand {
+  val accessoryDefinition = definitions.accessories[type]
+  return NewHand(
+      components = listOfNotNull(
+          AccessoryStack(
+              value = Accessory(
+                  type = type,
+              ),
+              owner = owner,
+              quantity = accessoryDefinition?.charges,
+          ),
+          newPossibleAction(definitions, type),
+      )
+  )
+}
 
 fun newCharacter(
     id: Id,
@@ -52,19 +71,7 @@ fun newCharacter(
 ): NewHand {
   val accessories = definition.accessories
       .map { type ->
-        val accessoryDefinition = definitions.accessories[type]
-        NewHand(
-            components = listOfNotNull(
-                AccessoryStack(
-                    value = Accessory(
-                        type = type,
-                    ),
-                    owner = id,
-                    quantity = accessoryDefinition?.charges,
-                ),
-                newPossibleAction(definitions, type),
-            )
-        )
+        newAccessory(definitions, type, id)
       }
 
   val nextWareId = newIdSource(1L)

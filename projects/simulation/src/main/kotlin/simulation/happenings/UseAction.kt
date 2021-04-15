@@ -1,15 +1,11 @@
 package simulation.happenings
 
-import marloth.scenery.enums.AccessoryIdOld
 import silentorb.mythic.characters.rigs.Freedom
 import silentorb.mythic.characters.rigs.FreedomTable
 import silentorb.mythic.characters.rigs.hasFreedom
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.UseAction
-import simulation.abilities.Actions
-import simulation.abilities.dashEvents
-import simulation.abilities.entangleEvents
-import simulation.abilities.onShadowSpirit
+import simulation.abilities.*
 import simulation.combat.spatial.startAttack
 import simulation.combat.spatial.withResolvedTarget
 import simulation.main.World
@@ -31,6 +27,7 @@ fun eventsFromTryAction(world: World, event: TryActionEvent): Events {
           Actions.dash -> dashEvents(definitions, accessory.value, actor)
           Actions.entangle -> withResolvedTarget(world, actor, target, entangleEvents(deck, accessory.value))
           Actions.shadowSpirit -> onShadowSpirit(world, actionDefinition, actor)
+          Actions.cancelShadowSpirit -> onCancelShadowSpirit(deck, actor)
           else -> listOf()
         }
         else -> listOf()
