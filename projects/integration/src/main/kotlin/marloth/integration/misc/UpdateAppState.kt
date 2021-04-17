@@ -235,8 +235,8 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
           timestep = timestep
       )
 
-  if (steps <= 1) {
-    val windowInfo = app.client.getWindowInfo()
+  val windowInfo = app.client.getWindowInfo()
+  if (steps <= 1 && windowInfo.dimensions.x > 0 && windowInfo.dimensions.y > 0) {
     val viewports = getPlayerViewports(appState.client, windowInfo.dimensions)
     val boxes = layoutBoxes(nextAppState)
     val editor = nextAppState.client.editor

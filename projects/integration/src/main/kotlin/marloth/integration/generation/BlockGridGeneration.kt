@@ -11,6 +11,7 @@ import marloth.definition.misc.sideGroups
 import marloth.definition.misc.traversableBlockSides
 import marloth.scenery.enums.Textures
 import silentorb.mythic.ent.*
+import silentorb.mythic.ent.scenery.ExpansionLibrary
 import silentorb.mythic.ent.scenery.getGraphRoots
 import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.ent.scenery.removeNodesAndChildren
@@ -254,6 +255,7 @@ fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig,
   val blockGrid = newBlockGrid(generationConfig.seed, dice, home, blocks - home, generationConfig.cellCount)
   val architectureInput = newArchitectureInput(generationConfig, dice, blockGrid)
   val architectureSource = buildArchitecture(architectureInput, builders)
-  val graph = filterDistributionGroups(architectureSource)
+  val expansionLibrary = ExpansionLibrary(graphs = graphLibrary)
+  val graph = filterDistributionGroups(expansionLibrary, architectureSource)
   return Pair(blockGrid, graph)
 }

@@ -183,7 +183,7 @@ fun expandGameInstances(library: ExpansionLibrary, name: String): Graph =
 fun loadWorldGraph(meshShapes: MeshShapeMap, name: String): Graph {
   val graphLibrary = loadMarlothGraphLibrary(marlothPropertiesSerialization)
   assert(graphLibrary.contains(name))
-  val library = ExpansionLibrary(graphLibrary, marlothExpanders(), marlothEditorPropertySchema(), meshShapes)
+  val library = ExpansionLibrary(graphLibrary, marlothExpanders())
   return expandGameInstances(library, name)
 }
 
@@ -192,7 +192,7 @@ const val defaultScene = "root"
 fun mainScene() = getDebugString("DEFAULT_SCENE") ?: defaultScene
 
 fun newExpansionLibrary(graphLibrary: GraphLibrary, meshShapes: Map<Key, Shape>) =
-    ExpansionLibrary(graphLibrary, marlothExpanders(), marlothEditorPropertySchema(), meshShapes)
+    ExpansionLibrary(graphLibrary, marlothExpanders())
 
 fun expandWorldGraph(editor: Editor, scene: String): Graph {
   val graphLibrary = loadAllDependencies(editor, scene)
