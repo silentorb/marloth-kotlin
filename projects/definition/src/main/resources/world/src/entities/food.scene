@@ -1,0 +1,10 @@
+{
+"graph" : [
+["food","",""],
+["food","texture","arch"],
+["food","mesh","key"],
+["food","translation",[0.0,0.0,0.28782347]],
+["food","type","item"],
+["food","type","solid-box"]
+]
+}

@@ -133,7 +133,7 @@ fun prepareBlockGraph(graph: Graph, sideNodes: List<String>, biomes: Collection<
 fun blockFromGraph(graph: Graph, cells: Map<Vector3i, BlockCell>, root: String, name: String,
                    biomes: Collection<String>,
                    heightOffset: Int): Block {
-  val rotation = getGraphValue<BlockRotations>(graph, root, MarlothProperties.blockRotations)
+  val rotation = getNodeValue<BlockRotations>(graph, root, MarlothProperties.blockRotations)
   return Block(
       name = name + if (heightOffset != 0) heightOffset else "",
       cells = cells,

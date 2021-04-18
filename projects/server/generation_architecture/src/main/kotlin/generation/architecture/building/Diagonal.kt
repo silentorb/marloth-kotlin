@@ -15,9 +15,3 @@ fun diagonalWall(depiction: Depiction): Builder = { input ->
   val scale = Vector3(1.0f, 1f, 1f)
   listOf(newWallInternal(config, depiction, Vector3(0f, 0f, -cellHalfLength), Quaternion().rotateZ(Pi * 0.25f), scale = scale))
 }
-
-fun diagonalCornerBuilder(texture: TextureName): Builder = mergeBuilders(
-    diagonalHalfFloorMesh(Depiction(mesh = MeshId.floorDiagonal, texture = texture)),
-    diagonalWall(Depiction(mesh = MeshId.diagonalWall, texture = texture))
-//    cubeWallsWithFeatures(fullWallFeatures(), lampOffset = plainWallLampOffset())
-)

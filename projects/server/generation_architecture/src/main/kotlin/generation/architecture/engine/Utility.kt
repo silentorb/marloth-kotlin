@@ -4,7 +4,7 @@ import generation.architecture.matrical.BlockBuilder
 import generation.general.*
 import marloth.scenery.enums.MeshInfoMap
 import silentorb.mythic.ent.Graph
-import silentorb.mythic.ent.getGraphValue
+import silentorb.mythic.ent.getNodeValue
 import silentorb.mythic.ent.getGraphValues
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
@@ -95,12 +95,12 @@ tailrec fun expandSideGroups(sideGroups: Map<String, Set<String>>, value: Collec
 }
 
 fun getCellDirection(graph: Graph, node: String): CellDirection? =
-    getGraphValue<CellDirection>(graph, node, MarlothProperties.direction)
+    getNodeValue<CellDirection>(graph, node, MarlothProperties.direction)
 
 fun gatherSides(sideGroups: Map<String, Set<String>>, graph: Graph, sideNodes: List<String>): List<Pair<CellDirection, Side?>> =
     sideNodes
         .mapNotNull { node ->
-          val mine = getGraphValue<String>(graph, node, MarlothProperties.mine)
+          val mine = getNodeValue<String>(graph, node, MarlothProperties.mine)
           val initialOther = getGraphValues<String>(graph, node, MarlothProperties.other)
           val other = expandSideGroups(sideGroups, initialOther)
           val cellDirection = getCellDirection(graph, node)
@@ -109,7 +109,7 @@ fun gatherSides(sideGroups: Map<String, Set<String>>, graph: Graph, sideNodes: L
           else if (mine == null || other.none())
             cellDirection to null
           else {
-            val height = getGraphValue<Int>(graph, node, MarlothProperties.sideHeight) ?: StandardHeights.first
+            val height = getNodeValue<Int>(graph, node, MarlothProperties.sideHeight) ?: StandardHeights.first
             cellDirection to Side(
                 mine = mine,
                 other = other.toSet(),

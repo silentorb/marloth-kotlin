@@ -29,9 +29,9 @@
 ["checkers-slope","blockRotations","all"],
 ["checkers-slope-base","parent","checkers-slope"],
 ["checkers-slope-base","type","checkers-slope-base"],
-["monster","parent","checkers-slope"],
-["monster","type","monster"],
-["monster","translation",[0.0,0.0,2.6542482]],
+["ground-slot","parent","checkers-slope"],
+["ground-slot","type","ground-slot"],
+["ground-slot","translation",[0.0,0.0,2.074632]],
 ["sides","parent","checkers-slope"]
 ]
 }

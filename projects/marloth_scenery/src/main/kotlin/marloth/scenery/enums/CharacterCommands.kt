@@ -42,4 +42,5 @@ object CharacterCommands {
 
   // Commands that are circumstantial and not normally bound to user input buttons
   const val sleep = "sleep"
+  const val take = "take"
 }

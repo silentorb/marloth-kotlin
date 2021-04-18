@@ -14,6 +14,7 @@ object GameAttributes {
   val resource = "resource"
   val sleepable = "sleepable"
   val victoryZone = "victoryZone"
+  val item = "item"
 
   // Block side related
   val blockSide = "blockSide"

@@ -10,8 +10,8 @@ import marloth.definition.misc.sideGroups
 import silentorb.mythic.editing.*
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.filterByProperty
-import silentorb.mythic.ent.getGraphValue
-import silentorb.mythic.ent.scenery.hasAttribute
+import silentorb.mythic.ent.getNodeValue
+import silentorb.mythic.ent.scenery.nodeHasAttribute
 import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Matrix
@@ -123,7 +123,7 @@ fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
       .filter { it.second != null } as List<Pair<CellDirection, Side>>
 
   val variableSides = selection.mapNotNull { node ->
-    getGraphValue<CellDirection>(graph, node, MarlothProperties.showIfSideIsEmpty)
+    getNodeValue<CellDirection>(graph, node, MarlothProperties.showIfSideIsEmpty)
   }
 
   val selectedSides = selection.mapNotNull { node ->
@@ -175,7 +175,7 @@ fun drawWorldBlockBounds(environment: GizmoEnvironment, blockGrid: BlockGrid) {
 val blockBoundsPainter = gizmoPainterToggle(blockBoundsEnabledKey) { environment ->
   val editor = environment.editor
   val graph = getCachedGraph(editor)
-  if (hasAttribute(graph, GameAttributes.blockSide)) {
+  if (nodeHasAttribute(graph, GameAttributes.blockSide)) {
     drawBlockBounds(environment, graph)
   }
   val blockGrid = staticDebugBlockGrid
