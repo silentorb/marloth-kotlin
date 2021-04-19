@@ -45,7 +45,7 @@ fun updateEntities(definitions: Definitions, world: World, navigation: Navigatio
           contracts = updateContracts(commands, deck.contracts),
           accessories = mapTable(deck.accessories, updateAccessory(definitions, events)),
           cyclesFloat = mapTableValues(deck.cyclesFloat, updateFloatCycle(delta)),
-          destructibles = mapTable(deck.destructibles, updateDestructibleHealth(events)),
+          destructibles = mapTable(deck.destructibles, updateDestructibleHealth(definitions, deck, events)),
           characters = mapTable(deck.characters, updateCharacter(definitions, dice, deck, world.bulletState, events)),
           knowledge = mapTable(deck.knowledge, updateKnowledge(world, lightRatings(world.deck), delta)),
           navigationDirections = if (navigation != null) updateNavigationDirections(navigation) else mapOf(),

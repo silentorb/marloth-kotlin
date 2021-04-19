@@ -17,11 +17,14 @@ fun getActions(definitions: Definitions, accessories: Table<AccessoryStack>, act
     getAccessories(accessories, actor)
         .filterValues { definitions.actions.containsKey(it.value.type) }
 
-fun getEquippedAction(definitions: Definitions, accessories: Table<AccessoryStack>, slot: EquipmentSlot, actor: Id): Id? =
-    getActions(definitions, accessories, actor)
-        .entries.firstOrNull { (_, accessory) ->
-          definitions.actions[accessory.value.type]?.equipmentSlot == slot
-        }?.key
+fun getEquippedAction(definitions: Definitions, deck: Deck, slot: EquipmentSlot, actor: Id): Id? =
+    if (slot == EquipmentSlot.utility) {
+      deck.characters[actor]?.utilityItem
+    } else
+      getActions(definitions, deck.accessories, actor)
+          .entries.firstOrNull { (_, accessory) ->
+            definitions.actions[accessory.value.type]?.equipmentSlot == slot
+          }?.key
 
 
 fun updateActions(definitions: Definitions, deck: Deck, events: Events): Table<Action> {

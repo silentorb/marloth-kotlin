@@ -14,7 +14,7 @@ fun canUse(world: World, action: Id): Boolean {
 //    return false
 
   val actionRecord = deck.actions[action]
-  return actionRecord != null && actionRecord.cooldown == 0f
+  return actionRecord == null || actionRecord.cooldown == 0f
 }
 
 fun canUseSimple(deck: Deck, action: Id): Boolean {

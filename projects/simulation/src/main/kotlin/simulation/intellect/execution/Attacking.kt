@@ -23,7 +23,7 @@ fun shouldMoveDirectlyToward(deck: Deck, target: SimpleBody, attacker: Id): Bool
 
 fun getWeaponAttackMethod(world: World, character: Id): AttackMethod? {
   val deck = world.deck
-  val action = getEquippedAction(world.definitions, deck.accessories, EquipmentSlot.attack, character)
+  val action = getEquippedAction(world.definitions, deck, EquipmentSlot.attack, character)
   val accessory = deck.accessories[action]!!
   return if (action != null) {
     val weapon = world.definitions.weapons[accessory.value.type]

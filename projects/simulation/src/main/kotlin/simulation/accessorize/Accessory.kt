@@ -7,6 +7,7 @@ import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.scenery.MeshName
 import simulation.happenings.TryActionEvent
+import simulation.happenings.UseAction
 import simulation.misc.Definitions
 import kotlin.math.max
 import kotlin.math.min
@@ -73,7 +74,7 @@ data class ModifyItemQuantityEvent(
 fun updateAccessory(definitions: Definitions, events: Events): (Id, AccessoryStack) -> AccessoryStack {
   val changeOwnerEvents = events.filterIsInstance<ChangeItemOwnerEvent>()
   val choseImprovedAccessoryEvents = events.filterIsInstance<ChooseImprovedAccessory>()
-  val allUseEvents = events.filterIsInstance<TryActionEvent>()
+  val allUseEvents = events.filterIsInstance<UseAction>()
   val modifyQuantityCommands = events.filterIsInstance<ModifyItemQuantityEvent>()
 
   return { id, accessory ->

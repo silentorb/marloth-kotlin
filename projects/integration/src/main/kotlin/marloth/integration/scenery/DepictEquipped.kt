@@ -22,7 +22,7 @@ fun getEquipmentTransform(camera: Camera, motionOffsetX: Float, motionOffsetY: F
 }
 
 fun getEquippedMesh(definitions: Definitions, deck: Deck, player: Id): MeshName? {
-  val equipped = getEquippedAction(definitions, deck.accessories, EquipmentSlot.attack, player)
+  val equipped = getEquippedAction(definitions, deck, EquipmentSlot.attack, player)
   val accessory = deck.accessories[equipped]
   val accessoryDefinition = definitions.accessories[accessory?.value?.type]
   return accessoryDefinition?.equippedMesh

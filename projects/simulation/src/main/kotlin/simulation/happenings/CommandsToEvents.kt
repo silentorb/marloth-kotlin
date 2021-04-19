@@ -27,7 +27,7 @@ fun commandsToEvents(definitions: Definitions, deck: Deck, commands: Commands): 
           CharacterCommands.abilityDefense,
           CharacterCommands.abilityMobility -> {
             val slot = characterCommandToEquipmentSlot(command.type)
-            val action = getEquippedAction(definitions, deck.accessories, slot, actor)
+            val action = getEquippedAction(definitions, deck, slot, actor)
             if (action != null) {
               TryActionEvent(
                   actor = actor,

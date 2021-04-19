@@ -4,6 +4,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import simulation.accessorize.Nutrient
 import simulation.happenings.TryActionEvent
+import simulation.happenings.UseAction
 import simulation.main.Deck
 import simulation.misc.*
 
@@ -14,7 +15,7 @@ val nourishmentRates = ResourceRates(
 
 fun getNourishmentEventsAdjustment(definitions: Definitions, deck: Deck, actor: Id, events: Events): Int =
     events
-        .filterIsInstance<TryActionEvent>()
+        .filterIsInstance<UseAction>()
         .filter { it.actor == actor }
         .sumBy { event ->
           val components = definitions.accessories[deck.accessories[event.action]?.value?.type]?.components ?: listOf()

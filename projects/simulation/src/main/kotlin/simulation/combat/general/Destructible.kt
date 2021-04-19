@@ -3,9 +3,12 @@ package simulation.combat.general
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.emptyId
 import silentorb.mythic.happenings.Events
+import simulation.characters.getNourishmentEventsAdjustment
 import simulation.characters.getNourishmentExpense
 import simulation.characters.getRoundedAccumulation
 import simulation.characters.healthTimeDrainDuration
+import simulation.main.Deck
+import simulation.misc.Definitions
 import simulation.misc.highIntScale
 
 data class DestructibleBaseStats(
@@ -56,30 +59,32 @@ val restoreDestructibleHealth: (Destructible) -> Destructible = { destructible -
   )
 }
 
-fun updateDestructibleHealth(events: Events): (Id, Destructible) -> Destructible {
+fun updateDestructibleHealth(definitions: Definitions, deck: Deck, events: Events): (Id, Destructible) -> Destructible {
   val damageEvents = events.filterIsInstance<DamageEvent>()
   val restoreEvents = events.filterIsInstance<RestoreHealth>()
 
-  return { id, destructible ->
-    val result = if (restoreEvents.any { it.target == id }) {
+  return { actor, destructible ->
+    val result = if (restoreEvents.any { it.target == actor }) {
       restoreDestructibleHealth(destructible)
     } else {
       val damages =
           damageEvents
-              .filter { it.target == id }
+              .filter { it.target == actor }
               .map { it.damage }
 
       damageDestructible(damages)(destructible)
     }
+    val nourishmentAdjustment = getNourishmentEventsAdjustment(definitions, deck, actor, events)
     if (destructible.drainDuration != 0) {
       val healthAccumulator = result.healthAccumulator - getNourishmentExpense(healthTimeDrainDuration, 1)
       val healthAccumulation = getRoundedAccumulation(healthAccumulator)
       result.copy(
-          health = modifyResource(result.health, result.maxHealth, healthAccumulation),
+          health = modifyResource(result.health, result.maxHealth, healthAccumulation + nourishmentAdjustment),
           healthAccumulator = healthAccumulator - healthAccumulation * highIntScale,
       )
     } else
-      result
-
+      result.copy(
+          health = modifyResource(result.health, result.maxHealth, nourishmentAdjustment)
+      )
   }
 }
