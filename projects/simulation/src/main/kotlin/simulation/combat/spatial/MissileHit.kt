@@ -14,8 +14,7 @@ import silentorb.mythic.timing.FloatTimer
 import simulation.entities.CollisionMap
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
-import simulation.happenings.NewHandEvent
-import simulation.main.Hand
+import simulation.main.NewHand
 
 data class Missile(
     val damageRadius: Float, // 0f for no AOE
@@ -38,17 +37,17 @@ fun eventsFromMissileCollision(world: SpatialCombatWorld, id: Id, missile: Missi
       }
       .flatten()
   val body = world.deck.bodies[id]!!
-  val explosionDepiction = NewHandEvent(
-      hand = Hand(
-          body = Body(
+  val explosionDepiction = NewHand(
+      components = listOf(
+          Body(
               position = body.position,
               scale = Vector3(missile.damageRadius)
           ),
-          depiction = Depiction(
+          Depiction(
               type = DepictionType.staticMesh,
               mesh = MeshId.sphere
           ),
-          timerFloat = FloatTimer(0.15f)
+          FloatTimer(0.15f)
       )
   )
   return listOf(DeleteEntityEvent(id)) + damageEvents + explosionDepiction

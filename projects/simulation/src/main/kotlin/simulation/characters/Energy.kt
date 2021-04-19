@@ -1,11 +1,17 @@
 package simulation.characters
 
-import marloth.scenery.enums.CharacterCommands
-import simulation.combat.general.modifyResource
-import simulation.misc.*
+import simulation.misc.HighInt
+import simulation.misc.Int1000
+import simulation.misc.highIntScale
+import simulation.misc.intMinute
 
-val energyRates = ResourceRates(
+val standardEnergyRates = ResourceRates(
     distanceTraveledDrainDuration = 1000,
+    timeDrainDuration = intMinute * 30,
+)
+
+val shadowSpiritEnergyRates = ResourceRates(
+    distanceTraveledDrainDuration = 500,
     timeDrainDuration = intMinute * 30,
 )
 

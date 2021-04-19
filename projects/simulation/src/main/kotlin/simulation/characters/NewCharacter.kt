@@ -12,7 +12,6 @@ import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.scenery.Capsule
 import silentorb.mythic.spatial.*
 import simulation.accessorize.Accessory
-import simulation.accessorize.AccessoryDefinition
 import simulation.accessorize.AccessoryStack
 import simulation.combat.general.Destructible
 import simulation.combat.general.DestructibleBaseStats
@@ -54,7 +53,7 @@ fun newAccessory(definitions: Definitions, type: String, owner: Id): NewHand {
                   type = type,
               ),
               owner = owner,
-              quantity = accessoryDefinition?.charges,
+              quantity = accessoryDefinition?.quantity ?: 1,
           ),
           newPossibleAction(definitions, type),
       )

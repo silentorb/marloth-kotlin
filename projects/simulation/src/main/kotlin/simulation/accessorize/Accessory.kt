@@ -8,6 +8,7 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.scenery.MeshName
 import simulation.happenings.TryActionEvent
 import simulation.misc.Definitions
+import kotlin.math.max
 import kotlin.math.min
 
 data class Accessory(
@@ -19,7 +20,7 @@ data class Accessory(
 data class AccessoryStack(
     val value: Accessory,
     val owner: Id,
-    val quantity: Int? = null,
+    val quantity: Int = 1,
 )
 
 typealias AccessoryName = String
@@ -35,10 +36,11 @@ data class AccessoryDefinition(
     //This mesh field is a stopgap until attaching any depiction to an articulation is supported
     val equippedMesh: MeshName? = null,
     val debugName: String? = null,
+    val isConsumable: Boolean = false,
     val maxLevel: Int = 1,
-    val charges: Int? = null,
+    val quantity: Int = 1,
     val components: List<Any> = listOf(),
-    val many: Boolean = true
+    val many: Boolean = true // Whether a character can have multiple instances of this accessory at once
 )
 
 fun hasAccessory(type: AccessoryName, accessories: Table<AccessoryStack>, actor: Id): Boolean =
@@ -63,10 +65,16 @@ data class ChangeItemOwnerEvent(
     val newOwner: Id
 )
 
+data class ModifyItemQuantityEvent(
+    val item: Id,
+    val modifier: Int
+)
+
 fun updateAccessory(definitions: Definitions, events: Events): (Id, AccessoryStack) -> AccessoryStack {
   val changeOwnerEvents = events.filterIsInstance<ChangeItemOwnerEvent>()
   val choseImprovedAccessoryEvents = events.filterIsInstance<ChooseImprovedAccessory>()
   val allUseEvents = events.filterIsInstance<TryActionEvent>()
+  val modifyQuantityCommands = events.filterIsInstance<ModifyItemQuantityEvent>()
 
   return { id, accessory ->
     val levelIncreases = choseImprovedAccessoryEvents.count {
@@ -75,20 +83,27 @@ fun updateAccessory(definitions: Definitions, events: Events): (Id, AccessorySta
     // Currently if two change owner events are triggered at the same time it is random which one
     // is honored
     val ownerChange = changeOwnerEvents.firstOrNull { it.item == id }
-    val charges = accessory.quantity
+    val quantity = accessory.quantity
+    val definition = definitions.accessories[accessory.value.type]
+    val quantityMod = modifyQuantityCommands
+        .filter { it.item == id }
+        .sumBy { it.modifier }
+
+    val consumptionQuantity = if (definition?.isConsumable == true)
+      quantity - allUseEvents.count { it.action == id }
+    else
+      quantity
+
     accessory.copy(
         owner = ownerChange?.newOwner ?: accessory.owner,
         value = accessory.value.copy(
             level = if (levelIncreases > 0)
-              min(accessory.value.level + levelIncreases, definitions.accessories[accessory.value.type]!!.maxLevel)
+              min(accessory.value.level + levelIncreases, definition!!.maxLevel)
             else
               accessory.value.level,
 
             ),
-        quantity = if (charges != null)
-          charges - allUseEvents.count { it.action == id }
-        else
-          null
+        quantity = max(0, consumptionQuantity + quantityMod),
     )
   }
 }

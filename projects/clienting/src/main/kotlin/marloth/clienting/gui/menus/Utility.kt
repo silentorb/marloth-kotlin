@@ -11,7 +11,10 @@ import silentorb.mythic.scenery.TextureName
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.spatial.toVector2
+import simulation.accessorize.AccessoryDefinition
+import simulation.accessorize.AccessoryStack
 import simulation.main.Deck
+import simulation.misc.Definitions
 
 fun getPlayerInteractingWith(deck: Deck, player: Id): Id? =
     deck.characters[player]?.interactingWith
@@ -34,4 +37,12 @@ fun redirectBox(view: ViewId?) =
 
 fun redirectFlower(view: ViewId?): Flower = { dimensions ->
   redirectBox(view)
+}
+
+fun actionItemText(definitions: Definitions, accessoryDefinition: AccessoryDefinition, quantity: Int): String {
+  val quantityClause = if (quantity > 1)
+    " ($quantity)"
+  else
+    ""
+  return definitions.textLibrary(accessoryDefinition.name) + quantityClause
 }

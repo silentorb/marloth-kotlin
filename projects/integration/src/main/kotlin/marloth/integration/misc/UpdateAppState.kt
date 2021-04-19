@@ -123,8 +123,8 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
     mouseLookEvents(dimensions, previousClient.input.deviceStates.lastOrNull(), clientState.input.deviceStates.last(), firstPlayer(clientState))
 
   val clientEvents = remapPlayerRigCommands(world.deck.players, clientState.events + gameCommands + mouseEvents)
-  val allEvents = withSimulationEvents(definitions, previous.deck, world, clientEvents) + world.nextCommands
-  val nextWorld = updateWorld(definitions, allEvents, clientState.commands + world.nextCommands, simulationDelta, world)
+  val allEvents = withSimulationEvents(definitions, previous.deck, world, clientEvents + world.nextCommands)
+  val nextWorld = updateWorld(definitions, allEvents, simulationDelta, world)
   val finalWorld = nextWorld.copy(
       deck = nextWorld.deck.copy(
           targets = updateTargeting(nextWorld, app.client, clientState.players, commands, previousClient.commands, nextWorld.deck.targets)

@@ -12,7 +12,6 @@ import simulation.accessorize.AccessoryStack
 import simulation.characters.newPlayerCharacters
 import simulation.combat.newDamageVisualEffects
 import simulation.entities.pruningEventsToIdHands
-import simulation.happenings.NewHandEvent
 import simulation.main.*
 import simulation.misc.*
 
@@ -73,7 +72,6 @@ fun newEntities(definitions: Definitions, graph: Graph, step: Long, previous: De
       listOf(
           newAmbientSounds(previous, next),
           handsFromSounds(soundsFromEvents(events)),
-          events.filterIsInstance<NewHandEvent>().map { it.hand },
           newDamageVisualEffects(next, events),
           newEntangleEntities(previous),
 //          newChosenAccessories(previous.accessories, events)

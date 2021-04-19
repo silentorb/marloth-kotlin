@@ -16,7 +16,10 @@ import simulation.intellect.execution.pursueGoals
 import simulation.intellect.execution.spiritsHandleRequests
 import simulation.main.Deck
 import simulation.main.World
-import simulation.misc.*
+import simulation.misc.Definitions
+import simulation.misc.doomEvents
+import simulation.misc.toPerformanceDeck
+import simulation.misc.toPerformanceDefinitions
 import simulation.movement.getFreedomTable
 import simulation.movement.mobilityEvents
 import simulation.physics.getBulletCollisions
@@ -41,7 +44,6 @@ fun withSimulationEvents(definitions: Definitions, previousDeck: Deck, world: Wo
       eventsFromPerformances(definitions, deck),
       commandsToEvents(definitions, deck, commands),
       eventsFromMissiles(toSpatialCombatWorld(world), collisions),
-      eventsFromItemPickups(world, collisions),
       eventsFromShadowSpiritRemoval(previousDeck, world),
       eventsFromRespawnCountdowns(previousDeck, world.deck),
       if (getDebugBoolean("ENABLE_MOBILITY")) mobilityEvents(world.definitions, world.deck, commands) else listOf()

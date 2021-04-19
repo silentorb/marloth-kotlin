@@ -23,13 +23,11 @@ data class Interactable(
 private const val interactableMaxDistance = 5f
 private const val interactableMaxRotation = 0.99f
 
-typealias InteractableEntry = Map.Entry<Id, Interactable>
-
 fun gatherInteractCommands(deck: Deck, commands: Commands): Commands {
   return deck.players.keys.mapNotNull { player ->
     if (commands.any { it.type == CharacterCommands.interactPrimary && it.target == player }) {
-      val interactingWith = deck.characters[player]?.interactingWith
-      val interaction = deck.interactables[interactingWith]
+      val target = deck.characters[player]?.canInteractWith
+      val interaction = deck.interactables[target]
       val primaryCommand = interaction?.primaryCommand
       val commandType = primaryCommand?.commandType
       if (commandType != null)

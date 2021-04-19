@@ -4,7 +4,6 @@ package marloth.scenery.enums
 object MeshId {
   val billboard = "billboard"
   val candle = "candle"
-  val cookie = "cookie"
   val hollowCircle = "hollowCircle"
   val cube = "cube"
   val grenadeLauncher = "grenadeLauncher"

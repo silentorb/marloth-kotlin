@@ -10,6 +10,9 @@ import silentorb.mythic.physics.BulletState
 import silentorb.mythic.randomly.Dice
 import simulation.accessorize.ChooseImprovedAccessory
 import simulation.accessorize.newAccessoryChoice
+import simulation.accessorize.updateUtilityItem
+import simulation.combat.general.ResourceTypes
+import simulation.combat.general.gatherModifyResourceEvents
 import simulation.combat.general.modifyResource
 import simulation.entities.ContractCommands
 import simulation.entities.updateAvailableContracts
@@ -28,7 +31,7 @@ fun updateMoney(deck: Deck, events: Events, character: Id, money: Int): Int {
 }
 
 fun updateInteractingWith(deck: Deck, character: Id, commands: Commands, interactingWith: Id?): Id? =
-    if (commands.any { it.type == CharacterCommands.interactPrimary })
+    if (commands.any { it.type == CharacterCommands.interactWith })
       deck.characters[character]!!.canInteractWith
     else if (commands.any { it.type == CharacterCommands.stopInteracting } ||
         (interactingWith != null && !deck.interactables.containsKey(interactingWith)))
@@ -60,6 +63,15 @@ fun updateAccessoryOptions(definitions: Definitions, dice: Dice, deck: Deck, eve
     character.accessoryOptions
 }
 
+fun getShadowSpirit(deck: Deck, actor: Id): Id? {
+  val playerRecord = deck.players[actor]
+  val rig = playerRecord?.rig
+  return if (rig != null && rig != actor)
+    rig
+  else
+    null
+}
+
 fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletState: BulletState, actor: Id, character: Character,
                     commands: Commands, events: Events): Character {
   val destructible = deck.destructibles[actor]!!
@@ -71,12 +83,18 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
   else
     null
 
-//  val nourishmentAdjustment = getNourishmentEventsAdjustment(definitions, deck, actor, events)
-  val intVelocity = toInt1000(body.velocity.length())
+  val shadowSpirit = getShadowSpirit(deck, actor)
+  val shadowSpiritBody = deck.bodies[shadowSpirit]
 
-  val energyAccumulator = character.energyAccumulator - getEnergyExpense(energyRates, 1, intVelocity)
+  val mainEnergyExpense = getEnergyExpense(standardEnergyRates, 1, toInt1000(body.velocity.length()))
+  val shadowEnergyExpense = if (shadowSpiritBody != null)
+    getEnergyExpense(shadowSpiritEnergyRates, 1, toInt1000(shadowSpiritBody.velocity.length()))
+  else
+    0
+
+  val energyAccumulator = character.energyAccumulator - mainEnergyExpense - shadowEnergyExpense
   val energyAccumulation = getRoundedAccumulation(energyAccumulator)
-  val energyMod = energyAccumulation
+  val energyMod = energyAccumulation + gatherModifyResourceEvents(events, actor, ResourceTypes.energy)
 
   return character.copy(
       isAlive = isAlive,
@@ -89,6 +107,7 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
       energy = modifyResource(character.energy, destructible.health, energyMod),
       energyAccumulator = energyAccumulator - energyAccumulation * highIntScale,
       availableContracts = updateAvailableContracts(commands, character.availableContracts),
+      utilityItem = updateUtilityItem(definitions, deck, commands, actor, character),
   )
 }
 

@@ -1,6 +1,7 @@
 package marloth.definition.data
 
 import marloth.scenery.enums.*
+import silentorb.mythic.performing.ActionCost
 import simulation.accessorize.AccessoryDefinition
 import simulation.accessorize.AccessoryName
 import silentorb.mythic.performing.ActionDefinition
@@ -9,6 +10,7 @@ import simulation.accessorize.Nutrient
 import simulation.characters.EquipmentSlot
 import simulation.combat.general.AttackMethod
 import simulation.combat.general.DamageDefinition
+import simulation.combat.general.ResourceTypes
 import simulation.combat.general.WeaponDefinition
 
 data class ActionAccessory(
@@ -44,12 +46,11 @@ fun rocketLauncher() =
         )
     )
 
-fun cookie() =
+fun apple() =
     ActionAccessory(
         accessory = AccessoryDefinition(
-            name = TextId.id_cookie,
-            equippedMesh = MeshId.cookie,
-            charges = 1,
+            name = DevText("Apple"),
+            isConsumable = true,
             components = listOf(
                 Nutrient(
                     value = 10
@@ -162,7 +163,7 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
 
     AccessoryIdOld.rocketLauncher to rocketLauncher(),
     AccessoryIdOld.spiritRocketLauncher to spiritRocketLauncher(),
-    AccessoryIdOld.cookie to cookie(),
+    Accessories.apple to apple(),
 
     AccessoryIdOld.claws to ActionAccessory(
         accessory = AccessoryDefinition(
@@ -195,7 +196,11 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
             type = Actions.shadowSpirit,
             cooldown = 2f,
             duration = 10f,
-            equipmentSlot = EquipmentSlot.mobility
+            equipmentSlot = EquipmentSlot.mobility,
+            cost = ActionCost(
+                type = ResourceTypes.energy,
+                amount = 2
+            )
         )
     ),
 
@@ -234,4 +239,4 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         )
     ),
 
-)
+    )

@@ -1,13 +1,10 @@
 package marloth.integration.generation
 
-import generation.architecture.engine.GenerationConfig
 import marloth.definition.data.itemInteractable
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.ent.scenery.nodeHasAttribute
 import silentorb.mythic.physics.Body
-import silentorb.mythic.physics.Collision
-import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.getNodeCollisionObject
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.scenery.Shape
@@ -45,7 +42,7 @@ fun getNodeDepiction(graph: Graph, node: Key): Depiction? {
 
 fun getNodeItem(graph: Graph, node: Key): Interactable? {
   return if (nodeHasAttribute(graph, node, GameAttributes.item))
-    itemInteractable
+    itemInteractable(node)
   else
     null
 }

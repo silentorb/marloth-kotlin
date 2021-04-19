@@ -42,9 +42,13 @@ val commandStrokes =
                 setOf(
                     toggleTargetingCommand,
                     CharacterRigCommands.switchView,
+                    CharacterCommands.interactPrimary,
+                    CharacterCommands.stopInteracting,
                     CharacterCommands.abilityUtility,
                     CharacterCommands.abilityDefense,
                     CharacterCommands.abilityMobility,
+                    CharacterCommands.previousItem,
+                    CharacterCommands.nextItem,
                 )
             ),
         InputContext.menu to standardStrokes()

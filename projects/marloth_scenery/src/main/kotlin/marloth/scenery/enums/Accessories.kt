@@ -3,7 +3,6 @@ package marloth.scenery.enums
 object AccessoryIdOld {
   const val candle = "candle"
   const val claws = "claws"
-  const val cookie = "cookie"
   const val damageBurning = "damageBurning"
   const val damageChilled = "damageChilled"
   const val damagePoisoned = "damagePoisoned"

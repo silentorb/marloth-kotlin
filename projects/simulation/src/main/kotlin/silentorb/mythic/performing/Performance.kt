@@ -7,10 +7,10 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
-import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.timing.FloatTimer
 import simulation.accessorize.AccessoryName
 import simulation.accessorize.AccessoryStack
+import simulation.happenings.UseAction
 
 data class PerformanceDeck(
     val accessories: Table<AccessoryStack>,

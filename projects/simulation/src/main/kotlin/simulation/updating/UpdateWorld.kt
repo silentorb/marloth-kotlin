@@ -2,9 +2,8 @@ package simulation.updating
 
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.mapTable
-import silentorb.mythic.ent.newIdSource
 import silentorb.mythic.ent.pipe
-import silentorb.mythic.happenings.Commands
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.applyBodyChanges
 import simulation.characters.newMoveSpeedTable
@@ -12,7 +11,6 @@ import simulation.combat.general.getDamageMultiplierModifiers
 import simulation.combat.general.updateDestructibleCache
 import simulation.combat.toCombatDefinitions
 import simulation.combat.toModifierDeck
-import simulation.entities.remapPlayerRigCommands
 import simulation.happenings.gatherNextCommands
 import simulation.intellect.navigation.NavigationState
 import simulation.intellect.navigation.updateNavigation
@@ -49,7 +47,7 @@ fun updateDeck(definitions: Definitions, events: Events, world: World,
         newEntities(definitions, world.staticGraph, world.step, world.deck, events, nextId)
     )
 
-fun updateWorld(definitions: Definitions, events: Events, commands: Commands, delta: Float, world: World): World {
+fun updateWorld(definitions: Definitions, events: Events, delta: Float, world: World): World {
   val withPhysics = updatePhysics(events)(world)
   val moveSpeedTable = newMoveSpeedTable(definitions, withPhysics.deck)
   val navigation = if (withPhysics.navigation != null)
@@ -65,7 +63,7 @@ fun updateWorld(definitions: Definitions, events: Events, commands: Commands, de
       deck = deck,
       global = updateGlobalState(deck, world.staticGraph, withPhysics.global),
       navigation = navigation,
-      nextCommands = gatherNextCommands(world, commands),
+      nextCommands = gatherNextCommands(world, events.filterIsInstance<Command>()),
       step = world.step + 1L,
   )
 }

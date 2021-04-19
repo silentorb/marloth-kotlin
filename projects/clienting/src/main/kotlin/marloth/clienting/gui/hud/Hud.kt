@@ -6,6 +6,7 @@ import marloth.clienting.gui.DeviceMode
 import marloth.clienting.gui.TextResources
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.TextStyles
+import marloth.clienting.gui.menus.actionItemText
 import marloth.clienting.gui.menus.black
 import marloth.clienting.gui.menus.general.verticalList
 import silentorb.mythic.bloom.*
@@ -13,13 +14,15 @@ import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.characters.rigs.isGrounded
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugOverrides
-import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.gpuProfileMeasurements
+import simulation.accessorize.AccessoryStack
+import simulation.characters.Character
 import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
 import simulation.happenings.Notification
 import simulation.main.World
+import simulation.misc.Definitions
 import kotlin.math.roundToInt
 
 private val textStyle = TextStyles.smallGray
@@ -84,12 +87,28 @@ fun getGpuTime(): Long =
       gpuTimeLast
     }
 
-fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flower {
+fun getUtilityItemText(definitions: Definitions, accessories: Map<Id, AccessoryStack>, character: Character): String? {
+  val item = character.utilityItem
+  return if (item == null)
+    null
+  else {
+    val accessory = accessories[item]
+    val accessoryDefinition = definitions.accessories[accessory?.value?.type]
+    if (accessoryDefinition == null)
+      null
+    else
+      actionItemText(definitions, accessoryDefinition, accessory!!.quantity)
+  }
+}
+
+fun playerStats(world: World, actor: Id, debugInfo: List<String>, accessories: Map<Id, AccessoryStack>): Flower {
   val deck = world.deck
   val destructible = deck.destructibles[actor]!!
   val character = deck.characters[actor]!!
   val accessoryPoints = character.accessoryPoints + if (character.accessoryOptions != null) 1 else 0
   val equipment = deck.accessories.filter { it.value.owner == actor }.values
+  val definitions = world.definitions
+  val utilityItemText = getUtilityItemText(definitions, accessories, character)
   val rows = listOfNotNull(
       label(textStyle, "Health: ${resourceString(destructible.health, destructible.maxHealth)}"),
 //      label(textStyle, "Nourishment: ${highPercentage(character.nourishment)}"),
@@ -100,15 +119,16 @@ fun playerStats(world: World, actor: Id, debugInfo: List<String>): Flower {
 //      label(textStyle, "Doom: ${world.global.doom}")
 //      label(textStyle, "Sanity: ${resourceString(data.madness)}")
   ) + listOfNotNull(
-      if (accessoryPoints > 0) label(textStyle, "Ability Points: $accessoryPoints") else null
-  ) + debugInfo.map {
+      if (accessoryPoints > 0) label(textStyle, "Ability Points: $accessoryPoints") else null,
+      if (utilityItemText != null) label(textStyle, utilityItemText) else null,
+      ) + debugInfo.map {
     label(textStyle, it)
   } + if (getDebugBoolean("HUD_DRAW_INVENTORY")) equipment.mapNotNull { accessory ->
-    val definition = world.definitions.accessories[accessory.value.type]
+    val definition = definitions.accessories[accessory.value.type]
     if (definition == null)
       null
     else
-      label(textStyle, world.definitions.textLibrary(definition.name))
+      label(textStyle, definitions.textLibrary(definition.name))
   }
   else
     listOf()
@@ -241,10 +261,10 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
 
     compose(listOfNotNull(
         if (interactable != null) interactionDialog(getInteractKeyText(guiState!!.primarydeviceMode), textResources, interactable) else null,
-        playerStats(world, player, debugInfo),
+        playerStats(world, player, debugInfo, accessories),
         if (notifications.any()) notificationsFlower(notifications) else null,
         if (cooldowns.any()) cooldownIndicatorPlacement(cooldowns) else null,
-        if (viewMode == ViewMode.firstPerson) reticlePlacement() else null
+        if (viewMode == ViewMode.firstPerson) reticlePlacement() else null,
     ))
   }
 }

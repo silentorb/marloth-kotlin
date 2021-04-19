@@ -35,12 +35,16 @@ object CharacterCommands {
   const val interactPrimary = "interactPrimary"
   const val stopInteracting = "stopInteracting"
 
+  const val previousItem = "previousItem"
+  const val nextItem = "nextItem"
+
   const val abilityAttack = "abilityAttack"
   const val abilityDefense = "abilityDefense"
   const val abilityMobility = "abilityMobility"
   const val abilityUtility = "abilityUtility"
 
-  // Commands that are circumstantial and not normally bound to user input buttons
+  // Commands that are contextual and not normally bound to user input buttons
   const val sleep = "sleep"
   const val take = "take"
+  const val interactWith = "interactWith"
 }

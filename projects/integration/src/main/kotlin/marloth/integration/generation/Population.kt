@@ -127,7 +127,7 @@ fun populateDistributions(nextId: IdSource, config: GenerationConfig, dice: Dice
   val remainingSlots = slots - monsterSlots.map { it.key }
 
   val itemSlots = selectSlots(dice, cellCount, remainingSlots, 100)
-  val itemDefinition = expandInstances(config.graphLibrary, graphLibrary["food"]!!)
+  val itemDefinition = expandInstances(config.graphLibrary, graphLibrary["apple"]!!)
   val itemHands = itemSlots.flatMap { (_, slot) ->
     graphToHands(config.meshShapes, nextId, itemDefinition, slot.transform)
   }

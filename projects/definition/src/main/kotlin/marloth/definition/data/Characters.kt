@@ -32,7 +32,7 @@ fun characterDefinitions(): Map<String, CharacterDefinition> = mapOf(
         depictionType = DepictionType.child,
         wares = listOf(
             Ware(
-                type = AccessoryIdOld.cookie,
+                type = Accessories.apple,
                 price = 10,
                 quantity = 10,
             )

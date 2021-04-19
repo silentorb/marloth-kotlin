@@ -5,7 +5,6 @@ import simulation.accessorize.getAccessories
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events
-import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.performing.Action
 import silentorb.mythic.performing.updateCooldown
 import simulation.accessorize.AccessoryStack

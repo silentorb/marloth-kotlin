@@ -43,7 +43,6 @@ enum class TextId : Text {
   gui_query_saveDisplayChanges,
 
   id_candle,
-  id_cookie,
   id_damageChilled,
   id_damageBurning,
   id_damagePoisoned,

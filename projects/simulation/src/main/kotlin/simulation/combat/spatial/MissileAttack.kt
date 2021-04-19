@@ -14,48 +14,47 @@ import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.timing.FloatTimer
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
-import simulation.happenings.NewHandEvent
 import simulation.happenings.Trigger
-import simulation.main.Hand
+import simulation.main.NewHand
 import simulation.physics.CollisionGroups
 
 fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinition, target: Vector3?): Events {
   val (origin, vector) = getAttackerOriginAndFacing(world.deck, attacker, target, 0.8f)
   return listOf(
-      NewHandEvent(
-          hand = Hand(
-              body = Body(
+      NewHand(
+          components = listOf(
+              Body(
                   position = origin,
                   velocity = vector * weapon.velocity,
                   scale = Vector3(0.5f)
               ),
-              dynamicBody = DynamicBody(
+              DynamicBody(
                   gravity = false,
                   mass = 1f,
                   resistance = 1f
               ),
-              collisionShape = CollisionObject(
+              CollisionObject(
                   shape = Sphere(0.5f),
                   groups = CollisionGroups.dynamic,
                   mask = CollisionGroups.standardMask
               ),
-              depiction = Depiction(
+              Depiction(
                   type = DepictionType.staticMesh,
                   mesh = weapon.missileMesh
               ),
-              light = Light(
+              Light(
                   type = LightType.point,
                   color = Vector4(1f, 0.9f, 0.6f, 1f),
                   offset = Vector3.zero,
                   range = 7f
               ),
-              missile = Missile(
+              Missile(
                   damageRadius = weapon.damageRadius,
                   damageFalloff = weapon.damageFalloff,
                   damages = weapon.damages
               ),
-              timerFloat = FloatTimer(1.5f),
-              trigger = Trigger()
+              FloatTimer(1.5f),
+              Trigger()
           )
       )
   )

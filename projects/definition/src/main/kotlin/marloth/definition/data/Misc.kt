@@ -22,9 +22,10 @@ fun miscellaneousDefinitions(): Map<String, NewHand> =
             )
     )
 
-val itemInteractable = Interactable(
+fun itemInteractable(itemType: String) = Interactable(
     primaryCommand = WidgetCommand(
         text = DevText("Take"),
-        commandType = CharacterCommands.take
+        commandType = CharacterCommands.take,
+        commandValue = itemType,
     )
 )

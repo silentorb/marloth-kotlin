@@ -5,11 +5,11 @@ import silentorb.mythic.characters.rigs.defaultCharacterHeight
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
-import silentorb.mythic.happenings.UseAction
 import silentorb.mythic.performing.ActionDefinition
 import silentorb.mythic.spatial.Vector3
 import simulation.accessorize.AccessoryName
 import simulation.combat.general.AttackMethod
+import simulation.happenings.UseAction
 
 const val executeMarker = "execute"
 

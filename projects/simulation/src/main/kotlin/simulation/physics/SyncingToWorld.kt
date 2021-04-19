@@ -26,7 +26,7 @@ fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, play
   val shape = deck.collisionObjects[player]!!
   val direction = characterRig.facingVector
   val start = body.position + Vector3(0f, 0f, 0.5f) + direction * shape.shape.radius
-  val end = start + direction * 7f
+  val end = start + direction * 4f
   val callback = firstRayHit(dynamicsWorld, start, end, CollisionGroups.tangibleMask)
   return if (callback != null) {
     val id = getEntityId(deck, callback.collisionObject)

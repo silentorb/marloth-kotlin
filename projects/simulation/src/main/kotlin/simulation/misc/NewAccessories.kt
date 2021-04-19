@@ -17,7 +17,7 @@ fun newAccessories(events: Events, definitions: Definitions): List<NewHand> =
                           type = purchase.wareType,
                       ),
                       owner = purchase.customer,
-                      quantity = definition?.charges,
+                      quantity = definition?.quantity ?: 1,
                   )
               )
           )

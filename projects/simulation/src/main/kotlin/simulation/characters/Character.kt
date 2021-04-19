@@ -64,6 +64,7 @@ data class Character(
     val energyAccumulator: Int = 0,
     val wares: Map<Id, Ware> = mapOf(),
     val availableContracts: Map<Id, ContractDefinition> = mapOf(),
+    val utilityItem: Id? = null,
 )
 
 data class ModifyLevelEvent(
