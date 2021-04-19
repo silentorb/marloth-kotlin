@@ -11,6 +11,7 @@ import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.ent.singleValueCache
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.scenery.Light
+import silentorb.mythic.spatial.Vector4
 import simulation.main.Deck
 import simulation.main.World
 
@@ -62,6 +63,24 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
     else
       null
 
+    val interactable = deck.characters[player]?.canInteractWith
+    val selected = if (interactable != null) {
+      val depiction = deck.depictions[interactable]
+      if (depiction != null)
+        convertSimpleDepiction(deck, interactable, depiction)
+      else
+        null
+    } else
+      null
+
+    val selectedLayer = if (selected != null)
+      SceneLayer(
+          elements = listOf(ElementGroup(listOf(selected))),
+          highlightColor = Vector4(1f, 0.9f, 0.3f, 1f)
+      )
+    else
+      null
+
     val targetingLayer = getTargetingLayer(deck, player)
 //    val movementRangeLayer = entanglingMovementRangeLayer(definitions, deck, player)
 //        ?: if (getDebugBoolean("ENABLE_MOBILITY"))
@@ -106,7 +125,7 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
             depth = DepthMode.none,
             shadingMode = ShadingMode.forward,
         ),
-    ) + listOfNotNull(movementRangeLayer, equipmentLayer)
+    ) + listOfNotNull(selectedLayer, movementRangeLayer, equipmentLayer)
     // + listOfNotNull(movementRangeLayer, equipmentLayer, targetingLayer)
 
     val elementLights = gatherLightsFromLayers(layers)

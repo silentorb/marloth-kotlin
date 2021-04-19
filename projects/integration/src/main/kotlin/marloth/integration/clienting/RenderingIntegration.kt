@@ -49,6 +49,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
         }
         labRender(appState)(sceneRenderer, scene)
         applyFilters(sceneRenderer, filters)
+        renderSceneLayerHighlights(sceneRenderer, scene.layers)
         if (boxIterator.hasNext()) {
           val box = boxIterator.next()
           renderLayout(box, canvas, getDebugBoolean("MARK_BLOOM_PASS"))
