@@ -3,14 +3,14 @@ package simulation.combat.general
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 
-typealias ResourceType = String
+typealias ResourceTypeName = String
 
-typealias ResourceMap = Map<ResourceType, Int>
+typealias ResourceMap = Map<ResourceTypeName, Int>
 
 val emptyResourceMap: ResourceMap = mapOf()
 
 object ResourceTypes {
-  val injury = "injury"
+  val health = "health"
   val energy = "energy"
   val sanity = "sanity"
   val money = "money"
@@ -19,10 +19,16 @@ object ResourceTypes {
 //fun getResources(graph: AnyGraph): List<Any> =
 //    filterByAttribute(graph, GameAttributes.resource)
 
+enum class ResourceOperation {
+  add,
+  replace,
+}
+
 data class ModifyResource(
     val actor: Id,
     val resource: String,
     val amount: Int,
+    val operation: ResourceOperation = ResourceOperation.add,
 )
 
 data class ResourceContainer(
@@ -35,20 +41,29 @@ data class ResourceBundle(
     val maximums: ResourceMap = emptyResourceMap
 )
 
-fun modifyResource(value: Int, max: Int, mod: Int): Int {
-  val newValue = mod + value
+fun clampResource(value: Int, max: Int): Int {
   return when {
-    newValue < 0 -> 0
-    newValue > max -> max
-    else -> newValue
+    value < 0 -> 0
+    value > max -> max
+    else -> value
   }
 }
 
-fun modifyResource(resource: ResourceContainer, mod: Int): Int =
-    modifyResource(resource.value, resource.max, mod)
+fun modifyResource(value: Int, max: Int, mod: Int): Int =
+    clampResource(mod + value, max)
 
-fun gatherModifyResourceEvents(events: Events, actor: Id, resource: String): Int =
-    events
-        .filterIsInstance<ModifyResource>()
-        .filter { it.actor == actor && it.resource == resource }
-        .sumBy { it.amount }
+fun modifyResourceWithEvents(events: Events, actor: Id, resource: String, previous: Int, max: Int, mod: Int): Int {
+  val modifyEvents =
+      events
+          .filterIsInstance<ModifyResource>()
+
+  val (replacements, additions) = modifyEvents
+      .filter { it.actor == actor && it.resource == resource }
+      .partition { it.operation == ResourceOperation.replace }
+
+  val replacement = replacements.maxOfOrNull { it.amount }
+  val base = replacement ?: previous
+  val raw = base + additions.sumBy { it.amount } + mod
+
+  return clampResource(raw, max)
+}

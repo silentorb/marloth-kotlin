@@ -18,6 +18,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.gpuProfileMeasurements
 import simulation.accessorize.AccessoryStack
 import simulation.characters.Character
+import simulation.characters.isAliveOrNotACharacter
 import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
 import simulation.happenings.Notification
@@ -179,7 +180,7 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
     val accessories = deck.accessories
         .filter { it.value.owner == player }
 
-    val interactable = if (view == null)
+    val interactable = if (view == null && character.isAlive)
       deck.interactables[character.canInteractWith]
     else null
 
@@ -264,7 +265,7 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
         playerStats(world, player, debugInfo, accessories),
         if (notifications.any()) notificationsFlower(notifications) else null,
         if (cooldowns.any()) cooldownIndicatorPlacement(cooldowns) else null,
-        if (viewMode == ViewMode.firstPerson) reticlePlacement() else null,
+        if (viewMode == ViewMode.firstPerson && character.isAlive) reticlePlacement() else null,
     ))
   }
 }

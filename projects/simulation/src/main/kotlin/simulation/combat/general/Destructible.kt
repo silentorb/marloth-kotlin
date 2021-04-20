@@ -75,16 +75,16 @@ fun updateDestructibleHealth(definitions: Definitions, deck: Deck, events: Event
       damageDestructible(damages)(destructible)
     }
     val nourishmentAdjustment = getNourishmentEventsAdjustment(definitions, deck, actor, events)
-    if (destructible.drainDuration != 0) {
-      val healthAccumulator = result.healthAccumulator - getNourishmentExpense(healthTimeDrainDuration, 1)
-      val healthAccumulation = getRoundedAccumulation(healthAccumulator)
-      result.copy(
-          health = modifyResource(result.health, result.maxHealth, healthAccumulation + nourishmentAdjustment),
-          healthAccumulator = healthAccumulator - healthAccumulation * highIntScale,
-      )
-    } else
-      result.copy(
-          health = modifyResource(result.health, result.maxHealth, nourishmentAdjustment)
-      )
+    val healthAccumulator = if (destructible.drainDuration != 0)
+      result.healthAccumulator - getNourishmentExpense(healthTimeDrainDuration, 1)
+    else
+      result.healthAccumulator
+
+    val healthAccumulation = getRoundedAccumulation(healthAccumulator)
+    val mod = healthAccumulation + nourishmentAdjustment
+    result.copy(
+        health = modifyResourceWithEvents(events, actor, ResourceTypes.health, result.health, result.maxHealth, mod),
+        healthAccumulator = healthAccumulator - healthAccumulation * highIntScale,
+    )
   }
 }

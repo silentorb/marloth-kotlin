@@ -63,8 +63,9 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
     else
       null
 
-    val interactable = deck.characters[player]?.canInteractWith
-    val selected = if (interactable != null) {
+    val character = deck.characters[player]
+    val interactable = character?.canInteractWith
+    val selected = if (interactable != null && character.isAlive) {
       val depiction = deck.depictions[interactable]
       if (depiction != null)
         convertSimpleDepiction(deck, interactable, depiction)

@@ -12,8 +12,7 @@ import simulation.accessorize.ChooseImprovedAccessory
 import simulation.accessorize.newAccessoryChoice
 import simulation.accessorize.updateUtilityItem
 import simulation.combat.general.ResourceTypes
-import simulation.combat.general.gatherModifyResourceEvents
-import simulation.combat.general.modifyResource
+import simulation.combat.general.modifyResourceWithEvents
 import simulation.entities.ContractCommands
 import simulation.entities.updateAvailableContracts
 import simulation.main.Deck
@@ -94,7 +93,6 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
 
   val energyAccumulator = character.energyAccumulator - mainEnergyExpense - shadowEnergyExpense
   val energyAccumulation = getRoundedAccumulation(energyAccumulator)
-  val energyMod = energyAccumulation + gatherModifyResourceEvents(events, actor, ResourceTypes.energy)
 
   return character.copy(
       isAlive = isAlive,
@@ -104,7 +102,7 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
       money = updateMoney(deck, events, actor, character.money),
       accessoryPoints = updateAccessoryPoints(events, character),
       accessoryOptions = updateAccessoryOptions(definitions, dice, deck, events, actor, character),
-      energy = modifyResource(character.energy, destructible.health, energyMod),
+      energy = modifyResourceWithEvents(events, actor, ResourceTypes.energy, character.energy, destructible.health, energyAccumulation),
       energyAccumulator = energyAccumulator - energyAccumulation * highIntScale,
       availableContracts = updateAvailableContracts(commands, character.availableContracts),
       utilityItem = updateUtilityItem(definitions, deck, commands, actor, character),

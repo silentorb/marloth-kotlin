@@ -6,7 +6,6 @@ import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.filterCharacterCommandsFromEvents
 import simulation.abilities.eventsFromShadowSpiritRemoval
-import simulation.accessorize.eventsFromItemPickups
 import simulation.combat.spatial.eventsFromMissiles
 import simulation.combat.toSpatialCombatWorld
 import simulation.entities.eventsFromRespawnCountdowns
