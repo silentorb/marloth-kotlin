@@ -32,7 +32,6 @@ fun commonCharacterElements(position: Vector3, angle: Float, runSpeed: Float) =
     listOf(
         Body(
             position = position,
-            velocity = Vector3(),
             orientation = Quaternion()
         ),
         characterDynamicBody,

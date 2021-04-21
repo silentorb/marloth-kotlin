@@ -18,7 +18,6 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.gpuProfileMeasurements
 import simulation.accessorize.AccessoryStack
 import simulation.characters.Character
-import simulation.characters.isAliveOrNotACharacter
 import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
 import simulation.happenings.Notification

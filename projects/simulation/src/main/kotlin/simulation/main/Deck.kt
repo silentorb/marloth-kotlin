@@ -17,6 +17,7 @@ import silentorb.mythic.timing.FloatTimer
 import silentorb.mythic.timing.IntTimer
 import simulation.accessorize.AccessoryStack
 import simulation.accessorize.ItemPickup
+import simulation.accessorize.getAccessories
 import simulation.characters.Character
 import simulation.combat.PlayerOverlay
 import simulation.combat.general.Destructible
@@ -72,7 +73,7 @@ data class Deck(
     val triggers: Table<Trigger> = mapOf(),
 )
 
-fun allHandsToDeck(definitions: Definitions, nextId: IdSource, newHands: List<NewHand>, time: Long = -1L, deck: Deck): Deck {
+fun allHandsToDeck(definitions: Definitions, nextId: IdSource, newHands: List<NewHand>, deck: Deck, time: Long = -1L): Deck {
   val hands = newHands.flatMap(finalizeHands(nextId))
   return deck.copy(
       accessories = incorporateNewAccessories(definitions, deck.accessories, applyHands(hands)),
@@ -123,8 +124,25 @@ fun addEntitiesToWorldDeck(world: World, transform: (IdSource) -> List<NewHand>)
   val nextId = world.nextId.source()
   val hands = transform(nextId)
   return world.copy(
-      deck = allHandsToDeck(world.definitions, nextId, hands, world.step, world.deck),
+      deck = allHandsToDeck(world.definitions, nextId, hands, world.deck, world.step),
   )
 }
 
 typealias DeckSource = (IdSource) -> Deck
+
+fun copyEntity(deck: Deck, entity: Id): NewHand {
+  val components = deckReflection.deckProperties.mapNotNull { property ->
+    val table = property.get(deck) as Table<Any>
+    table[entity]
+  }
+
+  val accessories = getAccessories(deck.accessories, entity)
+      .keys
+      .map { copyEntity(deck, it) }
+
+  return NewHand(
+      id = entity,
+      components = components,
+      children = accessories,
+  )
+}

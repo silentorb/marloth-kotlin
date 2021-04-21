@@ -1,54 +1,36 @@
 package marloth.integration.misc
 
-import marloth.clienting.*
+import marloth.clienting.ClientState
+import marloth.clienting.PlayerBoxes
 import marloth.clienting.editing.mainScene
 import marloth.clienting.editing.renderEditorViewport
-import marloth.clienting.gui.hud.updateTargeting
-import marloth.clienting.input.GuiCommandType
-import marloth.clienting.input.mouseLookEvents
+import marloth.clienting.flattenToPlayerBoxes
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.menus.logic.syncDisplayOptions
 import marloth.clienting.gui.menus.logic.updateAppOptions
 import marloth.clienting.gui.newBloomDefinition
-import marloth.clienting.input.firstPlayer
-import marloth.clienting.input.isGameMouseActive
+import marloth.clienting.input.GuiCommandType
+import marloth.clienting.updateClient
 import marloth.integration.clienting.layoutGui
 import marloth.integration.clienting.renderMain
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
 import marloth.integration.clienting.updateAppStateForNewPlayers
 import marloth.integration.front.GameApp
-import marloth.scenery.enums.CharacterCommands
-import persistence.Database
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.toAbsoluteBoundsRecursive
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.incrementGlobalDebugLoopNumber
-import silentorb.mythic.ent.*
-import silentorb.mythic.happenings.Command
-import silentorb.mythic.happenings.Events
+import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.Table
+import silentorb.mythic.ent.pipe
+import silentorb.mythic.ent.singleValueCache
 import silentorb.mythic.lookinglass.getPlayerViewports
 import silentorb.mythic.quartz.updateTimestep
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4i
 import simulation.entities.Player
-import simulation.entities.remapPlayerRigCommands
-import simulation.happenings.withSimulationEvents
-import simulation.main.Deck
 import simulation.main.World
-import simulation.misc.Factions
 import simulation.updating.simulationDelta
-import simulation.updating.updateWorld
-
-fun updateSimulationDatabase(db: Database, next: World, previous: World) {
-  val nextGameOver = next.global.gameOver
-  if (previous.global.gameOver == null && nextGameOver != null) {
-    if (nextGameOver.winningFaction == Factions.misfits) {
-//      createVictory(db, Victory(
-//          next.deck.players.values.first().name
-//      ))
-    }
-  }
-}
 
 fun updateClientPlayers(deckPlayers: Table<Player>): (List<Id>) -> List<Id> = { clientPlayers ->
   clientPlayers.plus(deckPlayers.keys.minus(clientPlayers))
@@ -68,83 +50,8 @@ fun updateClientFromWorld(worlds: List<World>, clientState: ClientState): Client
     )
 }
 
-fun gatherAdditionalGameCommands(deck: Deck, previousClient: ClientState, clientState: ClientState): List<Command> {
-  return clientState.players.flatMap { player ->
-    val guiState = clientState.guiStates[player]
-    val view = guiState?.view
-    val previousView = previousClient.guiStates[player]?.view
-    val character = deck.characters[player]
-    listOfNotNull(
-        if (character?.interactingWith != null && view == null && previousView != null)
-          Command(type = CharacterCommands.stopInteracting, target = player)
-        else
-          null
-    )
-  }
-}
-
-fun filterCommands(clientState: ClientState): (List<Command>) -> List<Command> = { commands ->
-  commands
-      .groupBy { it.target }
-      .flatMap { (_, commands) ->
-        commands.filter { command ->
-          val view = clientState.guiStates[command.target]?.view
-          view == null
-        }
-      }
-}
-
 fun getPlayerViewports(clientState: ClientState, windowDimensions: Vector2i): List<Vector4i> =
     getPlayerViewports(clientState.players.size, windowDimensions)
-
-fun updateWorldGraph(events: Events, graph: Graph): Graph {
-  val setGraphEvent = events.filterIsInstance<ClientEvent>().firstOrNull { it.type == ClientEventType.setWorldGraph }
-  return if (setGraphEvent != null)
-    setGraphEvent.value!! as Graph
-  else
-    graph
-}
-
-fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: ClientState, worlds: List<World>, commands: List<Command>): List<World> {
-  val world = worlds.last()
-      .copy(
-          staticGraph = updateWorldGraph(clientState.events, worlds.last().staticGraph),
-      )
-
-  val previous = worlds.takeLast(2).first()
-  val gameCommands = filterCommands(clientState)(commands)
-      .plus(gatherAdditionalGameCommands(world.deck, previousClient, clientState))
-
-  val definitions = app.definitions
-  val dimensions = app.platform.display.getInfo().dimensions
-  val mouseEvents = if (isGameMouseActive(app.platform, clientState))
-    listOf()
-  else
-    mouseLookEvents(dimensions, previousClient.input.deviceStates.lastOrNull(), clientState.input.deviceStates.last(), firstPlayer(clientState))
-
-  val clientEvents = remapPlayerRigCommands(world.deck.players, clientState.events + gameCommands + mouseEvents)
-  val allEvents = withSimulationEvents(definitions, previous.deck, world, clientEvents + world.nextCommands)
-  val nextWorld = updateWorld(definitions, allEvents, simulationDelta, world)
-  val finalWorld = nextWorld.copy(
-      deck = nextWorld.deck.copy(
-          targets = updateTargeting(nextWorld, app.client, clientState.players, commands, previousClient.commands, nextWorld.deck.targets)
-      ),
-  )
-
-  updateSimulationDatabase(app.db, finalWorld, world)
-  return worlds
-      .plus(finalWorld)
-      .takeLast(2)
-}
-
-fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientState): (List<World>) -> List<World> = { worlds ->
-  val commands = if (clientState.isEditorActive)
-    listOf()
-  else
-    clientState.commands
-
-  updateSimulation(app, previousClient, clientState, worlds, commands)
-}
 
 fun checkRestartGame(app: GameApp, appState: AppState, clientState: ClientState): AppState? {
   val newGameCommand = clientState.commands

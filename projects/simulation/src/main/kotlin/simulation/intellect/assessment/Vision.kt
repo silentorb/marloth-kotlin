@@ -70,8 +70,6 @@ fun areEnemies(deck: Deck, first: Id, second: Id): Boolean =
 
 fun canSee(world: World, lightRatings: Table<Float>, viewer: Id): (Id) -> Boolean = { target ->
   val deck = world.deck
-  val definitions =world.definitions
-  val realm = world.realm
   val bulletState = world.bulletState
 
   val viewerBody = deck.bodies[viewer]!!

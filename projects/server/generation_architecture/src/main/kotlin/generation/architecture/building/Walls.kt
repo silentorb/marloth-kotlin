@@ -8,7 +8,6 @@ import silentorb.mythic.spatial.*
 import simulation.entities.Depiction
 import simulation.main.Hand
 import simulation.misc.cellHalfLength
-import kotlin.math.min
 
 fun getWallOrientation(direction: Direction): Quaternion {
   val angleZ = directionRotation(direction)

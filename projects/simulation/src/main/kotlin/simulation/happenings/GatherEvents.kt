@@ -6,6 +6,7 @@ import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.filterCharacterCommandsFromEvents
 import simulation.abilities.eventsFromShadowSpiritRemoval
+import simulation.abilities.nextCommandsFromSleep
 import simulation.combat.spatial.eventsFromMissiles
 import simulation.combat.toSpatialCombatWorld
 import simulation.entities.eventsFromRespawnCountdowns
@@ -55,7 +56,7 @@ fun withSimulationEvents(definitions: Definitions, previousDeck: Deck, world: Wo
 fun gatherNextCommands(world: World, commands: Commands): Commands {
   val deck = world.deck
   val spirits = aliveSpirits(deck)
-  val spiritResponseCommands = spiritsHandleRequests(world, spirits, commands)
-  val interactCommands = gatherInteractCommands(deck, commands)
-  return spiritResponseCommands + interactCommands
+  return spiritsHandleRequests(world, spirits, commands) +
+      gatherInteractCommands(deck, commands) +
+      nextCommandsFromSleep(commands)
 }

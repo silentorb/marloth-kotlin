@@ -16,7 +16,7 @@ fun toPhysicsDeck(deck: Deck): PhysicsDeck =
 
 fun updatePhysics(events: Events): (World) -> World = { world ->
   val deck = world.deck
-  val physicsDeck = toPhysicsDeck(mergeDecks(deck, world.realm.deck))
+  val physicsDeck = toPhysicsDeck(deck)
   val physicsWorld = PhysicsWorld(
       bulletState = world.bulletState,
       deck = physicsDeck,

@@ -5,7 +5,8 @@ import marloth.clienting.editing.expandWorldGraph
 import marloth.clienting.editing.loadWorldGraph
 import marloth.clienting.input.newInputState
 import marloth.integration.front.GameApp
-import marloth.integration.generation.generateWorld
+import marloth.integration.generation.generateNewWorld
+import marloth.integration.generation.newGenerationConfig
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.GraphLibrary
 import silentorb.mythic.ent.Id
@@ -15,7 +16,8 @@ import silentorb.mythic.quartz.newTimestepState
 import simulation.main.World
 
 fun newWorld(gameApp: GameApp, graph: Graph, graphLibrary: GraphLibrary = mapOf()): World {
-  return generateWorld(gameApp.db, gameApp.definitions, getMeshShapes(gameApp.client.renderer), graph, graphLibrary)
+  val generationConfig = newGenerationConfig(gameApp, graphLibrary)
+  return generateNewWorld(gameApp.db, graph, generationConfig)
 }
 
 fun restartWorld(app: GameApp, oldWorld: World, graph: Graph, graphLibrary: GraphLibrary): World {

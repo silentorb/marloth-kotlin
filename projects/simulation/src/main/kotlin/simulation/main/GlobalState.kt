@@ -6,7 +6,8 @@ import simulation.misc.*
 data class GlobalState(
     val doom: Long,
     val frame: Long,
-    val gameOver: GameOver?
+    val gameOver: GameOver?,
+    val level: Int = 1,
 )
 
 fun newGlobalState(): GlobalState =

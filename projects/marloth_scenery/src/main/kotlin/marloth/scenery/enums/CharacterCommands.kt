@@ -47,4 +47,5 @@ object CharacterCommands {
   const val sleep = "sleep"
   const val take = "take"
   const val interactWith = "interactWith"
+  const val nextWorld = "nextWorld"
 }

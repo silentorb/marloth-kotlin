@@ -10,7 +10,6 @@ import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.Key
 import silentorb.mythic.ent.Graph
-import silentorb.mythic.ent.scenery.expandInstance
 import silentorb.mythic.ent.scenery.expandInstances
 import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.randomly.Dice
@@ -23,8 +22,11 @@ import simulation.characters.newPlayerAndCharacter
 import simulation.intellect.Spirit
 import simulation.intellect.SpiritAttributes
 import simulation.intellect.assessment.newKnowledge
+import simulation.main.Deck
 import simulation.main.NewHand
+import simulation.main.allHandsToDeck
 import simulation.misc.*
+import kotlin.math.max
 import kotlin.math.min
 
 fun cycleHands(nextId: IdSource) =
@@ -111,22 +113,23 @@ fun populateMonsters(definitions: Definitions, locations: List<Matrix>, nextId: 
   }
 }
 
-fun selectSlots(dice: Dice, cellCount: Int, slots: SlotMap, limit: Int): List<Map.Entry<Key, Slot>> {
-  val count = min(limit, min(slots.size, cellCount / 15))
+fun selectSlots(dice: Dice, slots: SlotMap, limit: Int): List<Map.Entry<Key, Slot>> {
+  val count = min(limit, slots.size)
   return dice.take(slots.entries, count)
 }
 
 fun populateDistributions(nextId: IdSource, config: GenerationConfig, dice: Dice, slots: SlotMap, cellCount: Int): List<NewHand> {
   val definitions = config.definitions
   val graphLibrary = config.graphLibrary
-  val monsterSlots = selectSlots(dice, cellCount, slots, monsterLimit())
+  val maxMonsters = min(monsterLimit(), cellCount / max(2, 16 - config.level))
+  val monsterSlots = selectSlots(dice, slots, maxMonsters)
   val monsterLocations = monsterSlots
       .map { it.value.transform }
 
   val monsterHands = populateMonsters(definitions, monsterLocations, nextId, dice)
   val remainingSlots = slots - monsterSlots.map { it.key }
 
-  val itemSlots = selectSlots(dice, cellCount, remainingSlots, 100)
+  val itemSlots = selectSlots(dice, remainingSlots, cellCount / 15)
   val itemDefinition = expandInstances(config.graphLibrary, graphLibrary["apple"]!!)
   val itemHands = itemSlots.flatMap { (_, slot) ->
     graphToHands(config.meshShapes, nextId, itemDefinition, slot.transform)
@@ -134,15 +137,23 @@ fun populateDistributions(nextId: IdSource, config: GenerationConfig, dice: Dice
   return monsterHands + itemHands
 }
 
+fun newPlayerCharacters(nextId: IdSource, definitions: Definitions, graph: Graph): List<NewHand> {
+  val playerCount = getDebugInt("INITIAL_PLAYER_COUNT") ?: 1
+  return (1..playerCount)
+      .flatMap { newPlayerAndCharacter(nextId, definitions, graph) }
+}
+
+fun addNewPlayerCharacters(nextId: IdSource, config: GenerationConfig, graph: Graph, deck: Deck): Deck {
+  val hands = newPlayerCharacters(nextId, config.definitions, graph)
+  return allHandsToDeck(config.definitions, nextId, hands, deck)
+}
+
 fun populateWorld(nextId: IdSource, config: GenerationConfig, dice: Dice, graph: Graph): List<NewHand> {
   val definitions = config.definitions
-  val playerCount = getDebugInt("INITIAL_PLAYER_COUNT") ?: 1
   val elementGroups = nodesToElements(config.meshShapes, graph)
   val lights = elementGroups.flatMap { it.lights }
   val slots = gatherSlots(graph)
-  val hands = (1..playerCount)
-      .flatMap { newPlayerAndCharacter(nextId, definitions, graph) }
-      .plus(graphToHands(definitions, nextId, worldExpansions, graph))
+  val hands = graphToHands(definitions, nextId, worldExpansions, graph)
       .plus(cycleHands(nextId))
       .plus(populateDistributions(nextId, config, dice, slots, config.cellCount))
       .plus(lights.map {

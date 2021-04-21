@@ -89,5 +89,5 @@ fun newEntities(definitions: Definitions, graph: Graph, step: Long, previous: De
       newAccessories(events, definitions) +
       events.filterIsInstance<NewHand>()
 
-  allHandsToDeck(definitions, nextId, newHands, step, lastDeck)
+  allHandsToDeck(definitions, nextId, newHands, lastDeck, step)
 }

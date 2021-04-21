@@ -28,7 +28,11 @@ fun rocketLauncher() =
         action = ActionDefinition(
             cooldown = 1f,
             range = 25f,
-            equipmentSlot = EquipmentSlot.attack
+            equipmentSlot = EquipmentSlot.attack,
+            cost = ActionCost(
+                type = ResourceTypes.energy,
+                amount = 5
+            )
         ),
         weapon = WeaponDefinition(
             attackMethod = AttackMethod.missile,
@@ -53,7 +57,7 @@ fun apple() =
             isConsumable = true,
             components = listOf(
                 Nutrient(
-                    value = 10
+                    value = 20
                 )
             )
         ),

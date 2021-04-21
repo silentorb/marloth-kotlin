@@ -94,8 +94,8 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
       null
 
     val mainElements = gatherVisualElements(definitions, deck, rigPlayer, characterRig) +
-        graphElementCache(graph) +
-        gridElementCache(world.realm.deck)
+        graphElementCache(graph)
+//       + gridElementCache(world.realm.deck)
 
     val (particleGroups, solidGroups) = mainElements
         .partition { group -> group.billboards.any() }

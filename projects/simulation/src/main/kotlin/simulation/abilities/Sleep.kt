@@ -1,7 +1,9 @@
 package simulation.abilities
 
+import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
+import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
 import simulation.combat.general.ModifyResource
 import simulation.combat.general.ResourceTypes
@@ -31,3 +33,13 @@ fun eventsFromSleep(world: World): (Command, Id) -> Events = { command, actor ->
     )
   }
 }
+
+fun nextCommandsFromSleep(commands: Commands): Commands =
+    if (commands.any { it.type == CharacterCommands.sleep })
+      listOf(
+          Command(
+              type = CharacterCommands.nextWorld,
+          )
+      )
+    else
+      listOf()

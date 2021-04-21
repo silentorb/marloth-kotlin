@@ -35,12 +35,12 @@ typealias PolyominoMap = Map<String, Polyomino>
 data class GenerationConfig(
     val seed: Long,
     val definitions: Definitions,
-    val polyominoes: PolyominoMap,
     val meshes: MeshInfoMap,
     val meshShapes: MeshShapeMap,
     val includeEnemies: Boolean,
     val cellCount: Int,
     val graphLibrary: GraphLibrary,
+    val level: Int = 1,
 )
 
 data class ArchitectureInput(
