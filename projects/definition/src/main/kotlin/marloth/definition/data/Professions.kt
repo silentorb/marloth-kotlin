@@ -25,6 +25,7 @@ object Professions {
       deathSound = SoundId.girlScream,
       damageMultipliers = mapOf(),
       money = 200,
+      runSpeed = 6f
   )
 
 }

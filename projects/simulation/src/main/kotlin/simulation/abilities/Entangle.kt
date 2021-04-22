@@ -24,7 +24,7 @@ fun entangledDuration(level: Int): Float =
     }
 
 fun entangleEvents(deck: Deck, accessory: Accessory): (Id) -> Events = { target ->
-  val immunityDuration = 3f
+  val immunityDuration = 2.5f
 
   if (hasAnyAccessory(setOf(AccessoryIdOld.entangling, AccessoryIdOld.entangleImmune), deck.accessories, target))
     listOf()

@@ -1,6 +1,7 @@
 package simulation.abilities
 
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
+import silentorb.mythic.characters.rigs.disableFreedomsBuff
 import silentorb.mythic.characters.rigs.defaultCharacterHeight
 import silentorb.mythic.characters.rigs.defaultCharacterRadius
 import silentorb.mythic.ent.Id
@@ -98,7 +99,18 @@ fun onCancelShadowSpirit(deck: Deck, spiritActor: Id): Events {
   else
     deck.accessories
         .filter { it.value.owner == player && it.value.value.type == shadowSpiritBuff }
-        .map { (key) -> DeleteEntityEvent(key) }
+        .map { (key) -> DeleteEntityEvent(key) } +
+        NewHand(
+            components = listOf(
+                AccessoryStack(
+                    value = Accessory(
+                        type = disableFreedomsBuff,
+                    ),
+                    owner = player,
+                ),
+                FloatTimer(0.2f)
+            ),
+        )
 }
 
 fun eventsFromShadowSpiritRemoval(previousDeck: Deck, world: World): Events {

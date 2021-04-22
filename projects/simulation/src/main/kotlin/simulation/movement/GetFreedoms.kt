@@ -4,12 +4,15 @@ import marloth.scenery.enums.AccessoryIdOld
 import silentorb.mythic.characters.rigs.Freedom
 import silentorb.mythic.characters.rigs.FreedomTable
 import silentorb.mythic.characters.rigs.Freedoms
+import silentorb.mythic.characters.rigs.disableFreedomsBuff
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.performing.isPerforming
 import simulation.abilities.isEntangled
 import simulation.accessorize.AccessoryStack
+import simulation.accessorize.getAccessories
+import simulation.accessorize.hasAccessory
 import simulation.happenings.canUseSimple
 import simulation.main.Deck
 
@@ -25,7 +28,8 @@ fun canUseMobility(deck: Deck): (Id) -> Boolean = { actor ->
 
 fun getFreedoms(deck: Deck): (Id) -> Freedoms = { actor ->
   val character = deck.characters[actor]
-  if (character != null && !character.isAlive)
+  val disabled = hasAccessory(disableFreedomsBuff, deck.accessories, actor)
+  if (disabled || (character != null && !character.isAlive))
     Freedom.none
   else {
     val isPerforming = isPerforming(deck.performances, actor)

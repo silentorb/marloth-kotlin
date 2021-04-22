@@ -19,16 +19,20 @@ fun eventsFromSleep(world: World): (Command, Id) -> Events = { command, actor ->
   else {
     destructible.health
 
+    val gainedEnergy = max(0, destructible.health - character.energy)
+    val familyExpense = 10
+    val energyExpense = gainedEnergy / 10
+    val totalExpense = familyExpense + energyExpense
     listOf(
         ModifyResource(
             actor = actor,
             resource = ResourceTypes.energy,
-            amount = max(0, destructible.health - character.energy),
+            amount = gainedEnergy,
         ),
         ModifyResource(
             actor = actor,
             resource = ResourceTypes.health,
-            amount = -20,
+            amount = -totalExpense,
         )
     )
   }

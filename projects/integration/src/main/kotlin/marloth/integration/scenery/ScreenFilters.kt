@@ -40,7 +40,7 @@ fun getScreenFilters(deck: Deck, actor: Id): List<ScreenFilter> {
     val shadowSpiritFilters = if (player != null && player.rig != actor)
       listOf(
 //          desaturation,
-          shadowSpiritFilter(0.3f)
+          shadowSpiritFilter(0.25f)
       )
     else
       listOf()

@@ -26,7 +26,7 @@ fun rocketLauncher() =
             equippedMesh = MeshId.grenadeLauncher
         ),
         action = ActionDefinition(
-            cooldown = 1f,
+            cooldown = 1.5f,
             range = 25f,
             equipmentSlot = EquipmentSlot.attack,
             cost = ActionCost(
@@ -70,7 +70,7 @@ fun spiritRocketLauncher(): ActionAccessory {
   val accessory = rocketLauncher()
   return accessory.copy(
       action = accessory.action.copy(
-          cooldown = 3f,
+          cooldown = 2.4f,
           animation = AnimationId.shootPistol
       )
   )
