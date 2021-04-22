@@ -13,7 +13,7 @@ fun meleeAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinitio
   val shape = deck.collisionShapes[attacker]!!.shape
   val range = world.definitions.actions[accessory]!!.range
   val forwardOffset = range
-  val (origin, vector) = getAttackerOriginAndFacing(deck, attacker, target, forwardOffset)
+  val (origin, vector) = getAttackerOriginAndFacing(deck, attacker, target, null, forwardOffset)
   return deck.destructibles.keys
       .minus(attacker)
       .mapNotNull { destructible ->

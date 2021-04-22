@@ -16,7 +16,8 @@ const val executeMarker = "execute"
 data class AttackEvent(
     val attacker: Id,
     val accessory: AccessoryName,
-    val target: Vector3? = null
+    val targetLocation: Vector3? = null,
+    val targetEntity: Id? = null,
 )
 
 fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
@@ -24,11 +25,11 @@ fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
   val attacker = event.attacker
   val accessory = event.accessory
   val weapon = definitions.weapons[accessory]!!
-  val (origin, _) = getAttackerOriginAndFacing(world.deck, attacker, event.target, 0.5f)
+  val (origin, _) = getAttackerOriginAndFacing(world.deck, attacker, event.targetLocation, event.targetEntity, 0.5f)
   val attackEvents = when (weapon.attackMethod) {
-    AttackMethod.raycast -> raycastAttack(world, attacker, weapon, event.target)
-    AttackMethod.missile -> missileAttack(world, attacker, weapon, event.target)
-    AttackMethod.melee -> meleeAttack(world, attacker, weapon, event.target, event.accessory)
+    AttackMethod.raycast -> raycastAttack(world, attacker, weapon, event.targetLocation, event.targetEntity)
+    AttackMethod.missile -> missileAttack(world, attacker, weapon, event.targetLocation, event.targetEntity)
+    AttackMethod.melee -> meleeAttack(world, attacker, weapon, event.targetLocation, event.accessory)
     else -> throw Error("Not implemented")
   }
   if (weapon.sound != null)
@@ -44,11 +45,15 @@ fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
     attackEvents
 }
 
-fun startAttack(actionDefinition: ActionDefinition, attacker: Id, action: Id, accessory: AccessoryName, target: Vector3?): GameEvent {
+fun startAttack(actionDefinition: ActionDefinition, attacker: Id, action: Id, accessory: AccessoryName,
+                targetLocation: Vector3?,
+                targetEntity: Id?
+): GameEvent {
   val attackEvent = AttackEvent(
       attacker = attacker,
       accessory = accessory,
-      target = target
+      targetLocation = targetLocation,
+      targetEntity = targetEntity,
   )
 
   return if (actionDefinition.animation == null)
@@ -63,10 +68,13 @@ fun startAttack(actionDefinition: ActionDefinition, attacker: Id, action: Id, ac
     )
 }
 
-fun getAttackerOriginAndFacing(deck: SpatialCombatDeck, attacker: Id, externalTarget: Vector3?, forwardOffset: Float): Pair<Vector3, Vector3> {
+fun getAttackerOriginAndFacing(deck: SpatialCombatDeck, attacker: Id, targetLocation: Vector3?, targetEntity: Id?,
+                               forwardOffset: Float): Pair<Vector3, Vector3> {
   val body = deck.bodies[attacker]!!
   val characterRig = deck.characterRigs[attacker]!!
-  val target = externalTarget ?: deck.bodies[deck.targets[attacker]]?.position
+  val target = deck.bodies[targetEntity]?.position
+      ?: targetLocation
+      ?: deck.bodies[deck.targets[attacker]]?.position
   val baseOrigin = body.position + Vector3(0f, 0f, defaultCharacterHeight * 0.5f)
   val vector = if (target == null)
     characterRig.facingVector

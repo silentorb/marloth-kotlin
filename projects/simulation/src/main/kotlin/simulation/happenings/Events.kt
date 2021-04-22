@@ -27,7 +27,7 @@ data class ApplyBuffEvent(
 data class TryActionEvent(
     val actor: Id,
     val action: Id,
-    val target: Id? = null,
+    val targetEntity: Id? = null,
     val targetLocation: Vector3? = null
 )
 

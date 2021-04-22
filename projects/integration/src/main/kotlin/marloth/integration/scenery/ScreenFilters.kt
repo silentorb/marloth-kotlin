@@ -49,7 +49,7 @@ fun getScreenFilters(deck: Deck, actor: Id): List<ScreenFilter> {
         .filterValues { it.player == actor }
         .mapNotNull { overlay ->
           when (overlay.value.type) {
-            PlayerOverlayType.bleeding -> bloodFilter(0.2f)
+            PlayerOverlayType.bleeding -> bloodFilter(0.5f * overlay.value.strength)
             else -> null
           }
         }

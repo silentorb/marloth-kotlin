@@ -26,6 +26,7 @@ fun textures() = listOf(
     "bushOrb",
     Textures.checkersBlackWhite,
     "dirt",
+    "doorWood",
     "cobblestone",
     "diamondTiles",
     Textures.grass,

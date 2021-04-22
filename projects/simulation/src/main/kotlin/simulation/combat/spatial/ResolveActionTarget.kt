@@ -13,7 +13,7 @@ fun resolveActionTarget(world: World, actor: Id, target: Id?): Id? =
     else {
       val deck = world.deck
       val bulletState = world.bulletState
-      val (origin, vector) = getAttackerOriginAndFacing(toSpatialCombatDeck(deck), actor, null, 0.3f)
+      val (origin, vector) = getAttackerOriginAndFacing(toSpatialCombatDeck(deck), actor, null, null, 0.3f)
       val end = origin + vector * 30f
       val collision = firstRayHit(bulletState.dynamicsWorld, origin, end, CollisionGroups.tangibleMask)
       val hitEntity = collision?.collisionObject as? Id?

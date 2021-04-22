@@ -9,6 +9,8 @@ import silentorb.mythic.physics.Body
 import silentorb.mythic.timing.FloatTimer
 import simulation.main.Deck
 import simulation.main.Hand
+import simulation.main.NewHand
+import kotlin.math.max
 
 enum class PlayerOverlayType {
   bleeding,
@@ -17,10 +19,11 @@ enum class PlayerOverlayType {
 
 data class PlayerOverlay(
     val player: Id,
-    val type: PlayerOverlayType
+    val type: PlayerOverlayType,
+    val strength: Float = 1f,
 )
 
-fun newDamageVisualEffects(deck: Deck, events: Events): List<Hand> {
+fun newDamageVisualEffects(deck: Deck, events: Events): List<NewHand> {
   val damageGroups = events
       .asSequence()
       .filterIsInstance<DamageEvent>()
@@ -31,33 +34,34 @@ fun newDamageVisualEffects(deck: Deck, events: Events): List<Hand> {
         deck.players.containsKey(character) &&
             deck.playerOverlays.none { it.value.player == character && it.value.type == PlayerOverlayType.bleeding }
       }
-      .mapNotNull { (target, damageEvents) ->
+      .map { (target, damageEvents) ->
         val maxHealth = deck.destructibles[target]!!.base.health
-        val degree = damageEvents.sumBy { it.damage.amount }.toFloat() / maxHealth.toFloat()
-        if (degree < 0.05f)
-          null
-        else
-          Hand(
-              playerOverlay = PlayerOverlay(
-                  player = target,
-                  type = PlayerOverlayType.bleeding
-              ),
-              timerFloat = FloatTimer(
-                  duration = 0.2f
-              )
-          )
+        val strength = max(0.1f, damageEvents.sumBy { it.damage.amount }.toFloat() / maxHealth.toFloat())
+        NewHand(
+            components = listOf(
+                PlayerOverlay(
+                    player = target,
+                    type = PlayerOverlayType.bleeding,
+                    strength = strength,
+                ),
+                FloatTimer(
+                    duration = 0.2f
+                )
+            )
+        )
       }
 
   val bloodParticleEffects = damageGroups
       .mapNotNull { (target, damageEvents) ->
-        Hand(
-            body = Body(
+        NewHand(
+            components = listOf(Body(
                 position = damageEvents.firstOrNull { it.position != null }?.position ?: deck.bodies[target]!!.position
             ),
-            particleEffect = ParticleEffect(
-                type = ParticleEffectType.blood.name
-            ),
-            timerFloat = FloatTimer(0.9f)
+                ParticleEffect(
+                    type = ParticleEffectType.blood.name
+                ),
+                FloatTimer(0.9f)
+            )
         )
       }
   return bloodOverlays + bloodParticleEffects

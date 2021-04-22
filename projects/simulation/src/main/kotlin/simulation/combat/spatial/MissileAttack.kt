@@ -18,8 +18,8 @@ import simulation.happenings.Trigger
 import simulation.main.NewHand
 import simulation.physics.CollisionGroups
 
-fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinition, target: Vector3?): Events {
-  val (origin, vector) = getAttackerOriginAndFacing(world.deck, attacker, target, 0.8f)
+fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinition, targetLocation: Vector3?, targetEntity: Id?): Events {
+  val (origin, vector) = getAttackerOriginAndFacing(world.deck, attacker, targetLocation, targetEntity,0.8f)
   return listOf(
       NewHand(
           components = listOf(

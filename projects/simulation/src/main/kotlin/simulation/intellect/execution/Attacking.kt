@@ -57,7 +57,7 @@ fun spiritAttack(world: World, attacker: Id, knowledge: Knowledge, pursuit: Purs
         listOf(TryActionEvent(
             actor = attacker,
             action = world.dice.takeOne(actions),
-            target = target.id,
+            targetEntity = target.id,
             targetLocation = target.position
         ))
     }
