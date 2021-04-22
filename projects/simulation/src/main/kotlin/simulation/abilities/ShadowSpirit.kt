@@ -53,11 +53,6 @@ fun onShadowSpirit(world: World, actionDefinition: ActionDefinition, actor: Id):
       mask = CollisionGroups.spiritMask
   )
 
-//  val shiftedOffset = shadowSpiritPlacementOffset(world.bulletState.dynamicsWorld, collisionObject, Matrix.identity.translate(position))
-//  val canPlace = shiftedOffset.copy(z = 0f).length() < 0.1f && abs(shiftedOffset.z) < maxFootStepHeight * 1.2f
-//  return if (!canPlace)
-//    listOf()
-//  else
   return listOf(
       NewHand(
           id = shadowSpirit,

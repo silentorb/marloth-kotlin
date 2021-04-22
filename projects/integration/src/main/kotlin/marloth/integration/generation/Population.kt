@@ -15,6 +15,7 @@ import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Matrix
+import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.timing.FloatCycle
 import simulation.characters.CharacterDefinition
 import simulation.characters.newCharacter
@@ -106,9 +107,9 @@ fun populateMonsters(definitions: Definitions, locations: List<Matrix>, nextId: 
   else {
     val distributions = distributeToSlots(dice, locations.size, enemyDistributions(), mapOf())
     locations
-        .zip(distributions) { location, definitionName ->
+        .zip(distributions) { transform, definitionName ->
           val definition = definitions.professions[definitionName]!!
-          placeMonster(definitions, definition, nextId, location)
+          placeMonster(definitions, definition, nextId, transform.translate(Vector3(0f, 0f, 0.5f)))
         }
   }
 }
@@ -121,7 +122,8 @@ fun selectSlots(dice: Dice, slots: SlotMap, limit: Int): List<Map.Entry<Key, Slo
 fun populateDistributions(nextId: IdSource, config: GenerationConfig, dice: Dice, slots: SlotMap, cellCount: Int): List<NewHand> {
   val definitions = config.definitions
   val graphLibrary = config.graphLibrary
-  val maxMonsters = min(monsterLimit(), cellCount / max(2, 16 - config.level))
+  val level = getDebugInt("WORLD_LEVEL") ?: config.level
+  val maxMonsters = min(monsterLimit(), cellCount / max(2, 16 - level))
   val monsterSlots = selectSlots(dice, slots, maxMonsters)
   val monsterLocations = monsterSlots
       .map { it.value.transform }
