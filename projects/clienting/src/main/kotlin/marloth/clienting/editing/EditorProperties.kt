@@ -12,6 +12,7 @@ import silentorb.mythic.editing.components.*
 import silentorb.mythic.ent.Serialization
 import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.spatial.Vector3i
+import simulation.entities.Interactions
 import simulation.misc.BlockRotations
 import simulation.misc.MarlothProperties
 
@@ -66,6 +67,7 @@ val cellDirectionSerialization = Serialization(
 val biomeIds = reflectProperties<String>(Biomes)
 val blockRotationOptions =  BlockRotations.values().associate { it to it.name }
 val blockRotationsWidget: PropertyWidget = labeledDropDownWidget { blockRotationOptions }
+val interactionIds = reflectProperties<String>(Interactions)
 
 fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): PropertyDefinitions = mapOf(
     MarlothProperties.mine to PropertyDefinition(
@@ -112,5 +114,15 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
         widget = blockRotationsWidget,
         serialization = enumSerialization { BlockRotations.valueOf(it) },
         defaultValue = { BlockRotations.all },
+    ),
+    MarlothProperties.interaction to PropertyDefinition(
+        displayName = "Interaction",
+        widget = dropDownWidget { interactionIds },
+        defaultValue = { Interactions.take },
+    ),
+    MarlothProperties.itemType to PropertyDefinition(
+        displayName = "Item Type",
+        widget = propertyTextField,
+        defaultValue = { "" },
     ),
 ) + commonPropertyDefinitions()

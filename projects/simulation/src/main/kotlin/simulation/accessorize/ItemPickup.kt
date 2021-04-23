@@ -2,12 +2,12 @@ package simulation.accessorize
 
 import marloth.scenery.enums.AccessoryIdOld
 import silentorb.mythic.ent.Id
-import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.Body
 import silentorb.mythic.spatial.Vector3
 import simulation.entities.CollisionMap
+import simulation.entities.Interaction
 import simulation.entities.PruneEntityEvent
 import simulation.main.NewHand
 import simulation.main.World
@@ -32,8 +32,8 @@ fun eventsFromCollisionItemPickups(world: World, collisions: CollisionMap): Even
             itemAccessory.value.type == accessory.value.type
           }
       if (available) {
-        when {
-          itemAccessory.value.type == AccessoryIdOld.victoryKey -> listOf(
+        when (itemAccessory.value.type) {
+          AccessoryIdOld.victoryKey -> listOf(
               PruneEntityEvent(
                   id = itemPickup,
                   hand = newVictoryKey(owner = character)
@@ -62,33 +62,31 @@ fun eventsFromCollisionItemPickups(world: World, collisions: CollisionMap): Even
       .flatten()
 }
 
-fun eventsFromItemPickup(world: World): (Command, Id) -> Events = { command, actor ->
+fun eventsFromItemPickup(world: World): (Interaction, Id) -> Events = { interaction, actor ->
   val deck = world.deck
-  val worldItem = deck.characters[actor]?.canInteractWith
-  val itemType = deck.interactables[worldItem]?.primaryCommand?.commandValue as? String
-  if (worldItem == null || itemType == null)
-    listOf()
-  else {
-    val stack = deck.accessories.entries
-        .firstOrNull { it.value.owner == actor && it.value.value.type == itemType }
+  val worldItem = interaction.target
+  val stack = deck.accessories[worldItem]
 
-    listOf(
-        DeleteEntityEvent(
-            id = worldItem
-        ),
-        if (stack != null)
-          ModifyItemQuantityEvent(stack.key, 1)
+  listOfNotNull(
+      DeleteEntityEvent(
+          id = worldItem
+      ),
+      if (stack == null)
+        null
+      else {
+        val existingStack = deck.accessories.entries
+            .firstOrNull { it.value.owner == actor && it.value.value.type == stack.value.type }
+
+        if (existingStack != null)
+          ModifyItemQuantityEvent(existingStack.key, 1)
         else
           NewHand(
               components = listOf(
-                  AccessoryStack(
-                      value = Accessory(
-                          type = itemType,
-                      ),
+                  stack.copy(
                       owner = actor
                   )
               )
           )
-    )
-  }
+      }
+  )
 }

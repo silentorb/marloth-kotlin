@@ -119,7 +119,7 @@ fun eventsFromShadowSpiritRemoval(previousDeck: Deck, world: World): Events {
   }
 
   return removedBuffs.flatMap { (id, accessory) ->
-    val actor = accessory.owner
+    val actor = accessory.owner!!
     val spiritRig = previousDeck.players[actor]?.rig
     removeShadowSpirit(actor, spiritRig)
   }

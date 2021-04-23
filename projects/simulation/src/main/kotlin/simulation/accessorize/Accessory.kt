@@ -20,7 +20,7 @@ data class Accessory(
 
 data class AccessoryStack(
     val value: Accessory,
-    val owner: Id,
+    val owner: Id? = null,
     val quantity: Int = 1,
 )
 

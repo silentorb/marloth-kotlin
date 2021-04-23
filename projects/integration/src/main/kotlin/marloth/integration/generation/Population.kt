@@ -3,7 +3,6 @@ package marloth.integration.generation
 import generation.abstracted.distributeToSlots
 import generation.architecture.engine.GenerationConfig
 import marloth.definition.data.characterDefinitions
-import marloth.definition.data.miscellaneousDefinitions
 import marloth.definition.misc.enemyDistributions
 import marloth.definition.misc.monsterLimit
 import silentorb.mythic.debugging.getDebugInt
@@ -67,18 +66,8 @@ fun characterDefinitionExpansions(): NodeExpansionMap =
           }
         }
 
-fun miscellaneousExpansions(): NodeExpansionMap =
-    miscellaneousDefinitions().mapValues { (_, hand) ->
-      { _, node ->
-        hand.plusComponents(
-            NodeReference(node)
-        )
-      }
-    }
-
 private val worldExpansions =
-    characterDefinitionExpansions() +
-        miscellaneousExpansions()
+    characterDefinitionExpansions()
 
 fun graphToHands(definitions: Definitions, nextId: IdSource, expansions: NodeExpansionMap, graph: Graph): List<NewHand> {
   val typeEntries = graph.filter { it.property == SceneProperties.type && expansions.containsKey(it.target) }

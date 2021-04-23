@@ -6,7 +6,7 @@
 ["mattress","scale",[0.848116,1.5548011,0.18356985]],
 ["mattress","collisionShape","box"],
 ["mattress","type","solid-static"],
-["mattress","type","sleepable"],
+["mattress","interaction","sleep"],
 ["pillow","mesh","cube"],
 ["pillow","parent","bed"],
 ["pillow","scale",[0.6586754,0.35745,0.1250504]],

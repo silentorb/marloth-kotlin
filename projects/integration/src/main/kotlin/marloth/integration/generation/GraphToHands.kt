@@ -1,6 +1,6 @@
 package marloth.integration.generation
 
-import marloth.definition.data.itemInteractable
+import marloth.definition.data.newInteraction
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.ent.scenery.nodeHasAttribute
@@ -10,10 +10,13 @@ import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.scenery.Shape
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Quaternion
+import simulation.accessorize.Accessory
+import simulation.accessorize.AccessoryStack
 import simulation.entities.Depiction
 import simulation.entities.Interactable
 import simulation.main.NewHand
 import simulation.misc.GameAttributes
+import simulation.misc.MarlothProperties
 
 fun getNodeBody(graph: Graph, node: Key, parentTransform: Matrix): Body? {
   val transform = parentTransform * getNodeTransform(graph, node)
@@ -40,9 +43,20 @@ fun getNodeDepiction(graph: Graph, node: Key): Depiction? {
   }
 }
 
-fun getNodeItem(graph: Graph, node: Key): Interactable? {
-  return if (nodeHasAttribute(graph, node, GameAttributes.item))
-    itemInteractable(node)
+fun getNodeInteractions(graph: Graph, node: Key): List<Interactable> =
+    getGraphValues<String>(graph, node, MarlothProperties.interaction)
+        .map { type ->
+          newInteraction(type)
+        }
+
+fun getNodeItemType(graph: Graph, node: Key): AccessoryStack? {
+  val itemType = getNodeValue<String>(graph, node, MarlothProperties.itemType)
+  return if (itemType != null)
+    AccessoryStack(
+        value = Accessory(
+            type = itemType,
+        )
+    )
   else
     null
 }
@@ -54,9 +68,9 @@ fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph,
         val components = listOfNotNull(
             getNodeBody(graph, node, transform),
             getNodeDepiction(graph, node),
-            getNodeItem(graph, node),
             getNodeCollisionObject(meshShapes, graph, node),
-        )
+            getNodeItemType(graph, node),
+        ) + getNodeInteractions(graph, node)
         if (components.any())
           NewHand(
               id = nextId(),

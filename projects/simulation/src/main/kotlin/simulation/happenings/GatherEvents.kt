@@ -10,7 +10,7 @@ import simulation.abilities.nextCommandsFromSleep
 import simulation.combat.spatial.eventsFromMissiles
 import simulation.combat.toSpatialCombatWorld
 import simulation.entities.eventsFromRespawnCountdowns
-import simulation.entities.gatherInteractCommands
+import simulation.entities.gatherInteractionEvents
 import simulation.intellect.aliveSpirits
 import simulation.intellect.execution.pursueGoals
 import simulation.intellect.execution.spiritsHandleRequests
@@ -45,6 +45,7 @@ fun withSimulationEvents(definitions: Definitions, previousDeck: Deck, world: Wo
       commandsToEvents(definitions, deck, commands),
       eventsFromMissiles(toSpatialCombatWorld(world), collisions),
       eventsFromShadowSpiritRemoval(previousDeck, world),
+      gatherInteractionEvents(deck, commands),
       eventsFromRespawnCountdowns(previousDeck, world.deck),
       if (getDebugBoolean("ENABLE_MOBILITY")) mobilityEvents(world.definitions, world.deck, commands) else listOf()
   )
@@ -53,10 +54,10 @@ fun withSimulationEvents(definitions: Definitions, previousDeck: Deck, world: Wo
   return eventsFromEvents(world, freedomTable, events)
 }
 
-fun gatherNextCommands(world: World, commands: Commands): Commands {
+fun gatherNextCommands(world: World, events: Events): Commands {
   val deck = world.deck
   val spirits = aliveSpirits(deck)
+  val commands = events.filterIsInstance<Command>()
   return spiritsHandleRequests(world, spirits, commands) +
-      gatherInteractCommands(deck, commands) +
-      nextCommandsFromSleep(commands)
+      nextCommandsFromSleep(events)
 }

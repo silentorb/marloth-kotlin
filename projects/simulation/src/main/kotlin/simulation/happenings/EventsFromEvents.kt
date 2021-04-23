@@ -12,6 +12,8 @@ import simulation.accessorize.eventsFromItemPickup
 import simulation.characters.newMoveSpeedTable
 import simulation.combat.spatial.onAttack
 import simulation.combat.toSpatialCombatWorld
+import simulation.entities.Interaction
+import simulation.entities.Interactions
 import simulation.main.World
 import simulation.physics.toPhysicsDeck
 
@@ -37,6 +39,20 @@ fun mapCommands(type: Any, transform: (Command, Id) -> Events): (Events) -> Even
       }
 }
 
+fun mapInteractions(type: String, transform: (Interaction, Id) -> Events): (Events) -> Events = { events ->
+  events
+      .filterIsInstance<Interaction>()
+      .filter { it.type == type }
+      .flatMap { command ->
+        val actor = command.target as? Id
+        if (actor == null)
+          listOf()
+        else {
+          transform(command, actor)
+        }
+      }
+}
+
 fun eventsFromEvents(world: World, freedomTable: FreedomTable, events: Events): Events {
   val deck = world.deck
   val characterMovementEvents = allCharacterMovements(toPhysicsDeck(deck), deck.characterRigs, deck.thirdPersonRigs, events)
@@ -44,8 +60,8 @@ fun eventsFromEvents(world: World, freedomTable: FreedomTable, events: Events): 
   return listOf(
       mapEvents(eventsFromTryAction(world, freedomTable)),
       mapEvents(onAttack(toSpatialCombatWorld(world))),
-      mapCommands(CharacterCommands.take, eventsFromItemPickup(world)),
-      mapCommands(CharacterCommands.sleep, eventsFromSleep(world)),
+      mapInteractions(Interactions.take, eventsFromItemPickup(world)),
+      mapInteractions(Interactions.sleep, eventsFromSleep(world)),
   )
       .fold(events) { a, b -> a + b(a) }
       .plus(characterMovementEvents)

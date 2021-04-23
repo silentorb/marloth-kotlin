@@ -33,6 +33,5 @@ fun textures() = listOf(
     "perlinParticle",
     "redTile",
     "water",
-    "woodDoor",
     "woodPanel",
 )

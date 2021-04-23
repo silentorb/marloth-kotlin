@@ -44,8 +44,6 @@ object CharacterCommands {
   const val abilityUtility = "abilityUtility"
 
   // Commands that are contextual and not normally bound to user input buttons
-  const val sleep = "sleep"
-  const val take = "take"
   const val interactWith = "interactWith"
   const val nextWorld = "nextWorld"
 }

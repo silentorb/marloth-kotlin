@@ -1,5 +1,6 @@
 package simulation.misc
 
+import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.ent.PropertyInfo
 import silentorb.mythic.ent.PropertySchema
 
@@ -14,7 +15,6 @@ object GameAttributes {
   val resource = "resource"
   val sleepable = "sleepable"
   val victoryZone = "victoryZone"
-  val item = "item"
 
   // Block side related
   val blockSide = "blockSide"
@@ -38,6 +38,8 @@ object MarlothProperties {
   const val biome = "biome"
   const val blockRotations = "blockRotations"
   const val heightVariant = "heightVariant"
+  const val interaction = "interaction"
+  const val itemType = "itemType"
 }
 
 fun marlothPropertiesSchema(): PropertySchema = mapOf(
@@ -51,6 +53,9 @@ fun marlothPropertiesSchema(): PropertySchema = mapOf(
         manyToMany = true,
     ),
     MarlothProperties.heightVariant to PropertyInfo(
+        manyToMany = true,
+    ),
+    MarlothProperties.interaction to PropertyInfo(
         manyToMany = true,
     ),
 )

@@ -6,6 +6,7 @@ import marloth.scenery.enums.Text
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.EventTrigger
+import silentorb.mythic.happenings.Events
 import simulation.main.Deck
 
 data class WidgetCommand(
@@ -23,22 +24,34 @@ data class Interactable(
 private const val interactableMaxDistance = 5f
 private const val interactableMaxRotation = 0.99f
 
-fun gatherInteractCommands(deck: Deck, commands: Commands): Commands {
+data class Interaction(
+    val actor: Id,
+    val type: String,
+    val target: Id,
+)
+
+fun gatherInteractionEvents(deck: Deck, commands: Commands): Events {
   return deck.players.keys.mapNotNull { player ->
     if (commands.any { it.type == CharacterCommands.interactPrimary && it.target == player }) {
       val target = deck.characters[player]?.canInteractWith
       val interaction = deck.interactables[target]
       val primaryCommand = interaction?.primaryCommand
-      val commandType = primaryCommand?.commandType
-      if (commandType != null)
-        Command(
+      val commandType = primaryCommand?.commandType as? String
+      if (commandType != null && target != null)
+        Interaction(
             type = commandType,
-            target = player,
-            value = primaryCommand.commandValue,
+            actor = player,
+            target = target,
         )
       else
         null
     } else
       null
   }
+}
+
+object Interactions {
+  val openClose = "openClose"
+  val sleep = "sleep"
+  val take = "take"
 }

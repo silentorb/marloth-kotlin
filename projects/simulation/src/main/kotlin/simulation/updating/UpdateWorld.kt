@@ -63,7 +63,7 @@ fun updateWorld(definitions: Definitions, events: Events, delta: Float, world: W
       deck = deck,
       global = updateGlobalState(deck, world.staticGraph, withPhysics.global),
       navigation = navigation,
-      nextCommands = gatherNextCommands(world, events.filterIsInstance<Command>()),
+      nextCommands = gatherNextCommands(world, events),
       step = world.step + 1L,
   )
 }

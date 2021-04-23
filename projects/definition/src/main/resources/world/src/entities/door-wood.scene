@@ -1,0 +1,25 @@
+{
+"graph" : [
+["door-wood","",""],
+["door-wood","scale",[0.1703572,0.1703572,0.15523751]],
+["door-wood1","mesh","wallSquareShort"],
+["door-wood1","texture","doorWood"],
+["door-wood1","parent","door-wood"],
+["door-wood1","scale",[0.9846252,0.9846252,1.3775376]],
+["door-wood1","collisionGroups",2],
+["door-wood1","collisionMask",3],
+["door-wood1","collisionShape","box"],
+["knob","parent","door-wood"],
+["knob","mesh","sphere"],
+["knob","scale",[0.70553434,0.70553434,0.70553434]],
+["knob","translation",[2.219561,-0.9119603,5.328853]],
+["knob1","mesh","sphere"],
+["knob1","scale",[0.70553434,0.70553434,0.70553434]],
+["knob1","parent","door-wood"],
+["knob1","translation",[2.219561,1.8342953,5.3493285]],
+["pad","parent","door-wood"],
+["pad","mesh","cube"],
+["pad","translation",[2.2279506,0.3856663,4.7653728]],
+["pad","scale",[0.70553434,0.6172447,1.269867]]
+]
+}
