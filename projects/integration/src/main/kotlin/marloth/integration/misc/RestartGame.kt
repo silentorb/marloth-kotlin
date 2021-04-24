@@ -7,6 +7,7 @@ import marloth.clienting.input.newInputState
 import marloth.integration.front.GameApp
 import marloth.integration.generation.generateNewWorld
 import marloth.integration.generation.newGenerationConfig
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.GraphLibrary
 import silentorb.mythic.ent.Id
@@ -39,10 +40,11 @@ fun restartGame(app: GameApp, appState: AppState, scene: String): AppState {
   System.gc()
 
   val editor = appState.client.editor
-  val graph = if (editor != null)
-    expandWorldGraph(editor, scene)
-  else
-    loadWorldGraph(getMeshShapes(app.client.renderer), scene)
+  val graph = when {
+    !getDebugBoolean("STATIC_MAP") -> listOf()
+    editor != null -> expandWorldGraph(editor, scene)
+    else -> loadWorldGraph(getMeshShapes(app.client.renderer), scene)
+  }
 
   return if (appState.worlds.none()) {
     AppState(

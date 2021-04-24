@@ -30,7 +30,7 @@ fun staticDefinitions(clientDefinitions: ClientDefinitions, applicationInfo: App
       soundDurations = clientDefinitions.soundDurations,
       textLibrary = englishTextResources,
       weapons = weapons,
-      meshShapeMap = clientDefinitions.meshShapeMap,
+      meshShapes = clientDefinitions.meshShapeMap,
       graphs = loadMarlothDefinitions(propertiesSerialization),
       propertiesSerialization = propertiesSerialization,
   )

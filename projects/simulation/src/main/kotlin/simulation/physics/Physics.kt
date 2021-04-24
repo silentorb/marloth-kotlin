@@ -5,7 +5,6 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.*
 import simulation.main.Deck
 import simulation.main.World
-import simulation.main.mergeDecks
 
 fun toPhysicsDeck(deck: Deck): PhysicsDeck =
     PhysicsDeck(
@@ -21,7 +20,7 @@ fun updatePhysics(events: Events): (World) -> World = { world ->
       bulletState = world.bulletState,
       deck = physicsDeck,
       graph = world.staticGraph,
-      meshShapes = world.definitions.meshShapeMap,
+      meshShapes = world.definitions.meshShapes,
   )
   val linearForces = events.filterIsInstance<LinearImpulse>()
   val nextPhysicsWorld = updateBulletPhysics(linearForces)(physicsWorld)

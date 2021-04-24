@@ -2,13 +2,13 @@ package marloth.integration.generation
 
 import generation.abstracted.distributeToSlots
 import generation.architecture.engine.GenerationConfig
-import marloth.definition.data.characterDefinitions
 import marloth.definition.misc.enemyDistributions
 import marloth.definition.misc.monsterLimit
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.Key
 import silentorb.mythic.ent.Graph
+import silentorb.mythic.ent.getGraphKeys
 import silentorb.mythic.ent.scenery.expandInstances
 import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.randomly.Dice
@@ -44,39 +44,6 @@ fun cycleHands(nextId: IdSource) =
             )
         )
     )
-
-data class ExpansionContext(
-    val definitions: Definitions,
-    val graph: Graph,
-    val nextId: IdSource,
-)
-
-typealias NodeExpansion = (ExpansionContext, Key) -> NewHand
-typealias NodeExpansionMap = Map<Key, NodeExpansion>
-
-fun characterDefinitionExpansions(): NodeExpansionMap =
-    characterDefinitions()
-        .mapValues { (_, definition) ->
-          { context, node ->
-            newCharacter(context.nextId, context.definitions, definition, context.graph, node)
-                .plusComponents(
-                    Spirit(),
-                    newKnowledge()
-                )
-          }
-        }
-
-private val worldExpansions =
-    characterDefinitionExpansions()
-
-fun graphToHands(definitions: Definitions, nextId: IdSource, expansions: NodeExpansionMap, graph: Graph): List<NewHand> {
-  val typeEntries = graph.filter { it.property == SceneProperties.type && expansions.containsKey(it.target) }
-  val context = ExpansionContext(definitions, graph, nextId)
-  return typeEntries.map { entry ->
-    val expansion = expansions[entry.target]!!
-    expansion(context, entry.source)
-  }
-}
 
 fun placeMonster(definitions: Definitions, definition: CharacterDefinition, nextId: IdSource, transform: Matrix): NewHand {
   return newCharacter(nextId, definitions, definition, transform, Factions.monsters)
@@ -140,12 +107,10 @@ fun addNewPlayerCharacters(nextId: IdSource, config: GenerationConfig, graph: Gr
 }
 
 fun populateWorld(nextId: IdSource, config: GenerationConfig, dice: Dice, graph: Graph): List<NewHand> {
-  val definitions = config.definitions
   val elementGroups = nodesToElements(config.meshShapes, graph)
   val lights = elementGroups.flatMap { it.lights }
   val slots = gatherSlots(graph)
-  val hands = graphToHands(definitions, nextId, worldExpansions, graph)
-      .plus(cycleHands(nextId))
+  val hands = cycleHands(nextId)
       .plus(populateDistributions(nextId, config, dice, slots, config.cellCount))
       .plus(lights.map {
         NewHand(listOf(

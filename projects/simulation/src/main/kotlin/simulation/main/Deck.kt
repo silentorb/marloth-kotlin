@@ -28,7 +28,6 @@ import simulation.intellect.Spirit
 import simulation.intellect.assessment.Knowledge
 import simulation.intellect.navigation.NavigationDirection
 import simulation.misc.Definitions
-import simulation.misc.NodeReference
 import simulation.updating.applyHands
 import simulation.updating.finalizeHands
 import simulation.updating.incorporateNewAccessories
@@ -57,7 +56,6 @@ data class Deck(
     val lights: Table<Light> = mapOf(),
     val missiles: Table<Missile> = mapOf(),
     val navigationDirections: Table<NavigationDirection> = mapOf(),
-    val nodeReferences: Table<NodeReference> = mapOf(),
     val particleEffects: Table<ParticleEffect> = mapOf(),
     val performances: Table<Performance> = mapOf(),
     val players: Table<Player> = mapOf(),
@@ -97,7 +95,6 @@ fun allHandsToDeck(definitions: Definitions, nextId: IdSource, newHands: List<Ne
       lights = deck.lights + applyHands(hands),
       missiles = deck.missiles + applyHands(hands),
       navigationDirections = deck.navigationDirections + applyHands(hands),
-      nodeReferences = deck.nodeReferences + applyHands(hands),
       particleEffects = deck.particleEffects + applyHands(hands),
       performances = deck.performances + applyHands(hands),
       players = deck.players + applyHands(hands),

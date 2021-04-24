@@ -3,22 +3,10 @@ package simulation.physics
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld
 import silentorb.mythic.ent.Id
 import silentorb.mythic.physics.BulletState
+import silentorb.mythic.physics.Collision
 import silentorb.mythic.physics.firstRayHit
 import silentorb.mythic.spatial.Vector3
 import simulation.main.Deck
-import silentorb.mythic.physics.Collision
-
-fun getEntityId(deck: Deck, value: Any?): Id? {
-  val id = value as? Id
-  return if (id != null)
-    id
-  else {
-    val node = value as? String
-    deck.nodeReferences.entries
-        .firstOrNull { it.value.node == node }
-        ?.key
-  }
-}
 
 fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, player: Id): Id? {
   val body = deck.bodies[player]!!
@@ -29,7 +17,7 @@ fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, play
   val end = start + direction * 4f
   val callback = firstRayHit(dynamicsWorld, start, end, CollisionGroups.tangibleMask)
   return if (callback != null) {
-    val id = getEntityId(deck, callback.collisionObject)
+    val id = callback.collisionObject as? Id
     if (deck.interactables.containsKey(id))
       id
     else

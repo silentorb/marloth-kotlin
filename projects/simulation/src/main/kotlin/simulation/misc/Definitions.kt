@@ -37,7 +37,7 @@ data class Definitions(
     val soundDurations: Map<SoundType, Float>,
     val textLibrary: TextResourceMapper,
     val weapons: Map<AccessoryName, WeaponDefinition>,
-    val meshShapeMap: Map<String, Shape>,
+    val meshShapes: Map<String, Shape>,
     val graphs: GraphStores,
     val propertiesSerialization: PropertiesSerialization,
 )

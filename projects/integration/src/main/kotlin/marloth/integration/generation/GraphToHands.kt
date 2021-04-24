@@ -43,7 +43,7 @@ fun getNodeDepiction(graph: Graph, node: Key): Depiction? {
   }
 }
 
-fun getNodeInteractions(graph: Graph, node: Key): List<Interactable> =
+fun getNodeInteractions(graph: Graph, node: Key): List<Any> =
     getGraphValues<String>(graph, node, MarlothProperties.interaction)
         .map { type ->
           newInteraction(type)
@@ -61,8 +61,8 @@ fun getNodeItemType(graph: Graph, node: Key): AccessoryStack? {
     null
 }
 
-fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph, transform: Matrix): List<NewHand> {
-  val keys = getGraphKeys(graph)
+fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph, keys: Collection<String>,
+                 transform: Matrix): List<NewHand> {
   return keys
       .mapNotNull { node ->
         val components = listOfNotNull(
@@ -80,3 +80,6 @@ fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph,
           null
       }
 }
+
+fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph, transform: Matrix):List<NewHand>  =
+    graphToHands(meshShapes, nextId, graph, getGraphKeys(graph), transform)

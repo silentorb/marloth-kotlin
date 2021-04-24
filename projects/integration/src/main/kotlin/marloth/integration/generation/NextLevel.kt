@@ -2,11 +2,9 @@ package marloth.integration.generation
 
 import marloth.integration.front.GameApp
 import silentorb.mythic.ent.Graph
-import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
-import silentorb.mythic.ent.SharedNextId
 import silentorb.mythic.physics.Body
-import silentorb.mythic.physics.newBulletState
+import silentorb.mythic.physics.newBulletStateWithGraph
 import silentorb.mythic.physics.releaseBulletState
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Quaternion
@@ -48,7 +46,7 @@ fun nextLevel(app: GameApp, world: World): World {
       deck = preserveLongTermEntities(world.definitions, nextId, graph, world.deck, deck),
       navigation = initializeNavigation(generationConfig, graph),
       staticGraph = graph,
-      bulletState = newBulletState(),
+      bulletState = newBulletStateWithGraph(graph, world.definitions.meshShapes),
       nextCommands = listOf(), // At minimum, the nextLevel command needs to be removed to prevent an infinite loop
       global = global.copy(
           level = level
