@@ -121,15 +121,15 @@ fun newCharacter(
                   damageMultipliers = definition.damageMultipliers
               ),
 
-              if (definition.wares.any() || definition.availableContracts.any()) {
-                Interactable(
-                    primaryCommand = WidgetCommand(
-                        text = TextId.menu_talk,
-                        commandType = ClientCommand.showConversationView
-                    )
-                )
-              } else
-                null,
+//              if (definition.wares.any() || definition.availableContracts.any()) {
+//                Interactable(
+//                    primaryCommand = WidgetCommand(
+//                        text = TextId.menu_talk,
+//                        commandType = ClientCommand.showConversationView
+//                    )
+//                )
+//              } else
+//                null,
           )
   )
 }

@@ -32,12 +32,12 @@ fun newTreasureChest(meshInfo: MeshInfoMap, position: Vector3, amount: Int): Han
           type = DepictionType.staticMesh,
           mesh = MeshId.treasureChest.toString()
       ),
-      interactable = Interactable(
-          primaryCommand = WidgetCommand(
-              text = TextId.gui_take,
-              action = TakeItem()
-          )
-      ),
+//      interactable = Interactable(
+//          primaryCommand = WidgetCommand(
+//              text = TextId.gui_take,
+//              action = TakeItem()
+//          )
+//      ),
 //      resources = ResourceBundle(
 //          values = mapOf(
 //              ResourceId.money.name to amount

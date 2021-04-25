@@ -3,7 +3,6 @@ package marloth.integration.generation
 import marloth.definition.data.newInteraction
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.getNodeTransform
-import silentorb.mythic.ent.scenery.nodeHasAttribute
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.getNodeCollisionObject
 import silentorb.mythic.scenery.SceneProperties
@@ -13,9 +12,7 @@ import silentorb.mythic.spatial.Quaternion
 import simulation.accessorize.Accessory
 import simulation.accessorize.AccessoryStack
 import simulation.entities.Depiction
-import simulation.entities.Interactable
 import simulation.main.NewHand
-import simulation.misc.GameAttributes
 import simulation.misc.MarlothProperties
 
 fun getNodeBody(graph: Graph, node: Key, parentTransform: Matrix): Body? {
