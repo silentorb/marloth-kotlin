@@ -65,28 +65,28 @@ typealias ActionHandler<T> = (Definitions, Deck, T, Id, Id) -> DeckSource
 
 typealias TriggerToEventMap = (List<Triggering>) -> Events
 
-fun gatherCommandTriggers(deck: Deck, commands: Commands): List<Triggering> {
-  return commands.mapNotNull { command ->
-    when (command.type) {
-      CharacterCommands.interactPrimary -> {
-        val player = deck.players.keys.first()
-        val character = deck.characters[player]!!
-        val interactable = deck.interactables[character.canInteractWith]
-        val action = interactable?.primaryCommand?.action
-        if (action != null) {
-          Triggering(
-              actor = player,
-              action = action,
-              target = character.canInteractWith!!
-          )
-        } else {
-          null
-        }
-      }
-      else -> null
-    }
-  }
-}
+//fun gatherCommandTriggers(deck: Deck, commands: Commands): List<Triggering> {
+//  return commands.mapNotNull { command ->
+//    when (command.type) {
+//      CharacterCommands.interactPrimary -> {
+//        val player = deck.players.keys.first()
+//        val character = deck.characters[player]!!
+//        val interactable = deck.interactables[character.canInteractWith]
+//        val action = interactable?.primaryCommand?.action
+//        if (action != null) {
+//          Triggering(
+//              actor = player,
+//              action = action,
+//              target = character.canInteractWith!!
+//          )
+//        } else {
+//          null
+//        }
+//      }
+//      else -> null
+//    }
+//  }
+//}
 
 //fun gatherActivatedTriggers(deck: Deck, definitions: Definitions, collisions: CollisionMap, commands: Commands): List<Triggering> {
 //  val attachmentTriggers = deck.triggers.mapNotNull { trigger ->

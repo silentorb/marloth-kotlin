@@ -20,6 +20,8 @@ import simulation.accessorize.AccessoryStack
 import simulation.characters.Character
 import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
+import simulation.entities.Interactions
+import simulation.entities.getInteractionCommandType
 import simulation.happenings.Notification
 import simulation.main.World
 import simulation.misc.Definitions
@@ -146,14 +148,20 @@ fun getInteractKeyText(deviceMode: DeviceMode) =
       DeviceMode.mouseKeyboard -> "E"
     }
 
+fun getInteractableLabelText(interactable: Interactable): String =
+    when(getInteractionCommandType(interactable.type)) {
+      Interactions.sleep -> "Sleep"
+      Interactions.take -> "Take"
+      else -> throw Error("Not supported")
+    }
+
 fun interactionDialog(primaryInteractText: String, textResources: TextResources, interactable: Interactable): Flower {
-  val secondary = interactable.secondaryCommand
   val rows = listOfNotNull(
-      label(textStyle, textResources(interactable.primaryCommand.text) + " $primaryInteractText"),
-      if (secondary != null)
-        label(textStyle, textResources(secondary.text) + " (B)")
-      else
-        null
+      label(textStyle, getInteractableLabelText(interactable) + " $primaryInteractText"),
+//      if (secondary != null)
+//        label(textStyle, textResources(secondary.text) + " (B)")
+//      else
+//        null
   )
 
   return alignSingle(percentage(0.8f), verticalPlane,

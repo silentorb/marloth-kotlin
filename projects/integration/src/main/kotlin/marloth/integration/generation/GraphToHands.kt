@@ -1,6 +1,5 @@
 package marloth.integration.generation
 
-import marloth.definition.data.newInteraction
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.getNodeTransform
 import silentorb.mythic.physics.Body
@@ -12,6 +11,7 @@ import silentorb.mythic.spatial.Quaternion
 import simulation.accessorize.Accessory
 import simulation.accessorize.AccessoryStack
 import simulation.entities.Depiction
+import simulation.entities.Interactable
 import simulation.main.NewHand
 import simulation.misc.MarlothProperties
 
@@ -43,7 +43,7 @@ fun getNodeDepiction(graph: Graph, node: Key): Depiction? {
 fun getNodeInteractions(graph: Graph, node: Key): List<Any> =
     getGraphValues<String>(graph, node, MarlothProperties.interaction)
         .map { type ->
-          newInteraction(type)
+          Interactable(type = type)
         }
 
 fun getNodeItemType(graph: Graph, node: Key): AccessoryStack? {

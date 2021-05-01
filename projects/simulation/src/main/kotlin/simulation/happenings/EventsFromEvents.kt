@@ -43,12 +43,12 @@ fun mapInteractions(type: String, transform: (Interaction, Id) -> Events): (Even
   events
       .filterIsInstance<Interaction>()
       .filter { it.type == type }
-      .flatMap { command ->
-        val actor = command.target as? Id
+      .flatMap { interaction ->
+        val actor = interaction.actor as? Id
         if (actor == null)
           listOf()
         else {
-          transform(command, actor)
+          transform(interaction, actor)
         }
       }
 }

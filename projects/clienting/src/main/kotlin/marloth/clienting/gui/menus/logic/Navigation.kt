@@ -54,8 +54,8 @@ fun getInteractionCommands(deck: Deck?, player: Id): Commands =
     else {
       val interactingWith = deck.characters[player]?.interactingWith
       val interaction = deck.interactables[interactingWith]
-      when (interaction?.primaryCommand?.commandType) {
-        ClientCommand.showConversationView -> listOf(Command(type = ClientEventType.navigate, target = player, value = ViewId.conversation))
+      when (interaction?.type) {
+//        ClientCommand.showConversationView -> listOf(Command(type = ClientEventType.navigate, target = player, value = ViewId.conversation))
         else -> listOf()
       }
     }

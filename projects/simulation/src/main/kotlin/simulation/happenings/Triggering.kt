@@ -11,25 +11,25 @@ import simulation.main.Deck
 //    val strength: Int? = null
 //)
 
-fun commandsToTriggers(deck: Deck, commands: Commands): List<Triggering> {
-  return commands.mapNotNull { command ->
-    when (command.type) {
-      CharacterCommands.interactPrimary -> {
-        val player = deck.players.keys.first()
-        val character = deck.characters[player]!!
-        val interactable = deck.interactables[character.canInteractWith]
-        val action = interactable?.primaryCommand?.action
-        if (action != null) {
-          Triggering(
-              actor = player,
-              action = action,
-              target = character.canInteractWith!!
-          )
-        } else {
-          null
-        }
-      }
-      else -> null
-    }
-  }
-}
+//fun commandsToTriggers(deck: Deck, commands: Commands): List<Triggering> {
+//  return commands.mapNotNull { command ->
+//    when (command.type) {
+//      CharacterCommands.interactPrimary -> {
+//        val player = deck.players.keys.first()
+//        val character = deck.characters[player]!!
+//        val interactable = deck.interactables[character.canInteractWith]
+//        val action = interactable?.primaryCommand?.action
+//        if (action != null) {
+//          Triggering(
+//              actor = player,
+//              action = action,
+//              target = character.canInteractWith!!
+//          )
+//        } else {
+//          null
+//        }
+//      }
+//      else -> null
+//    }
+//  }
+//}
