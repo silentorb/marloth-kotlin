@@ -98,7 +98,7 @@
 ["ceiling1","scale",[0.42974097,0.42974097,4.389137]],
 ["door-wood","parent","home-set"],
 ["door-wood","type","door-wood"],
-["door-wood","translation",[-0.069003105,-2.1093438,1.79576]],
+["door-wood","translation",[-1.3936675,-2.1093438,1.79576]],
 ["doorway","mesh","wallSquareShort"],
 ["doorway","type","solid-box"],
 ["doorway","texture","redTile"],

@@ -24,7 +24,7 @@
 ["bridge","type","bridge"],
 ["bridge","rotation",[0.0,0.0,-0.7853982]],
 ["bridge","scale",[2.917251,2.917251,2.917251]],
-["bridge","translation",[-2.6548696,-2.5792208,-3.2338288]],
+["bridge","translation",[-2.5702503,-2.6317859,-3.085567]],
 ["filled","parent","sides"],
 ["filled","type","blockSide"],
 ["filled","direction",[0,0,0,"east"]],

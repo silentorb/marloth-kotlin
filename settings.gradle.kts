@@ -26,6 +26,7 @@ addProjects(file("projects").toPath())
 includeBuild("../../mythic/gradle")
 includeBuild("../../mythic")
 includeBuild("../../imp")
+includeBuild("../marloth-assets/assets")
 
 Files.list(file("../../mythic/modules").toPath())
     .forEach { path ->

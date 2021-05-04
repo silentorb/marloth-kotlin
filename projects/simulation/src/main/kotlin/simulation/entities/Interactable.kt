@@ -34,7 +34,7 @@ fun getInteractionCommandType(interactionType: String?): String? =
     when (interactionType) {
       Interactables.bed -> Interactions.sleep
       Interactables.item -> Interactions.take
-      else -> null
+      else -> interactionType
     }
 
 fun gatherInteractionEvents(deck: Deck, commands: Commands): Events {
