@@ -13,6 +13,7 @@ import silentorb.mythic.ent.GraphLibrary
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.getMeshShapes
 import silentorb.mythic.physics.releaseBulletState
+import silentorb.mythic.platforming.PlatformInput
 import silentorb.mythic.quartz.newTimestepState
 import simulation.main.World
 
@@ -26,9 +27,9 @@ fun restartWorld(app: GameApp, oldWorld: World, graph: Graph, graphLibrary: Grap
   return newWorld(app, graph, graphLibrary)
 }
 
-fun restartClientState(client: ClientState, playerMap: Map<Id, Id>): ClientState =
+fun restartClientState(input: PlatformInput, client: ClientState, playerMap: Map<Id, Id>): ClientState =
     client.copy(
-        input = newInputState(client.input.config),
+        input = newInputState(input, client.input.config),
         guiStates = mapOf(),
         commands = listOf(),
         players = playerMap.values.toList(),
@@ -62,7 +63,7 @@ fun restartGame(app: GameApp, appState: AppState, scene: String): AppState {
         .zip(world.deck.players.keys)
         .associate { Pair(it.first, it.second) }
     AppState(
-        client = restartClientState(appState.client, players),
+        client = restartClientState(app.platform.input, appState.client, players),
         options = appState.options,
         worlds = listOf(world),
         timestep = newTimestepState()

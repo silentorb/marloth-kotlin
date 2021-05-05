@@ -16,6 +16,7 @@ import silentorb.mythic.editing.Editor
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.platforming.DisplayMode
+import silentorb.mythic.platforming.Platform
 
 const val canvasRendererKey = "renderer"
 
@@ -45,13 +46,14 @@ data class ClientState(
 
 fun newClientState(
     textLibrary: TextResourceMapper,
+    platform: Platform,
     inputConfig: GameInputConfig,
     audioConfig: AudioConfig,
     displayModes: List<DisplayMode>,
     meshShapes: MeshShapeMap,
 ) =
     ClientState(
-        input = newInputState(inputConfig),
+        input = newInputState(platform.input, inputConfig),
         guiStates = mapOf(),
         audio = newAudioState(audioConfig.soundVolume),
         commands = listOf(),

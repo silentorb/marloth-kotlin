@@ -12,6 +12,7 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.platforming.Devices
 import silentorb.mythic.platforming.InputEvent
 import silentorb.mythic.platforming.Platform
+import silentorb.mythic.platforming.PlatformInput
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.toVector2
@@ -41,9 +42,9 @@ data class InputState(
     val devicePlayers: Map<Int, Id>
 )
 
-fun newInputState(config: GameInputConfig) =
+fun newInputState(input: PlatformInput, config: GameInputConfig) =
     InputState(
-        deviceStates = listOf(newInputDeviceState()),
+        deviceStates = listOf(newInputDeviceState(input)),
         config = config,
         inputProfiles = mapOf(
             defaultInputProfile to InputProfile(

@@ -83,7 +83,7 @@ fun runApp(platform: Platform, options: AppOptions) {
   platform.display.initialize(toPlatformDisplayConfig(options.display))
   val app = newGameApp(platform, newClient(platform, options.display))
   val meshShapes = getMeshShapes(app.client.renderer)
-  val clientState = newClientState(app.definitions.textLibrary, options.input, options.audio, platform.display.getDisplayModes(), meshShapes)
+  val clientState = newClientState(app.definitions.textLibrary, platform, options.input, options.audio, platform.display.getDisplayModes(), meshShapes)
   val worlds = if (clientState.isEditorActive)
     listOf()
   else

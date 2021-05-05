@@ -35,8 +35,8 @@ fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
               ),
               CollisionObject(
                   shape = Sphere(0.5f),
-                  groups = CollisionGroups.dynamic,
-                  mask = CollisionGroups.standardMask,
+                  groups = CollisionGroups.trigger,
+                  mask = CollisionGroups.tangibleMask,
                   isSolid = false,
               ),
               Depiction(
