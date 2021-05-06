@@ -27,6 +27,7 @@ data class CharacterDefinition(
     val health: Int = 100,
     val runSpeed: Float = 8f,
     val accessories: List<AccessoryName> = listOf(),
+    val accessoryPool: List<AccessoryName> = listOf(),
     val depictionType: DepictionType,
     val deathSound: SoundName? = SoundId.girlScream,
     val ambientSounds: List<SoundType> = listOf(),

@@ -16,6 +16,7 @@ import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.timing.FloatCycle
+import simulation.accessorize.AccessoryName
 import simulation.characters.CharacterDefinition
 import simulation.characters.newCharacter
 import simulation.characters.newPlayerAndCharacter
@@ -45,8 +46,21 @@ fun cycleHands(nextId: IdSource) =
         )
     )
 
-fun placeMonster(definitions: Definitions, definition: CharacterDefinition, nextId: IdSource, transform: Matrix): NewHand {
-  return newCharacter(nextId, definitions, definition, transform, Factions.monsters)
+fun equipMonster(definitions: Definitions, dice: Dice, definition: CharacterDefinition): List<AccessoryName> {
+  val pool = definition.accessoryPool
+  val weaponPool = pool.intersect(definitions.weapons.keys)
+  val secondaryPool = pool - weaponPool
+  return listOfNotNull(
+      dice.takeOneOrNull(weaponPool),
+      dice.takeOneOrNull(secondaryPool),
+  )
+}
+
+fun placeMonster(definitions: Definitions, dice: Dice, definition: CharacterDefinition, nextId: IdSource, transform: Matrix): NewHand {
+  val definition2 = definition.copy(
+      accessories = definition.accessories + equipMonster(definitions, dice, definition)
+  )
+  return newCharacter(nextId, definitions, definition2, transform, Factions.monsters)
       .plusComponents(
           Spirit(
               post = transform.translation(),
@@ -65,7 +79,7 @@ fun populateMonsters(definitions: Definitions, locations: List<Matrix>, nextId: 
     locations
         .zip(distributions) { transform, definitionName ->
           val definition = definitions.professions[definitionName]!!
-          placeMonster(definitions, definition, nextId, transform.translate(Vector3(0f, 0f, 0.5f)))
+          placeMonster(definitions, dice, definition, nextId, transform.translate(Vector3(0f, 0f, 0.5f)))
         }
   }
 }

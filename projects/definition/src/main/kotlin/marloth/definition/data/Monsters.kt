@@ -5,12 +5,26 @@ import simulation.characters.CharacterDefinition
 import simulation.characters.fieldOfView360
 import simulation.entities.DepictionType
 
+object AccessoryPools {
+  val common: List<String> = listOf(
+      AccessoryIdOld.pistol,
+      AccessoryIdOld.spiritRocketLauncher,
+      AccessoryIdOld.entangle,
+  )
+
+  val mobile: List<String> = common + listOf(
+      AccessoryIdOld.claws,
+      AccessoryIdOld.dash,
+      AccessoryIdOld.pistol,
+  )
+}
+
 fun monsterDefinitions(): Map<String, CharacterDefinition> =
     mapOf(
         CreatureId.hogMan to CharacterDefinition(
             name = TextId.unnamed,
             health = 100,
-            accessories = listOf(AccessoryIdOld.pistol, AccessoryIdOld.mobility),
+            accessoryPool = AccessoryPools.mobile,
             depictionType = DepictionType.person,
             runSpeed = 2.5f,
             deathSound = SoundId.hogDeath,
@@ -20,7 +34,7 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
         CreatureId.sentinel to CharacterDefinition(
             name = TextId.unnamed,
             health = 100,
-            accessories = listOf(AccessoryIdOld.spiritRocketLauncher, AccessoryIdOld.entangle),
+            accessoryPool = AccessoryPools.common,
             depictionType = DepictionType.sentinel,
             runSpeed = 0f,
             deathSound = null,
@@ -30,9 +44,9 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
         CreatureId.hound to CharacterDefinition(
             name = TextId.unnamed,
             health = 100,
-            accessories = listOf(AccessoryIdOld.claws, AccessoryIdOld.dash, AccessoryIdOld.mobility),
+            accessoryPool = AccessoryPools.mobile,
             depictionType = DepictionType.hound,
-            runSpeed = 5f,
+            runSpeed = 2.5f,
             deathSound = null,
             ambientSounds = listOf()
         )
