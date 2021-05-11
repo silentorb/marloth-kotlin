@@ -14,21 +14,9 @@ import simulation.misc.Definitions
 import simulation.misc.getPlayerStart
 
 fun extractLongTermEntities(deck: Deck): Table<NewHand> =
-    deck.players.keys.associateWith { player ->
-      copyEntity(deck, player)
+    deck.characters.keys.associateWith { character ->
+      copyEntity(deck, character)
     }
-
-fun addHandBody(hand: NewHand, transform: Matrix): NewHand =
-    hand.copy(
-        components = hand.components
-            .filter { !(it is Body) }
-            .plus(
-                Body(
-                    position = transform.translation(),
-                    orientation = Quaternion().rotateZ(transform.rotation().z)
-                )
-            )
-    )
 
 // nextLevel ignores runtime editor changes
 fun nextLevel(app: GameApp, world: World): World {
@@ -37,7 +25,12 @@ fun nextLevel(app: GameApp, world: World): World {
   val nextId = world.nextId.source()
   releaseBulletState(world.bulletState)
   val persistentHands = extractLongTermEntities(world.deck)
-  val generationConfig = newGenerationConfig(app).copy(level = level)
+  val generationConfig = newGenerationConfig(app)
+      .copy(
+          hands = persistentHands,
+          level = level,
+      )
+
   val (graph, deck) = generateWorldGraphAndDeck(nextId, generationConfig)
   val playerStart = getPlayerStart(graph) ?: Matrix.identity
   val playerHands = persistentHands

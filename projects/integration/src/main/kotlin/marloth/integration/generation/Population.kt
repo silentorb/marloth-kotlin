@@ -5,18 +5,20 @@ import generation.architecture.engine.GenerationConfig
 import marloth.definition.misc.enemyDistributions
 import marloth.definition.misc.monsterLimit
 import silentorb.mythic.debugging.getDebugInt
+import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.Key
-import silentorb.mythic.ent.Graph
-import silentorb.mythic.ent.getGraphKeys
+import silentorb.mythic.ent.Table
 import silentorb.mythic.ent.scenery.expandInstances
 import silentorb.mythic.ent.scenery.nodesToElements
+import silentorb.mythic.physics.Body
 import silentorb.mythic.randomly.Dice
-import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Matrix
+import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.timing.FloatCycle
 import simulation.accessorize.AccessoryName
+import simulation.characters.Character
 import simulation.characters.CharacterDefinition
 import simulation.characters.newCharacter
 import simulation.characters.newPlayerAndCharacter
@@ -26,7 +28,8 @@ import simulation.intellect.assessment.newKnowledge
 import simulation.main.Deck
 import simulation.main.NewHand
 import simulation.main.allHandsToDeck
-import simulation.misc.*
+import simulation.misc.Definitions
+import simulation.misc.Factions
 import kotlin.math.max
 import kotlin.math.min
 
@@ -44,6 +47,18 @@ fun cycleHands(nextId: IdSource) =
                 FloatCycle(0.002f, 0.2f)
             )
         )
+    )
+
+fun addHandBody(hand: NewHand, transform: Matrix): NewHand =
+    hand.copy(
+        components = hand.components
+            .filter { !(it is Body) }
+            .plus(
+                Body(
+                    position = transform.translation(),
+                    orientation = Quaternion().rotateZ(transform.rotation().z)
+                )
+            )
     )
 
 fun equipMonster(definitions: Definitions, dice: Dice, definition: CharacterDefinition): List<AccessoryName> {
@@ -70,7 +85,7 @@ fun placeMonster(definitions: Definitions, dice: Dice, definition: CharacterDefi
       )
 }
 
-fun populateMonsters(definitions: Definitions, locations: List<Matrix>, nextId: IdSource, dice: Dice): List<NewHand> {
+fun populateNewMonsters(definitions: Definitions, locations: List<Matrix>, nextId: IdSource, dice: Dice): List<NewHand> {
   println("Monster count: ${locations.size}")
   return if (locations.none())
     listOf()
@@ -84,6 +99,13 @@ fun populateMonsters(definitions: Definitions, locations: List<Matrix>, nextId: 
   }
 }
 
+fun populateOlderMonsters(monsterHands: Table<NewHand>, locations: List<Matrix>): List<NewHand> {
+  return monsterHands.values
+      .zip(locations) { hand, transform ->
+        addHandBody(hand, transform)
+      }
+}
+
 fun selectSlots(dice: Dice, slots: SlotMap, limit: Int): List<Map.Entry<Key, Slot>> {
   val count = min(limit, slots.size)
   return dice.take(slots.entries, count)
@@ -93,12 +115,22 @@ fun populateDistributions(nextId: IdSource, config: GenerationConfig, dice: Dice
   val definitions = config.definitions
   val graphLibrary = config.graphLibrary
   val level = getDebugInt("WORLD_LEVEL") ?: config.level
+
+  val previousMonsters = config.hands.filterValues { hand ->
+    hand.components.any { (it as? Character)?.faction == Factions.monsters }
+  }
+
   val maxMonsters = min(monsterLimit(), cellCount / max(2, 16 - level))
   val monsterSlots = selectSlots(dice, slots, maxMonsters)
   val monsterLocations = monsterSlots
       .map { it.value.transform }
 
-  val monsterHands = populateMonsters(definitions, monsterLocations, nextId, dice)
+  val monsterLocationsOlder = monsterLocations.take(previousMonsters.size)
+  val monsterLocationsNewer = monsterLocations.drop(previousMonsters.size)
+
+  val monsterHands = populateNewMonsters(definitions, monsterLocationsNewer, nextId, dice) +
+      populateOlderMonsters(previousMonsters, monsterLocationsOlder)
+
   val remainingSlots = slots - monsterSlots.map { it.key }
 
   val itemSlots = selectSlots(dice, remainingSlots, cellCount / 15)

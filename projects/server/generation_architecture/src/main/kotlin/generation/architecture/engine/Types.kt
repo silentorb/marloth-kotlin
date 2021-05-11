@@ -5,10 +5,12 @@ import generation.general.CellDirection
 import marloth.scenery.enums.MeshInfoMap
 import marloth.scenery.enums.MeshShapeMap
 import silentorb.mythic.ent.GraphLibrary
+import silentorb.mythic.ent.Table
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
+import simulation.main.NewHand
 import simulation.misc.CellAttribute
 import simulation.misc.Definitions
 
@@ -40,6 +42,7 @@ data class GenerationConfig(
     val includeEnemies: Boolean,
     val cellCount: Int,
     val graphLibrary: GraphLibrary,
+    val hands: Table<NewHand> = mapOf(),
     val level: Int = 1,
 )
 
