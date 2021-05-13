@@ -17,11 +17,7 @@ import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.timing.FloatCycle
-import simulation.accessorize.AccessoryName
-import simulation.characters.Character
-import simulation.characters.CharacterDefinition
-import simulation.characters.newCharacter
-import simulation.characters.newPlayerAndCharacter
+import simulation.characters.*
 import simulation.intellect.Spirit
 import simulation.intellect.SpiritAttributes
 import simulation.intellect.assessment.newKnowledge
@@ -61,19 +57,9 @@ fun addHandBody(hand: NewHand, transform: Matrix): NewHand =
             )
     )
 
-fun equipMonster(definitions: Definitions, dice: Dice, definition: CharacterDefinition): List<AccessoryName> {
-  val pool = definition.accessoryPool
-  val weaponPool = pool.intersect(definitions.weapons.keys)
-  val secondaryPool = pool - weaponPool
-  return listOfNotNull(
-      dice.takeOneOrNull(weaponPool),
-      dice.takeOneOrNull(secondaryPool),
-  )
-}
-
 fun placeMonster(definitions: Definitions, dice: Dice, definition: CharacterDefinition, nextId: IdSource, transform: Matrix): NewHand {
   val definition2 = definition.copy(
-      accessories = definition.accessories + equipMonster(definitions, dice, definition)
+      accessories = definition.accessories + equipCharacter(definitions, dice, definition)
   )
   return newCharacter(nextId, definitions, definition2, transform, Factions.monsters)
       .plusComponents(
