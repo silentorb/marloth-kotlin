@@ -9,7 +9,7 @@ fun canUse(world: World, action: Id): Boolean {
   val definitions = world.definitions
 
   val accessory = deck.accessories[action]!!
-  val isWeapon = definitions.weapons.containsKey(accessory.value.type)
+  val isWeapon = definitions.weapons.containsKey(accessory.type)
 //  if (isWeapon && isAtHome(world.realm.grid, deck)(accessory.owner))
 //    return false
 

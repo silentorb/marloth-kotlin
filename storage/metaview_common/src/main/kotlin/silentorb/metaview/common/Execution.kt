@@ -20,7 +20,7 @@ fun sanitizeGraph(nodeDefinitions: NodeDefinitionMap, defaultValues: ValueMap): 
   }
 
   val newValues = changes.map { (node, input) ->
-    val getValue = defaultValues[input.value.type]
+    val getValue = defaultValues[input.type]
     if (getValue == null)
       throw Error("Type ${input.key} cannot be null")
     InputValue(

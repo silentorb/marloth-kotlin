@@ -1,8 +1,8 @@
 package simulation.combat.general
 
 import silentorb.mythic.ent.Table
-import simulation.accessorize.AccessoryStack
+import simulation.accessorize.Accessory
 
 data class CombatDeck(
-    val accessories: Table<AccessoryStack>
+    val accessories: Table<Accessory>
 )

@@ -12,7 +12,6 @@ import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.spatial.toVector2
 import simulation.accessorize.AccessoryDefinition
-import simulation.accessorize.AccessoryStack
 import simulation.main.Deck
 import simulation.misc.Definitions
 

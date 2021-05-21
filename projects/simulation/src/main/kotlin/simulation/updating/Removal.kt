@@ -7,7 +7,7 @@ import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.timing.expiredTimers
-import simulation.accessorize.AccessoryStack
+import simulation.accessorize.Accessory
 import simulation.entities.PruneEntityEvent
 import simulation.happenings.TakeItemEvent
 import simulation.main.Deck
@@ -26,7 +26,7 @@ fun getFinished(soundDurations: SoundDurations, events: Events, deck: Deck): Set
       .plus(finishedSounds(soundDurations)(deck.sounds))
 }
 
-fun exhaustedAccessories(accessories: Table<AccessoryStack>) =
+fun exhaustedAccessories(accessories: Table<Accessory>) =
     accessories.filter {
       val quantity = it.value.quantity
       quantity != null && quantity < 1

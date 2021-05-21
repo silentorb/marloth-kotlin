@@ -29,10 +29,10 @@ fun eventsFromCollisionItemPickups(world: World, collisions: CollisionMap): Even
       val characterAccessories = deck.accessories.filter { it.value.owner == character }
       val available = characterAccessories
           .none { (_, accessory) ->
-            itemAccessory.value.type == accessory.value.type
+            itemAccessory.type == accessory.type
           }
       if (available) {
-        when (itemAccessory.value.type) {
+        when (itemAccessory.type) {
           AccessoryIdOld.victoryKey -> listOf(
               PruneEntityEvent(
                   id = itemPickup,
@@ -75,7 +75,7 @@ fun eventsFromItemPickup(world: World): (Interaction, Id) -> Events = { interact
         null
       else {
         val existingStack = deck.accessories.entries
-            .firstOrNull { it.value.owner == actor && it.value.value.type == stack.value.type }
+            .firstOrNull { it.value.owner == actor && it.value.type == stack.type }
 
         if (existingStack != null)
           ModifyItemQuantityEvent(existingStack.key, 1)

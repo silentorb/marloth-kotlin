@@ -10,19 +10,18 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.performing.isPerforming
 import simulation.abilities.isEntangled
-import simulation.accessorize.AccessoryStack
-import simulation.accessorize.getAccessories
+import simulation.accessorize.Accessory
 import simulation.accessorize.hasAccessory
 import simulation.happenings.canUseSimple
 import simulation.main.Deck
 
-fun hasMobilityModifier(modifiers: Table<AccessoryStack>, actor: Id): Boolean =
-    modifiers.any { it.value.owner == actor && it.value.value.type == AccessoryIdOld.mobile }
+fun hasMobilityModifier(modifiers: Table<Accessory>, actor: Id): Boolean =
+    modifiers.any { it.value.owner == actor && it.value.type == AccessoryIdOld.mobile }
 
 fun canUseMobility(deck: Deck): (Id) -> Boolean = { actor ->
   deck.characters[actor]!!.isAlive &&
       deck.performances.none { it.value.target == actor } &&
-      deck.accessories.any { it.value.value.type == AccessoryIdOld.mobility && it.value.owner == actor && canUseSimple(deck, it.key) } &&
+      deck.accessories.any { it.value.type == AccessoryIdOld.mobility && it.value.owner == actor && canUseSimple(deck, it.key) } &&
       !hasMobilityModifier(deck.accessories, actor)
 }
 

@@ -16,7 +16,7 @@ import silentorb.mythic.scenery.Light
 import silentorb.mythic.timing.FloatCycle
 import silentorb.mythic.timing.FloatTimer
 import silentorb.mythic.timing.IntTimer
-import simulation.accessorize.AccessoryStack
+import simulation.accessorize.Accessory
 import simulation.accessorize.ItemPickup
 import simulation.characters.Character
 import simulation.combat.PlayerOverlay
@@ -33,7 +33,7 @@ typealias GetAnyGraph = (Any) -> AnyGraph
 
 @Deprecated("Use NewHand")
 data class Hand(
-    val accessory: AccessoryStack? = null,
+    val accessory: Accessory? = null,
     val action: Action? = null,
     val ambientAudioEmitter: AmbientAudioEmitter? = null,
     val attributes: Attributes? = null,

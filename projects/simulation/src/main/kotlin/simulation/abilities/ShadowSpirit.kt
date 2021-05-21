@@ -14,7 +14,6 @@ import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.timing.FloatTimer
 import simulation.accessorize.Accessory
-import simulation.accessorize.AccessoryStack
 import simulation.characters.characterDynamicBody
 import simulation.characters.commonCharacterElements
 import simulation.characters.newAccessory
@@ -63,10 +62,8 @@ fun onShadowSpirit(world: World, actionDefinition: ActionDefinition, actor: Id):
       ),
       NewHand(
           components = listOf(
-              AccessoryStack(
-                  value = Accessory(
-                      type = shadowSpiritBuff,
-                  ),
+              Accessory(
+                  type = shadowSpiritBuff,
                   owner = actor,
               ),
               FloatTimer(10f)
@@ -98,14 +95,12 @@ fun onCancelShadowSpirit(deck: Deck, spiritActor: Id): Events {
     listOf()
   else
     deck.accessories
-        .filter { it.value.owner == player && it.value.value.type == shadowSpiritBuff }
+        .filter { it.value.owner == player && it.value.type == shadowSpiritBuff }
         .map { (key) -> DeleteEntityEvent(key) } +
         NewHand(
             components = listOf(
-                AccessoryStack(
-                    value = Accessory(
-                        type = disableFreedomsBuff,
-                    ),
+                Accessory(
+                    type = disableFreedomsBuff,
                     owner = player,
                 ),
                 FloatTimer(0.2f)
@@ -115,7 +110,7 @@ fun onCancelShadowSpirit(deck: Deck, spiritActor: Id): Events {
 
 fun eventsFromShadowSpiritRemoval(previousDeck: Deck, world: World): Events {
   val removedBuffs = previousDeck.accessories.filter { (id, accessory) ->
-    !world.deck.accessories.containsKey(id) && accessory.value.type == shadowSpiritBuff
+    !world.deck.accessories.containsKey(id) && accessory.type == shadowSpiritBuff
   }
 
   return removedBuffs.flatMap { (id, accessory) ->

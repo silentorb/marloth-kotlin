@@ -120,7 +120,7 @@ fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footP
             ""
 
           TextBillboard(
-              content = accessoryDebugName(definitions, accessory.value.type) + suffix,
+              content = accessoryDebugName(definitions, accessory.type) + suffix,
               position = footPosition + Vector3(0f, 0f, shape.height + 0.1f),
               style = TextStyles.smallWhite,
               depthOffset = -0.01f
@@ -136,7 +136,7 @@ fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footP
 
       val modifierBillboard = if (accessory != null) {
         TextBillboard(
-            content = accessoryDebugName(definitions, accessory.value.type),
+            content = accessoryDebugName(definitions, accessory.type),
             position = footPosition + Vector3(0f, 0f, shape.height - 0.3f),
             style = TextStyles.smallGray,
             depthOffset = -0.01f
@@ -222,7 +222,7 @@ fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depi
       animations = animations,
       attachments = accessories
           .mapNotNull { (_, accessoryRecord) ->
-            val accessoryType = definitions.accessories[accessoryRecord.value.type]
+            val accessoryType = definitions.accessories[accessoryRecord.type]
             val mesh = accessoryType?.equippedMesh
             if (mesh != null)
               AttachedMesh(

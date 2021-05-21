@@ -16,7 +16,7 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugOverrides
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.gpuProfileMeasurements
-import simulation.accessorize.AccessoryStack
+import simulation.accessorize.Accessory
 import simulation.characters.Character
 import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
@@ -89,13 +89,13 @@ fun getGpuTime(): Long =
       gpuTimeLast
     }
 
-fun getUtilityItemText(definitions: Definitions, accessories: Map<Id, AccessoryStack>, character: Character): String? {
+fun getUtilityItemText(definitions: Definitions, accessories: Map<Id, Accessory>, character: Character): String? {
   val item = character.utilityItem
   return if (item == null)
     null
   else {
     val accessory = accessories[item]
-    val accessoryDefinition = definitions.accessories[accessory?.value?.type]
+    val accessoryDefinition = definitions.accessories[accessory?.type]
     if (accessoryDefinition == null)
       null
     else
@@ -103,7 +103,7 @@ fun getUtilityItemText(definitions: Definitions, accessories: Map<Id, AccessoryS
   }
 }
 
-fun playerStats(world: World, actor: Id, debugInfo: List<String>, accessories: Map<Id, AccessoryStack>): Flower {
+fun playerStats(world: World, actor: Id, debugInfo: List<String>, accessories: Map<Id, Accessory>): Flower {
   val deck = world.deck
   val destructible = deck.destructibles[actor]!!
   val character = deck.characters[actor]!!
@@ -126,7 +126,7 @@ fun playerStats(world: World, actor: Id, debugInfo: List<String>, accessories: M
       ) + debugInfo.map {
     label(textStyle, it)
   } + if (getDebugBoolean("HUD_DRAW_INVENTORY")) equipment.mapNotNull { accessory ->
-    val definition = definitions.accessories[accessory.value.type]
+    val definition = definitions.accessories[accessory.type]
     if (definition == null)
       null
     else
@@ -196,8 +196,8 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
         .mapNotNull { (accessory, accessoryRecord) ->
           val cooldown = deck.actions[accessory]?.cooldown
           if (cooldown != null && cooldown != 0f) {
-            val accessoryDefinition = definitions.accessories[accessoryRecord.value.type]
-            val definitionCooldown = definitions.actions[accessoryRecord.value.type]?.cooldown
+            val accessoryDefinition = definitions.accessories[accessoryRecord.type]
+            val definitionCooldown = definitions.actions[accessoryRecord.type]?.cooldown
             if (accessoryDefinition != null && definitionCooldown != null)
               Cooldown(
                   name = textResources(accessoryDefinition.name)!!,
@@ -213,7 +213,7 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
                 .mapNotNull { (id, accessory) ->
                   val timer = deck.timersFloat[id]
                   if (timer != null) {
-                    val definition = definitions.accessories[accessory.value.type]
+                    val definition = definitions.accessories[accessory.type]
                     if (definition != null)
                       Cooldown(
                           name = textResources(definition.name)!!,

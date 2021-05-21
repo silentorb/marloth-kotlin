@@ -6,7 +6,6 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.scenery.MeshName
-import simulation.happenings.TryActionEvent
 import simulation.happenings.UseAction
 import simulation.misc.Definitions
 import kotlin.math.max
@@ -16,10 +15,6 @@ data class Accessory(
     val type: AccessoryName,
     val source: Id = 0,
     val level: Int = 1,
-)
-
-data class AccessoryStack(
-    val value: Accessory,
     val owner: Id? = null,
     val quantity: Int = 1,
 )
@@ -44,20 +39,20 @@ data class AccessoryDefinition(
     val many: Boolean = true // Whether a character can have multiple instances of this accessory at once
 )
 
-fun hasAccessory(type: AccessoryName, accessories: Table<AccessoryStack>, actor: Id): Boolean =
-    accessories.values.any { it.owner == actor && it.value.type == type }
+fun hasAccessory(type: AccessoryName, accessories: Table<Accessory>, actor: Id): Boolean =
+    accessories.values.any { it.owner == actor && it.type == type }
 
-fun hasAnyAccessory(types: Collection<AccessoryName>, accessories: Table<AccessoryStack>, actor: Id): Boolean =
-    accessories.values.any { it.owner == actor && types.contains(it.value.type) }
+fun hasAnyAccessory(types: Collection<AccessoryName>, accessories: Table<Accessory>, actor: Id): Boolean =
+    accessories.values.any { it.owner == actor && types.contains(it.type) }
 
-fun getAccessory(type: AccessoryName, accessories: Table<AccessoryStack>, actor: Id): Map.Entry<Id, AccessoryStack>? =
-    accessories.entries.firstOrNull { it.value.owner == actor && it.value.value.type == type }
+fun getAccessory(type: AccessoryName, accessories: Table<Accessory>, actor: Id): Map.Entry<Id, Accessory>? =
+    accessories.entries.firstOrNull { it.value.owner == actor && it.value.type == type }
 
-fun hasAccessory(type: AccessoryName): (Table<AccessoryStack>, Id) -> Boolean = { accessories, actor ->
+fun hasAccessory(type: AccessoryName): (Table<Accessory>, Id) -> Boolean = { accessories, actor ->
   hasAccessory(type, accessories, actor)
 }
 
-fun getAccessories(accessories: Table<AccessoryStack>, entity: Id): Table<AccessoryStack> {
+fun getAccessories(accessories: Table<Accessory>, entity: Id): Table<Accessory> {
   return accessories.filterValues { it.owner == entity }
 }
 
@@ -71,7 +66,7 @@ data class ModifyItemQuantityEvent(
     val modifier: Int
 )
 
-fun updateAccessory(definitions: Definitions, events: Events): (Id, AccessoryStack) -> AccessoryStack {
+fun updateAccessory(definitions: Definitions, events: Events): (Id, Accessory) -> Accessory {
   val changeOwnerEvents = events.filterIsInstance<ChangeItemOwnerEvent>()
   val choseImprovedAccessoryEvents = events.filterIsInstance<ChooseImprovedAccessory>()
   val allUseEvents = events.filterIsInstance<UseAction>()
@@ -79,13 +74,13 @@ fun updateAccessory(definitions: Definitions, events: Events): (Id, AccessorySta
 
   return { id, accessory ->
     val levelIncreases = choseImprovedAccessoryEvents.count {
-      it.accessory == accessory.value.type && it.actor == accessory.owner
+      it.accessory == accessory.type && it.actor == accessory.owner
     }
     // Currently if two change owner events are triggered at the same time it is random which one
     // is honored
     val ownerChange = changeOwnerEvents.firstOrNull { it.item == id }
     val quantity = accessory.quantity
-    val definition = definitions.accessories[accessory.value.type]
+    val definition = definitions.accessories[accessory.type]
     val quantityMod = modifyQuantityCommands
         .filter { it.item == id }
         .sumBy { it.modifier }
@@ -97,13 +92,10 @@ fun updateAccessory(definitions: Definitions, events: Events): (Id, AccessorySta
 
     accessory.copy(
         owner = ownerChange?.newOwner ?: accessory.owner,
-        value = accessory.value.copy(
-            level = if (levelIncreases > 0)
-              min(accessory.value.level + levelIncreases, definition!!.maxLevel)
-            else
-              accessory.value.level,
-
-            ),
+        level = if (levelIncreases > 0)
+          min(accessory.level + levelIncreases, definition!!.maxLevel)
+        else
+          accessory.level,
         quantity = max(0, consumptionQuantity + quantityMod),
     )
   }

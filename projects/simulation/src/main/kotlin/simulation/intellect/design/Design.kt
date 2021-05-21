@@ -22,7 +22,7 @@ fun updateTargetEnemy(world: World, character: Id, knowledge: Knowledge, pursuit
 
 fun getActionRange(deck: Deck, definitions: Definitions): (Id) -> Float = { action ->
   val accessory = deck.accessories[action]!!
-  val definition = definitions.actions[accessory.value.type]!!
+  val definition = definitions.actions[accessory.type]!!
   definition.range
 }
 

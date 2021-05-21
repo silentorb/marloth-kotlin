@@ -7,7 +7,6 @@ import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.timing.FloatTimer
 import simulation.accessorize.Accessory
-import simulation.accessorize.AccessoryStack
 import simulation.happenings.UseAction
 import simulation.main.Deck
 import simulation.main.NewHand
@@ -26,11 +25,9 @@ fun isMobilityCommand(command: Command): Boolean =
 fun newMobilityModifierEvent(actor: Id, source: Id, duration: Float) =
     NewHand(
         components = listOf(
-            AccessoryStack(
-                value = Accessory(
-                    type = AccessoryIdOld.mobile,
-                    source = source,
-                ),
+            Accessory(
+                type = AccessoryIdOld.mobile,
+                source = source,
                 owner = actor,
             ),
             FloatTimer(duration)
@@ -47,9 +44,9 @@ fun mobilityEvents(definitions: Definitions, deck: Deck, commands: List<Command>
       .filter(canUseMobility(deck))
       .flatMap { actor ->
         val accessory = deck.accessories.entries
-            .first { it.value.value.type == AccessoryIdOld.mobility && it.value.owner == actor }
+            .first { it.value.type == AccessoryIdOld.mobility && it.value.owner == actor }
 
-        val duration = definitions.actions[accessory.value.value.type]!!.duration
+        val duration = definitions.actions[accessory.value.type]!!.duration
 
         listOf(
             UseAction(

@@ -9,7 +9,6 @@ import silentorb.mythic.scenery.Shape
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Quaternion
 import simulation.accessorize.Accessory
-import simulation.accessorize.AccessoryStack
 import simulation.entities.Depiction
 import simulation.entities.Interactable
 import simulation.main.NewHand
@@ -46,13 +45,11 @@ fun getNodeInteractions(graph: Graph, node: Key): List<Any> =
           Interactable(type = type)
         }
 
-fun getNodeItemType(graph: Graph, node: Key): AccessoryStack? {
+fun getNodeItemType(graph: Graph, node: Key): Accessory? {
   val itemType = getNodeValue<String>(graph, node, MarlothProperties.itemType)
   return if (itemType != null)
-    AccessoryStack(
-        value = Accessory(
-            type = itemType,
-        )
+    Accessory(
+        type = itemType,
     )
   else
     null
@@ -78,5 +75,5 @@ fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph,
       }
 }
 
-fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph, transform: Matrix):List<NewHand>  =
+fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph, transform: Matrix): List<NewHand> =
     graphToHands(meshShapes, nextId, graph, getGraphKeys(graph), transform)

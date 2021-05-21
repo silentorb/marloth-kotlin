@@ -1,8 +1,6 @@
 package simulation.characters
 
 import marloth.scenery.enums.AnimationId
-import marloth.scenery.enums.ClientCommand
-import marloth.scenery.enums.TextId
 import silentorb.mythic.characters.rigs.*
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.getNodeTransform
@@ -12,7 +10,6 @@ import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.scenery.Capsule
 import silentorb.mythic.spatial.*
 import simulation.accessorize.Accessory
-import simulation.accessorize.AccessoryStack
 import simulation.combat.general.Destructible
 import simulation.combat.general.DestructibleBaseStats
 import simulation.entities.*
@@ -47,10 +44,8 @@ fun newAccessory(definitions: Definitions, type: String, owner: Id): NewHand {
   val accessoryDefinition = definitions.accessories[type]
   return NewHand(
       components = listOfNotNull(
-          AccessoryStack(
-              value = Accessory(
-                  type = type,
-              ),
+          Accessory(
+              type = type,
               owner = owner,
               quantity = accessoryDefinition?.quantity ?: 1,
           ),

@@ -6,7 +6,6 @@ import simulation.accessorize.hasAccessory
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.timing.FloatTimer
-import simulation.accessorize.AccessoryStack
 import simulation.accessorize.hasAnyAccessory
 import simulation.main.Deck
 import simulation.main.Hand
@@ -32,11 +31,9 @@ fun entangleEvents(deck: Deck, accessory: Accessory): (Id) -> Events = { target 
     listOf(
         NewHand(
             components = listOf(
-                AccessoryStack(
-                    value = Accessory(
-                        type = AccessoryIdOld.entangling,
-                        level = accessory.level,
-                    ),
+                Accessory(
+                    type = AccessoryIdOld.entangling,
+                    level = accessory.level,
                     owner = target,
                 ),
                 FloatTimer(1f)
@@ -44,10 +41,8 @@ fun entangleEvents(deck: Deck, accessory: Accessory): (Id) -> Events = { target 
         ),
         NewHand(
             components = listOf(
-                AccessoryStack(
-                    value = Accessory(
-                        type = AccessoryIdOld.entangleImmune,
-                    ),
+                Accessory(
+                    type = AccessoryIdOld.entangleImmune,
                     owner = target
                 ),
                 FloatTimer(entangledDuration(accessory.level) + immunityDuration),
@@ -59,17 +54,15 @@ fun entangleEvents(deck: Deck, accessory: Accessory): (Id) -> Events = { target 
 fun newEntangleEntities(previous: Deck): List<Hand> =
     previous.accessories
         .filter { (key, accessory) ->
-          accessory.value.type == AccessoryIdOld.entangling && previous.timersFloat[key]!!.duration <= 0f
+          accessory.type == AccessoryIdOld.entangling && previous.timersFloat[key]!!.duration <= 0f
         }
         .map { (_, accessory) ->
           Hand(
-              accessory = AccessoryStack(
-                  value = Accessory(
-                      type = AccessoryIdOld.entangled,
-                      level = accessory.value.level
-                  ),
+              accessory = Accessory(
+                  type = AccessoryIdOld.entangled,
+                  level = accessory.level,
                   owner = accessory.owner,
               ),
-              timerFloat = FloatTimer(entangledDuration(accessory.value.level))
+              timerFloat = FloatTimer(entangledDuration(accessory.level))
           )
         }

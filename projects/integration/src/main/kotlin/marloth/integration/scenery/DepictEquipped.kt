@@ -24,7 +24,7 @@ fun getEquipmentTransform(camera: Camera, motionOffsetX: Float, motionOffsetY: F
 fun getEquippedMesh(definitions: Definitions, deck: Deck, player: Id): MeshName? {
   val equipped = getEquippedAction(definitions, deck, EquipmentSlot.attack, player)
   val accessory = deck.accessories[equipped]
-  val accessoryDefinition = definitions.accessories[accessory?.value?.type]
+  val accessoryDefinition = definitions.accessories[accessory?.type]
   return accessoryDefinition?.equippedMesh
 }
 
@@ -32,7 +32,7 @@ fun getPlayerEquipmentLayer(definitions: Definitions, deck: Deck, player: Id, ca
   val equippedMesh = getEquippedMesh(definitions, deck, player)
   val victoryKey = deck.accessories.entries
       .firstOrNull { (_, accessory) ->
-        accessory.value.type == AccessoryIdOld.victoryKey && accessory.owner == player
+        accessory.type == AccessoryIdOld.victoryKey && accessory.owner == player
       }
   return if (equippedMesh != null || victoryKey != null) {
     val body = deck.bodies[player]!!

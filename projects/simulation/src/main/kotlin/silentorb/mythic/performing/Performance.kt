@@ -9,11 +9,11 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.GameEvent
 import silentorb.mythic.timing.FloatTimer
 import simulation.accessorize.AccessoryName
-import simulation.accessorize.AccessoryStack
+import simulation.accessorize.Accessory
 import simulation.happenings.UseAction
 
 data class PerformanceDeck(
-    val accessories: Table<AccessoryStack>,
+    val accessories: Table<Accessory>,
     val performances: Table<Performance>,
     val timersFloat: Table<FloatTimer>
 )
@@ -34,7 +34,7 @@ fun performancesFromEvents(definitions: PerformanceDefinitions, deck: Performanc
   val actionEvents = events.filterIsInstance<UseAction>()
   return actionEvents.mapNotNull { event ->
     val accessory = deck.accessories[event.action]
-    val definition = definitions.actions[accessory?.value?.type]
+    val definition = definitions.actions[accessory?.type]
     val animation = definition?.animation
     if (animation != null) {
       Performance(

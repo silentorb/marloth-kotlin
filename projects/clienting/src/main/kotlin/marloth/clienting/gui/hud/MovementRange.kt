@@ -49,19 +49,19 @@ fun movementRangeLayer(definitions: Definitions, deck: Deck, actor: Id, duration
 
 fun mobilityMovementRangeLayer(definitions: Definitions, deck: Deck, actor: Id): SceneLayer? {
   val accessory = deck.accessories.entries
-      .firstOrNull { it.value.owner == actor && it.value.value.type == AccessoryIdOld.mobility }
+      .firstOrNull { it.value.owner == actor && it.value.type == AccessoryIdOld.mobility }
 
   return if (accessory == null)
     null
   else {
     val action = deck.actions[accessory.key]!!
     val modifier = deck.accessories.entries
-        .firstOrNull { it.value.value.source == accessory.key }
+        .firstOrNull { it.value.source == accessory.key }
 
     val duration = if (modifier != null)
       deck.timersFloat[modifier.key]!!.duration
     else if (action.cooldown == 0f)
-      definitions.actions[accessory.value.value.type]!!.duration
+      definitions.actions[accessory.value.type]!!.duration
     else
       0f
 
@@ -80,7 +80,7 @@ fun mobilityMovementRangeLayer(definitions: Definitions, deck: Deck, actor: Id):
 
 fun entanglingMovementRangeLayer(definitions: Definitions, deck: Deck, actor: Id): SceneLayer? {
   val accessory = deck.accessories.entries
-      .firstOrNull { it.value.owner == actor && it.value.value.type == AccessoryIdOld.entangling }
+      .firstOrNull { it.value.owner == actor && it.value.type == AccessoryIdOld.entangling }
 
   return if (accessory == null)
     null

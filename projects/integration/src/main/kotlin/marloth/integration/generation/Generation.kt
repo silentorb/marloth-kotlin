@@ -89,11 +89,11 @@ fun newGenerationConfig(gameApp: GameApp,
                         seed: Long = newGenerationSeed()): GenerationConfig =
     newGenerationConfig(gameApp.definitions, getMeshShapes(gameApp.client.renderer), graphLibrary, seed)
 
-fun generateWorldGraphAndDeck(nextId: IdSource, generationConfig: GenerationConfig): Pair<Graph, Deck> {
+fun generateWorldGraphAndDeck(nextId: IdSource, generationConfig: GenerationConfig,
+                              dice: Dice = Dice(generationConfig.seed)): Pair<Graph, Deck> {
   val definitions = generationConfig.definitions
   val seed = generationConfig.seed
   println("Generation seed $seed")
-  val dice = Dice(seed)
   if (getDebugBoolean("LOG_SEED")) {
     println("Generation seed: ${dice.seed}")
   }

@@ -8,7 +8,7 @@ import silentorb.mythic.performing.Performance
 import silentorb.mythic.performing.performancesFromEvents
 import silentorb.mythic.timing.FloatTimer
 import simulation.abilities.newEntangleEntities
-import simulation.accessorize.AccessoryStack
+import simulation.accessorize.Accessory
 import simulation.characters.newPlayerCharacters
 import simulation.combat.newDamageVisualEffects
 import simulation.entities.pruningEventsToIdHands
@@ -55,11 +55,11 @@ inline fun <reified T> applyHands(hands: List<SimpleHand>): Table<T> =
     }
         .associate { it }
 
-fun incorporateNewAccessories(definitions: Definitions, previous: Table<AccessoryStack>, additions: Table<AccessoryStack>): Table<AccessoryStack> {
+fun incorporateNewAccessories(definitions: Definitions, previous: Table<Accessory>, additions: Table<Accessory>): Table<Accessory> {
   val filteredAdditions = additions.filter { (id, accessory) ->
-    val definition = definitions.accessories[accessory.value.type]
+    val definition = definitions.accessories[accessory.type]
     !(!(definition?.many ?: true) && previous.any {
-      it.value.owner == accessory.owner && it.value.value.type == accessory.value.type
+      it.value.owner == accessory.owner && it.value.type == accessory.type
     })
   }
   return previous + filteredAdditions

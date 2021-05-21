@@ -15,7 +15,7 @@ import silentorb.mythic.scenery.Light
 import silentorb.mythic.timing.FloatCycle
 import silentorb.mythic.timing.FloatTimer
 import silentorb.mythic.timing.IntTimer
-import simulation.accessorize.AccessoryStack
+import simulation.accessorize.Accessory
 import simulation.accessorize.ItemPickup
 import simulation.accessorize.getAccessories
 import simulation.characters.Character
@@ -35,7 +35,7 @@ import simulation.updating.incorporateNewAccessories
 // Deck is basically a database full of tables
 
 data class Deck(
-    val accessories: Table<AccessoryStack> = mapOf(),
+    val accessories: Table<Accessory> = mapOf(),
     val actions: Table<Action> = mapOf(),
     val ambientSounds: Table<AmbientAudioEmitter> = mapOf(),
     val animations: Table<CharacterAnimation> = mapOf(),

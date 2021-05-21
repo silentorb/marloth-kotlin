@@ -26,7 +26,7 @@ fun getWeaponAttackMethod(world: World, character: Id): AttackMethod? {
   val action = getEquippedAction(world.definitions, deck, EquipmentSlot.attack, character)
   val accessory = deck.accessories[action]!!
   return if (action != null) {
-    val weapon = world.definitions.weapons[accessory.value.type]
+    val weapon = world.definitions.weapons[accessory.type]
     weapon?.attackMethod
   } else
     null

@@ -10,11 +10,11 @@ import simulation.characters.EquipmentSlot
 import simulation.main.Deck
 import simulation.misc.Definitions
 
-fun getUtilityItems(actions: Map<AccessoryName, ActionDefinition>, accessories: Table<AccessoryStack>, actor: Id): List<Id> =
+fun getUtilityItems(actions: Map<AccessoryName, ActionDefinition>, accessories: Table<Accessory>, actor: Id): List<Id> =
     accessories
-        .filterValues { it.owner == actor && actions[it.value.type]?.equipmentSlot == EquipmentSlot.utility }
+        .filterValues { it.owner == actor && actions[it.type]?.equipmentSlot == EquipmentSlot.utility }
         .entries
-        .sortedBy { it.value.value.type }
+        .sortedBy { it.value.type }
         .map { it.key }
 
 fun updateUtilityItem(definitions: Definitions, deck: Deck, commands: Commands, actor: Id, character: Character): Id? {

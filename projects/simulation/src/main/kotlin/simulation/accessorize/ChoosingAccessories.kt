@@ -16,7 +16,7 @@ fun newAccessoryChoice(definitions: Definitions, dice: Dice, deck: Deck, actor: 
   val available = definitions.selectableAccessories
       .filter { accessory ->
         val definition = definitions.accessories[accessory]!!
-        val currentLevel = currentAccessories.values.firstOrNull { it.value.type == accessory }?.value?.level ?: 0
+        val currentLevel = currentAccessories.values.firstOrNull { it.type == accessory }?.level ?: 0
         definition.maxLevel > currentLevel
       }
 

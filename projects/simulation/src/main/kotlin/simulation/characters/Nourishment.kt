@@ -18,7 +18,7 @@ fun getNourishmentEventsAdjustment(definitions: Definitions, deck: Deck, actor: 
         .filterIsInstance<UseAction>()
         .filter { it.actor == actor }
         .sumBy { event ->
-          val components = definitions.accessories[deck.accessories[event.action]?.value?.type]?.components ?: listOf()
+          val components = definitions.accessories[deck.accessories[event.action]?.type]?.components ?: listOf()
           components
               .filterIsInstance<Nutrient>()
               .sumBy { it.value }

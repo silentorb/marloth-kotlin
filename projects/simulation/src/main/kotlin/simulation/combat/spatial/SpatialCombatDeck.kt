@@ -6,11 +6,11 @@ import silentorb.mythic.ent.Table
 import silentorb.mythic.performing.Action
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
-import simulation.accessorize.AccessoryStack
+import simulation.accessorize.Accessory
 import simulation.combat.general.Destructible
 
 data class SpatialCombatDeck(
-    val accessories: Table<AccessoryStack>,
+    val accessories: Table<Accessory>,
     val actions: Table<Action>,
     val bodies: Table<Body>,
     val characterRigs: Table<CharacterRig>,

@@ -242,7 +242,7 @@ fun insertNode(nodeDefinitions: NodeDefinitionMap, name: String): CommonTransfor
         val inputDefinition = getDefinition(nodeDefinitions)(graph, inputNode)
         val outputDefinition = nodeDefinitions[name]!!
         val input = outputDefinition.inputs.entries
-            .firstOrNull { it.value.type == inputDefinition.outputType }?.key
+            .firstOrNull { it.type == inputDefinition.outputType }?.key
         if (input != null)
           pipe(
               newConnection(existingConnection.input, middleNode, input),

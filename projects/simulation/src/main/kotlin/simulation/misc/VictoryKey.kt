@@ -15,7 +15,6 @@ import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 import silentorb.mythic.spatial.Vector4
 import simulation.accessorize.Accessory
-import simulation.accessorize.AccessoryStack
 import simulation.accessorize.ItemPickup
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
@@ -25,17 +24,15 @@ import simulation.main.Hand
 import simulation.main.IdHand
 import simulation.physics.CollisionGroups
 
-fun getAllVictoryKeys(accessories: Table<AccessoryStack>): Table<AccessoryStack> =
+fun getAllVictoryKeys(accessories: Table<Accessory>): Table<Accessory> =
     accessories
-        .filterValues { it.value.type == AccessoryIdOld.victoryKey }
+        .filterValues { it.type == AccessoryIdOld.victoryKey }
 
 // Needs body
 fun newVictoryKey(owner: Id = 0) =
     Hand(
-        accessory = AccessoryStack(
-            value = Accessory(
-                type = AccessoryIdOld.victoryKey,
-            ),
+        accessory = Accessory(
+            type = AccessoryIdOld.victoryKey,
             owner = owner
         ),
         spinner = Spinner(Pi)
