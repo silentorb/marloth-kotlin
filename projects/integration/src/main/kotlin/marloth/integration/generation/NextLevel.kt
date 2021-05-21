@@ -1,23 +1,40 @@
 package marloth.integration.generation
 
 import marloth.integration.front.GameApp
-import silentorb.mythic.ent.Graph
-import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.Table
-import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.newBulletStateWithGraph
 import silentorb.mythic.physics.releaseBulletState
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Matrix
-import silentorb.mythic.spatial.Quaternion
+import simulation.characters.Character
 import simulation.characters.upgradeCharacterEquipment
+import simulation.combat.general.Destructible
 import simulation.main.*
-import simulation.misc.Definitions
 import simulation.misc.getPlayerStart
 
 fun extractLongTermEntities(deck: Deck): Table<NewHand> =
-    deck.characters.keys.associateWith { character ->
-      copyEntity(deck, character)
+    deck.characters.mapValues { (id, previousCharacter) ->
+      val definition = previousCharacter.definition
+      val hand = copyEntity(deck, id)
+      if (deck.players.containsKey(id))
+        hand
+      else
+        hand
+            .modifyComponent<Destructible> { destructible ->
+              destructible.copy(
+                  health = definition.health,
+                  healthAccumulator = 0,
+                  lastDamageSource = 0L,
+              )
+            }
+            .modifyComponent<Character> { character ->
+              character.copy(
+                  energy = definition.health,
+                  energyAccumulator = 0,
+                  isAlive = true,
+                  isInfinitelyFalling = false,
+              )
+            }
     }
 
 // nextLevel ignores runtime editor changes

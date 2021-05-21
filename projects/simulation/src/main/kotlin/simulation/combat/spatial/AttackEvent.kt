@@ -28,7 +28,7 @@ fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
   val (origin, _) = getAttackerOriginAndFacing(world.deck, attacker, event.targetLocation, event.targetEntity, 0.5f)
   val attackEvents = when (weapon.attackMethod) {
     AttackMethod.raycast -> raycastAttack(world, attacker, weapon, event.targetLocation, event.targetEntity)
-    AttackMethod.missile -> missileAttack(world, attacker, weapon, event.targetLocation, event.targetEntity)
+    AttackMethod.missile, AttackMethod.lobbed -> missileAttack(world, attacker, weapon, event.targetLocation, event.targetEntity)
     AttackMethod.melee -> meleeAttack(world, attacker, weapon, event.targetLocation, event.accessory)
     else -> throw Error("Not implemented")
   }

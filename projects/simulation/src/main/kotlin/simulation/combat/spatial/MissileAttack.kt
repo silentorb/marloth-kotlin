@@ -12,6 +12,7 @@ import silentorb.mythic.scenery.Sphere
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.timing.FloatTimer
+import simulation.combat.general.AttackMethod
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
 import simulation.happenings.Trigger
@@ -29,7 +30,7 @@ fun missileAttack(world: SpatialCombatWorld, attacker: Id, weapon: WeaponDefinit
                   scale = Vector3(0.5f)
               ),
               DynamicBody(
-                  gravity = false,
+                  gravity = weapon.attackMethod == AttackMethod.lobbed,
                   mass = 1f,
                   resistance = 1f
               ),

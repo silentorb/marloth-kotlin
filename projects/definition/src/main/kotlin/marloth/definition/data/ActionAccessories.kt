@@ -57,7 +57,7 @@ fun apple() =
             isConsumable = true,
             components = listOf(
                 Nutrient(
-                    value = 20
+                    value = 30
                 )
             )
         ),
@@ -112,19 +112,23 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         ),
         action = ActionDefinition(
             cooldown = 3f,
-            range = 20f,
-            animation = AnimationId.shootPistol,
-            equipmentSlot = EquipmentSlot.attack
+            range = 15f,
+            equipmentSlot = EquipmentSlot.attack,
+            cost = ActionCost(
+                type = ResourceTypes.energy,
+                amount = 5
+            )
         ),
         weapon = WeaponDefinition(
-            attackMethod = AttackMethod.missile,
-            damageRadius = 1f,
+            attackMethod = AttackMethod.lobbed,
+            damageRadius = 3.5f,
             velocity = 20f,
-            damageFalloff = 1f,
+            damageFalloff = 0.8f,
+            missileMesh = MeshId.missile,
             damages = listOf(
                 DamageDefinition(
                     type = DamageTypes.physical,
-                    amount = 70
+                    amount = 80
                 )
             ),
             sound = SoundId.pistolFire

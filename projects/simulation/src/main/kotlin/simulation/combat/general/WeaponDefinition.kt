@@ -16,5 +16,6 @@ data class WeaponDefinition(
     val damageFalloff: Float = 0f,
     val sound: SoundType? = null,
     val impulse: Float = 0f,
-    val missileMesh: MeshName? = null
+    val missileMesh: MeshName? = null,
+    val yawOffset: Float = 0f,
 )

@@ -33,7 +33,7 @@ fun upgradeCharacterEquipment(definitions: Definitions, dice: Dice, definition: 
     definition.accessoryPool
   else
     previousAccessories.keys
-  
+
   val pool = basePool
       .filter { definitions.accessories[it]?.maxLevel ?: 1 > previousAccessories[it]?.first?.level ?: 1 }
 
