@@ -72,7 +72,6 @@ fun newEntities(definitions: Definitions, graph: Graph, step: Long, previous: De
       listOf(
           newAmbientSounds(previous, next),
           handsFromSounds(soundsFromEvents(events)),
-          newEntangleEntities(previous),
 //          newChosenAccessories(previous.accessories, events)
       )
           .flatMap { toIdHands(nextId, it) }
@@ -87,6 +86,7 @@ fun newEntities(definitions: Definitions, graph: Graph, step: Long, previous: De
   val newHands = newPlayerCharacters(nextId, definitions, graph, events) +
       newDamageVisualEffects(next, events) +
       newAccessories(events, definitions) +
+      newEntangleEntities(previous) +
       events.filterIsInstance<NewHand>()
 
   allHandsToDeck(definitions, nextId, newHands, lastDeck, step)

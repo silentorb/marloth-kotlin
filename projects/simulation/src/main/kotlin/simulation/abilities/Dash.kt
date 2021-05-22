@@ -24,7 +24,7 @@ fun dashEvents(definitions: Definitions, accessory: Accessory, actor: Id): Event
           components = listOf(
               Accessory(
                   type = AccessoryIdOld.dashing,
-                  level = accessory.level,
+                  level = definitions.accessories[accessory.type]!!.level,
                   owner = actor,
               ),
               FloatTimer(definition.duration),

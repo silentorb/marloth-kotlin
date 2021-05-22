@@ -22,7 +22,7 @@ fun entangledDuration(level: Int): Float =
       else -> 1f
     }
 
-fun entangleEvents(deck: Deck, accessory: Accessory): (Id) -> Events = { target ->
+fun entangleEvents(deck: Deck, level: Int): (Id) -> Events = { target ->
   val immunityDuration = 2.5f
 
   if (hasAnyAccessory(setOf(AccessoryIdOld.entangling, AccessoryIdOld.entangleImmune), deck.accessories, target))
@@ -33,7 +33,7 @@ fun entangleEvents(deck: Deck, accessory: Accessory): (Id) -> Events = { target 
             components = listOf(
                 Accessory(
                     type = AccessoryIdOld.entangling,
-                    level = accessory.level,
+                    level = level,
                     owner = target,
                 ),
                 FloatTimer(1f)
@@ -45,24 +45,26 @@ fun entangleEvents(deck: Deck, accessory: Accessory): (Id) -> Events = { target 
                     type = AccessoryIdOld.entangleImmune,
                     owner = target
                 ),
-                FloatTimer(entangledDuration(accessory.level) + immunityDuration),
+                FloatTimer(entangledDuration(level) + immunityDuration),
             )
         )
     )
 }
 
-fun newEntangleEntities(previous: Deck): List<Hand> =
+fun newEntangleEntities(previous: Deck): List<NewHand> =
     previous.accessories
         .filter { (key, accessory) ->
           accessory.type == AccessoryIdOld.entangling && previous.timersFloat[key]!!.duration <= 0f
         }
         .map { (_, accessory) ->
-          Hand(
-              accessory = Accessory(
-                  type = AccessoryIdOld.entangled,
-                  level = accessory.level,
-                  owner = accessory.owner,
-              ),
-              timerFloat = FloatTimer(entangledDuration(accessory.level))
+          NewHand(
+              components = listOf(
+                  Accessory(
+                      type = AccessoryIdOld.entangled,
+                      level = accessory.level,
+                      owner = accessory.owner,
+                  ),
+                  FloatTimer(entangledDuration(accessory.level))
+              )
           )
         }

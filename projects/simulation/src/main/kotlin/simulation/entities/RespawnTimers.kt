@@ -5,7 +5,6 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.timing.FloatTimer
-import simulation.abilities.graveDiggerDurationModifer
 import simulation.combat.general.RestoreHealth
 import simulation.happenings.ReturnHome
 import simulation.main.Deck
@@ -47,7 +46,7 @@ fun newRespawnCountdowns(nextId: IdSource, previous: Deck, next: Deck): List<IdH
       3f
     else {
       // Use id as a cheap source of random entropy
-      15f + (id % 10).toFloat() + graveDiggerDurationModifer(previous, actor)
+      15f + (id % 10).toFloat()
     }
     newRespawnCountdown(id, duration, actor)
   }

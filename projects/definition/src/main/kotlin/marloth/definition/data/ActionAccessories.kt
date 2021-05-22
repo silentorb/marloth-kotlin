@@ -1,5 +1,6 @@
 package marloth.definition.data
 
+import marloth.definition.misc.multiLevelActionAccessory
 import marloth.scenery.enums.*
 import silentorb.mythic.performing.ActionCost
 import simulation.accessorize.AccessoryDefinition
@@ -19,7 +20,9 @@ data class ActionAccessory(
     val weapon: WeaponDefinition? = null
 )
 
-fun rocketLauncher() =
+typealias ActionAccessoryMap = Map<AccessoryName, ActionAccessory>
+
+fun rocketLauncher(level: Int = 1) =
     ActionAccessory(
         accessory = AccessoryDefinition(
             name = TextId.id_rocketLauncher,
@@ -31,7 +34,7 @@ fun rocketLauncher() =
             equipmentSlot = EquipmentSlot.attack,
             cost = ActionCost(
                 type = ResourceTypes.energy,
-                amount = 5
+                amount = 4 + level
             )
         ),
         weapon = WeaponDefinition(
@@ -43,7 +46,7 @@ fun rocketLauncher() =
             damages = listOf(
                 DamageDefinition(
                     type = DamageTypes.physical,
-                    amount = 70
+                    amount = 40 + 30 * level
                 )
             ),
             sound = SoundId.pistolFire
@@ -66,8 +69,8 @@ fun apple() =
         ),
     )
 
-fun spiritRocketLauncher(): ActionAccessory {
-  val accessory = rocketLauncher()
+fun spiritRocketLauncher(level: Int): ActionAccessory {
+  val accessory = rocketLauncher(level)
   return accessory.copy(
       action = accessory.action.copy(
           cooldown = 2.4f,
@@ -76,34 +79,55 @@ fun spiritRocketLauncher(): ActionAccessory {
   )
 }
 
-fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
-
-    AccessoryIdOld.dash to ActionAccessory(
+fun claws(level: Int) =
+    ActionAccessory(
         accessory = AccessoryDefinition(
-            name = TextId.id_dash,
-            maxLevel = 3
+            name = TextId.unnamed,
+            equippedMesh = null
         ),
         action = ActionDefinition(
-            type = Actions.dash,
-            cooldown = 4f,
-            duration = 1.3f,
-            equipmentSlot = EquipmentSlot.mobility
+            cooldown = 1f,
+            range = 3.5f,
+            animation = AnimationId.clawAttack,
+            equipmentSlot = EquipmentSlot.attack
+        ),
+        weapon = WeaponDefinition(
+            attackMethod = AttackMethod.melee,
+            damages = listOf(
+                DamageDefinition(
+                    type = DamageTypes.physical,
+                    amount = 50 + 30 * level
+                )
+            ),
+            sound = SoundId.pistolFire
         )
-    ),
+    )
 
-    AccessoryIdOld.entangle to ActionAccessory(
+fun pistol(level: Int) =
+    ActionAccessory(
         accessory = AccessoryDefinition(
-            name = TextId.id_entangle,
-            maxLevel = 3
+            name = TextId.id_pistol,
+            equippedMesh = MeshId.pistol
         ),
         action = ActionDefinition(
-            type = Actions.entangle,
-            cooldown = 4f,
-            range = 20f,
-            animation = AnimationId.cast,
-            equipmentSlot = EquipmentSlot.utility
+            cooldown = 2f,
+            range = 10f,
+            animation = AnimationId.shootPistol,
+            equipmentSlot = EquipmentSlot.attack
+        ),
+        weapon = WeaponDefinition(
+            attackMethod = AttackMethod.raycast,
+            damages = listOf(
+                DamageDefinition(
+                    type = DamageTypes.physical,
+                    amount = 40 + 30 * level
+                )
+            ),
+            sound = SoundId.pistolFire
         )
-    ),
+    )
+
+fun actionAccessories(): ActionAccessoryMap = mapOf(
 
     AccessoryIdOld.grenadeLauncher to ActionAccessory(
         accessory = AccessoryDefinition(
@@ -146,55 +170,8 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         )
     ),
 
-    AccessoryIdOld.pistol to ActionAccessory(
-        accessory = AccessoryDefinition(
-            name = TextId.id_pistol,
-            equippedMesh = MeshId.pistol
-        ),
-        action = ActionDefinition(
-            cooldown = 2f,
-            range = 10f,
-            animation = AnimationId.shootPistol,
-            equipmentSlot = EquipmentSlot.attack
-        ),
-        weapon = WeaponDefinition(
-            attackMethod = AttackMethod.raycast,
-            damages = listOf(
-                DamageDefinition(
-                    type = DamageTypes.physical,
-                    amount = 70
-                )
-            ),
-            sound = SoundId.pistolFire
-        )
-    ),
-
     AccessoryIdOld.rocketLauncher to rocketLauncher(),
-    AccessoryIdOld.spiritRocketLauncher to spiritRocketLauncher(),
     Accessories.apple to apple(),
-
-    AccessoryIdOld.claws to ActionAccessory(
-        accessory = AccessoryDefinition(
-            name = TextId.unnamed,
-            equippedMesh = null
-        ),
-        action = ActionDefinition(
-            cooldown = 1f,
-            range = 3.5f,
-            animation = AnimationId.clawAttack,
-            equipmentSlot = EquipmentSlot.attack
-        ),
-        weapon = WeaponDefinition(
-            attackMethod = AttackMethod.melee,
-            damages = listOf(
-                DamageDefinition(
-                    type = DamageTypes.physical,
-                    amount = 80
-                )
-            ),
-            sound = SoundId.pistolFire
-        )
-    ),
 
     Accessories.shadowSpirit to ActionAccessory(
         accessory = AccessoryDefinition(
@@ -247,4 +224,34 @@ fun actionAccessories(): Map<AccessoryName, ActionAccessory> = mapOf(
         )
     ),
 
-    )
+    ) +
+    multiLevelActionAccessory(AccessoryIdOld.spiritRocketLauncher, 3, ::spiritRocketLauncher) +
+    multiLevelActionAccessory(AccessoryIdOld.pistol, 3, ::pistol) +
+    multiLevelActionAccessory(AccessoryIdOld.claws, 3, ::claws) +
+    multiLevelActionAccessory(AccessoryIdOld.entangle, 3) {
+      ActionAccessory(
+          accessory = AccessoryDefinition(
+              name = TextId.id_entangle,
+          ),
+          action = ActionDefinition(
+              type = Actions.entangle,
+              cooldown = 4f,
+              range = 20f,
+              animation = AnimationId.cast,
+              equipmentSlot = EquipmentSlot.utility
+          )
+      )
+    } +
+    multiLevelActionAccessory(AccessoryIdOld.dash, 3) {
+      ActionAccessory(
+          accessory = AccessoryDefinition(
+              name = TextId.id_dash,
+          ),
+          action = ActionDefinition(
+              type = Actions.dash,
+              cooldown = 4f,
+              duration = 1.3f,
+              equipmentSlot = EquipmentSlot.mobility
+          )
+      )
+    }

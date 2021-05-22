@@ -13,8 +13,8 @@ import kotlin.math.min
 
 data class Accessory(
     val type: AccessoryName,
-    val source: Id = 0,
     val level: Int = 1,
+    val source: Id = 0,
     val owner: Id? = null,
     val quantity: Int = 1,
 )
@@ -29,14 +29,15 @@ data class AccessoryDefinition(
     val name: Text,
     val description: Text = TextId.unnamed,
     val children: List<ChildAccessory> = listOf(),
-    //This mesh field is a stopgap until attaching any depiction to an articulation is supported
-    val equippedMesh: MeshName? = null,
+    val equippedMesh: MeshName? = null, // A stopgap until attaching any depiction to an articulation is supported
     val debugName: String? = null,
     val isConsumable: Boolean = false,
     val maxLevel: Int = 1,
     val quantity: Int = 1,
     val components: List<Any> = listOf(),
-    val many: Boolean = true // Whether a character can have multiple instances of this accessory at once
+    val many: Boolean = true, // Whether a character can have multiple instances of this accessory at once
+    val upgrades: Set<AccessoryName> = setOf(),
+    val level: Int = 1,
 )
 
 fun hasAccessory(type: AccessoryName, accessories: Table<Accessory>, actor: Id): Boolean =

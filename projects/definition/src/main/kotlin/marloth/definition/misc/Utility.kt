@@ -1,5 +1,7 @@
 package marloth.definition.misc
 
+import marloth.definition.data.ActionAccessory
+import marloth.definition.data.ActionAccessoryMap
 import marloth.scenery.enums.DamageTypes
 import marloth.scenery.enums.ModifierDirection
 import marloth.scenery.enums.Text
@@ -29,3 +31,25 @@ fun loadMarlothGraphLibrary(propertiesSerialization: PropertiesSerialization) =
 fun loadMarlothDefinitions(propertiesSerialization: PropertiesSerialization): GraphStores =
     loadGraphLibrary(propertiesSerialization, "world/src/entities")
         .mapValues { SimpleGraphStore((it.value as AnyGraph).toSet()) }
+
+fun multiLevelActionAccessory(baseName: String, levels: Int, generator: (Int) -> ActionAccessory): ActionAccessoryMap =
+    (1..levels)
+        .associate { level ->
+          val name = if (level < 2)
+            baseName
+          else
+            "$baseName$level"
+
+          val bundle = generator(level)
+          val bundleWithAnyUpgrades = if (level < levels)
+            bundle.copy(
+                accessory = bundle.accessory.copy(
+                    upgrades = setOf("$baseName${level + 1}"),
+                    level = level,
+                )
+            )
+          else
+            bundle
+
+          name to bundleWithAnyUpgrades
+        }

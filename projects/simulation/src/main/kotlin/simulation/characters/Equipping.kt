@@ -16,7 +16,7 @@ fun equipCharacter(definitions: Definitions, dice: Dice, definition: CharacterDe
   )
 }
 
-fun upgradeCharacterEquipment(definitions: Definitions, dice: Dice, definition: CharacterDefinition, hand: NewHand): NewHand {
+fun upgradeCharacterEquipment(definitions: Definitions, dice: Dice, characterDefinition: CharacterDefinition, hand: NewHand): NewHand {
   assert(hand.id != null)
   val previousAccessories = hand.children
       .mapNotNull { accessoryHand ->
@@ -30,40 +30,29 @@ fun upgradeCharacterEquipment(definitions: Definitions, dice: Dice, definition: 
 
   val maxAccessoryTypes = 3
   val basePool = if (previousAccessories.size < maxAccessoryTypes)
-    definition.accessoryPool
+    characterDefinition.accessoryPool
   else
     previousAccessories.keys
 
   val pool = basePool
-      .filter { definitions.accessories[it]?.maxLevel ?: 1 > previousAccessories[it]?.first?.level ?: 1 }
+      .flatMap {
+        val definition = definitions.accessories[it]!!
+        definition.upgrades
+      }
 
   val accessory = dice.takeOneOrNull(pool)
   return if (accessory != null) {
     val previous = previousAccessories[accessory]
-    if (previous != null)
-      hand.copy(
-          children = hand.children.map { childHand ->
-            if (childHand.id == previous.second.id)
-              childHand.copy(
-                  components = childHand.components.map { component ->
-                    if (component is Accessory)
-                      component.copy(
-                          level = component.level + 1
-                      )
-                    else
-                      component
-                  }
-              )
-            else
-              childHand
-          }
-      )
+    val withoutPrevious = if (previous != null && previous.second.id != null)
+      hand.children.filter { it.id != previous.second.id }
     else
-      hand.copy(
-          children = hand.children + listOfNotNull(
-              newAccessory(definitions, accessory, hand.id!!)
-          )
-      )
+      hand.children
+
+    hand.copy(
+        children = withoutPrevious + listOfNotNull(
+            newAccessory(definitions, accessory, hand.id!!)
+        )
+    )
   } else
     hand
 }
