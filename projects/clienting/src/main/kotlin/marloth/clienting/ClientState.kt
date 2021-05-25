@@ -22,9 +22,10 @@ const val canvasRendererKey = "renderer"
 
 typealias PlayerViews = Map<Id, ViewId?>
 
-fun initialEditor(textLibrary: TextResourceMapper, meshShapes: MeshShapeMap): Editor? =
+fun initialEditor(textLibrary: TextResourceMapper, meshes: Collection<String>,
+                  meshShapes: MeshShapeMap, textures: Collection<String>): Editor? =
     if (getDebugBoolean("START_EDITOR"))
-      newEditor(textLibrary, meshShapes)
+      newEditor(textLibrary, meshes, meshShapes, textures)
     else
       null
 
@@ -50,7 +51,9 @@ fun newClientState(
     inputConfig: GameInputConfig,
     audioConfig: AudioConfig,
     displayModes: List<DisplayMode>,
+    meshes: Collection<String>,
     meshShapes: MeshShapeMap,
+    textures: Collection<String>
 ) =
     ClientState(
         input = newInputState(platform.input, inputConfig),
@@ -60,5 +63,5 @@ fun newClientState(
         players = listOf(),
         events = listOf(),
         displayModes = displayModes,
-        editor = initialEditor(textLibrary, meshShapes)
+        editor = initialEditor(textLibrary, meshes, meshShapes, textures)
     )

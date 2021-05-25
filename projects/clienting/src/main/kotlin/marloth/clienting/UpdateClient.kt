@@ -57,7 +57,7 @@ fun updateMousePointerVisibility(platform: Platform, clientState: ClientState) {
   }
 }
 
-fun toggleDebugBooleanByNumber(number: Int){
+fun toggleDebugBooleanByNumber(number: Int) {
   val key = getDebugString("TOGGLE_KEY_TARGET$number")
   if (key != null) {
     toggleDebugBoolean(key)
@@ -192,7 +192,8 @@ fun updateClient(
   val windowInfo = client.getWindowInfo()
   val (nextEditor, editorEvents1) = if (clientState.isEditorActive) {
     ensureImGuiIsInitialized(editorFonts, windowInfo.id)
-    val editor = previousEditor ?: newEditor(textLibrary, getMeshShapes(client.renderer))
+    val editor = previousEditor ?: newEditor(textLibrary, client.renderer.meshes.keys,
+        getMeshShapes(client.renderer), getClientTextures(client))
     val editorCommands = prepareEditorUpdate(deviceStates, editor)
     val editorEvents = getEditorEvents(editor)(editorCommands, listOf())
     val editorWithWorld = updateEditorSyncing(worlds.lastOrNull(), editor)

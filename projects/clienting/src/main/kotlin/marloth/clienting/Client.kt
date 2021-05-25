@@ -50,3 +50,6 @@ data class Client(
     platform.audio.stop()
   }
 }
+
+fun getClientTextures(client: Client): Set<String> =
+    client.renderer.textures.keys + client.textureLoadingState.remaining.map { it.name }.toSet()

@@ -1,0 +1,15 @@
+{
+"graph" : [
+["bounds","parent","vine-shrubbery"],
+["bounds","type","solid-box"],
+["bounds","scale",[2.0,0.05,1.0]],
+["bounds","translation",[0.0,0.0,0.5]],
+["vine-shrubbery","",""],
+["visual","",""],
+["visual","mesh","squareFace"],
+["visual","texture","vineShrubbery"],
+["visual","scale",[2.0,1.0,1.0]],
+["visual","translation",[0.0,0.0,0.5]],
+["visual","parent","vine-shrubbery"]
+]
+}

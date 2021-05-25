@@ -133,7 +133,7 @@ fun marlothGraphEditors(): GraphEditors = mapOf(
     }
 )
 
-fun newEditor(textLibrary: TextResourceMapper, meshShapes: MeshShapeMap): Editor {
+fun newEditor(textLibrary: TextResourceMapper, meshes: Collection<String>, meshShapes: MeshShapeMap, textures: Collection<String>): Editor {
   val debugProjectPath = getDebugString("EDITOR_PROJECT_PATH")
   val projectPath = if (debugProjectPath != null)
     Path.of(debugProjectPath)
@@ -146,9 +146,9 @@ fun newEditor(textLibrary: TextResourceMapper, meshShapes: MeshShapeMap): Editor
           propertyDefinitions = marlothEditorProperties,
           propertiesSerialization = marlothPropertiesSerialization,
           schema = marlothEditorPropertySchema(),
-          textures = textures() + reflectProperties(PlaceholderTextures),
+          textures = textures.toList() + reflectProperties(PlaceholderTextures),
           attributes = getMarlothEditorAttributes(),
-          meshes = reflectProperties(MeshId),
+          meshes = meshes.toList().sorted(),
           meshShapes = meshShapes,
           collisionPresets = marlothCollisionPresets(),
           expanders = marlothExpanders(),
