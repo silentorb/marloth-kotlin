@@ -7,7 +7,6 @@ import marloth.clienting.editing.staticDebugBlockGrid
 import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.integration.front.GameApp
 import marloth.integration.misc.persistenceTable
-import marloth.scenery.enums.MeshShapeMap
 import persistence.Database
 import persistence.queryEntries
 import silentorb.mythic.debugging.getDebugBoolean
@@ -15,7 +14,7 @@ import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.removeNodesAndChildren
-import silentorb.mythic.lookinglass.getMeshShapes
+import silentorb.mythic.lookinglass.ResourceInfo
 import silentorb.mythic.physics.newBulletStateWithGraph
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
@@ -62,7 +61,7 @@ fun newWorld(db: Database, generationConfig: GenerationConfig, nextId: IdSource,
         dice = Dice(),
         navigation = initializeNavigation(generationConfig, graph),
         staticGraph = graph,
-        bulletState = newBulletStateWithGraph(graph, generationConfig.meshShapes),
+        bulletState = newBulletStateWithGraph(graph, generationConfig.resourceInfo.meshShapes),
         definitions = generationConfig.definitions,
         persistence = queryEntries(db, persistenceTable).toSet(),
         step = 0L,
@@ -71,14 +70,14 @@ fun newWorld(db: Database, generationConfig: GenerationConfig, nextId: IdSource,
 fun newGenerationSeed(): Long =
     getDebugString("GENERATION_SEED")?.toLong() ?: System.currentTimeMillis()
 
-fun newGenerationConfig(definitions: Definitions, meshInfo: MeshShapeMap,
+fun newGenerationConfig(definitions: Definitions, resourceInfo: ResourceInfo,
                         graphLibrary: GraphLibrary,
                         seed: Long = newGenerationSeed()): GenerationConfig =
     GenerationConfig(
         seed = seed,
         definitions = definitions,
-        meshes = compileArchitectureMeshInfo(meshInfo),
-        meshShapes = meshInfo,
+        meshes = compileArchitectureMeshInfo(resourceInfo.meshShapes),
+        resourceInfo = resourceInfo,
         includeEnemies = getDebugString("MONSTER_LIMIT") != "0",
         cellCount = getDebugInt("BASE_ROOM_COUNT") ?: 100,
         graphLibrary = loadMarlothGraphLibrary(marlothPropertiesSerialization) + graphLibrary,
@@ -87,7 +86,7 @@ fun newGenerationConfig(definitions: Definitions, meshInfo: MeshShapeMap,
 fun newGenerationConfig(gameApp: GameApp,
                         graphLibrary: GraphLibrary = mapOf(),
                         seed: Long = newGenerationSeed()): GenerationConfig =
-    newGenerationConfig(gameApp.definitions, getMeshShapes(gameApp.client.renderer), graphLibrary, seed)
+    newGenerationConfig(gameApp.definitions, gameApp.client.resourceInfo, graphLibrary, seed)
 
 fun generateWorldGraphAndDeck(nextId: IdSource, generationConfig: GenerationConfig,
                               dice: Dice = Dice(generationConfig.seed)): Pair<Graph, Deck> {

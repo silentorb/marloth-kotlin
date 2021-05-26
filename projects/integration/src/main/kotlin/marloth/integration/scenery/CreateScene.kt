@@ -6,6 +6,7 @@ import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Id
+import silentorb.mythic.lookinglass.ResourceInfo
 import silentorb.mythic.ent.scenery.getGraphRoots
 import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.ent.singleValueCache
@@ -15,10 +16,10 @@ import silentorb.mythic.spatial.Vector4
 import simulation.main.Deck
 import simulation.main.World
 
-val graphElementCache = singleValueCache<Graph, ElementGroups> { graph ->
+val graphElementCache = singleValueCache<Pair<ResourceInfo, Graph>, ElementGroups> { (resourceInfo, graph) ->
   val roots = getGraphRoots(graph)
   if (roots.any())
-    nodesToElements(mapOf(), graph)
+    nodesToElements(resourceInfo, graph)
   else
     listOf()
 }
@@ -40,7 +41,7 @@ fun gatherLightsFromLayers(layers: List<SceneLayer>): List<Light> =
               gatherLightsFromLayers(layer.children)
         }
 
-fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
+fun createScene(resourceInfo: ResourceInfo, world: World): (Id) -> Scene = { player ->
   val deck = world.deck
   val definitions = world.definitions
   val graph = world.staticGraph
@@ -94,11 +95,11 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
       null
 
     val mainElements = gatherVisualElements(definitions, deck, rigPlayer, characterRig) +
-        graphElementCache(graph)
+        graphElementCache(resourceInfo to graph)
 //       + gridElementCache(world.realm.deck)
 
-    val (particleGroups, solidGroups) = mainElements
-        .partition { group -> group.billboards.any() }
+    val (transparentGroups, solidGroups) = mainElements
+        .partition(::groupContainsTransparency)
 
     val layers = listOf(
         SceneLayer(
@@ -106,7 +107,7 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
             shadingMode = ShadingMode.deferred,
             children = listOfNotNull(
                 SceneLayer(
-                    elements = depthSort(camera, cullElementGroups(meshes, camera, solidGroups)),
+                    elements = depthSort(camera, cullElementGroups(resourceInfo.meshShapes, camera, solidGroups)),
                 ),
 //                equipmentLayer,
             )
@@ -117,14 +118,19 @@ fun createScene(meshes: ModelMeshMap, world: World): (Id) -> Scene = { player ->
 //            shadingMode = ShadingMode.none,
 //        ),
         SceneLayer(
-            elements = particleGroups.sortedByDescending { it.billboards.first().position.distance(camera.position) },
+            elements = transparentGroups.sortedByDescending {
+              val location = it.meshes.firstOrNull()?.transform?.translation() ?: it.billboards.first().position
+              location.distance(camera.position)
+            },
             depth = DepthMode.global,
             shadingMode = ShadingMode.forward,
+            blending = LayerBlending.premultiplied,
         ),
         SceneLayer(
             elements = gatherParticleElements(deck, camera.position),
             depth = DepthMode.none,
             shadingMode = ShadingMode.forward,
+            blending = LayerBlending.premultiplied,
         ),
     ) + listOfNotNull(selectedLayer, movementRangeLayer, equipmentLayer)
     // + listOfNotNull(movementRangeLayer, equipmentLayer, targetingLayer)

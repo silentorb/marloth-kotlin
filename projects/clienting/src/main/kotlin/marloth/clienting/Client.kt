@@ -1,5 +1,6 @@
 package marloth.clienting
 
+import marloth.clienting.editing.PlaceholderTextures
 import marloth.clienting.gui.DeviceMode
 import marloth.clienting.gui.GuiState
 import marloth.clienting.gui.TextResources
@@ -7,12 +8,15 @@ import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.baseFonts
 import marloth.definition.texts.englishTextResources
+import marloth.scenery.enums.textures
 import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.bloom.old.newBloomState
 import silentorb.mythic.editing.closeImGui
 import silentorb.mythic.ent.Id
-import silentorb.mythic.lookinglass.Renderer
-import silentorb.mythic.lookinglass.logGpuProfiling
+import silentorb.mythic.ent.reflectProperties
+import silentorb.mythic.glowing.TextureAttributes
+import silentorb.mythic.lookinglass.*
+import silentorb.mythic.lookinglass.texturing.DeferredTexture
 import silentorb.mythic.lookinglass.texturing.TextureLoadingState
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.typography.loadFontSets
@@ -39,7 +43,8 @@ data class Client(
     val soundLibrary: SoundLibrary,
     val textureLoadingState: TextureLoadingState,
     val textResources: TextResources = englishTextResources,
-    val customBloomResources: Map<String, Any>
+    val customBloomResources: Map<String, Any>,
+    val resourceInfo: ResourceInfo,
 ) {
   fun getWindowInfo() = platform.display.getInfo()
 
@@ -51,5 +56,5 @@ data class Client(
   }
 }
 
-fun getClientTextures(client: Client): Set<String> =
-    client.renderer.textures.keys + client.textureLoadingState.remaining.map { it.name }.toSet()
+fun getClientTextures(renderer: Renderer, deferredTextures: List<DeferredTexture>): Map<String, TextureAttributes> =
+    renderer.textures.mapValues { it.value.attributes } + deferredTextures.associate { it.name to it.attributes }

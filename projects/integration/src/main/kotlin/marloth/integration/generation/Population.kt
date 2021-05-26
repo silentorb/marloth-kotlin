@@ -122,7 +122,7 @@ fun populateDistributions(nextId: IdSource, config: GenerationConfig, dice: Dice
   val itemSlots = selectSlots(dice, remainingSlots, cellCount / 15)
   val itemDefinition = expandInstances(config.graphLibrary, graphLibrary["apple"]!!)
   val itemHands = itemSlots.flatMap { (_, slot) ->
-    graphToHands(config.meshShapes, nextId, itemDefinition, slot.transform)
+    graphToHands(config.resourceInfo.meshShapes, nextId, itemDefinition, slot.transform)
   }
   return monsterHands + itemHands
 }
@@ -139,7 +139,7 @@ fun addNewPlayerCharacters(nextId: IdSource, config: GenerationConfig, graph: Gr
 }
 
 fun populateWorld(nextId: IdSource, config: GenerationConfig, dice: Dice, graph: Graph): List<NewHand> {
-  val elementGroups = nodesToElements(config.meshShapes, graph)
+  val elementGroups = nodesToElements(config.resourceInfo, graph)
   val lights = elementGroups.flatMap { it.lights }
   val slots = gatherSlots(graph)
   val hands = cycleHands(nextId)

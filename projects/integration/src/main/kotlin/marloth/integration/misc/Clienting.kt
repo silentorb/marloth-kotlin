@@ -4,12 +4,14 @@ import marloth.clienting.Client
 import marloth.clienting.audio.loadSounds
 import marloth.clienting.canvasRendererKey
 import marloth.clienting.gatherFontSets
+import marloth.clienting.getClientTextures
 import marloth.clienting.gui.hud.cooldownMeshKey
 import marloth.clienting.gui.hud.createCooldownCircleMesh
 import marloth.clienting.rendering.createMeshes
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.drawing.setGlobalFonts
 import silentorb.mythic.glowing.Glow
+import silentorb.mythic.glowing.TextureFormat
 import silentorb.mythic.glowing.prepareScreenFrameBuffer
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.meshes.VertexSchemas
@@ -30,14 +32,12 @@ fun gatherTextures(loadImage: ImageLoader, attributes: TextureAttributeMapper): 
 
 fun gatherTextures(display: PlatformDisplay, displayOptions: DisplayOptions): List<DeferredTexture> {
   val defaultAttributes = textureAttributesFromConfig(displayOptions)
-  val backgroundAttributes = defaultAttributes.copy(
-      mipmap = false
+  val transparentImageAttributes = defaultAttributes.copy(
+      format = TextureFormat.rgba,
   )
-  val backgroundIds = BackgroundTextureId.values().map { it.name }
   return gatherTextures(display.loadImage) { path ->
-    val name = getFileShortName(path)
-    if (backgroundIds.contains(name))
-      backgroundAttributes
+    if (path.toString().contains(".png") && display.loadImageInfo(path.toString()).channels > 3)
+      transparentImageAttributes
     else
       defaultAttributes
   }
@@ -94,6 +94,10 @@ fun newClient(platform: Platform, displayOptions: DisplayOptions): Client {
       customBloomResources = mapOf(
           cooldownMeshKey to createCooldownCircleMesh(),
           canvasRendererKey to renderer
+      ),
+      resourceInfo = ResourceInfo(
+          meshShapes = getMeshShapes(renderer),
+          textures = getClientTextures(renderer, textures),
       )
   )
 }

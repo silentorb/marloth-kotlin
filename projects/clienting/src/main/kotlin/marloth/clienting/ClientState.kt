@@ -15,6 +15,7 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.editing.Editor
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
+import silentorb.mythic.lookinglass.ResourceInfo
 import silentorb.mythic.platforming.DisplayMode
 import silentorb.mythic.platforming.Platform
 
@@ -23,9 +24,9 @@ const val canvasRendererKey = "renderer"
 typealias PlayerViews = Map<Id, ViewId?>
 
 fun initialEditor(textLibrary: TextResourceMapper, meshes: Collection<String>,
-                  meshShapes: MeshShapeMap, textures: Collection<String>): Editor? =
+                  resourceInfo: ResourceInfo): Editor? =
     if (getDebugBoolean("START_EDITOR"))
-      newEditor(textLibrary, meshes, meshShapes, textures)
+      newEditor(textLibrary, meshes, resourceInfo)
     else
       null
 
@@ -51,9 +52,7 @@ fun newClientState(
     inputConfig: GameInputConfig,
     audioConfig: AudioConfig,
     displayModes: List<DisplayMode>,
-    meshes: Collection<String>,
-    meshShapes: MeshShapeMap,
-    textures: Collection<String>
+    client: Client
 ) =
     ClientState(
         input = newInputState(platform.input, inputConfig),
@@ -63,5 +62,5 @@ fun newClientState(
         players = listOf(),
         events = listOf(),
         displayModes = displayModes,
-        editor = initialEditor(textLibrary, meshes, meshShapes, textures)
+        editor = initialEditor(textLibrary, client.renderer.meshes.keys, client.resourceInfo)
     )

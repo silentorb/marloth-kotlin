@@ -3,9 +3,9 @@ package generation.architecture.engine
 import generation.general.BlockGrid
 import generation.general.CellDirection
 import marloth.scenery.enums.MeshInfoMap
-import marloth.scenery.enums.MeshShapeMap
 import silentorb.mythic.ent.GraphLibrary
 import silentorb.mythic.ent.Table
+import silentorb.mythic.lookinglass.ResourceInfo
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
@@ -38,7 +38,7 @@ data class GenerationConfig(
     val seed: Long,
     val definitions: Definitions,
     val meshes: MeshInfoMap,
-    val meshShapes: MeshShapeMap,
+    val resourceInfo: ResourceInfo,
     val includeEnemies: Boolean,
     val cellCount: Int,
     val graphLibrary: GraphLibrary,

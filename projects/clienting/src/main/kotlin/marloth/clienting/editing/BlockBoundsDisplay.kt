@@ -115,7 +115,7 @@ fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
   val editor = environment.editor
   val selection = getNodeSelection(editor)
   val meshNodes = filterByProperty(graph, SceneProperties.mesh).map { it.source }
-  val cells = getCellOccupancy(editor.enumerations.meshShapes, graph, meshNodes)
+  val cells = getCellOccupancy(editor.enumerations.resourceInfo.meshShapes, graph, meshNodes)
       .distinct()
 
   val sideNodes = nodeAttributes(graph, GameAttributes.blockSide)

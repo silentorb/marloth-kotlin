@@ -29,7 +29,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
 
     if (world != null) {
       val scenes = appState.client.players
-          .map(createScene(renderer.meshes, world))
+          .map(createScene(client.resourceInfo, world))
 
       val viewportIterator = viewports.iterator()
       val boxIterator = boxes.values.iterator()
