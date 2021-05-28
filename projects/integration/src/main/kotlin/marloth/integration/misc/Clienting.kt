@@ -17,6 +17,7 @@ import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.meshes.VertexSchemas
 import silentorb.mythic.lookinglass.meshes.createVertexSchemas
 import silentorb.mythic.lookinglass.texturing.*
+import silentorb.mythic.platforming.ImageInfo
 import silentorb.mythic.platforming.ImageLoader
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.platforming.PlatformDisplay
@@ -30,13 +31,21 @@ fun gatherTextures(loadImage: ImageLoader, attributes: TextureAttributeMapper): 
         .plus(scanTextureResources("images"))
         .map { deferImageFile(loadImage, it, attributes(it)) }
 
+fun loadPngImageInfo(display: PlatformDisplay, path: String): ImageInfo {
+  val info = display.loadImageInfo(path)
+  if (info.channels == 1)
+    throw Error("Marloth does not currently support single channel images: ${path}")
+
+  return info
+}
+
 fun gatherTextures(display: PlatformDisplay, displayOptions: DisplayOptions): List<DeferredTexture> {
   val defaultAttributes = textureAttributesFromConfig(displayOptions)
   val transparentImageAttributes = defaultAttributes.copy(
       format = TextureFormat.rgba,
   )
   return gatherTextures(display.loadImage) { path ->
-    if (path.toString().contains(".png") && display.loadImageInfo(path.toString()).channels > 3)
+    if (path.toString().contains(".png") && loadPngImageInfo(display, path.toString()).channels > 3)
       transparentImageAttributes
     else
       defaultAttributes

@@ -41,7 +41,7 @@
 ["shelf","mesh","largeBrick"],
 ["shelf","parent","checkers-slope"],
 ["shelf","translation",[-0.0154025555,-1.325592,3.1554363]],
-["shelf","scale",[0.476,-0.44304612,0.47955805]],
+["shelf","scale",[0.476,0.44304612,0.47955805]],
 ["sides","parent","checkers-slope"]
 ]
 }

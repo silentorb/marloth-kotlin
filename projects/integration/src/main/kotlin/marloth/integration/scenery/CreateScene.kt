@@ -110,6 +110,11 @@ fun createScene(resourceInfo: ResourceInfo, world: World): (Id) -> Scene = { pla
                     elements = depthSort(camera, cullElementGroups(resourceInfo.meshShapes, camera, solidGroups)),
                 ),
                 SceneLayer(
+                    elements = gatherBackground(deck.cyclesFloat, camera.position),
+                    depth = DepthMode.globalNoWrite,
+                    shadingMode = ShadingMode.none,
+                ),
+                SceneLayer(
                     elements = transparentGroups.sortedByDescending {
                       val location = it.meshes.firstOrNull()?.transform?.translation() ?: it.billboards.first().position
                       location.distance(camera.position)
@@ -121,11 +126,6 @@ fun createScene(resourceInfo: ResourceInfo, world: World): (Id) -> Scene = { pla
 //                equipmentLayer,
             )
         ),
-//        SceneLayer(
-//            elements = gatherBackground(deck.cyclesFloat, camera.position),
-//            useDepth = true,
-//            shadingMode = ShadingMode.none,
-//        ),
         SceneLayer(
             elements = gatherParticleElements(deck, camera.position),
             depth = DepthMode.none,

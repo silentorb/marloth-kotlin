@@ -11,6 +11,12 @@
 ["visual","scale",[2.0,1.0,1.0]],
 ["visual","translation",[0.0,0.0,0.5]],
 ["visual","parent","vine-shrubbery"],
-["visual","type","doubleSided"]
+["visual1","",""],
+["visual1","mesh","squareFace"],
+["visual1","texture","vineShrubbery"],
+["visual1","scale",[2.0,1.0,1.0]],
+["visual1","translation",[0.0,0.0,0.5]],
+["visual1","parent","vine-shrubbery"],
+["visual1","rotation",[0.0,0.0,3.1415927]]
 ]
 }
