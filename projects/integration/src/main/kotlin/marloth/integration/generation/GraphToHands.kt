@@ -11,6 +11,7 @@ import silentorb.mythic.spatial.Quaternion
 import simulation.accessorize.Accessory
 import simulation.entities.Depiction
 import simulation.entities.Interactable
+import simulation.entities.PrimaryMode
 import simulation.main.NewHand
 import simulation.misc.MarlothProperties
 
@@ -39,6 +40,18 @@ fun getNodeDepiction(graph: Graph, node: Key): Depiction? {
   }
 }
 
+fun getPrimaryMode(graph: Graph, node: Key): PrimaryMode? {
+  val modeType = getNodeValue<String>(graph, node, MarlothProperties.modeType)
+  val mode = getNodeValue<String>(graph, node, MarlothProperties.mode)
+  return if (modeType != null && mode != null)
+    PrimaryMode(
+        type = modeType,
+        mode = mode,
+    )
+  else
+    null
+}
+
 fun getNodeInteractions(graph: Graph, node: Key): List<Any> =
     getGraphValues<String>(graph, node, MarlothProperties.interaction)
         .map { type ->
@@ -64,6 +77,7 @@ fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph,
             getNodeDepiction(graph, node),
             getNodeCollisionObject(meshShapes, graph, node),
             getNodeItemType(graph, node),
+            getPrimaryMode(graph, node),
         ) + getNodeInteractions(graph, node)
         if (components.any())
           NewHand(

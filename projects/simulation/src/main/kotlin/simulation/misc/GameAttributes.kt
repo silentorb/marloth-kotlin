@@ -29,6 +29,10 @@ enum class BlockRotations {
   once
 }
 
+val modeTypes = listOf(
+    "door"
+)
+
 object MarlothProperties {
   const val mine = "mine"
   const val other = "other"
@@ -40,6 +44,8 @@ object MarlothProperties {
   const val heightVariant = "heightVariant"
   const val interaction = "interaction"
   const val itemType = "itemType"
+  const val modeType = "modeType"
+  const val mode = "mode"
 }
 
 fun marlothPropertiesSchema(): PropertySchema = mapOf(

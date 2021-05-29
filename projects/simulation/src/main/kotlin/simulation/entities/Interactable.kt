@@ -2,7 +2,6 @@ package simulation.entities
 
 import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.ent.Id
-import marloth.scenery.enums.Text
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
 import simulation.main.Deck

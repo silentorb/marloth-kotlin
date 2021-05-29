@@ -8,7 +8,6 @@ import silentorb.mythic.particles.ParticleEffect
 import silentorb.mythic.physics.Body
 import silentorb.mythic.timing.FloatTimer
 import simulation.main.Deck
-import simulation.main.Hand
 import simulation.main.NewHand
 import kotlin.math.max
 

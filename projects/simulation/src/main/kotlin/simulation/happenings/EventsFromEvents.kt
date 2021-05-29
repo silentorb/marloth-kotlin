@@ -1,6 +1,5 @@
 package simulation.happenings
 
-import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.characters.rigs.FreedomTable
 import silentorb.mythic.characters.rigs.allCharacterMovements
 import silentorb.mythic.characters.rigs.characterMovementsToImpulses

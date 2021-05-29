@@ -8,7 +8,6 @@ import silentorb.mythic.happenings.Events
 import silentorb.mythic.timing.FloatTimer
 import simulation.accessorize.hasAnyAccessory
 import simulation.main.Deck
-import simulation.main.Hand
 import simulation.main.NewHand
 
 val isEntangleImmune = hasAccessory(AccessoryIdOld.entangleImmune)

@@ -15,6 +15,7 @@ import silentorb.mythic.spatial.Vector3i
 import simulation.entities.Interactions
 import simulation.misc.BlockRotations
 import simulation.misc.MarlothProperties
+import simulation.misc.modeTypes
 
 val cellDirectionWidget: PropertyWidget = { _, entry, owner ->
   val value = entry.target as? CellDirection ?: stagingValue(owner) { CellDirection(Vector3i.zero, Direction.east) }
@@ -124,5 +125,15 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
         displayName = "Item Type",
         widget = propertyTextField,
         defaultValue = { "" },
+    ),
+    MarlothProperties.modeType to PropertyDefinition(
+        displayName = "Mode Type",
+        widget = dropDownWidget { modeTypes },
+        defaultValue = { modeTypes.first() },
+    ),
+    MarlothProperties.mode to PropertyDefinition(
+        displayName = "Mode",
+        widget = propertyTextField,
+        defaultValue = { modeTypes.first() },
     ),
 ) + commonPropertyDefinitions()

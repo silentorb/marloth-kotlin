@@ -6,7 +6,6 @@ import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.physics.HingeConstraint
 import silentorb.mythic.scenery.Box
 import silentorb.mythic.spatial.Vector3
-import simulation.entities.Door
 import simulation.entities.Interactable
 import simulation.main.Hand
 import simulation.physics.CollisionGroups

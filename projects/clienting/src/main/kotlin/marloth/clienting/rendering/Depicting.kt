@@ -293,9 +293,6 @@ fun gatherVisualElements(definitions: Definitions, deck: Deck, playerRig: Id, ch
       simple.mapNotNull {
         convertSimpleDepiction(deck, it.key, it.value)
       }
-          .plus(deck.doors.mapNotNull {
-            convertSimpleDepiction(deck, it.key, MeshId.prisonDoor)
-          })
 
   return initial + complexElements + ElementGroup(simpleElements)
 }

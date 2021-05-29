@@ -152,6 +152,7 @@ fun getInteractableLabelText(interactable: Interactable): String =
     when(getInteractionCommandType(interactable.type)) {
       Interactions.sleep -> "Sleep"
       Interactions.take -> "Take"
+      Interactions.openClose -> "Open or Close"
       else -> throw Error("Not supported")
     }
 
