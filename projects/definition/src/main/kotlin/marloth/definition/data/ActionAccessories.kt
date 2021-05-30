@@ -111,7 +111,7 @@ fun pistol(level: Int) =
         ),
         action = ActionDefinition(
             cooldown = 2f,
-            range = 10f,
+            range = 20f,
             animation = AnimationId.shootPistol,
             equipmentSlot = EquipmentSlot.attack
         ),
@@ -135,7 +135,7 @@ fun actionAccessories(): ActionAccessoryMap = mapOf(
             equippedMesh = MeshId.grenadeLauncher
         ),
         action = ActionDefinition(
-            cooldown = 3f,
+            cooldown = 2f,
             range = 15f,
             equipmentSlot = EquipmentSlot.attack,
             cost = ActionCost(
