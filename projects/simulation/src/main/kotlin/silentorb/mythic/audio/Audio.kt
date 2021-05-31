@@ -9,7 +9,7 @@ typealias SoundName = String
 
 data class NewSound(
     val type: SoundType,
-    val volume: Float,
+    val volume: Float = 1f,
     val position: Vector3? = null
 )
 

@@ -19,7 +19,7 @@ object DoorMode {
   val closing = "closing"
 }
 
-fun eventsFromDoorInteractions(world: World, mode: String): (Interaction, Id) -> Events = { interaction, actor ->
+fun eventsFromDoorOpening(world: World): (Interaction, Id) -> Events = { interaction, actor ->
   val deck = world.deck
   val door = interaction.target
   val body = deck.bodies[door]
@@ -27,12 +27,32 @@ fun eventsFromDoorInteractions(world: World, mode: String): (Interaction, Id) ->
     listOf()
   else {
     listOf(
-        Command(type = setPrimaryMode, target = door, value = mode),
+        Command(type = setPrimaryMode, target = door, value = DoorMode.opening),
         NewSound(
             type = SoundId.creakingDoor,
             position = body.position,
-            volume = 1f,
-        )
+        ),
+        NewSound(
+            type = SoundId.doorLock,
+            position = body.position,
+        ),
+    )
+  }
+}
+
+fun eventsFromDoorClosing(world: World): (Interaction, Id) -> Events = { interaction, actor ->
+  val deck = world.deck
+  val door = interaction.target
+  val body = deck.bodies[door]
+  if (body == null)
+    listOf()
+  else {
+    listOf(
+        Command(type = setPrimaryMode, target = door, value = DoorMode.closing),
+        NewSound(
+            type = SoundId.creakingDoor,
+            position = body.position,
+        ),
     )
   }
 }
@@ -62,8 +82,14 @@ fun eventsFromOpeningAndClosingTransitions(deck: Deck): Events {
       .flatMap { door ->
         val body = deck.bodies[door]
         if (body == null || body.orientation.angleZ < 0.01f)
-          listOf(
+          listOfNotNull(
               Command(type = setPrimaryMode, target = door, value = DoorMode.closed),
+              if (body != null) NewSound(
+                  type = SoundId.doorLock,
+                  position = body.position,
+              )
+              else
+                null,
           )
         else
           listOf(

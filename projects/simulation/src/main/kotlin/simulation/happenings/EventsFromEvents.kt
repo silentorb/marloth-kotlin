@@ -60,8 +60,8 @@ fun eventsFromEvents(world: World, freedomTable: FreedomTable, events: Events): 
       mapEvents(onAttack(toSpatialCombatWorld(world))),
       mapInteractions(Interactions.take, eventsFromItemPickup(world)),
       mapInteractions(Interactions.sleep, eventsFromSleep(world)),
-      mapInteractions(Interactions.open, eventsFromDoorInteractions(world, DoorMode.opening)),
-      mapInteractions(Interactions.close, eventsFromDoorInteractions(world, DoorMode.closing)),
+      mapInteractions(Interactions.open, eventsFromDoorOpening(world)),
+      mapInteractions(Interactions.close, eventsFromDoorClosing(world)),
   )
       .fold(events) { a, b -> a + b(a) }
       .plus(characterMovementEvents)
