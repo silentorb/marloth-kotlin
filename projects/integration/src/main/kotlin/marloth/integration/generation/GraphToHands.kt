@@ -1,8 +1,10 @@
 package marloth.integration.generation
 
 import silentorb.mythic.ent.*
-import silentorb.mythic.ent.scenery.getNodeTransform
+import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
+import silentorb.mythic.ent.scenery.getLocalNodeTransform
 import silentorb.mythic.physics.Body
+import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.physics.getNodeCollisionObject
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.scenery.Shape
@@ -15,17 +17,21 @@ import simulation.entities.PrimaryMode
 import simulation.main.NewHand
 import simulation.misc.MarlothProperties
 
-fun getNodeBody(graph: Graph, node: Key, parentTransform: Matrix): Body? {
-  val transform = parentTransform * getNodeTransform(graph, node)
-  return if (transform == Matrix.identity)
-    null
-  else {
+fun bodyFromTransform(transform: Matrix) =
     Body(
         position = transform.translation(),
         orientation = Quaternion().fromUnnormalized(transform),
-        scale = transform.getScale()
+        scale = transform.getScale(),
     )
-  }
+
+fun getNodeBody(graph: Graph, node: Key, parentTransform: Matrix): Body? {
+  val transform = parentTransform * getAbsoluteNodeTransform(graph, node)
+  return if (transform == Matrix.identity)
+    null
+  else
+    bodyFromTransform(transform).copy(
+        isKinetic = true,
+    )
 }
 
 fun getNodeDepiction(graph: Graph, node: Key): Depiction? {
@@ -52,6 +58,20 @@ fun getPrimaryMode(graph: Graph, node: Key): PrimaryMode? {
     null
 }
 
+//fun getDynamicBody(graph: Graph, node: Key): DynamicBody? {
+//  val mass = getNodeValue<Float>(graph, node, MarlothProperties.mass)
+//  val resistance = getNodeValue<Float>(graph, node, MarlothProperties.mass)
+//  val mass = getNodeValue<Float>(graph, node, MarlothProperties.mass)
+//  return if (mass != null)
+//    DynamicBody(
+//        mass = mass,
+//        gravity = false,
+//        resistance =
+//    )
+//  else
+//    null
+//}
+
 fun getNodeInteractions(graph: Graph, node: Key): List<Any> =
     getGraphValues<String>(graph, node, MarlothProperties.interaction)
         .map { type ->
@@ -68,9 +88,28 @@ fun getNodeItemType(graph: Graph, node: Key): Accessory? {
     null
 }
 
+fun associateHandParentBodies(graph: Graph, hands: Map<String, NewHand>) =
+    hands.map { (node, hand) ->
+      val parent = getNodeValue<Key>(graph, node, SceneProperties.parent)
+      val parentHand = hands[parent]
+      val parentId = parentHand?.id
+      val parentBody = parentHand?.components?.filterIsInstance<Body>()?.firstOrNull()
+      val body = hand.components.filterIsInstance<Body>().firstOrNull()
+
+      if (parentBody != null && parentId != null && body != null) {
+        hand.replaceComponent(
+            body.copy(
+                parent = parentId,
+                localTransform = getLocalNodeTransform(graph, node)
+            )
+        )
+      } else
+        hand
+    }
+
 fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph, keys: Collection<String>,
                  transform: Matrix): List<NewHand> {
-  return keys
+  val hands = keys
       .mapNotNull { node ->
         val components = listOfNotNull(
             getNodeBody(graph, node, transform),
@@ -80,13 +119,16 @@ fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph,
             getPrimaryMode(graph, node),
         ) + getNodeInteractions(graph, node)
         if (components.any())
-          NewHand(
+          node to NewHand(
               id = nextId(),
               components = components,
           )
         else
           null
       }
+      .associate { it }
+
+  return associateHandParentBodies(graph, hands)
 }
 
 fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph, transform: Matrix): List<NewHand> =

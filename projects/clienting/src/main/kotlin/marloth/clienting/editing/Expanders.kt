@@ -2,7 +2,7 @@ package marloth.clienting.editing
 
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.Expanders
-import silentorb.mythic.ent.scenery.getNodeTransform
+import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.getCenter
@@ -22,11 +22,11 @@ fun marlothExpanders(): Expanders = mapOf(
         val (a, b) = connections
         val (a1, a2) = a.split("+")
         val (b1, b2) = b.split("+")
-        val accidentalLocation = getNodeTransform(graph, node).translation()
-        val a1Location = getNodeTransform(graph, a1).translation() - accidentalLocation
-        val a2Location = getNodeTransform(graph, a2).translation()
-        val b1Location = getNodeTransform(graph, b1).translation() - accidentalLocation
-        val b2Location = getNodeTransform(graph, b2).translation()
+        val accidentalLocation = getAbsoluteNodeTransform(graph, node).translation()
+        val a1Location = getAbsoluteNodeTransform(graph, a1).translation() - accidentalLocation
+        val a2Location = getAbsoluteNodeTransform(graph, a2).translation()
+        val b1Location = getAbsoluteNodeTransform(graph, b1).translation() - accidentalLocation
+        val b2Location = getAbsoluteNodeTransform(graph, b2).translation()
         if (a2Location == b2Location)
           graph
         else {

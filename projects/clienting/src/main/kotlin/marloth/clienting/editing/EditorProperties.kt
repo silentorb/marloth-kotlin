@@ -136,4 +136,10 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
         widget = propertyTextField,
         defaultValue = { modeTypes.first() },
     ),
+    MarlothProperties.mass to PropertyDefinition(
+        displayName = "Mass",
+        serialization = floatSerialization,
+        widget = propertyDecimalTextField,
+        defaultValue = { 20f },
+    ),
 ) + commonPropertyDefinitions()

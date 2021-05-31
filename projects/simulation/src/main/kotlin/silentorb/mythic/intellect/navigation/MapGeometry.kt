@@ -7,7 +7,7 @@ import org.recast4j.recast.geom.TriMesh
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Key
 import silentorb.mythic.ent.Graph
-import silentorb.mythic.ent.scenery.getNodeTransform
+import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
 import silentorb.mythic.ent.scenery.getShape
 import silentorb.mythic.physics.getBodyTransform
 import silentorb.mythic.scenery.Shape
@@ -38,7 +38,7 @@ fun newNavMeshTriMeshes(meshShapeMap: Map<String, Shape>, graph: Graph, architec
         Pair(node, mesh)
       }
       .map { (node, mesh) ->
-        val transform = getNodeTransform(graph, node)
+        val transform = getAbsoluteNodeTransform(graph, node)
         val vertices = mesh.vertices.flatMap {
           val temp = it.transform(transform)
           // Convert to an array and Recast's Y-up coordinate system

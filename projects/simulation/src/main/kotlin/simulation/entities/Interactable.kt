@@ -6,15 +6,12 @@ import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
 import simulation.main.Deck
 
-//data class WidgetCommand(
-//    val text: Text,
-//    val commandType: Any? = null,
-//)
-
-object Interactables {
-  val door = "door"
-  val item = "item"
-  val bed = "bed"
+object Interactions {
+  val close = "close"
+  val open = "open"
+  val openClose = "openClose"
+  val sleep = "sleep"
+  val take = "take"
 }
 
 data class Interactable(
@@ -29,10 +26,13 @@ data class Interaction(
     val target: Id,
 )
 
-fun getInteractionCommandType(interactionType: String?): String? =
+fun getInteractionCommandType(interactionType: String?, mode: String?): String? =
     when (interactionType) {
-      Interactables.bed -> Interactions.sleep
-      Interactables.item -> Interactions.take
+      Interactions.openClose -> when(mode) {
+        DoorMode.open -> Interactions.close
+        DoorMode.closed -> Interactions.open
+        else -> null
+      }
       else -> interactionType
     }
 
@@ -41,7 +41,7 @@ fun gatherInteractionEvents(deck: Deck, commands: Commands): Events {
     if (commands.any { it.type == CharacterCommands.interactPrimary && it.target == player }) {
       val target = deck.characters[player]?.canInteractWith
       val interaction = deck.interactables[target]
-      val commandType = getInteractionCommandType(interaction?.type)
+      val commandType = getInteractionCommandType(interaction?.type, deck.primaryModes[target]?.mode)
       if (commandType != null && target != null)
         Interaction(
             type = commandType,
@@ -53,10 +53,4 @@ fun gatherInteractionEvents(deck: Deck, commands: Commands): Events {
     } else
       null
   }
-}
-
-object Interactions {
-  val openClose = "openClose"
-  val sleep = "sleep"
-  val take = "take"
 }

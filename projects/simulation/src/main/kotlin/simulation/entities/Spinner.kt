@@ -9,10 +9,10 @@ data class Spinner(
     val rate: Float
 )
 
-fun updateSpinnerRotation(spinners: Table<Spinner>, delta: Float, id: Id, body: Body): Quaternion {
+fun updateSpinnerRotation(spinners: Table<Spinner>, delta: Float, id: Id, orientation: Quaternion): Quaternion {
   val spinner = spinners[id]
   return if (spinner != null)
-    body.orientation.rotateZ(spinner.rate * delta)
+    orientation.rotateZ(spinner.rate * delta)
   else
-    body.orientation
+    orientation
 }

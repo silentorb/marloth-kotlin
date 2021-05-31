@@ -29,7 +29,7 @@ fun updatePhysics(events: Events): (World) -> World = { world ->
   world.copy(
       bulletState = nextPhysicsWorld.bulletState,
       deck = world.deck.copy(
-          bodies = nextDeck.bodies,
+          bodies = updateInheritedBodyTransforms(nextDeck.bodies),
           collisionObjects = nextDeck.collisionObjects,
           dynamicBodies = nextDeck.dynamicBodies
       )

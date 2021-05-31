@@ -10,7 +10,7 @@ fun filterLightDistribution(library: ExpansionLibrary, graph: Graph, slots: Slot
   // This doesn't include all lights in the scene, only lights tagged to be potentially filtered
   val lights = nodesWithAttribute(graph, GameAttributes.lightDistribution)
   val locationMap = lights.map { node ->
-    node to getNodeTransform(graph, node).translation()
+    node to getAbsoluteNodeTransform(graph, node).translation()
   } + slots.map { it.key to it.value.transform.translation() }
 
   val notUsed = removeClumps(graph, 10f, locationMap)

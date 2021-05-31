@@ -1,6 +1,6 @@
 package marloth.integration.scenery
 
-import marloth.clienting.rendering.depictionTransform
+import marloth.clienting.rendering.getBodyTransform
 import silentorb.mythic.ent.Id
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.LightType
@@ -12,7 +12,7 @@ fun mapLights(deck: Deck, player: Id): List<Light> =
     deck.lights
         .filterValues { it.isDynamic }
         .map { (id, light) ->
-          val transform = depictionTransform(deck.bodies, deck.characterRigs, id)
+          val transform = getBodyTransform(deck.bodies, id)
           Light(
               type = LightType.point,
               color = light.color,

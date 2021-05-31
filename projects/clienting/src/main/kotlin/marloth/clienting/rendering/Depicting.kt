@@ -14,6 +14,7 @@ import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.performing.isMarkerTriggered
 import silentorb.mythic.physics.Body
+import silentorb.mythic.physics.getBodyTransform
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.scenery.Shape
 import silentorb.mythic.scenery.TextureName
@@ -62,10 +63,16 @@ fun depictionTransform(bodies: Table<Body>, characterRigs: Table<CharacterRig>, 
   }
 }
 
+fun getBodyTransform(bodies: Table<Body>, id: Id): Matrix {
+  val body = bodies[id]
+  return if (body == null)
+    Matrix.identity
+  else
+    getBodyTransform(body)
+}
+
 fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, texture: TextureName? = null): MeshElement? {
   val body = deck.bodies[id]!!
-  val transform = depictionTransform(deck.bodies, deck.characterRigs, id)
-
   val material = if (texture != null)
     Material(texture = texture, shading = true)
   else
@@ -74,7 +81,7 @@ fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, texture: TextureN
   return MeshElement(
       id = id,
       mesh = mesh,
-      transform = transform.scale(body.scale),
+      transform = body.absoluteTransform ?: depictionTransform(deck.bodies, deck.characterRigs, id).scale(body.scale),
       material = material,
       location = body.position
   )

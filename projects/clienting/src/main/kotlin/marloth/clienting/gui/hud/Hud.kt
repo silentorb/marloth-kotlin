@@ -19,6 +19,7 @@ import silentorb.mythic.lookinglass.gpuProfileMeasurements
 import simulation.accessorize.Accessory
 import simulation.characters.Character
 import simulation.combat.general.ResourceContainer
+import simulation.entities.DoorMode
 import simulation.entities.Interactable
 import simulation.entities.Interactions
 import simulation.entities.getInteractionCommandType
@@ -123,7 +124,7 @@ fun playerStats(world: World, actor: Id, debugInfo: List<String>, accessories: M
   ) + listOfNotNull(
       if (accessoryPoints > 0) label(textStyle, "Ability Points: $accessoryPoints") else null,
       if (utilityItemText != null) label(textStyle, utilityItemText) else null,
-      ) + debugInfo.map {
+  ) + debugInfo.map {
     label(textStyle, it)
   } + if (getDebugBoolean("HUD_DRAW_INVENTORY")) equipment.mapNotNull { accessory ->
     val definition = definitions.accessories[accessory.type]
@@ -148,28 +149,31 @@ fun getInteractKeyText(deviceMode: DeviceMode) =
       DeviceMode.mouseKeyboard -> "E"
     }
 
-fun getInteractableLabelText(interactable: Interactable): String =
-    when(getInteractionCommandType(interactable.type)) {
+fun getInteractableLabelText(interactable: Interactable, mode: String?): String? =
+    when (getInteractionCommandType(interactable.type, mode)) {
       Interactions.sleep -> "Sleep"
       Interactions.take -> "Take"
-      Interactions.openClose -> "Open or Close"
-      else -> throw Error("Not supported")
+      Interactions.open -> "Open"
+      Interactions.close -> "Close"
+      else -> null
     }
 
-fun interactionDialog(primaryInteractText: String, textResources: TextResources, interactable: Interactable): Flower {
-  val rows = listOfNotNull(
-      label(textStyle, getInteractableLabelText(interactable) + " $primaryInteractText"),
-//      if (secondary != null)
-//        label(textStyle, textResources(secondary.text) + " (B)")
-//      else
-//        null
-  )
+fun interactionDialog(primaryInteractText: String, textResources: TextResources, interactable: Interactable,
+                      mode: String?): Flower? {
+  val label = getInteractableLabelText(interactable, mode)
+  return if (label == null)
+    null
+  else {
+    val rows = listOf(
+        label(textStyle, "$label $primaryInteractText"),
+    )
 
-  return alignSingle(percentage(0.8f), verticalPlane,
-      alignSingle(centered, horizontalPlane,
-          boxMargin(10)(boxList(verticalPlane, 20)(rows))
-      ) depictBehind solidBackground(black)
-  )
+    alignSingle(percentage(0.8f), verticalPlane,
+        alignSingle(centered, horizontalPlane,
+            boxMargin(10)(boxList(verticalPlane, 20)(rows))
+        ) depictBehind solidBackground(black)
+    )
+  }
 }
 
 fun hudLayout(textResources: TextResources, world: World, clientState: ClientState, player: Id, view: ViewId?): Flower? {
@@ -179,10 +183,9 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
   val notifications = guiState?.notifications ?: listOf()
   val character = deck.characters[player]
   val characterRig = deck.characterRigs[player]
-  return if (character == null)
+  return if (character == null || guiState == null)
     null
   else {
-    val destructible = deck.destructibles[player]!!
     val body = deck.bodies[player]!!
 
     val accessories = deck.accessories
@@ -227,7 +230,6 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
                 }
         )
 
-//    val victoryKeyStats = getVictoryKeyStats(grid, deck)
     val viewMode = characterRig?.viewMode ?: ViewMode.firstPerson
     val debugInfo = listOfNotNull(
 //            "LR: ${floatToRoundedString(lightRating(deck, player))}",
@@ -240,7 +242,6 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
           "${characterRig?.facingRotation?.x} ${characterRig?.facingRotation?.y}"
         else
           null,
-//        "Keys: ${victoryKeyStats.collected}/${victoryKeyStats.total}",
 //            floatToRoundedString(deck.thirdPersonRigs[player]!!.rotation.x)
 //            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()
 //        if (getDebugString() != "") getDebugString() else null,
@@ -269,7 +270,10 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
         .map { (key, value) -> "$key: $value" }
 
     compose(listOfNotNull(
-        if (interactable != null) interactionDialog(getInteractKeyText(guiState!!.primarydeviceMode), textResources, interactable) else null,
+        if (interactable != null)
+          interactionDialog(getInteractKeyText(guiState.primarydeviceMode), textResources, interactable, deck.primaryModes[character.canInteractWith]?.mode)
+        else
+          null,
         playerStats(world, player, debugInfo, accessories),
         if (notifications.any()) notificationsFlower(notifications) else null,
         if (cooldowns.any()) cooldownIndicatorPlacement(cooldowns) else null,

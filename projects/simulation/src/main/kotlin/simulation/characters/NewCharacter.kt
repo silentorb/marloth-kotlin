@@ -3,7 +3,7 @@ package simulation.characters
 import marloth.scenery.enums.AnimationId
 import silentorb.mythic.characters.rigs.*
 import silentorb.mythic.ent.*
-import silentorb.mythic.ent.scenery.getNodeTransform
+import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.physics.DynamicBody
@@ -134,6 +134,6 @@ fun newCharacter(nextId: IdSource, definitions: Definitions, definition: Charact
 }
 
 fun newCharacter(nextId: IdSource, definitions: Definitions, definition: CharacterDefinition, graph: Graph, node: Key, faction: Id = Factions.neutral): NewHand {
-  val transform = getNodeTransform(graph, node)
+  val transform = getAbsoluteNodeTransform(graph, node)
   return newCharacter(nextId, definitions, definition, transform, faction)
 }

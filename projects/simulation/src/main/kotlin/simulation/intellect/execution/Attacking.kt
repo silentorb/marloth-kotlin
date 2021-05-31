@@ -14,12 +14,12 @@ import simulation.intellect.design.actionsForTarget
 import simulation.main.Deck
 import simulation.main.World
 
-fun shouldMoveDirectlyToward(deck: Deck, target: SimpleBody, attacker: Id): Boolean {
-  val attackerBody = deck.bodies[attacker]!!
-  throw Error("Not implemented")
-//  return !isInAttackRange(attackerBody, target.position, deck.silentorb.mythic.characters[attacker]!!.abilities[0])
-//      && attackerBody.nearestNode == target.nearestNode
-}
+//fun shouldMoveDirectlyToward(deck: Deck, target: SimpleBody, attacker: Id): Boolean {
+//  val attackerBody = deck.bodies[attacker]!!
+//  throw Error("Not implemented")
+////  return !isInAttackRange(attackerBody, target.position, deck.silentorb.mythic.characters[attacker]!!.abilities[0])
+////      && attackerBody.nearestNode == target.nearestNode
+//}
 
 fun getWeaponAttackMethod(world: World, character: Id): AttackMethod? {
   val deck = world.deck

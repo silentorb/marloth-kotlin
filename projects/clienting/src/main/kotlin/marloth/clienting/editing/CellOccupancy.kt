@@ -2,7 +2,7 @@ package marloth.clienting.editing
 
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Key
-import silentorb.mythic.ent.scenery.getNodeTransform
+import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
 import silentorb.mythic.ent.scenery.getShape
 import silentorb.mythic.scenery.Box
 import silentorb.mythic.scenery.Shape
@@ -55,7 +55,7 @@ fun lesserToGreater(a: Int, b: Int) =
 
 fun getCellOccupancy(meshShapes: Map<Key, Shape>, graph: Graph, nodes: Collection<Key>): List<Vector3i> =
     nodes.flatMap { node ->
-      val transform = getNodeTransform(graph, node)
+      val transform = getAbsoluteNodeTransform(graph, node)
       val shape = getShape(meshShapes, graph, node)
       if (shape == null)
         listOf()

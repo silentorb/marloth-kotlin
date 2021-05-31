@@ -7,15 +7,13 @@ import silentorb.mythic.ent.mapTable
 import silentorb.mythic.ent.mapTableValues
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.physics.updateInheritedBodyTransforms
 import silentorb.mythic.timing.updateFloatCycle
 import silentorb.mythic.timing.updateFloatTimer
 import simulation.accessorize.updateAccessory
 import simulation.characters.updateCharacter
 import simulation.combat.general.updateDestructibleHealth
-import simulation.entities.updateAmbientAudio
-import simulation.entities.updateCharacterAnimation
-import simulation.entities.updateContracts
-import simulation.entities.updatePlayer
+import simulation.entities.*
 import simulation.happenings.updateActions
 import simulation.intellect.assessment.lightRatings
 import simulation.intellect.assessment.updateKnowledge
@@ -40,7 +38,7 @@ fun updateEntities(definitions: Definitions, world: World, navigation: Navigatio
           actions = updateActions(world.definitions, deck, events),
           ambientSounds = updateAmbientAudio(definitions, dice, deck),
           animations = mapTable(deck.animations, updateCharacterAnimation(deck, definitions.animations, delta)),
-          bodies = mapTable(deck.bodies, updateBodies(deck, events, delta)),
+          bodies = updateInheritedBodyTransforms(mapTable(deck.bodies, updateBodies(deck, events, delta))),
           characterRigs = mapTable(deck.characterRigs, updateCharacterRig(world.bulletState, CollisionGroups.static, deck, freedomTable, events, delta)),
           contracts = updateContracts(commands, deck.contracts),
           accessories = mapTable(deck.accessories, updateAccessory(definitions, events)),
@@ -51,6 +49,7 @@ fun updateEntities(definitions: Definitions, world: World, navigation: Navigatio
           navigationDirections = if (navigation != null) updateNavigationDirections(navigation) else mapOf(),
           particleEffects = mapTableValues(deck.particleEffects, deck.bodies, updateParticleEffect(definitions.particleEffects, dice, delta)),
           players = mapTable(deck.players, updatePlayer(events)),
+          primaryModes = mapTable(deck.primaryModes, updatePrimaryModes(commands)),
           sounds = mapTableValues(deck.sounds, updateSound(delta)),
           spirits = mapTable(deck.spirits, updateSpirit(world, delta)),
           thirdPersonRigs = mapTable(deck.thirdPersonRigs, updateThirdPersonCamera(world.bulletState.dynamicsWorld, CollisionGroups.affectsCamera, events, deck.bodies, deck.characterRigs, deck.targets, freedomTable, delta)),

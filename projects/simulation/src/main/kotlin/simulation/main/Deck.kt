@@ -98,6 +98,7 @@ fun allHandsToDeck(definitions: Definitions, nextId: IdSource, newHands: List<Ne
       performances = deck.performances + applyHands(hands),
       players = deck.players + applyHands(hands),
       playerOverlays = deck.playerOverlays + applyHands(hands),
+      primaryModes = deck.primaryModes + applyHands(hands),
       respawnCountdowns = deck.respawnCountdowns + applyHands(hands),
       sounds = deck.sounds + applyHands(hands),
       spinners = deck.spinners + applyHands(hands),

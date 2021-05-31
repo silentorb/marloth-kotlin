@@ -11,8 +11,7 @@ import simulation.accessorize.eventsFromItemPickup
 import simulation.characters.newMoveSpeedTable
 import simulation.combat.spatial.onAttack
 import simulation.combat.toSpatialCombatWorld
-import simulation.entities.Interaction
-import simulation.entities.Interactions
+import simulation.entities.*
 import simulation.main.World
 import simulation.physics.toPhysicsDeck
 
@@ -61,8 +60,11 @@ fun eventsFromEvents(world: World, freedomTable: FreedomTable, events: Events): 
       mapEvents(onAttack(toSpatialCombatWorld(world))),
       mapInteractions(Interactions.take, eventsFromItemPickup(world)),
       mapInteractions(Interactions.sleep, eventsFromSleep(world)),
+      mapInteractions(Interactions.open, eventsFromDoorInteractions(world, DoorMode.opening)),
+      mapInteractions(Interactions.close, eventsFromDoorInteractions(world, DoorMode.closing)),
   )
       .fold(events) { a, b -> a + b(a) }
       .plus(characterMovementEvents)
       .plus(characterMovementsToImpulses(deck.bodies, deck.characterRigs, freedomTable, moveSpeedTable, characterMovementEvents))
+      .plus(eventsFromOpeningAndClosingTransitions(deck))
 }

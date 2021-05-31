@@ -20,14 +20,14 @@ fun extractLongTermEntities(deck: Deck): Table<NewHand> =
         hand
       else
         hand
-            .modifyComponent<Destructible> { destructible ->
+            .replaceComponent<Destructible> { destructible ->
               destructible.copy(
                   health = definition.health,
                   healthAccumulator = 0,
                   lastDamageSource = 0L,
               )
             }
-            .modifyComponent<Character> { character ->
+            .replaceComponent<Character> { character ->
               character.copy(
                   energy = definition.health,
                   energyAccumulator = 0,

@@ -14,6 +14,7 @@ import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.removeNodesAndChildren
+import silentorb.mythic.ent.scenery.withNodeChildren
 import silentorb.mythic.lookinglass.ResourceInfo
 import silentorb.mythic.physics.newBulletStateWithGraph
 import silentorb.mythic.randomly.Dice
@@ -101,6 +102,7 @@ fun generateWorldGraphAndDeck(nextId: IdSource, generationConfig: GenerationConf
   val staticEntities = graph
       .filter { it.property == MarlothProperties.interaction }
       .map { it.source }
+      .flatMap { withNodeChildren(graph, it) }
       .toSet()
 
   val staticHands = graphToHands(definitions.meshShapes, nextId, graph, staticEntities, Matrix.identity)

@@ -46,6 +46,10 @@ object MarlothProperties {
   const val itemType = "itemType"
   const val modeType = "modeType"
   const val mode = "mode"
+
+  const val mass = "mass"
+//  const val resistance = "resistance"
+//  const val gravity = "gravity"
 }
 
 fun marlothPropertiesSchema(): PropertySchema = mapOf(
