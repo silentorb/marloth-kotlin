@@ -3,6 +3,7 @@ package generation.architecture.biomes
 object Biomes {
   val checkers = "checkers"
   val city = "city"
+  val dungeon = "dungeon"
   val forest = "forest"
   val hedgeMaze = "hedgeMaze"
   val home = "home"
