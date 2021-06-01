@@ -2,18 +2,28 @@ package marloth.clienting.editing
 
 import generation.general.BlockGrid
 import marloth.clienting.Client
+import marloth.clienting.getEditorEvents
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.rendering.characterMeshes
 import marloth.clienting.rendering.characterPlacement
 import marloth.definition.data.characterDefinitions
 import marloth.definition.misc.loadMarlothGraphLibrary
-import marloth.scenery.enums.*
+import marloth.scenery.enums.MeshShapeMap
+import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.editing.*
 import silentorb.mythic.editing.components.gizmoMenuToggleState
+import silentorb.mythic.editing.updating.prepareEditorUpdate
+import silentorb.mythic.editing.updating.updateEditor
+import silentorb.mythic.editing.updating.updateEditorFromCommands
+import silentorb.mythic.editing.updating.updateGraphStateAndHistory
 import silentorb.mythic.ent.*
-import silentorb.mythic.ent.scenery.*
+import silentorb.mythic.ent.scenery.ExpansionLibrary
+import silentorb.mythic.ent.scenery.expandInstances
+import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
+import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.glowing.defaultTextureAttributes
+import silentorb.mythic.haft.InputDeviceState
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.lookinglass.ElementGroup
@@ -24,6 +34,7 @@ import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.scenery.Shape
 import silentorb.mythic.scenery.scenePropertiesSchema
 import simulation.entities.DepictionType
+import simulation.main.World
 import simulation.misc.Entities
 import simulation.misc.GameAttributes
 import simulation.misc.marlothPropertiesSchema
@@ -210,4 +221,31 @@ fun newEditorResourceInfo(client: Client): ResourceInfo {
       textures = client.resourceInfo.textures + reflectProperties<String>(PlaceholderTextures)
           .associateWith { defaultTextureAttributes }
   )
+}
+
+fun gatherCustomEditorCommands(editor: Editor, previousEditor: Editor): Commands {
+  val graph = getActiveEditorGraph(editor)
+  val previousGraph = getActiveEditorGraph(previousEditor)
+  return if (graph == null || previousGraph == null)
+    listOf()
+  else
+    updateSideNodeNames(editor, graph, previousGraph)
+}
+
+fun updateMarlothEditor(deviceStates: List<InputDeviceState>, world: World?, editor: Editor): Pair<Editor, Commands> {
+  val editorCommands = prepareEditorUpdate(deviceStates, editor)
+  val editorEvents = getEditorEvents(editor)(editorCommands, listOf())
+  val editorWithWorld = updateEditorSyncing(world, editor)
+  val nextEditor = updateEditor(deviceStates, editorCommands, editorWithWorld)
+  val additionalCommands = gatherCustomEditorCommands(nextEditor, editor)
+  val finalEditor = if (additionalCommands.any()) {
+    val (nextState, nextHistory) = updateGraphStateAndHistory(nextEditor, additionalCommands)
+    nextEditor.copy(
+        persistentState = nextState,
+        history = nextHistory,
+    )
+  } else
+    nextEditor
+
+  return finalEditor to editorEvents
 }

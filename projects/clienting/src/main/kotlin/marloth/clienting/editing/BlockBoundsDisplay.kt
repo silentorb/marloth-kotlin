@@ -11,7 +11,7 @@ import silentorb.mythic.editing.*
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.filterByProperty
 import silentorb.mythic.ent.getNodeValue
-import silentorb.mythic.ent.scenery.nodeHasAttribute
+import silentorb.mythic.ent.scenery.anyNodeHasAttribute
 import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Matrix
@@ -175,7 +175,7 @@ fun drawWorldBlockBounds(environment: GizmoEnvironment, blockGrid: BlockGrid) {
 val blockBoundsPainter = gizmoPainterToggle(blockBoundsEnabledKey) { environment ->
   val editor = environment.editor
   val graph = getCachedGraph(editor)
-  if (nodeHasAttribute(graph, GameAttributes.blockSide)) {
+  if (anyNodeHasAttribute(graph, GameAttributes.blockSide)) {
     drawBlockBounds(environment, graph)
   }
   val blockGrid = staticDebugBlockGrid

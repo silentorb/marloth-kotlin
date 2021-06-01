@@ -28,8 +28,6 @@ import silentorb.mythic.editing.Editor
 import silentorb.mythic.editing.EditorCommands
 import silentorb.mythic.editing.checkSaveEditor
 import silentorb.mythic.editing.ensureImGuiIsInitialized
-import silentorb.mythic.editing.updating.prepareEditorUpdate
-import silentorb.mythic.editing.updating.updateEditor
 import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.updateInputDeviceStates
 import silentorb.mythic.happenings.Command
@@ -193,10 +191,7 @@ fun updateClient(
   val (nextEditor, editorEvents1) = if (clientState.isEditorActive) {
     ensureImGuiIsInitialized(editorFonts, windowInfo.id)
     val editor = previousEditor ?: newEditor(textLibrary, client.renderer.meshes.keys, newEditorResourceInfo(client))
-    val editorCommands = prepareEditorUpdate(deviceStates, editor)
-    val editorEvents = getEditorEvents(editor)(editorCommands, listOf())
-    val editorWithWorld = updateEditorSyncing(worlds.lastOrNull(), editor)
-    updateEditor(deviceStates, editorCommands, editorWithWorld) to editorEvents
+    updateMarlothEditor(deviceStates, worlds.lastOrNull(), editor)
   } else
     previousEditor to listOf()
 
