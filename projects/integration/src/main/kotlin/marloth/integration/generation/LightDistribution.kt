@@ -23,7 +23,7 @@ fun filterLightDistribution(library: ExpansionLibrary, graph: Graph, slots: Slot
         Entry(key, SceneProperties.type, "lamppost"),
         Entry(key, SceneProperties.translation, slot.transform.translation()),
     )
-    expandInstances(library, entries)
+    expandGraphInstances(library, entries)
   }
   return afterRemoved + withNewLights
 }

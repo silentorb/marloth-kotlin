@@ -9,7 +9,7 @@ import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.Key
 import silentorb.mythic.ent.Table
-import silentorb.mythic.ent.scenery.expandInstances
+import silentorb.mythic.ent.scenery.expandGraphInstances
 import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.physics.Body
 import silentorb.mythic.randomly.Dice
@@ -120,7 +120,7 @@ fun populateDistributions(nextId: IdSource, config: GenerationConfig, dice: Dice
   val remainingSlots = slots - monsterSlots.map { it.key }
 
   val itemSlots = selectSlots(dice, remainingSlots, cellCount / 15)
-  val itemDefinition = expandInstances(config.graphLibrary, graphLibrary["apple"]!!)
+  val itemDefinition = expandGraphInstances(config.graphLibrary, graphLibrary["apple"]!!)
   val itemHands = itemSlots.flatMap { (_, slot) ->
     graphToHands(config.resourceInfo.meshShapes, nextId, itemDefinition, slot.transform)
   }

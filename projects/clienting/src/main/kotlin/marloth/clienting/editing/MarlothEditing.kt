@@ -15,11 +15,10 @@ import silentorb.mythic.editing.*
 import silentorb.mythic.editing.components.gizmoMenuToggleState
 import silentorb.mythic.editing.updating.prepareEditorUpdate
 import silentorb.mythic.editing.updating.updateEditor
-import silentorb.mythic.editing.updating.updateEditorFromCommands
 import silentorb.mythic.editing.updating.updateGraphStateAndHistory
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.ExpansionLibrary
-import silentorb.mythic.ent.scenery.expandInstances
+import silentorb.mythic.ent.scenery.expandGraphInstances
 import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
 import silentorb.mythic.ent.scenery.nodeAttributes
 import silentorb.mythic.glowing.defaultTextureAttributes
@@ -139,8 +138,10 @@ fun marlothGraphEditors(): GraphEditors = mapOf(
       val selection = getNodeSelection(editor)
       if (selection.size != 1)
         graph
-      else
-        fillOccupied(editor.enumerations.resourceInfo.meshShapes, graph, selection.first())
+      else {
+        val expandedGraph = expandGraphInstances(editor.graphLibrary, graph)
+        fillOccupied(editor.enumerations.resourceInfo.meshShapes, expandedGraph, selection.first())
+      }
     }
 )
 
@@ -188,7 +189,7 @@ fun filterOutEditorOnlyNodes(graph: Graph): Graph {
 }
 
 fun expandGameInstances(library: ExpansionLibrary, name: String): Graph =
-    filterOutEditorOnlyNodes(expandInstances(library, name))
+    filterOutEditorOnlyNodes(expandGraphInstances(library, name))
 
 fun loadWorldGraph(meshShapes: MeshShapeMap, name: String): Graph {
   val graphLibrary = loadMarlothGraphLibrary(marlothPropertiesSerialization)

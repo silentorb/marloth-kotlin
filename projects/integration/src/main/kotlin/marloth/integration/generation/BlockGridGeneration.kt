@@ -66,6 +66,11 @@ val defaultBiomeTextures: Map<String, Map<String, String>> = mapOf(
         PlaceholderTextures.wall to Textures.checkersBlackWhite,
         PlaceholderTextures.ceiling to Textures.checkersBlackWhite,
     ),
+    Biomes.dungeon to mapOf(
+        PlaceholderTextures.floor to Textures.cobblestone,
+        PlaceholderTextures.wall to Textures.bricks,
+        PlaceholderTextures.ceiling to Textures.bricks,
+    ),
     Biomes.forest to mapOf(
         PlaceholderTextures.floor to Textures.grass,
         PlaceholderTextures.wall to Textures.grass,
