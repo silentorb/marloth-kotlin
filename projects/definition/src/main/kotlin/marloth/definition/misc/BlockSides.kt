@@ -3,6 +3,7 @@ package marloth.definition.misc
 import silentorb.mythic.ent.reflectProperties
 
 object BlockSides {
+  val aerialOpen = "arialOpen"
   val open = "open"
   val partialOpen = "partialOpen"
   val slopeLeftHalf = "slopeLeftHalf"

@@ -6,6 +6,7 @@ import silentorb.mythic.editing.EditorCommands
 import silentorb.mythic.editing.getNodeSelection
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.getNodeValue
+import silentorb.mythic.ent.nodeHasProperty
 import silentorb.mythic.ent.scenery.nodeHasAttribute
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
@@ -23,9 +24,15 @@ fun updateSideNodeNames(editor: Editor, graph: Graph, previous: Graph): Commands
           val currentDirection = getNodeValue<CellDirection>(graph, node, MarlothProperties.direction)
           val previousDirection = getNodeValue<CellDirection>(previous, node, MarlothProperties.direction)
           if (currentDirection != previousDirection && currentDirection != null && previousDirection != null) {
+            val isConnection = nodeHasProperty(graph, node, MarlothProperties.mine)
             val cell = currentDirection.cell
             val direction = currentDirection.direction
-            val name = "${cell.x},${cell.y},${cell.z},${direction}"
+            val directionClause = if (isConnection)
+              ",${direction}"
+            else
+              ""
+
+            val name = "${cell.x},${cell.y},${cell.z}${directionClause}"
             Command(EditorCommands.renameNode, value = name)
           } else
             null
