@@ -18,7 +18,7 @@ fun updateEditorSyncing(world: World?, editor: Editor): Editor =
           name = activeWorldKey,
           fullPath = activeWorldKey,
       )
-      val graphEntry = activeWorldKey to world.staticGraph
+      val graphEntry = activeWorldKey to world.staticGraph.value
       editor.copy(
           fileItems = editor.fileItems + fileItem,
           graphLibrary = editor.graphLibrary + graphEntry,

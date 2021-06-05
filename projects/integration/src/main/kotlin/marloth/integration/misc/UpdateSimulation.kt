@@ -12,6 +12,7 @@ import marloth.integration.generation.nextLevel
 import marloth.scenery.enums.CharacterCommands
 import persistence.Database
 import silentorb.mythic.ent.Graph
+import silentorb.mythic.ent.GraphWrapper
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
 import simulation.entities.remapPlayerRigCommands
@@ -59,12 +60,12 @@ fun filterCommands(clientState: ClientState): (List<Command>) -> List<Command> =
       }
 }
 
-fun updateWorldGraph(events: Events, graph: Graph): Graph {
+fun updateWorldGraph(events: Events, wrapper: GraphWrapper): GraphWrapper {
   val setGraphEvent = events.filterIsInstance<ClientEvent>().firstOrNull { it.type == ClientEventType.setWorldGraph }
   return if (setGraphEvent != null)
-    setGraphEvent.value!! as Graph
+    GraphWrapper(setGraphEvent.value!! as Graph)
   else
-    graph
+    wrapper
 }
 
 fun updateWorldGraph(events: Events, world: World): World =

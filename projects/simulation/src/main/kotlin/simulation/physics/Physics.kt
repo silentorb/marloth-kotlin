@@ -19,7 +19,7 @@ fun updatePhysics(events: Events): (World) -> World = { world ->
   val physicsWorld = PhysicsWorld(
       bulletState = world.bulletState,
       deck = physicsDeck,
-      graph = world.staticGraph,
+      graph = world.staticGraph.value,
       meshShapes = world.definitions.meshShapes,
   )
   val linearForces = events.filterIsInstance<LinearImpulse>()

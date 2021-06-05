@@ -4,7 +4,7 @@ import marloth.clienting.gui.hud.mobilityMovementRangeLayer
 import marloth.clienting.rendering.*
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.ent.Graph
+import silentorb.mythic.ent.GraphWrapper
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.ResourceInfo
 import silentorb.mythic.ent.scenery.getGraphRoots
@@ -16,10 +16,10 @@ import silentorb.mythic.spatial.Vector4
 import simulation.main.Deck
 import simulation.main.World
 
-val graphElementCache = singleValueCache<Pair<ResourceInfo, Graph>, ElementGroups> { (resourceInfo, graph) ->
-  val roots = getGraphRoots(graph)
+val graphElementCache = singleValueCache<Pair<ResourceInfo, GraphWrapper>, ElementGroups> { (resourceInfo, wrapper) ->
+  val roots = getGraphRoots(wrapper.value)
   if (roots.any())
-    nodesToElements(resourceInfo, graph)
+    nodesToElements(resourceInfo, wrapper.value)
   else
     listOf()
 }

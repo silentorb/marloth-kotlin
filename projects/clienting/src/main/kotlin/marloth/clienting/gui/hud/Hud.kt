@@ -176,7 +176,8 @@ fun interactionDialog(primaryInteractText: String, textResources: TextResources,
   }
 }
 
-fun hudLayout(textResources: TextResources, world: World, clientState: ClientState, player: Id, view: ViewId?): Flower? {
+fun hudLayout(textResources: TextResources, world: World, clientState: ClientState, player: Id,
+              debugInfo: List<String>, view: ViewId?): Flower? {
   val deck = world.deck
   val definitions = world.definitions
   val guiState = clientState.guiStates[player]
@@ -266,8 +267,9 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
           "GPU: " + String.format("%,d", time).padStart(14, ' ')
         } else
           null,
-    ) + getDebugOverrides()
-        .map { (key, value) -> "$key: $value" }
+    ) + debugInfo +
+        getDebugOverrides()
+            .map { (key, value) -> "$key: $value" }
 
     compose(listOfNotNull(
         if (interactable != null)

@@ -3,7 +3,6 @@ package simulation.updating
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.mapTable
 import silentorb.mythic.ent.pipe
-import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.applyBodyChanges
 import simulation.characters.newMoveSpeedTable
@@ -44,7 +43,7 @@ fun updateDeck(definitions: Definitions, events: Events, world: World,
         removeWhole(world.definitions.soundDurations, events, world.deck),
 //        removePartial(events, world.deck),
         cleanOutdatedReferences,
-        newEntities(definitions, world.staticGraph, world.step, world.deck, events, nextId)
+        newEntities(definitions, world.staticGraph.value, world.step, world.deck, events, nextId)
     )
 
 fun updateWorld(definitions: Definitions, events: Events, delta: Float, world: World): World {
@@ -61,7 +60,7 @@ fun updateWorld(definitions: Definitions, events: Events, delta: Float, world: W
 
   return withPhysics.copy(
       deck = deck,
-      global = updateGlobalState(deck, world.staticGraph, withPhysics.global),
+      global = updateGlobalState(deck, world.staticGraph.value, withPhysics.global),
       navigation = navigation,
       nextCommands = gatherNextCommands(world, events),
       step = world.step + 1L,

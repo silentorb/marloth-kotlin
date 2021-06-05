@@ -13,7 +13,7 @@ data class World(
     val global: GlobalState,
     val dice: Dice,
     val navigation: NavigationState?,
-    val staticGraph: Graph = newGraph(),
+    val staticGraph: GraphWrapper = GraphWrapper(newGraph()),
     val bulletState: BulletState,
     val definitions: Definitions,
     val persistence: Graph,

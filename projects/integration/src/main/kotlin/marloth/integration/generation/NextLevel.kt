@@ -1,6 +1,7 @@
 package marloth.integration.generation
 
 import marloth.integration.front.GameApp
+import silentorb.mythic.ent.GraphWrapper
 import silentorb.mythic.ent.Table
 import silentorb.mythic.physics.newBulletStateWithGraph
 import silentorb.mythic.physics.releaseBulletState
@@ -73,7 +74,7 @@ fun nextLevel(app: GameApp, world: World): World {
   return world.copy(
       deck = allHandsToDeck(definitions, nextId, playerHands, deck),
       navigation = initializeNavigation(generationConfig, graph),
-      staticGraph = graph,
+      staticGraph = GraphWrapper(graph),
       bulletState = newBulletStateWithGraph(graph, definitions.meshShapes),
       nextCommands = listOf(), // At minimum, the nextLevel command needs to be removed to prevent an infinite loop
       global = global.copy(

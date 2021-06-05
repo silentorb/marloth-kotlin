@@ -66,10 +66,11 @@ fun victoryMenu() = listOfNotNull(
 
 val emptyViewFlower: StateFlowerTransform = { _, _ -> emptyFlower }
 
-fun guiLayout(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, player: Id): Flower {
+fun guiLayout(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, player: Id,
+              debugInfo: List<String>): Flower {
   val state = clientState.guiStates[player]
   return compose(listOfNotNull(
-      if (world != null) hudLayout(definitions.textLibrary, world, clientState, player, state?.view) else null,
+      if (world != null) hudLayout(definitions.textLibrary, world, clientState, player, debugInfo, state?.view) else null,
       if (state != null) {
         val stateFlower = viewSelect(world, options, clientState, state.view, player)
         if (stateFlower != null)
@@ -83,7 +84,7 @@ fun guiLayout(definitions: Definitions, options: AppOptions, clientState: Client
 }
 
 fun layoutPlayerGui(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, dimensions: Vector2i,
-                    player: Id): Box {
-  val layout = guiLayout(definitions, options, clientState, world, player)
+                    player: Id, debugInfo: List<String>): Box {
+  val layout = guiLayout(definitions, options, clientState, world, player, debugInfo)
   return layout(dimensions)
 }
