@@ -21,6 +21,7 @@ object GameAttributes {
   val anyBiome = "anyBiome"
   val lockedRotation = "lockedRotation"
   val lightDistribution = "lightDistribution"
+  val showIfSideIsEmpty = "showIfSideIsEmpty"
 }
 
 enum class BlockRotations {

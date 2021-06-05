@@ -13,6 +13,7 @@ import silentorb.mythic.ent.filterByProperty
 import silentorb.mythic.ent.getNodeValue
 import silentorb.mythic.ent.scenery.anyNodeHasAttribute
 import silentorb.mythic.ent.scenery.nodeAttributes
+import silentorb.mythic.ent.scenery.nodeHasAttribute
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector3
@@ -78,7 +79,7 @@ fun getSideHeightLines(selection: Collection<CellDirection>, sides: List<Pair<Ce
             val ad = a - hookOffset
             val bc = b + hookOffset
             val bd = b - hookOffset
-            val color = if(selection.contains(cellDirection))
+            val color = if (selection.contains(cellDirection))
               LineColors.selectedHeight
             else
               LineColors.height
@@ -123,7 +124,10 @@ fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
       .filter { it.second != null } as List<Pair<CellDirection, Side>>
 
   val variableSides = selection.mapNotNull { node ->
-    getNodeValue<CellDirection>(graph, node, MarlothProperties.showIfSideIsEmpty)
+    if (nodeHasAttribute(graph, node, GameAttributes.showIfSideIsEmpty))
+      getNodeValue<CellDirection>(graph, node, MarlothProperties.direction)
+    else
+      getNodeValue<CellDirection>(graph, node, MarlothProperties.showIfSideIsEmpty)
   }
 
   val selectedSides = selection.mapNotNull { node ->
@@ -137,7 +141,7 @@ fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
 
   val primaryLines = getCellLines(primaryCells, mediumColor)
   val secondaryLines = getCellLines(secondaryCells - primaryCells, lightColor)
-  val selectedLines = getCellLines(selectedSides.map {it.cell}, ImColor.intToColor(255, 255, 255, 200))
+  val selectedLines = getCellLines(selectedSides.map { it.cell }, ImColor.intToColor(255, 255, 255, 200))
 
   val transform = environment.transform
   val drawList = environment.drawList

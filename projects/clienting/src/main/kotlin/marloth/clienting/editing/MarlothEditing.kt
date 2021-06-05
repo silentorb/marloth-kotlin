@@ -167,6 +167,7 @@ fun newEditor(textLibrary: TextResourceMapper, meshes: Collection<String>, resou
           menus = marlothEditorMenus(),
           gizmoPainters = listOf(blockBoundsPainter),
           graphEditors = defaultGraphEditors() + marlothGraphEditors(),
+          graphTransform = ::applyCellDirectionOffsets,
       ),
       fileItems = loadProjectTree(projectPath, "world"),
       persistentState = loadEditorStateOrDefault(),

@@ -5,16 +5,14 @@ import generation.architecture.engine.*
 import generation.architecture.matrical.BlockBuilder
 import generation.general.*
 import marloth.clienting.editing.PlaceholderTextures
+import marloth.clienting.editing.applyCellDirectionOffsets
 import marloth.clienting.editing.expandGameInstances
 import marloth.clienting.editing.newExpansionLibrary
 import marloth.definition.misc.sideGroups
 import marloth.definition.misc.traversableBlockSides
 import marloth.scenery.enums.Textures
 import silentorb.mythic.ent.*
-import silentorb.mythic.ent.scenery.ExpansionLibrary
-import silentorb.mythic.ent.scenery.getGraphRoots
-import silentorb.mythic.ent.scenery.nodeAttributes
-import silentorb.mythic.ent.scenery.removeNodesAndChildren
+import silentorb.mythic.ent.scenery.*
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Vector3i
@@ -156,13 +154,23 @@ fun shouldOmit(cellDirections: List<CellDirection>, keys: Set<CellDirection>): B
 
 fun builderFromGraph(graph: Graph, zShifts: Collection<CellDirection>): Builder {
   val showIfSideIsEmpty = filterByProperty(graph, MarlothProperties.showIfSideIsEmpty)
-      .groupBy { it.source }
+      .map {it.source to it.target as CellDirection}
+      .plus(nodesWithAttribute(graph, GameAttributes.showIfSideIsEmpty)
+          .mapNotNull {
+            val direction = getNodeValue<CellDirection>(graph, it, MarlothProperties.direction)
+            if (direction != null)
+              it to direction
+            else
+              null
+          }
+      )
+      .groupBy { it.first }
 
   return { input ->
     val omitted = showIfSideIsEmpty
         .mapValues { i ->
           i.value.map { entry ->
-            val cellDirection = entry.target as CellDirection
+            val cellDirection = entry.second
             if (zShifts.contains(cellDirection))
               cellDirection.copy(cell = cellDirection.cell + Vector3i(0, 0, -1))
             else
@@ -243,7 +251,7 @@ fun graphsToBlockBuilders(graphLibrary: GraphLibrary): List<BlockBuilder> {
       }
       .keys
       .flatMap { key ->
-        val expanded = expandGameInstances(library, key)
+        val expanded = applyCellDirectionOffsets(expandGameInstances(library, key))
         graphToBlockBuilder(key, expanded)
       }
 }
