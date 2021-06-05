@@ -2,6 +2,7 @@ package marloth.integration.generation
 
 import generation.architecture.engine.GenerationConfig
 import generation.architecture.engine.compileArchitectureMeshInfo
+import marloth.clienting.editing.marlothGraphSchema
 import marloth.clienting.editing.marlothPropertiesSerialization
 import marloth.clienting.editing.staticDebugBlockGrid
 import marloth.definition.misc.loadMarlothGraphLibrary
@@ -13,6 +14,7 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.*
+import silentorb.mythic.ent.scenery.ExpansionLibrary
 import silentorb.mythic.ent.scenery.removeNodesAndChildren
 import silentorb.mythic.ent.scenery.withNodeChildren
 import silentorb.mythic.lookinglass.ResourceInfo
@@ -33,7 +35,7 @@ fun prepareWorldGraph(generationConfig: GenerationConfig, dice: Dice, graph: Gra
     if (getDebugBoolean("STATIC_MAP"))
       graph
     else {
-      val (blockGrid, architectureSource) = generateWorldBlocks(dice, generationConfig, generationConfig.graphLibrary)
+      val (blockGrid, architectureSource) = generateWorldBlocks(dice, generationConfig, generationConfig.expansionLibrary)
       if (getDebugBoolean("ENABLE_EDITOR")) {
         staticDebugBlockGrid = blockGrid
       }
@@ -81,7 +83,10 @@ fun newGenerationConfig(definitions: Definitions, resourceInfo: ResourceInfo,
         resourceInfo = resourceInfo,
         includeEnemies = getDebugString("MONSTER_LIMIT") != "0",
         cellCount = getDebugInt("BASE_ROOM_COUNT") ?: 100,
-        graphLibrary = loadMarlothGraphLibrary(marlothPropertiesSerialization) + graphLibrary,
+        expansionLibrary = ExpansionLibrary(
+            graphs = loadMarlothGraphLibrary(marlothPropertiesSerialization) + graphLibrary,
+            schema = marlothGraphSchema(),
+        ),
     )
 
 fun newGenerationConfig(gameApp: GameApp,

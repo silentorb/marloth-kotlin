@@ -3,6 +3,7 @@ package marloth.clienting.editing
 import generation.architecture.building.directionRotation
 import generation.general.CellDirection
 import generation.general.Direction
+import generation.general.isSimpleSideNode
 import silentorb.mythic.editing.Editor
 import silentorb.mythic.editing.EditorCommands
 import silentorb.mythic.editing.getNodeSelection
@@ -25,7 +26,7 @@ fun updateSideNodeNames(editor: Editor, graph: Graph, previous: Graph): Commands
   else {
     val sideNodes = selection
         .filter(nodeHasAttribute(graph, GameAttributes.blockSide))
-        .filter { it.matches(Regex("\\d+[-,]\\d+[-,]\\d+")) }
+        .filter(::isSimpleSideNode)
 
     sideNodes
         .mapNotNull { node ->
@@ -49,31 +50,36 @@ fun updateSideNodeNames(editor: Editor, graph: Graph, previous: Graph): Commands
 }
 
 fun applyCellDirectionOffsets(graph: Graph): Graph {
-  val nodeDirections = filterByProperty(graph, MarlothProperties.direction)
-  val additions = nodeDirections
-      .flatMap { entry ->
-        val node = entry.source
-        val (cell, direction) = entry.target as CellDirection
-        listOfNotNull(
-            if (direction != Direction.east) {
-              val rotation = getNodeValue<Vector3>(graph, node, SceneProperties.rotation) ?: Vector3.zero
-              Entry(node, SceneProperties.rotation, rotation + Vector3(0f, 0f, directionRotation(direction)))
-            } else
-              null,
-            if (cell != Vector3i.zero) {
-              val translation = getLocalNodeTranslation(graph, node)
-              val k = translation + absoluteCellPosition(cell)
-              Entry(node, SceneProperties.translation, translation + absoluteCellPosition(cell))
-            } else
-              null,
-        )
-      }
+  val signatureKey = "appliedCellDirectionOffsets"
+  return if (graph.any { it.source == signatureKey })
+    graph
+  else {
+    val nodeDirections = filterByProperty(graph, MarlothProperties.direction)
+    val additions = nodeDirections
+        .flatMap { entry ->
+          val node = entry.source
+          val (cell, direction) = entry.target as CellDirection
+          listOfNotNull(
+              if (direction != Direction.east) {
+                val rotation = getNodeValue<Vector3>(graph, node, SceneProperties.rotation) ?: Vector3.zero
+                Entry(node, SceneProperties.rotation, rotation + Vector3(0f, 0f, directionRotation(direction)))
+              } else
+                null,
+              if (cell != Vector3i.zero) {
+                val translation = getLocalNodeTranslation(graph, node)
+                val k = translation + absoluteCellPosition(cell)
+                Entry(node, SceneProperties.translation, translation + absoluteCellPosition(cell))
+              } else
+                null,
+          )
+        }
 
-  val removed = graph
-      .filter { entry ->
-        (entry.property == SceneProperties.translation || entry.property == SceneProperties.rotation) &&
-            additions.any { it.source == entry.source && it.property == entry.property }
-      }
+    val removed = graph
+        .filter { entry ->
+          (entry.property == SceneProperties.translation || entry.property == SceneProperties.rotation) &&
+              additions.any { it.source == entry.source && it.property == entry.property }
+        }
 
-  return (graph - removed) + additions
+    (graph - removed) + additions + Entry(signatureKey, "", "")
+  }
 }

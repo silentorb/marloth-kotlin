@@ -5,6 +5,7 @@ import generation.general.CellDirection
 import marloth.scenery.enums.MeshInfoMap
 import silentorb.mythic.ent.GraphLibrary
 import silentorb.mythic.ent.Table
+import silentorb.mythic.ent.scenery.ExpansionLibrary
 import silentorb.mythic.lookinglass.ResourceInfo
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Quaternion
@@ -41,7 +42,7 @@ data class GenerationConfig(
     val resourceInfo: ResourceInfo,
     val includeEnemies: Boolean,
     val cellCount: Int,
-    val graphLibrary: GraphLibrary,
+    val expansionLibrary: ExpansionLibrary,
     val hands: Table<NewHand> = mapOf(),
     val level: Int = 1,
 )

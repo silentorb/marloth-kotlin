@@ -55,7 +55,7 @@ var staticDebugBlockGrid: BlockGrid? = null
 fun getMarlothEditorAttributes(): List<String> =
     commonEditorAttributes() + reflectProperties(GameAttributes)
 
-fun marlothEditorPropertySchema() =
+fun marlothGraphSchema() =
     scenePropertiesSchema() + marlothPropertiesSchema()
 
 val marlothEditorProperties =
@@ -139,7 +139,11 @@ fun marlothGraphEditors(): GraphEditors = mapOf(
       if (selection.size != 1)
         graph
       else {
-        val expandedGraph = expandGraphInstances(editor.graphLibrary, graph)
+        val expansionLibrary = ExpansionLibrary(
+            graphs = editor.graphLibrary,
+            schema = editor.enumerations.schema,
+        )
+        val expandedGraph = expandGraphInstances(expansionLibrary, graph)
         fillOccupied(editor.enumerations.resourceInfo.meshShapes, expandedGraph, selection.first())
       }
     }
@@ -157,7 +161,7 @@ fun newEditor(textLibrary: TextResourceMapper, meshes: Collection<String>, resou
       enumerations = EditorEnumerations(
           propertyDefinitions = marlothEditorProperties,
           propertiesSerialization = marlothPropertiesSerialization,
-          schema = marlothEditorPropertySchema(),
+          schema = marlothGraphSchema(),
           attributes = getMarlothEditorAttributes(),
           meshes = meshes.toList().sorted(),
           resourceInfo = resourceInfo,
@@ -195,7 +199,7 @@ fun expandGameInstances(library: ExpansionLibrary, name: String): Graph =
 fun loadWorldGraph(meshShapes: MeshShapeMap, name: String): Graph {
   val graphLibrary = loadMarlothGraphLibrary(marlothPropertiesSerialization)
   assert(graphLibrary.contains(name))
-  val library = ExpansionLibrary(graphLibrary, marlothExpanders())
+  val library = ExpansionLibrary(graphLibrary, marlothGraphSchema())
   return expandGameInstances(library, name)
 }
 
@@ -204,7 +208,7 @@ const val defaultScene = "root"
 fun mainScene() = getDebugString("DEFAULT_SCENE") ?: defaultScene
 
 fun newExpansionLibrary(graphLibrary: GraphLibrary, meshShapes: Map<Key, Shape>) =
-    ExpansionLibrary(graphLibrary, marlothExpanders())
+    ExpansionLibrary(graphLibrary, marlothGraphSchema())
 
 fun expandWorldGraph(editor: Editor, scene: String): Graph {
   val graphLibrary = loadAllDependencies(editor, scene)

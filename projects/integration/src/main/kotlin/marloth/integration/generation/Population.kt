@@ -99,7 +99,7 @@ fun selectSlots(dice: Dice, slots: SlotMap, limit: Int): List<Map.Entry<Key, Slo
 
 fun populateDistributions(nextId: IdSource, config: GenerationConfig, dice: Dice, slots: SlotMap, cellCount: Int): List<NewHand> {
   val definitions = config.definitions
-  val graphLibrary = config.graphLibrary
+  val graphLibrary = config.expansionLibrary.graphs
   val level = getDebugInt("WORLD_LEVEL") ?: config.level
 
   val previousMonsters = config.hands.filterValues { hand ->
@@ -120,7 +120,7 @@ fun populateDistributions(nextId: IdSource, config: GenerationConfig, dice: Dice
   val remainingSlots = slots - monsterSlots.map { it.key }
 
   val itemSlots = selectSlots(dice, remainingSlots, cellCount / 15)
-  val itemDefinition = expandGraphInstances(config.graphLibrary, graphLibrary["apple"]!!)
+  val itemDefinition = expandGraphInstances(config.expansionLibrary, graphLibrary["apple"]!!)
   val itemHands = itemSlots.flatMap { (_, slot) ->
     graphToHands(config.resourceInfo.meshShapes, nextId, itemDefinition, slot.transform)
   }

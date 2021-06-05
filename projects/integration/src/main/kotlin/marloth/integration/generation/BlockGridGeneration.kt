@@ -4,10 +4,7 @@ import generation.architecture.biomes.Biomes
 import generation.architecture.engine.*
 import generation.architecture.matrical.BlockBuilder
 import generation.general.*
-import marloth.clienting.editing.PlaceholderTextures
-import marloth.clienting.editing.applyCellDirectionOffsets
-import marloth.clienting.editing.expandGameInstances
-import marloth.clienting.editing.newExpansionLibrary
+import marloth.clienting.editing.*
 import marloth.definition.misc.sideGroups
 import marloth.definition.misc.traversableBlockSides
 import marloth.scenery.enums.Textures
@@ -104,17 +101,17 @@ fun cellsFromSides(sides: List<Pair<CellDirection, Side?>>): Map<Vector3i, Block
       .keys
       .associate {
         val cell = it + Vector3i(0, 0, 1)
-         cell to BlockCell(
-             sides = mapOf(),
-             isTraversable = false,
-         )
+        cell to BlockCell(
+            sides = mapOf(),
+            isTraversable = false,
+        )
       }
 
   return cells + headroomCells
 }
 
 fun prepareBlockGraph(graph: Graph, sideNodes: List<String>, biomes: Collection<String>): Graph {
-  val truncatedGraph = graph.filter { !sideNodes.contains(it.source) }
+  val truncatedGraph = graph.filter { !sideNodes.contains(it.source) || !isSimpleSideNode(it.source) }
   val defaultTexture = biomes
       .mapNotNull { defaultBiomeTextures[it] }
       .firstOrNull()
@@ -154,7 +151,7 @@ fun shouldOmit(cellDirections: List<CellDirection>, keys: Set<CellDirection>): B
 
 fun builderFromGraph(graph: Graph, zShifts: Collection<CellDirection>): Builder {
   val showIfSideIsEmpty = filterByProperty(graph, MarlothProperties.showIfSideIsEmpty)
-      .map {it.source to it.target as CellDirection}
+      .map { it.source to it.target as CellDirection }
       .plus(nodesWithAttribute(graph, GameAttributes.showIfSideIsEmpty)
           .mapNotNull {
             val direction = getNodeValue<CellDirection>(graph, it, MarlothProperties.direction)
@@ -257,8 +254,8 @@ fun graphsToBlockBuilders(graphLibrary: GraphLibrary): List<BlockBuilder> {
 }
 
 fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig,
-                        graphLibrary: GraphLibrary): Pair<BlockGrid, Graph> {
-  val coreBlocks = graphsToBlockBuilders(graphLibrary)
+                        expansionLibrary: ExpansionLibrary): Pair<BlockGrid, Graph> {
+  val coreBlocks = graphsToBlockBuilders(expansionLibrary.graphs)
   val blockBuilders = explodeBlockMap(coreBlocks)
   val (blocks, builders) = splitBlockBuilders(devFilterBlockBuilders(blockBuilders))
   val home = blocks.firstOrNull { it.name == "home-set" }
@@ -268,7 +265,6 @@ fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig,
   val blockGrid = newBlockGrid(generationConfig.seed, dice, home, blocks - home, generationConfig.cellCount)
   val architectureInput = newArchitectureInput(generationConfig, dice, blockGrid)
   val architectureSource = buildArchitecture(architectureInput, builders)
-  val expansionLibrary = ExpansionLibrary(graphs = graphLibrary)
   val graph = filterDistributionGroups(expansionLibrary, architectureSource)
   return Pair(blockGrid, graph)
 }

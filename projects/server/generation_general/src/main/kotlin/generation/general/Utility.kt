@@ -28,3 +28,6 @@ fun rotateZ(turns: Int, cellDirection: CellDirection): CellDirection =
     cellDirection.copy(
         direction = rotateZ(turns, cellDirection.direction)
     )
+
+fun isSimpleSideNode(node: String): Boolean =
+    node.matches(Regex("\\d+[-,]\\d+[-,]\\d+"))
