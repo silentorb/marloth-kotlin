@@ -27,7 +27,7 @@ fun monsterDefinitions(): Map<String, CharacterDefinition> =
             accessoryPool = AccessoryPools.mobile,
             depictionType = DepictionType.person,
             runSpeed = 2.5f,
-            deathSound = SoundId.hogDeath,
+            deathSound = Sounds.hogDeath,
             ambientSounds = listOf(
             )
         ),

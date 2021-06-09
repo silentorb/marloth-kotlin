@@ -1,0 +1,11 @@
+{
+"graph" : [
+["apple2","",""],
+["apple2","texture","arch"],
+["apple2","mesh","key"],
+["apple2","type","solid-box"],
+["apple2","interaction","take"],
+["apple2","itemType","apple2"],
+["apple2","scale",[2.0437694,2.0437694,2.0437694]]
+]
+}

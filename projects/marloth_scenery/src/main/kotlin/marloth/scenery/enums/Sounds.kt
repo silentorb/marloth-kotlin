@@ -1,7 +1,7 @@
 package marloth.scenery.enums
 
 // As long as there is SoundId reflection, its fields cannot be const
-object SoundId {
+object Sounds {
   val creakingDoor = "creakingDoor"
   val doorLock = "doorLock"
   val girlScream = "girlScream"
@@ -10,5 +10,6 @@ object SoundId {
   val hogAmbient03 = "hogAmbient03"
   val hogDeath = "hogDeath"
   val pistolFire = "pistolFire"
+  val takePlant = "takePlant"
   val throwWeapon = "throwWeapon"
 }

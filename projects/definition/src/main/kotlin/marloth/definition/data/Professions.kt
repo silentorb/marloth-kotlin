@@ -1,7 +1,7 @@
 package marloth.definition.data
 
 import marloth.scenery.enums.AccessoryIdOld
-import marloth.scenery.enums.SoundId
+import marloth.scenery.enums.Sounds
 import marloth.scenery.enums.TextId
 import silentorb.mythic.ent.reflectPropertiesMap
 import simulation.characters.CharacterDefinition
@@ -13,7 +13,7 @@ object Professions {
       health = 200,
       accessories = listOf(AccessoryIdOld.shotgun, AccessoryIdOld.graveDigger, AccessoryIdOld.mobility),
       depictionType = DepictionType.child,
-      deathSound = SoundId.girlScream,
+      deathSound = Sounds.girlScream,
       damageMultipliers = mapOf()
   )
 
@@ -22,7 +22,7 @@ object Professions {
       health = 200,
       accessories = listOf(AccessoryIdOld.grenadeLauncher, AccessoryIdOld.rocketLauncher, Accessories.shadowSpirit),
       depictionType = DepictionType.child,
-      deathSound = SoundId.girlScream,
+      deathSound = Sounds.girlScream,
       damageMultipliers = mapOf(),
       money = 200,
       runSpeed = 6f
@@ -36,7 +36,7 @@ private val debug = CharacterDefinition(
     accessories = listOf(AccessoryIdOld.rocketLauncher),
     depictionType = DepictionType.child,
     runSpeed = 16f,
-    deathSound = SoundId.girlScream,
+    deathSound = Sounds.girlScream,
     damageMultipliers = mapOf()
 )
 

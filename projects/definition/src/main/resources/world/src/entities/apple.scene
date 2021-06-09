@@ -3,9 +3,8 @@
 ["apple","",""],
 ["apple","texture","arch"],
 ["apple","mesh","key"],
-["apple","translation",[0.0,0.0,0.28782347]],
 ["apple","type","solid-box"],
-["apple","itemType","apple"],
-["apple","interaction","take"]
+["apple","interaction","take"],
+["apple","itemType","apple"]
 ]
 }

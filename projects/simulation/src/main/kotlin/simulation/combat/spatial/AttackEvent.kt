@@ -37,7 +37,6 @@ fun onAttack(world: SpatialCombatWorld): (AttackEvent) -> Events = { event ->
         .plus(listOf(
             NewSound(
                 type = weapon.sound,
-                volume = 1f,
                 position = origin
             )
         ))

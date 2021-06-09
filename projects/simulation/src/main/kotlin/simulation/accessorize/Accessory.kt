@@ -38,6 +38,7 @@ data class AccessoryDefinition(
     val many: Boolean = true, // Whether a character can have multiple instances of this accessory at once
     val upgrades: Set<AccessoryName> = setOf(),
     val level: Int = 1,
+    val pickupSound: String? = null
 )
 
 fun hasAccessory(type: AccessoryName, accessories: Table<Accessory>, actor: Id): Boolean =

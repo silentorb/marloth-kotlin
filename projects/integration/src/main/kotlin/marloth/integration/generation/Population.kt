@@ -119,9 +119,16 @@ fun populateDistributions(nextId: IdSource, config: GenerationConfig, dice: Dice
 
   val remainingSlots = slots - monsterSlots.map { it.key }
 
-  val itemSlots = selectSlots(dice, remainingSlots, cellCount / 15)
-  val itemDefinition = expandGraphInstances(config.expansionLibrary, graphLibrary["apple"]!!)
+  val itemSlots = selectSlots(dice, remainingSlots, cellCount / 10)
+  val itemDefinitions = listOf(
+      "apple",
+      "apple2",
+      "apple3",
+  )
+      .map { expandGraphInstances(config.expansionLibrary, graphLibrary[it]!!) }
+
   val itemHands = itemSlots.flatMap { (_, slot) ->
+    val itemDefinition = dice.takeOne(itemDefinitions)
     graphToHands(config.resourceInfo.meshShapes, nextId, itemDefinition, slot.transform)
   }
   return monsterHands + itemHands

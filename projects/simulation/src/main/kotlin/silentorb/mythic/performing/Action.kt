@@ -18,7 +18,7 @@ data class ActionDefinition(
     val range: Float = 0f,
     val animation: AnimationName? = null,
     val duration: Float = 0f,
-    val cost: ActionCost? = null
+    val cost: ActionCost? = null,
 )
 
 data class Action(

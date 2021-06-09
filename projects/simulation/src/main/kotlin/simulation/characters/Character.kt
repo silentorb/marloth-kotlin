@@ -1,6 +1,6 @@
 package simulation.characters
 
-import marloth.scenery.enums.SoundId
+import marloth.scenery.enums.Sounds
 import marloth.scenery.enums.Text
 import silentorb.mythic.audio.SoundName
 import silentorb.mythic.aura.SoundType
@@ -29,7 +29,7 @@ data class CharacterDefinition(
     val accessories: List<AccessoryName> = listOf(),
     val accessoryPool: List<AccessoryName> = listOf(),
     val depictionType: DepictionType,
-    val deathSound: SoundName? = SoundId.girlScream,
+    val deathSound: SoundName? = Sounds.girlScream,
     val ambientSounds: List<SoundType> = listOf(),
     val damageMultipliers: DamageMultipliers = mapOf(),
     val money: Int = 0,

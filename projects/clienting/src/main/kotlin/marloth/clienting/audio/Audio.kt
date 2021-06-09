@@ -5,7 +5,7 @@ import marloth.clienting.getListenerPosition
 import silentorb.mythic.ent.*
 import silentorb.mythic.platforming.PlatformAudio
 import silentorb.mythic.spatial.Vector3
-import marloth.scenery.enums.SoundId
+import marloth.scenery.enums.Sounds
 import silentorb.mythic.aura.*
 import simulation.main.World
 
@@ -31,7 +31,7 @@ fun loadAudioResource(audio: PlatformAudio, name: String) =
 //audio.loadSound(getResourceUrl("audio/$name.ogg")!!.file.drop(1))
 
 fun loadSounds(audio: PlatformAudio): SoundLibrary =
-    reflectProperties<String>(SoundId).mapIndexed { i, entry ->
+    reflectProperties<String>(Sounds).mapIndexed { i, entry ->
       val (buffer, duration) = loadAudioResource(audio, entry)
       val sound = SoundData(
           type = entry,

@@ -1,6 +1,7 @@
 package simulation.accessorize
 
 import marloth.scenery.enums.AccessoryIdOld
+import silentorb.mythic.audio.NewSound
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
@@ -66,11 +67,21 @@ fun eventsFromItemPickup(world: World): (Interaction, Id) -> Events = { interact
   val deck = world.deck
   val worldItem = interaction.target
   val stack = deck.accessories[worldItem]
+  val definition = world.definitions.accessories[stack?.type]
+  val sound = definition?.pickupSound
+  val itemBody = deck.bodies[worldItem]
 
   listOfNotNull(
       DeleteEntityEvent(
           id = worldItem
       ),
+      if (sound != null && itemBody != null)
+        NewSound(
+            type = sound,
+            position = itemBody.position,
+        )
+      else
+        null,
       if (stack == null)
         null
       else {

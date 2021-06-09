@@ -49,24 +49,8 @@ fun rocketLauncher(level: Int = 1) =
                     amount = 40 + 30 * level
                 )
             ),
-            sound = SoundId.pistolFire
+            sound = Sounds.pistolFire
         )
-    )
-
-fun apple() =
-    ActionAccessory(
-        accessory = AccessoryDefinition(
-            name = DevText("Apple"),
-            isConsumable = true,
-            components = listOf(
-                Nutrient(
-                    value = 30
-                )
-            )
-        ),
-        action = ActionDefinition(
-            equipmentSlot = EquipmentSlot.utility
-        ),
     )
 
 fun spiritRocketLauncher(level: Int): ActionAccessory {
@@ -99,7 +83,7 @@ fun claws(level: Int) =
                     amount = 50 + 30 * level
                 )
             ),
-            sound = SoundId.pistolFire
+            sound = Sounds.pistolFire
         )
     )
 
@@ -123,7 +107,7 @@ fun pistol(level: Int) =
                     amount = 40 + 30 * level
                 )
             ),
-            sound = SoundId.pistolFire
+            sound = Sounds.pistolFire
         )
     )
 
@@ -155,7 +139,7 @@ fun actionAccessories(): ActionAccessoryMap = mapOf(
                     amount = 80
                 )
             ),
-            sound = SoundId.pistolFire
+            sound = Sounds.pistolFire
         )
     ),
 
@@ -166,12 +150,59 @@ fun actionAccessories(): ActionAccessoryMap = mapOf(
         action = ActionDefinition(
             cooldown = 3f,
             duration = 2f,
-            equipmentSlot = EquipmentSlot.automatic
+            equipmentSlot = EquipmentSlot.automatic,
         )
     ),
 
     AccessoryIdOld.rocketLauncher to rocketLauncher(),
-    Accessories.apple to apple(),
+
+    Accessories.apple to ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = DevText("Small Apple"),
+            isConsumable = true,
+            pickupSound = Sounds.takePlant,
+            components = listOf(
+                Nutrient(
+                    value = 30
+                )
+            )
+        ),
+        action = ActionDefinition(
+            equipmentSlot = EquipmentSlot.utility
+        ),
+    ),
+
+    Accessories.apple2 to ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = DevText("Large Apple"),
+            isConsumable = true,
+            pickupSound = Sounds.takePlant,
+            components = listOf(
+                Nutrient(
+                    value = 45
+                )
+            )
+        ),
+        action = ActionDefinition(
+            equipmentSlot = EquipmentSlot.utility
+        ),
+    ),
+
+    Accessories.apple3 to ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = DevText("Huge Apple"),
+            isConsumable = true,
+            pickupSound = Sounds.takePlant,
+            components = listOf(
+                Nutrient(
+                    value = 60
+                )
+            )
+        ),
+        action = ActionDefinition(
+            equipmentSlot = EquipmentSlot.utility
+        ),
+    ),
 
     Accessories.shadowSpirit to ActionAccessory(
         accessory = AccessoryDefinition(
@@ -220,7 +251,7 @@ fun actionAccessories(): ActionAccessoryMap = mapOf(
                     amount = 30
                 )
             ),
-            sound = SoundId.pistolFire
+            sound = Sounds.pistolFire
         )
     ),
 

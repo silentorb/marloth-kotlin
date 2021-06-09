@@ -1,6 +1,6 @@
 package simulation.entities
 
-import marloth.scenery.enums.SoundId
+import marloth.scenery.enums.Sounds
 import silentorb.mythic.audio.NewSound
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
@@ -29,11 +29,11 @@ fun eventsFromDoorOpening(world: World): (Interaction, Id) -> Events = { interac
     listOf(
         Command(type = setPrimaryMode, target = door, value = DoorMode.opening),
         NewSound(
-            type = SoundId.creakingDoor,
+            type = Sounds.creakingDoor,
             position = body.position,
         ),
         NewSound(
-            type = SoundId.doorLock,
+            type = Sounds.doorLock,
             position = body.position,
         ),
     )
@@ -50,7 +50,7 @@ fun eventsFromDoorClosing(world: World): (Interaction, Id) -> Events = { interac
     listOf(
         Command(type = setPrimaryMode, target = door, value = DoorMode.closing),
         NewSound(
-            type = SoundId.creakingDoor,
+            type = Sounds.creakingDoor,
             position = body.position,
         ),
     )
@@ -85,7 +85,7 @@ fun eventsFromOpeningAndClosingTransitions(deck: Deck): Events {
           listOfNotNull(
               Command(type = setPrimaryMode, target = door, value = DoorMode.closed),
               if (body != null) NewSound(
-                  type = SoundId.doorLock,
+                  type = Sounds.doorLock,
                   position = body.position,
               )
               else

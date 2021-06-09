@@ -7,6 +7,8 @@ import simulation.accessorize.AccessoryName
 
 object Accessories {
     val apple = "apple"
+    val apple2 = "apple2"
+    val apple3 = "apple3"
     val cancelShadowSpirit = "cancelShadowSpirit"
     val shadowSpirit = "shadowSpirit"
 }
