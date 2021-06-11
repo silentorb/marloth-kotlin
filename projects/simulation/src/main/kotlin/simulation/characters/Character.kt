@@ -66,6 +66,7 @@ data class Character(
     val wares: Map<Id, Ware> = mapOf(),
     val availableContracts: Map<Id, ContractDefinition> = mapOf(),
     val utilityItem: Id? = null,
+    val stepCounter: Float = 0f,
 )
 
 data class ModifyLevelEvent(

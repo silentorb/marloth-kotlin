@@ -4,6 +4,8 @@ package marloth.scenery.enums
 object Sounds {
   val creakingDoor = "creakingDoor"
   val doorLock = "doorLock"
+  val footStep1 = "footStep1"
+  val footStep2 = "footStep2"
   val girlScream = "girlScream"
   val hogAmbient01 = "hogAmbient01"
   val hogAmbient02 = "hogAmbient02"

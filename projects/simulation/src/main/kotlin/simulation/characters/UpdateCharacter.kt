@@ -1,11 +1,14 @@
 package simulation.characters
 
 import marloth.scenery.enums.CharacterCommands
+import silentorb.mythic.characters.rigs.CharacterRig
+import silentorb.mythic.characters.rigs.isGrounded
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.pipe2
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.BulletState
 import silentorb.mythic.randomly.Dice
 import simulation.accessorize.ChooseImprovedAccessory
@@ -18,6 +21,7 @@ import simulation.entities.updateAvailableContracts
 import simulation.main.Deck
 import simulation.misc.*
 import simulation.physics.castInteractableRay
+import simulation.updating.simulationDelta
 
 fun updateMoney(deck: Deck, events: Events, character: Id, money: Int): Int {
   val rewards = events
@@ -71,10 +75,17 @@ fun getShadowSpirit(deck: Deck, actor: Id): Id? {
     null
 }
 
+fun updateStepCounter(rig: CharacterRig, body: Body, stepCounter: Float): Float =
+    if (isGrounded(rig))
+      (stepCounter + body.velocity.length() * 0.85f * simulationDelta) % 2f
+    else
+      stepCounter
+
 fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletState: BulletState, actor: Id, character: Character,
                     commands: Commands, events: Events): Character {
   val destructible = deck.destructibles[actor]!!
   val body = deck.bodies[actor]!!
+  val rig = deck.characterRigs[actor]!!
   val position = body.position
   val isAlive = isAlive(destructible.health, character, position)
   val canInteractWith = if (deck.players.containsKey(actor))
@@ -106,6 +117,7 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
       energyAccumulator = energyAccumulator - energyAccumulation * highIntScale,
       availableContracts = updateAvailableContracts(commands, character.availableContracts),
       utilityItem = updateUtilityItem(definitions, deck, commands, actor, character),
+      stepCounter = updateStepCounter(rig, body, character.stepCounter),
   )
 }
 
