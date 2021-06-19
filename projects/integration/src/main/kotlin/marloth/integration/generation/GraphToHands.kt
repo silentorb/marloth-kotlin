@@ -4,7 +4,6 @@ import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
 import silentorb.mythic.ent.scenery.getLocalNodeTransform
 import silentorb.mythic.physics.Body
-import silentorb.mythic.physics.DynamicBody
 import silentorb.mythic.physics.getNodeCollisionObject
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.scenery.Shape
@@ -15,7 +14,7 @@ import simulation.entities.Depiction
 import simulation.entities.Interactable
 import simulation.entities.PrimaryMode
 import simulation.main.NewHand
-import simulation.misc.MarlothProperties
+import simulation.misc.GameProperties
 
 fun bodyFromTransform(transform: Matrix) =
     Body(
@@ -47,8 +46,8 @@ fun getNodeDepiction(graph: Graph, node: Key): Depiction? {
 }
 
 fun getPrimaryMode(graph: Graph, node: Key): PrimaryMode? {
-  val modeType = getNodeValue<String>(graph, node, MarlothProperties.modeType)
-  val mode = getNodeValue<String>(graph, node, MarlothProperties.mode)
+  val modeType = getNodeValue<String>(graph, node, GameProperties.modeType)
+  val mode = getNodeValue<String>(graph, node, GameProperties.mode)
   return if (modeType != null && mode != null)
     PrimaryMode(
         type = modeType,
@@ -73,13 +72,13 @@ fun getPrimaryMode(graph: Graph, node: Key): PrimaryMode? {
 //}
 
 fun getNodeInteractions(graph: Graph, node: Key): List<Any> =
-    getGraphValues<String>(graph, node, MarlothProperties.interaction)
+    getGraphValues<String>(graph, node, GameProperties.interaction)
         .map { type ->
           Interactable(type = type)
         }
 
 fun getNodeItemType(graph: Graph, node: Key): Accessory? {
-  val itemType = getNodeValue<String>(graph, node, MarlothProperties.itemType)
+  val itemType = getNodeValue<String>(graph, node, GameProperties.itemType)
   return if (itemType != null)
     Accessory(
         type = itemType,

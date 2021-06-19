@@ -14,7 +14,7 @@ import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.spatial.Vector3i
 import simulation.entities.Interactions
 import simulation.misc.BlockRotations
-import simulation.misc.MarlothProperties
+import simulation.misc.GameProperties
 import simulation.misc.modeTypes
 
 val cellDirectionWidget: PropertyWidget = { _, entry, owner ->
@@ -71,72 +71,72 @@ val blockRotationsWidget: PropertyWidget = labeledDropDownWidget { blockRotation
 val interactionIds = reflectProperties<String>(Interactions)
 
 fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): PropertyDefinitions = mapOf(
-    MarlothProperties.mine to PropertyDefinition(
+    GameProperties.mine to PropertyDefinition(
         displayName = "My Type",
         widget = dropDownWidget { sides },
         defaultValue = { sides.firstOrNull() },
     ),
-    MarlothProperties.other to PropertyDefinition(
+    GameProperties.other to PropertyDefinition(
         displayName = "Other Type",
         widget = dropDownWidget { sides },
         defaultValue = { sides.firstOrNull() },
     ),
-    MarlothProperties.direction to PropertyDefinition(
+    GameProperties.direction to PropertyDefinition(
         displayName = "Direction",
         serialization = cellDirectionSerialization,
         widget = cellDirectionWidget,
         defaultValue = { CellDirection(Vector3i.zero, Direction.east) },
     ),
-    MarlothProperties.showIfSideIsEmpty to PropertyDefinition(
+    GameProperties.showIfSideIsEmpty to PropertyDefinition(
         displayName = "Show if Side is Empty",
         serialization = cellDirectionSerialization,
         widget = cellDirectionWidget,
         defaultValue = { CellDirection(Vector3i.zero, Direction.east) },
     ),
-    MarlothProperties.sideHeight to PropertyDefinition(
+    GameProperties.sideHeight to PropertyDefinition(
         displayName = "Side Height",
         serialization = intSerialization,
         widget = propertyIntegerTextField,
         defaultValue = { StandardHeights.first },
     ),
-    MarlothProperties.heightVariant to PropertyDefinition(
+    GameProperties.heightVariant to PropertyDefinition(
         displayName = "Height Variant",
         serialization = intSerialization,
         widget = propertyIntegerTextField,
         defaultValue = { 25 },
     ),
-    MarlothProperties.biome to PropertyDefinition(
+    GameProperties.biome to PropertyDefinition(
         displayName = "Biome",
         widget = dropDownWidget { biomeIds },
         defaultValue = { Biomes.checkers },
     ),
-    MarlothProperties.blockRotations to PropertyDefinition(
+    GameProperties.blockRotations to PropertyDefinition(
         displayName = "Block Rotations",
         widget = blockRotationsWidget,
         serialization = enumSerialization { BlockRotations.valueOf(it) },
         defaultValue = { BlockRotations.all },
     ),
-    MarlothProperties.interaction to PropertyDefinition(
+    GameProperties.interaction to PropertyDefinition(
         displayName = "Interaction",
         widget = dropDownWidget { interactionIds },
         defaultValue = { Interactions.take },
     ),
-    MarlothProperties.itemType to PropertyDefinition(
+    GameProperties.itemType to PropertyDefinition(
         displayName = "Item Type",
         widget = propertyTextField,
         defaultValue = { "" },
     ),
-    MarlothProperties.modeType to PropertyDefinition(
+    GameProperties.modeType to PropertyDefinition(
         displayName = "Mode Type",
         widget = dropDownWidget { modeTypes },
         defaultValue = { modeTypes.first() },
     ),
-    MarlothProperties.mode to PropertyDefinition(
+    GameProperties.mode to PropertyDefinition(
         displayName = "Mode",
         widget = propertyTextField,
         defaultValue = { modeTypes.first() },
     ),
-    MarlothProperties.mass to PropertyDefinition(
+    GameProperties.mass to PropertyDefinition(
         displayName = "Mass",
         serialization = floatSerialization,
         widget = propertyDecimalTextField,

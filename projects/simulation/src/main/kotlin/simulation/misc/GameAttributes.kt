@@ -1,6 +1,5 @@
 package simulation.misc
 
-import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.ent.PropertyInfo
 import silentorb.mythic.ent.PropertySchema
 
@@ -22,6 +21,7 @@ object GameAttributes {
   val lockedRotation = "lockedRotation"
   val lightDistribution = "lightDistribution"
   val showIfSideIsEmpty = "showIfSideIsEmpty"
+  val heteroBlock = BlockAttributes.hetero
 }
 
 enum class BlockRotations {
@@ -34,7 +34,7 @@ val modeTypes = listOf(
     "door"
 )
 
-object MarlothProperties {
+object GameProperties {
   const val mine = "mine"
   const val other = "other"
   const val direction = "direction"
@@ -54,19 +54,19 @@ object MarlothProperties {
 }
 
 fun marlothPropertiesSchema(): PropertySchema = mapOf(
-    MarlothProperties.biome to PropertyInfo(
+    GameProperties.biome to PropertyInfo(
         manyToMany = true,
     ),
-    MarlothProperties.other to PropertyInfo(
+    GameProperties.other to PropertyInfo(
         manyToMany = true,
     ),
-    MarlothProperties.showIfSideIsEmpty to PropertyInfo(
+    GameProperties.showIfSideIsEmpty to PropertyInfo(
         manyToMany = true,
     ),
-    MarlothProperties.heightVariant to PropertyInfo(
+    GameProperties.heightVariant to PropertyInfo(
         manyToMany = true,
     ),
-    MarlothProperties.interaction to PropertyInfo(
+    GameProperties.interaction to PropertyInfo(
         manyToMany = true,
     ),
 )

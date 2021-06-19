@@ -16,7 +16,7 @@ import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 import simulation.misc.GameAttributes
-import simulation.misc.MarlothProperties
+import simulation.misc.GameProperties
 import simulation.misc.absoluteCellPosition
 
 fun updateSideNodeNames(editor: Editor, graph: Graph, previous: Graph): Commands {
@@ -30,10 +30,10 @@ fun updateSideNodeNames(editor: Editor, graph: Graph, previous: Graph): Commands
 
     sideNodes
         .mapNotNull { node ->
-          val currentDirection = getNodeValue<CellDirection>(graph, node, MarlothProperties.direction)
-          val previousDirection = getNodeValue<CellDirection>(previous, node, MarlothProperties.direction)
+          val currentDirection = getNodeValue<CellDirection>(graph, node, GameProperties.direction)
+          val previousDirection = getNodeValue<CellDirection>(previous, node, GameProperties.direction)
           if (currentDirection != previousDirection && currentDirection != null && previousDirection != null) {
-            val isConnection = nodeHasProperty(graph, node, MarlothProperties.mine)
+            val isConnection = nodeHasProperty(graph, node, GameProperties.mine)
             val cell = currentDirection.cell
             val direction = currentDirection.direction
             val directionClause = if (isConnection)
@@ -54,7 +54,7 @@ fun applyCellDirectionOffsets(graph: Graph): Graph {
   return if (graph.any { it.source == signatureKey })
     graph
   else {
-    val nodeDirections = filterByProperty(graph, MarlothProperties.direction)
+    val nodeDirections = filterByProperty(graph, GameProperties.direction)
     val additions = nodeDirections
         .flatMap { entry ->
           val node = entry.source

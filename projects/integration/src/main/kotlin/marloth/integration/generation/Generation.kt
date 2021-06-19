@@ -29,7 +29,7 @@ import simulation.main.World
 import simulation.main.allHandsToDeck
 import simulation.main.newGlobalState
 import simulation.misc.Definitions
-import simulation.misc.MarlothProperties
+import simulation.misc.GameProperties
 
 fun prepareWorldGraph(generationConfig: GenerationConfig, dice: Dice, graph: Graph) =
     if (getDebugBoolean("STATIC_MAP"))
@@ -105,7 +105,7 @@ fun generateWorldGraphAndDeck(nextId: IdSource, generationConfig: GenerationConf
 
   val graph = prepareWorldGraph(generationConfig, dice, listOf())
   val staticEntities = graph
-      .filter { it.property == MarlothProperties.interaction }
+      .filter { it.property == GameProperties.interaction }
       .map { it.source }
       .flatMap { withNodeChildren(graph, it) }
       .toSet()

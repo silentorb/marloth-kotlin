@@ -5,6 +5,7 @@ import silentorb.mythic.debugging.conditionalDebugLog
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3i
+import simulation.misc.BlockAttributes
 import simulation.misc.CellAttribute
 import simulation.misc.cellLength
 import kotlin.math.pow
@@ -34,7 +35,7 @@ fun newGroupedBlocks(blocks: Collection<Block>): GroupedBlocks {
 }
 
 fun filterUsedUniqueBlock(block: Block?, groupedBlocks: GroupedBlocks): GroupedBlocks =
-    if (block != null && block.attributes.contains(CellAttribute.unique))
+    if (block != null && block.attributes.contains(BlockAttributes.unique))
       GroupedBlocks(
           all = groupedBlocks.all - block,
           flexible = groupedBlocks.flexible - block,
@@ -76,6 +77,23 @@ fun getNextPosition(incompleteSide: CellDirection): Vector3i {
   return position + offset
 }
 
+fun getSignificantCellCount(grid: BlockGrid): Int =
+    grid.entries
+        .filter { it.value.offset == Vector3i.zero }
+        .sumBy { it.value.source.significantCellCount }
+
+fun getAvailableBlocks(groupedBlocks: GroupedBlocks, incompleteSides: List<CellDirection>, block: Block?): Set<Block> {
+  val blocks = if (incompleteSides.size < 2)
+    groupedBlocks.flexible
+  else
+    groupedBlocks.all
+
+  return if (block != null && block.attributes.contains(BlockAttributes.hetero))
+    blocks - block
+  else
+    blocks
+}
+
 tailrec fun addPathStep(
     maxSteps: Int,
     dice: Dice,
@@ -97,7 +115,7 @@ tailrec fun addPathStep(
   if (grid.size > 1000)
     throw Error("Infinite loop in world generation.")
 
-  val stepCount = grid.count { it.value.cell.isTraversable }
+  val stepCount = getSignificantCellCount(grid)
 //  worldGenerationLog {
 //    "Grid size: ${grid.size}, Traversable: $stepCount, Required: $required, Optional: $optional"
 //  }
@@ -116,10 +134,7 @@ tailrec fun addPathStep(
     if (groupedBlocks == null)
       throw Error("Biome mismatch")
 
-    val blocks = if (incompleteSides.size < 2)
-      groupedBlocks.flexible
-    else
-      groupedBlocks.all
+    val blocks = getAvailableBlocks(groupedBlocks, incompleteSides, grid[state.lastCell]?.source)
 
     val matchResult = matchConnectingBlock(dice, blocks, grid, nextPosition)
         ?: matchConnectingBlock(dice, groupedBlocks.all - blocks, grid, nextPosition)
@@ -137,7 +152,7 @@ tailrec fun addPathStep(
         matchConnectingBlock(dice, groupedBlocks.all - blocks, grid, nextPosition)
       assert(cellAdditions.containsKey(nextPosition))
       assert(cellAdditions.any { it.value.offset == Vector3i.zero })
-      assert(cellAdditions.none { grid.containsKey(it.key)})
+      assert(cellAdditions.none { grid.containsKey(it.key) })
       state.copy(
           biomeBlocks = state.biomeBlocks + (biome to filterUsedUniqueBlock(block, groupedBlocks)),
           grid = grid + cellAdditions,

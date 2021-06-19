@@ -3,7 +3,7 @@
 ["gizmo","parent","ground-slot"],
 ["gizmo","mesh","cube"],
 ["gizmo","type","editorOnly"],
-["gizmo","scale",[0.37452623,0.37452623,0.37452623]],
+["gizmo","scale",[0.74905246,0.74905246,0.74905246]],
 ["gizmo","translation",[0.0,0.0,0.5]],
 ["ground-slot","type","groundSlot"]
 ]

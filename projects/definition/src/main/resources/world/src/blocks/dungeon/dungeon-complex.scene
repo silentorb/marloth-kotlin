@@ -114,6 +114,7 @@
 ["dungeon-complex","","2,1,1,north"],
 ["dungeon-complex","biome","dungeon"],
 ["dungeon-complex","blockRotations","all"],
+["dungeon-complex","type","heteroBlock"],
 ["floor","",""],
 ["floor","collisionMask",38],
 ["floor","collisionGroups",17],

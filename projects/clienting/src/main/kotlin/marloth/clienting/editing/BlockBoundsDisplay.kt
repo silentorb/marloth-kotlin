@@ -12,7 +12,7 @@ import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.filterByProperty
 import silentorb.mythic.ent.getNodeValue
 import silentorb.mythic.ent.scenery.anyNodeHasAttribute
-import silentorb.mythic.ent.scenery.nodeAttributes
+import silentorb.mythic.ent.scenery.getNodeAttributes
 import silentorb.mythic.ent.scenery.nodeHasAttribute
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Matrix
@@ -119,15 +119,15 @@ fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
   val cells = getCellOccupancy(editor.enumerations.resourceInfo.meshShapes, graph, meshNodes)
       .distinct()
 
-  val sideNodes = nodeAttributes(graph, GameAttributes.blockSide)
+  val sideNodes = getNodeAttributes(graph, GameAttributes.blockSide)
   val sides = gatherSides(sideGroups, graph, sideNodes)
       .filter { it.second != null } as List<Pair<CellDirection, Side>>
 
   val variableSides = selection.mapNotNull { node ->
     if (nodeHasAttribute(graph, node, GameAttributes.showIfSideIsEmpty))
-      getNodeValue<CellDirection>(graph, node, MarlothProperties.direction)
+      getNodeValue<CellDirection>(graph, node, GameProperties.direction)
     else
-      getNodeValue<CellDirection>(graph, node, MarlothProperties.showIfSideIsEmpty)
+      getNodeValue<CellDirection>(graph, node, GameProperties.showIfSideIsEmpty)
   }
 
   val selectedSides = selection.mapNotNull { node ->

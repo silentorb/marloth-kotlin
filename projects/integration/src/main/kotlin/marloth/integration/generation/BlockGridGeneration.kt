@@ -16,7 +16,7 @@ import silentorb.mythic.spatial.Vector3i
 import simulation.misc.BlockRotations
 import simulation.misc.CellAttribute
 import simulation.misc.GameAttributes
-import simulation.misc.MarlothProperties
+import simulation.misc.GameProperties
 
 fun getTraversable(cells: Map<Vector3i, BlockCell>) =
     cells
@@ -130,17 +130,36 @@ fun prepareBlockGraph(graph: Graph, sideNodes: List<String>, biomes: Collection<
   }
 }
 
+fun interpolateCellCount(cells: Set<Vector3i>, axis: Int): Int =
+    (cells.minOf { it[axis] } + 1 until cells.maxOf { it[axis] })
+        .count { i -> cells.none { it[axis] == i } }
+
+// Traversible cells are only marked along edges of a block
+// For large blocks, this function pads the traversable cell count
+// by including at least some middle cells in the count
+fun interpolateTraversibleCellCount(cells: Set<Vector3i>): Int {
+  val minimum =
+      interpolateCellCount(cells, 0) +
+          interpolateCellCount(cells, 1) +
+          interpolateCellCount(cells, 2)
+  return minimum * 3 / 2
+}
+
 fun blockFromGraph(graph: Graph, cells: Map<Vector3i, BlockCell>, root: String, name: String,
                    biomes: Collection<String>,
                    heightOffset: Int): Block {
-  val rotation = getNodeValue<BlockRotations>(graph, root, MarlothProperties.blockRotations)
+  val rotation = getNodeValue<BlockRotations>(graph, root, GameProperties.blockRotations)
+  val traversable = getTraversable(cells)
+  val blockAttributes = getNodeAttributes(graph, root).toSet()
   return Block(
       name = name + if (heightOffset != 0) heightOffset else "",
       cells = cells,
-      traversable = getTraversable(cells),
+      traversable = traversable,
       rotations = rotation ?: BlockRotations.none,
       biomes = biomes.toSet(),
       heightOffset = heightOffset,
+      significantCellCount = traversable.size + interpolateTraversibleCellCount(traversable),
+      attributes = blockAttributes,
   )
 }
 
@@ -150,11 +169,11 @@ fun shouldOmit(cellDirections: List<CellDirection>, keys: Set<CellDirection>): B
     }
 
 fun builderFromGraph(graph: Graph, zShifts: Collection<CellDirection>): Builder {
-  val showIfSideIsEmpty = filterByProperty(graph, MarlothProperties.showIfSideIsEmpty)
+  val showIfSideIsEmpty = filterByProperty(graph, GameProperties.showIfSideIsEmpty)
       .map { it.source to it.target as CellDirection }
       .plus(nodesWithAttribute(graph, GameAttributes.showIfSideIsEmpty)
           .mapNotNull {
-            val direction = getNodeValue<CellDirection>(graph, it, MarlothProperties.direction)
+            val direction = getNodeValue<CellDirection>(graph, it, GameProperties.direction)
             if (direction != null)
               it to direction
             else
@@ -213,12 +232,12 @@ fun adjustSideHeights(sides: List<Pair<CellDirection, Side?>>, height: Int): Lis
 
 fun graphToBlockBuilder(name: String, graph: Graph): List<BlockBuilder> {
   val root = getGraphRoots(graph).first()
-  val biomes = getGraphValues<String>(graph, root, MarlothProperties.biome)
+  val biomes = getGraphValues<String>(graph, root, GameProperties.biome)
   return if (biomes.none() || biomes.contains(Biomes.hedgeMaze))
     listOf()
   else {
-    val heights = listOf(0) + getGraphValues(graph, root, MarlothProperties.heightVariant)
-    val sideNodes = nodeAttributes(graph, GameAttributes.blockSide)
+    val heights = listOf(0) + getGraphValues(graph, root, GameProperties.heightVariant)
+    val sideNodes = getNodeAttributes(graph, GameAttributes.blockSide)
     val sides = gatherSides(sideGroups, graph, sideNodes)
     return heights.map { height ->
       val adjustedSides = adjustSideHeights(sides, height)

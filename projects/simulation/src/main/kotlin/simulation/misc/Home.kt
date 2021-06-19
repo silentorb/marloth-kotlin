@@ -1,7 +1,7 @@
 package simulation.misc
 
 import silentorb.mythic.ent.Graph
-import silentorb.mythic.ent.scenery.nodeAttributes
+import silentorb.mythic.ent.scenery.getNodeAttributes
 import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
 import silentorb.mythic.spatial.Matrix
 
@@ -17,7 +17,7 @@ import silentorb.mythic.spatial.Matrix
 //    grid.cells.entries.firstOrNull { it.value.attributes.contains(CellAttribute.home) }?.key ?: Vector3i.zero
 
 fun getPlayerStart(graph: Graph): Matrix? {
-  val spawners = nodeAttributes(graph, GameAttributes.playerSpawn)
+  val spawners = getNodeAttributes(graph, GameAttributes.playerSpawn)
   val spawner = spawners.minByOrNull { path -> path.count { it == '.' } }
   return if (spawner != null)
     getAbsoluteNodeTransform(graph, spawner)
@@ -26,5 +26,5 @@ fun getPlayerStart(graph: Graph): Matrix? {
 }
 
 fun getNodePositionsByAttribute(graph: Graph, attribute: String): List<Matrix> =
-    nodeAttributes(graph, attribute)
+    getNodeAttributes(graph, attribute)
         .map { getAbsoluteNodeTransform(graph, it) }

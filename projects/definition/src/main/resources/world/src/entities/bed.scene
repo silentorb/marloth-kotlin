@@ -5,10 +5,10 @@
 ["mattress","mesh","cube"],
 ["mattress","interaction","sleep"],
 ["mattress","type","solid-box"],
-["mattress","scale",[0.51749784,0.9486986,0.11200945]],
+["mattress","scale",[1.03499568,1.8973972,0.2240189]],
 ["pillow","mesh","cube"],
 ["pillow","parent","bed"],
-["pillow","scale",[0.40006116,0.21710517,0.07595213]],
+["pillow","scale",[0.80012232,0.43421034,0.15190426]],
 ["pillow","translation",[-5.302429E-4,0.6556198,0.15146203]]
 ]
 }
