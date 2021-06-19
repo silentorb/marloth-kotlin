@@ -12,7 +12,7 @@ import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.filterByProperty
 import silentorb.mythic.ent.getNodeValue
 import silentorb.mythic.ent.scenery.anyNodeHasAttribute
-import silentorb.mythic.ent.scenery.getNodeAttributes
+import silentorb.mythic.ent.scenery.getNodesWithAttribute
 import silentorb.mythic.ent.scenery.nodeHasAttribute
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Matrix
@@ -119,7 +119,7 @@ fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
   val cells = getCellOccupancy(editor.enumerations.resourceInfo.meshShapes, graph, meshNodes)
       .distinct()
 
-  val sideNodes = getNodeAttributes(graph, GameAttributes.blockSide)
+  val sideNodes = getNodesWithAttribute(graph, GameAttributes.blockSide)
   val sides = gatherSides(sideGroups, graph, sideNodes)
       .filter { it.second != null } as List<Pair<CellDirection, Side>>
 

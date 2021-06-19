@@ -9,7 +9,6 @@ import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.Key
 import silentorb.mythic.ent.Table
-import silentorb.mythic.ent.scenery.expandGraphInstances
 import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.physics.Body
 import silentorb.mythic.randomly.Dice
@@ -25,6 +24,7 @@ import simulation.main.Deck
 import simulation.main.NewHand
 import simulation.main.allHandsToDeck
 import simulation.misc.Definitions
+import simulation.misc.DistAttributes
 import simulation.misc.Factions
 import kotlin.math.max
 import kotlin.math.min
@@ -92,46 +92,43 @@ fun populateOlderMonsters(monsterHands: Table<NewHand>, locations: List<Matrix>)
       }
 }
 
-fun selectSlots(dice: Dice, slots: SlotMap, limit: Int): List<Map.Entry<Key, Slot>> {
+fun selectSlots(dice: Dice, slots: SlotMap, limit: Int): SlotMap {
   val count = min(limit, slots.size)
-  return dice.take(slots.entries, count)
+  return dice.take(slots.entries, count).associate { it.key to it.value }
+}
+
+fun populateMonsters(cellCount: Int, level: Int, dice: Dice, slots: SlotMap): SlotMap {
+  val maxMonsters = min(monsterLimit(), cellCount / max(2, 16 - level))
+  val groundSlots = slots.filter { it.value.attributes.contains(SlotTypes.ground) }
+  return selectSlots(dice, groundSlots, maxMonsters)
+}
+
+fun distributeItemHands(nextId: IdSource, config: GenerationConfig, dice: Dice, itemSlots: SlotMap): List<NewHand> {
+  val itemDefinitions = filterPropGraphs(config, setOf(DistAttributes.floor, DistAttributes.food))
+  return itemSlots.flatMap { (_, slot) ->
+    val itemDefinition = dice.takeOne(itemDefinitions)
+    graphToHands(config.resourceInfo.meshShapes, nextId, itemDefinition, slot.transform)
+  }
 }
 
 fun populateDistributions(nextId: IdSource, config: GenerationConfig, dice: Dice, slots: SlotMap, cellCount: Int): List<NewHand> {
   val definitions = config.definitions
-  val graphLibrary = config.expansionLibrary.graphs
   val level = getDebugInt("WORLD_LEVEL") ?: config.level
 
-  val previousMonsters = config.hands.filterValues { hand ->
-    hand.components.any { (it as? Character)?.faction == Factions.monsters }
-  }
+  val lightSlots = distributeLightSlots(slots)
+  val lightHands = distributeLightHands(nextId, config, dice, lightSlots)
+  val slots2 = slots - lightSlots.keys
 
-  val maxMonsters = min(monsterLimit(), cellCount / max(2, 16 - level))
-  val monsterSlots = selectSlots(dice, slots, maxMonsters)
+  val monsterSlots = populateMonsters(cellCount, level, dice, slots2)
   val monsterLocations = monsterSlots
       .map { it.value.transform }
 
-  val monsterLocationsOlder = monsterLocations.take(previousMonsters.size)
-  val monsterLocationsNewer = monsterLocations.drop(previousMonsters.size)
+  val monsterHands = populateNewMonsters(definitions, monsterLocations, nextId, dice)
+  val slots3 = slots2 - monsterSlots.map { it.key }
 
-  val monsterHands = populateNewMonsters(definitions, monsterLocationsNewer, nextId, dice) +
-      populateOlderMonsters(previousMonsters, monsterLocationsOlder)
-
-  val remainingSlots = slots - monsterSlots.map { it.key }
-
-  val itemSlots = selectSlots(dice, remainingSlots, cellCount / 10)
-  val itemDefinitions = listOf(
-      "apple",
-      "apple2",
-      "apple3",
-  )
-      .map { expandGraphInstances(config.expansionLibrary, graphLibrary[it]!!) }
-
-  val itemHands = itemSlots.flatMap { (_, slot) ->
-    val itemDefinition = dice.takeOne(itemDefinitions)
-    graphToHands(config.resourceInfo.meshShapes, nextId, itemDefinition, slot.transform)
-  }
-  return monsterHands + itemHands
+  val itemSlots = selectSlots(dice, slots3, cellCount / 10)
+  val itemHands = distributeItemHands(nextId, config, dice, itemSlots)
+  return monsterHands + itemHands + lightHands
 }
 
 fun newPlayerCharacters(nextId: IdSource, definitions: Definitions, graph: Graph): List<NewHand> {
@@ -148,7 +145,7 @@ fun addNewPlayerCharacters(nextId: IdSource, config: GenerationConfig, graph: Gr
 fun populateWorld(nextId: IdSource, config: GenerationConfig, dice: Dice, graph: Graph): List<NewHand> {
   val elementGroups = nodesToElements(config.resourceInfo, graph)
   val lights = elementGroups.flatMap { it.lights }
-  val slots = gatherSlots(graph)
+  val slots = gatherSlots(graph, setOf(SlotTypes.ground, SlotTypes.wall))
   val hands = cycleHands(nextId)
       .plus(populateDistributions(nextId, config, dice, slots, config.cellCount))
       .plus(lights.map {

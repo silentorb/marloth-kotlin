@@ -3,6 +3,7 @@ package marloth.integration.generation
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
 import silentorb.mythic.ent.scenery.getLocalNodeTransform
+import silentorb.mythic.ent.scenery.getNodeLight
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.getNodeCollisionObject
 import silentorb.mythic.scenery.SceneProperties
@@ -23,8 +24,7 @@ fun bodyFromTransform(transform: Matrix) =
         scale = transform.getScale(),
     )
 
-fun getNodeBody(graph: Graph, node: Key, parentTransform: Matrix): Body? {
-  val transform = parentTransform * getAbsoluteNodeTransform(graph, node)
+fun getNodeBody(transform: Matrix): Body? {
   return if (transform == Matrix.identity)
     null
   else
@@ -107,16 +107,22 @@ fun associateHandParentBodies(graph: Graph, hands: Map<String, NewHand>) =
     }
 
 fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph, keys: Collection<String>,
-                 transform: Matrix): List<NewHand> {
+                 parentTransform: Matrix): List<NewHand> {
   val hands = keys
       .mapNotNull { node ->
-        val components = listOfNotNull(
-            getNodeBody(graph, node, transform),
-            getNodeDepiction(graph, node),
-            getNodeCollisionObject(meshShapes, graph, node),
-            getNodeItemType(graph, node),
-            getPrimaryMode(graph, node),
-        ) + getNodeInteractions(graph, node)
+        val transform = parentTransform * getAbsoluteNodeTransform(graph, node)
+        val light = getNodeLight(graph, node, transform)
+        val components = if (light != null)
+          listOf(light)
+        else
+          listOfNotNull(
+              getNodeBody(transform),
+              getNodeDepiction(graph, node),
+              getNodeCollisionObject(meshShapes, graph, node),
+              getNodeItemType(graph, node),
+              getPrimaryMode(graph, node),
+          ) + getNodeInteractions(graph, node)
+
         if (components.any())
           node to NewHand(
               id = nextId(),

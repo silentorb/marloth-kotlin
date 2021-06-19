@@ -2,6 +2,7 @@ package simulation.misc
 
 import silentorb.mythic.ent.PropertyInfo
 import silentorb.mythic.ent.PropertySchema
+import silentorb.mythic.ent.reflectProperties
 
 object Entities {
   val farmer = "farmer"
@@ -22,7 +23,19 @@ object GameAttributes {
   val lightDistribution = "lightDistribution"
   val showIfSideIsEmpty = "showIfSideIsEmpty"
   val heteroBlock = BlockAttributes.hetero
+
+  val wallSlot = "wallSlot"
+
 }
+
+object DistAttributes {
+  val floor = "distFloor"
+  val food = "distFood"
+  val light = "distLight"
+  val wall = "distWall"
+}
+
+val distAttributes = reflectProperties<String>(DistAttributes)
 
 enum class BlockRotations {
   all,

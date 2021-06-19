@@ -1,5 +1,15 @@
 {
 "graph" : [
+["apple","",""],
+["apple","texture","arch"],
+["apple","mesh","key"],
+["apple","type","solid-box"],
+["apple","interaction","take"],
+["apple","itemType","apple"],
+["apple","type","distFood"],
+["apple","type","distFloor"],
+["apple","parent","apple3"],
+["apple3","type","distFood"],
 ["apple3","",""],
 ["apple3","texture","arch"],
 ["apple3","mesh","key"],

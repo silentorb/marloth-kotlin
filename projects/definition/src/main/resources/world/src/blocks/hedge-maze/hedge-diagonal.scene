@@ -21,7 +21,6 @@
 ["forest-diagonal","blockRotations","all"],
 ["forest-diagonal","biome","hedgeMaze"],
 ["lamppost","type","lamppost"],
-["lamppost","type","lightDistribution"],
 ["lamppost","parent","forest-diagonal"],
 ["lamppost","translation",[1.104164,0.72384006,0.91826713]],
 ["sides","parent","forest-diagonal"],

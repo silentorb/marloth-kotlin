@@ -9,5 +9,5 @@ import silentorb.mythic.spatial.Vector4i
 
 fun defaultLightingConfig() =
     LightingConfig(
-        ambient = getDebugFloat("AMBIENT_LIGHT_LEVEL") ?: 0.08f
+        ambient = getDebugFloat("AMBIENT_LIGHT_LEVEL") ?: 0f
     )

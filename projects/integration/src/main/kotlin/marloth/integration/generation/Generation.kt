@@ -75,19 +75,26 @@ fun newGenerationSeed(): Long =
 
 fun newGenerationConfig(definitions: Definitions, resourceInfo: ResourceInfo,
                         graphLibrary: GraphLibrary,
-                        seed: Long = newGenerationSeed()): GenerationConfig =
-    GenerationConfig(
-        seed = seed,
-        definitions = definitions,
-        meshes = compileArchitectureMeshInfo(resourceInfo.meshShapes),
-        resourceInfo = resourceInfo,
-        includeEnemies = getDebugString("MONSTER_LIMIT") != "0",
-        cellCount = getDebugInt("BASE_ROOM_COUNT") ?: 100,
-        expansionLibrary = ExpansionLibrary(
-            graphs = loadMarlothGraphLibrary(marlothPropertiesSerialization) + graphLibrary,
-            schema = marlothGraphSchema(),
-        ),
-    )
+                        seed: Long = newGenerationSeed()): GenerationConfig {
+  val expansionLibrary = ExpansionLibrary(
+      graphs = loadMarlothGraphLibrary(marlothPropertiesSerialization) + graphLibrary,
+      schema = marlothGraphSchema(),
+  )
+  val propGroups = categorizeProps(expansionLibrary.graphs)
+  val propGraphs = preparePropGraphs(expansionLibrary, propGroups.keys)
+
+  return GenerationConfig(
+      seed = seed,
+      definitions = definitions,
+      meshes = compileArchitectureMeshInfo(resourceInfo.meshShapes),
+      resourceInfo = resourceInfo,
+      includeEnemies = getDebugString("MONSTER_LIMIT") != "0",
+      cellCount = getDebugInt("BASE_ROOM_COUNT") ?: 100,
+      expansionLibrary = expansionLibrary,
+      propGroups = propGroups,
+      propGraphs = propGraphs,
+  )
+}
 
 fun newGenerationConfig(gameApp: GameApp,
                         graphLibrary: GraphLibrary = mapOf(),

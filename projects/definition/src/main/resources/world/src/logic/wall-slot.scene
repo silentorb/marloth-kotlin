@@ -1,0 +1,17 @@
+{
+"graph" : [
+["gizmo","mesh","cube"],
+["gizmo","type","editorOnly"],
+["gizmo","translation",[0.0,0.0,0.5]],
+["gizmo","parent","wall-slot"],
+["gizmo","scale",[0.1392278,0.62404007,0.74905246]],
+["gizmo1","type","editorOnly"],
+["gizmo1","parent","wall-slot"],
+["gizmo1","mesh","cylinder"],
+["gizmo1","rotation",[0.0,1.5707964,0.0]],
+["gizmo1","translation",[0.1840943,0.0,0.42838183]],
+["gizmo1","scale",[0.26209366,0.26209366,0.35206977]],
+["wall-slot","",""],
+["wall-slot","type","wallSlot"]
+]
+}

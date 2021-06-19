@@ -20,7 +20,7 @@ import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.ExpansionLibrary
 import silentorb.mythic.ent.scenery.expandGraphInstances
 import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
-import silentorb.mythic.ent.scenery.getNodeAttributes
+import silentorb.mythic.ent.scenery.getNodesWithAttribute
 import silentorb.mythic.glowing.defaultTextureAttributes
 import silentorb.mythic.haft.InputDeviceState
 import silentorb.mythic.happenings.Command
@@ -36,6 +36,7 @@ import simulation.entities.DepictionType
 import simulation.main.World
 import simulation.misc.Entities
 import simulation.misc.GameAttributes
+import simulation.misc.distAttributes
 import simulation.misc.marlothPropertiesSchema
 import simulation.physics.CollisionGroups
 import java.nio.file.Path
@@ -53,7 +54,7 @@ const val worldResourcePath = "world"
 var staticDebugBlockGrid: BlockGrid? = null
 
 fun getMarlothEditorAttributes(): List<String> =
-    commonEditorAttributes() + reflectProperties(GameAttributes)
+    commonEditorAttributes() + reflectProperties(GameAttributes) + distAttributes
 
 fun marlothGraphSchema() =
     scenePropertiesSchema() + marlothPropertiesSchema()
@@ -187,7 +188,7 @@ fun updateEditingActive(commands: Commands, previousIsActive: Boolean): Boolean 
     }
 
 fun filterOutEditorOnlyNodes(graph: Graph): Graph {
-  val editorOnlyNodes = getNodeAttributes(graph, CommonEditorAttributes.editorOnly)
+  val editorOnlyNodes = getNodesWithAttribute(graph, CommonEditorAttributes.editorOnly)
   return graph
       .filter { !editorOnlyNodes.contains(it.source) }
       .toSet()

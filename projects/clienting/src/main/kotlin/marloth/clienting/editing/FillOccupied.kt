@@ -7,7 +7,7 @@ import silentorb.mythic.ent.Entry
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Key
 import silentorb.mythic.ent.filterByProperty
-import silentorb.mythic.ent.scenery.getNodeAttributes
+import silentorb.mythic.ent.scenery.getNodesWithAttribute
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.scenery.Shape
 import silentorb.mythic.spatial.Vector3i
@@ -19,7 +19,7 @@ fun getMissingOccupied(meshShapes: Map<Key, Shape>, graph: Graph): List<Vector3i
   val occupiedCells = getCellOccupancy(meshShapes, graph, meshNodes)
       .distinct()
 
-  val currentSideCells = getNodeAttributes(graph, GameAttributes.blockSide)
+  val currentSideCells = getNodesWithAttribute(graph, GameAttributes.blockSide)
       .mapNotNull { node -> getCellDirection(graph, node)?.cell }
 
   return occupiedCells - currentSideCells

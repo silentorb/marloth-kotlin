@@ -4,7 +4,7 @@
 ["wall-with-lamp","type","solid-box"],
 ["wall-with-lamp","texture","placeholderWall"],
 ["wall-lamp","parent","wall-with-lamp"],
-["wall-lamp","type","wall-lamp"],
+["wall-lamp","type","wall-slot"],
 ["wall-lamp","rotation",[0.0,0.0,1.5707964]],
 ["wall-lamp","translation",[0.0,0.94517773,4.226741]],
 ["wall-lamp","type","lightDistribution"]

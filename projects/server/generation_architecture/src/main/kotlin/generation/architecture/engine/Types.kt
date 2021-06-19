@@ -3,6 +3,7 @@ package generation.architecture.engine
 import generation.general.BlockGrid
 import generation.general.CellDirection
 import marloth.scenery.enums.MeshInfoMap
+import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.GraphLibrary
 import silentorb.mythic.ent.Table
 import silentorb.mythic.ent.scenery.ExpansionLibrary
@@ -44,6 +45,8 @@ data class GenerationConfig(
     val cellCount: Int,
     val expansionLibrary: ExpansionLibrary,
     val hands: Table<NewHand> = mapOf(),
+    val propGroups: Map<String, Set<String>>,
+    val propGraphs: Map<String, Graph>,
     val level: Int = 1,
 )
 

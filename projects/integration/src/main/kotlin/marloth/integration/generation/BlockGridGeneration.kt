@@ -150,7 +150,7 @@ fun blockFromGraph(graph: Graph, cells: Map<Vector3i, BlockCell>, root: String, 
                    heightOffset: Int): Block {
   val rotation = getNodeValue<BlockRotations>(graph, root, GameProperties.blockRotations)
   val traversable = getTraversable(cells)
-  val blockAttributes = getNodeAttributes(graph, root).toSet()
+  val blockAttributes = getNodesWithAttribute(graph, root).toSet()
   return Block(
       name = name + if (heightOffset != 0) heightOffset else "",
       cells = cells,
@@ -171,7 +171,7 @@ fun shouldOmit(cellDirections: List<CellDirection>, keys: Set<CellDirection>): B
 fun builderFromGraph(graph: Graph, zShifts: Collection<CellDirection>): Builder {
   val showIfSideIsEmpty = filterByProperty(graph, GameProperties.showIfSideIsEmpty)
       .map { it.source to it.target as CellDirection }
-      .plus(nodesWithAttribute(graph, GameAttributes.showIfSideIsEmpty)
+      .plus(getNodesWithAttribute(graph, GameAttributes.showIfSideIsEmpty)
           .mapNotNull {
             val direction = getNodeValue<CellDirection>(graph, it, GameProperties.direction)
             if (direction != null)
@@ -237,7 +237,7 @@ fun graphToBlockBuilder(name: String, graph: Graph): List<BlockBuilder> {
     listOf()
   else {
     val heights = listOf(0) + getGraphValues(graph, root, GameProperties.heightVariant)
-    val sideNodes = getNodeAttributes(graph, GameAttributes.blockSide)
+    val sideNodes = getNodesWithAttribute(graph, GameAttributes.blockSide)
     val sides = gatherSides(sideGroups, graph, sideNodes)
     return heights.map { height ->
       val adjustedSides = adjustSideHeights(sides, height)
@@ -283,7 +283,6 @@ fun generateWorldBlocks(dice: Dice, generationConfig: GenerationConfig,
 
   val blockGrid = newBlockGrid(generationConfig.seed, dice, home, blocks - home, generationConfig.cellCount)
   val architectureInput = newArchitectureInput(generationConfig, dice, blockGrid)
-  val architectureSource = buildArchitecture(architectureInput, builders)
-  val graph = filterDistributionGroups(expansionLibrary, architectureSource)
+  val graph = buildArchitecture(architectureInput, builders)
   return Pair(blockGrid, graph)
 }

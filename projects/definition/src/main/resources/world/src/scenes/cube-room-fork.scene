@@ -14,7 +14,7 @@
 ["floor1","translation",[0.0,0.0,8.524954]],
 ["floor1","texture","bricks"],
 ["wall-lamp","parent","cube-room-fork"],
-["wall-lamp","type","wall-lamp"],
+["wall-lamp","type","wall-slot"],
 ["wall-lamp","rotation",[0.0,0.0,4.4505897]],
 ["wall-lamp","translation",[-0.6890917,4.2828627,3.0028098]],
 ["wall2","collisionShape","mesh"],

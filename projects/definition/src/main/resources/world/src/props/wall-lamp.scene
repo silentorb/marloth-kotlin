@@ -13,6 +13,8 @@
 ["lamp","range",6.0],
 ["mesh","parent","wall-lamp"],
 ["mesh","mesh","wallLamp"],
-["wall-lamp","",""]
+["wall-lamp","",""],
+["wall-lamp","type","distLight"],
+["wall-lamp","type","distWall"]
 ]
 }
