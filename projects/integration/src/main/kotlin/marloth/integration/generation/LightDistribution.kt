@@ -14,16 +14,11 @@ fun distributeLightSlots(slots: SlotMap): SlotMap {
   }
 }
 
-fun distributeLightHands(nextId: IdSource, config: GenerationConfig, dice: Dice, slots: SlotMap): List<NewHand> {
-  return slots.flatMap { (_, slot) ->
-    val slotAttribute = if (slot.attributes.contains(SlotTypes.ground))
-      DistAttributes.floor
-    else
-      DistAttributes.wall
+fun distributeLightSlots(config: DistributionConfig, slots: SlotMap): SlotMap =
+    distributeLightSlots(slots)
 
-    val definitions = filterPropGraphs(config, setOf(slotAttribute, DistAttributes.light))
-    val definition = dice.takeOne(definitions)
-    val k = graphToHands(config.resourceInfo.meshShapes, nextId, definition, slot.transform)
-    k
+fun distributeLightHands(config: GenerationConfig, nextId: IdSource, dice: Dice, slots: SlotMap): List<NewHand> {
+  return slots.flatMap { (_, slot) ->
+    slotToHands(config, nextId, dice, slot) { it.contains(DistAttributes.light) }
   }
 }

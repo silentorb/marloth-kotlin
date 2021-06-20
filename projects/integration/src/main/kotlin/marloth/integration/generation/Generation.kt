@@ -52,7 +52,7 @@ fun initializeNavigation(generationConfig: GenerationConfig, graph: Graph): Navi
     if (generationConfig.includeEnemies) {
       val meshNodes = filterByProperty(graph, SceneProperties.collisionShape)
           .map { it.source }
-      newNavigationState(generationConfig.definitions.meshShapes, meshNodes, graph, setOf(), Deck())
+      newNavigationState(generationConfig.definitions.resourceInfo.meshShapes, meshNodes, graph, setOf(), Deck())
     } else
       null
 
@@ -117,7 +117,7 @@ fun generateWorldGraphAndDeck(nextId: IdSource, generationConfig: GenerationConf
       .flatMap { withNodeChildren(graph, it) }
       .toSet()
 
-  val staticHands = graphToHands(definitions.meshShapes, nextId, graph, staticEntities, Matrix.identity)
+  val staticHands = graphToHands(definitions.resourceInfo, nextId, graph, staticEntities, Matrix.identity)
   val initialDeck = allHandsToDeck(definitions, nextId, staticHands, Deck())
   val graph2 = removeNodesAndChildren(graph, staticEntities)
   val deck = generateWorldDeck(nextId, definitions, generationConfig, dice, graph2, initialDeck)

@@ -14,7 +14,7 @@ import silentorb.mythic.spatial.Vector4
 
 fun drawLights(lights: List<Light>, renderer: Renderer) {
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
-  val cube = renderer.meshes[MeshId.cube]!!.primitives.first()
+  val sphere = renderer.meshes[MeshId.sphere]!!.primitives.first()
   for (light in lights) {
     effect.activate(ObjectShaderConfig(
         color = Vector4(1f, 1f, 0f, 0.3f),
@@ -24,7 +24,7 @@ fun drawLights(lights: List<Light>, renderer: Renderer) {
 
     ))
     globalState.depthEnabled = false
-    drawMesh(cube.mesh, DrawMethod.triangleFan)
+    drawMesh(sphere.mesh, DrawMethod.triangleFan)
     globalState.depthEnabled = true
   }
 }

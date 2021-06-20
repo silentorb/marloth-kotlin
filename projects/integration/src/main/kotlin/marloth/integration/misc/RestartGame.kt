@@ -1,6 +1,7 @@
 package marloth.integration.misc
 
 import marloth.clienting.ClientState
+import marloth.clienting.editing.activeWorldKey
 import marloth.clienting.editing.expandWorldGraph
 import marloth.clienting.editing.loadWorldGraph
 import marloth.clienting.input.newInputState
@@ -56,7 +57,8 @@ fun restartGame(app: GameApp, appState: AppState, scene: String): AppState {
     )
   } else {
     val previousWorld = appState.worlds.last()
-    val world = restartWorld(app, previousWorld, graph, editor?.graphLibrary ?: mapOf())
+    val graphLibrary = (editor?.graphLibrary ?: mapOf()).minus(activeWorldKey)
+    val world = restartWorld(app, previousWorld, graph, graphLibrary)
     // Right now order doesn't matter for new player characters since each one is identical other than location.
     // Eventually they will need to be more carefully mapped to preserve proper association
     val players = previousWorld.deck.players.keys

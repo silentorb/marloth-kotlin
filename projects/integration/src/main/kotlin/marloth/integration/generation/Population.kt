@@ -2,13 +2,12 @@ package marloth.integration.generation
 
 import generation.abstracted.distributeToSlots
 import generation.architecture.engine.GenerationConfig
+import marloth.clienting.editing.biomeIds
 import marloth.definition.misc.enemyDistributions
 import marloth.definition.misc.monsterLimit
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.IdSource
-import silentorb.mythic.ent.Key
-import silentorb.mythic.ent.Table
 import silentorb.mythic.ent.scenery.nodesToElements
 import silentorb.mythic.physics.Body
 import silentorb.mythic.randomly.Dice
@@ -85,11 +84,11 @@ fun populateNewMonsters(definitions: Definitions, locations: List<Matrix>, nextI
   }
 }
 
-fun populateOlderMonsters(monsterHands: Table<NewHand>, locations: List<Matrix>): List<NewHand> {
-  return monsterHands.values
-      .zip(locations) { hand, transform ->
-        addHandBody(hand, transform)
-      }
+fun populateNewMonsters(config: GenerationConfig, nextId: IdSource, dice: Dice, slots: SlotMap): List<NewHand> {
+  val monsterLocations = slots
+      .map { it.value.transform }
+
+  return populateNewMonsters(config.definitions, monsterLocations, nextId, dice)
 }
 
 fun selectSlots(dice: Dice, slots: SlotMap, limit: Int): SlotMap {
@@ -97,38 +96,60 @@ fun selectSlots(dice: Dice, slots: SlotMap, limit: Int): SlotMap {
   return dice.take(slots.entries, count).associate { it.key to it.value }
 }
 
-fun populateMonsters(cellCount: Int, level: Int, dice: Dice, slots: SlotMap): SlotMap {
-  val maxMonsters = min(monsterLimit(), cellCount / max(2, 16 - level))
-  val groundSlots = slots.filter { it.value.attributes.contains(SlotTypes.ground) }
-  return selectSlots(dice, groundSlots, maxMonsters)
+fun selectSlots(attributes: Collection<String>, limit: (Int) -> Int): SlotSelector = { config, slots ->
+  val filteredSlots = slots.filter { it.value.attributes.containsAll(attributes) }
+  selectSlots(config.dice, filteredSlots, limit(config.cellCount))
 }
 
-fun distributeItemHands(nextId: IdSource, config: GenerationConfig, dice: Dice, itemSlots: SlotMap): List<NewHand> {
+fun populateMonsters(config: DistributionConfig, slots: SlotMap): SlotMap {
+  val maxMonsters = min(monsterLimit(), config.cellCount / max(2, 16 - config.level))
+  val groundSlots = slots.filter { it.value.attributes.contains(SlotTypes.ground) }
+  return selectSlots(config.dice, groundSlots, maxMonsters)
+}
+
+fun distributeItemHands(config: GenerationConfig, nextId: IdSource, dice: Dice, slots: SlotMap): List<NewHand> {
   val itemDefinitions = filterPropGraphs(config, setOf(DistAttributes.floor, DistAttributes.food))
-  return itemSlots.flatMap { (_, slot) ->
+  return slots.flatMap { (_, slot) ->
     val itemDefinition = dice.takeOne(itemDefinitions)
-    graphToHands(config.resourceInfo.meshShapes, nextId, itemDefinition, slot.transform)
+    graphToHands(config.resourceInfo, nextId, itemDefinition, slot.transform)
   }
 }
 
+fun distributeBasicProps(config: GenerationConfig, nextId: IdSource, dice: Dice, slots: SlotMap): List<NewHand> {
+  return slots.flatMap { (_, slot) ->
+    slotToHands(config, nextId, dice, slot) {
+      it
+          .minus(listOf(DistAttributes.floor, DistAttributes.wall))
+          .minus(biomeIds)
+          .none()
+    }
+  }
+}
+
+val groundSlots = setOf(SlotTypes.ground)
+
+val distributors = listOf(
+    Distributor(::distributeLightSlots, ::distributeLightHands),
+    Distributor(::populateMonsters, ::populateNewMonsters),
+    Distributor(selectSlots(groundSlots) { it / 10 }, ::distributeItemHands),
+    Distributor(selectSlots(groundSlots) { it * 2 / 3 }, ::distributeBasicProps),
+)
+
 fun populateDistributions(nextId: IdSource, config: GenerationConfig, dice: Dice, slots: SlotMap, cellCount: Int): List<NewHand> {
-  val definitions = config.definitions
   val level = getDebugInt("WORLD_LEVEL") ?: config.level
+  val distributionConfig = DistributionConfig(
+      cellCount = cellCount,
+      level = level,
+      dice = dice,
+  )
 
-  val lightSlots = distributeLightSlots(slots)
-  val lightHands = distributeLightHands(nextId, config, dice, lightSlots)
-  val slots2 = slots - lightSlots.keys
-
-  val monsterSlots = populateMonsters(cellCount, level, dice, slots2)
-  val monsterLocations = monsterSlots
-      .map { it.value.transform }
-
-  val monsterHands = populateNewMonsters(definitions, monsterLocations, nextId, dice)
-  val slots3 = slots2 - monsterSlots.map { it.key }
-
-  val itemSlots = selectSlots(dice, slots3, cellCount / 10)
-  val itemHands = distributeItemHands(nextId, config, dice, itemSlots)
-  return monsterHands + itemHands + lightHands
+  return distributors
+      .fold(listOf<NewHand>() to slots) { (hands, slots), distributor ->
+        val selectedSlots = distributor.select(distributionConfig, slots)
+        val newHands = distributor.generate(config, nextId, dice, selectedSlots)
+        Pair(hands + newHands, slots - selectedSlots.keys)
+      }
+      .first
 }
 
 fun newPlayerCharacters(nextId: IdSource, definitions: Definitions, graph: Graph): List<NewHand> {

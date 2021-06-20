@@ -5,7 +5,7 @@ import generation.general.*
 import marloth.scenery.enums.MeshInfoMap
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.getNodeValue
-import silentorb.mythic.ent.getGraphValues
+import silentorb.mythic.ent.getNodeValues
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.CollisionObject
 import silentorb.mythic.scenery.MeshName
@@ -101,7 +101,7 @@ fun gatherSides(sideGroups: Map<String, Set<String>>, graph: Graph, sideNodes: L
     sideNodes
         .mapNotNull { node ->
           val mine = getNodeValue<String>(graph, node, GameProperties.mine)
-          val initialOther = getGraphValues<String>(graph, node, GameProperties.other)
+          val initialOther = getNodeValues<String>(graph, node, GameProperties.other)
           val other = expandSideGroups(sideGroups, initialOther)
           val cellDirection = getCellDirection(graph, node)
           if (cellDirection == null)

@@ -71,12 +71,8 @@ fun getBodyTransform(bodies: Table<Body>, id: Id): Matrix {
     getBodyTransform(body)
 }
 
-fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, texture: TextureName? = null): MeshElement? {
+fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, material: Material?): MeshElement? {
   val body = deck.bodies[id]!!
-  val material = if (texture != null)
-    Material(texture = texture, shading = true)
-  else
-    null
 
   return MeshElement(
       id = id,
@@ -96,7 +92,7 @@ fun convertSimpleDepiction(deck: Deck, id: Id, depiction: Depiction): MeshElemen
   if (mesh == null)
     return null
 
-  return convertSimpleDepiction(deck, id, mesh, depiction.texture)
+  return convertSimpleDepiction(deck, id, mesh, depiction.material)
 }
 
 fun accessoryDebugName(definitions: Definitions, accessoryType: AccessoryName): String {

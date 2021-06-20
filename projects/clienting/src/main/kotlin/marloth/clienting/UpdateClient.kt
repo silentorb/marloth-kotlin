@@ -218,5 +218,5 @@ fun definitionsFromClient(client: Client): ClientDefinitions =
         animations = mapAnimationInfo(client.renderer.armatures),
         lightAttachments = gatherMeshLights(client.renderer.meshes),
         soundDurations = client.soundLibrary.mapValues { it.value.duration },
-        meshShapeMap = getMeshShapes(client.renderer)
+        resourceInfo = client.resourceInfo,
     )

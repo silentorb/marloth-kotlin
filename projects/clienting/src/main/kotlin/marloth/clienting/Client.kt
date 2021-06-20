@@ -8,7 +8,6 @@ import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.baseFonts
 import marloth.definition.texts.englishTextResources
-import marloth.scenery.enums.textures
 import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.bloom.old.newBloomState
 import silentorb.mythic.editing.closeImGui

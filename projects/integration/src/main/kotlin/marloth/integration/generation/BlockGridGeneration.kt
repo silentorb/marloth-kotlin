@@ -232,11 +232,11 @@ fun adjustSideHeights(sides: List<Pair<CellDirection, Side?>>, height: Int): Lis
 
 fun graphToBlockBuilder(name: String, graph: Graph): List<BlockBuilder> {
   val root = getGraphRoots(graph).first()
-  val biomes = getGraphValues<String>(graph, root, GameProperties.biome)
+  val biomes = getNodeValues<String>(graph, root, GameProperties.biome)
   return if (biomes.none() || biomes.contains(Biomes.hedgeMaze))
     listOf()
   else {
-    val heights = listOf(0) + getGraphValues(graph, root, GameProperties.heightVariant)
+    val heights = listOf(0) + getNodeValues(graph, root, GameProperties.heightVariant)
     val sideNodes = getNodesWithAttribute(graph, GameAttributes.blockSide)
     val sides = gatherSides(sideGroups, graph, sideNodes)
     return heights.map { height ->

@@ -1,5 +1,6 @@
 package simulation.entities
 
+import silentorb.mythic.lookinglass.Material
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.scenery.TextureName
 
@@ -20,5 +21,5 @@ enum class DepictionType {
 data class Depiction(
     val type: DepictionType = DepictionType.staticMesh,
     val mesh: MeshName? = null,
-    val texture: TextureName? = null
+    val material: Material? = null,
 )

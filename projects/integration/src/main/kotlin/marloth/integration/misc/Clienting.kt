@@ -33,9 +33,8 @@ fun gatherTextures(loadImage: ImageLoader, attributes: TextureAttributeMapper): 
 
 fun loadPngImageInfo(display: PlatformDisplay, path: String): ImageInfo {
   val info = display.loadImageInfo(path)
-  if (info.channels == 1)
-    throw Error("Marloth does not currently support single channel images: ${path}")
-
+//  if (info.channels == 1)
+//    throw Error("Marloth does not currently support single channel images: ${path}")
   return info
 }
 
@@ -44,10 +43,18 @@ fun gatherTextures(display: PlatformDisplay, displayOptions: DisplayOptions): Li
   val transparentImageAttributes = defaultAttributes.copy(
       format = TextureFormat.rgba,
   )
+  val grayscaleImageAttributes = defaultAttributes.copy(
+      format = TextureFormat.scalar,
+  )
   return gatherTextures(display.loadImage) { path ->
-    if (path.toString().contains(".png") && loadPngImageInfo(display, path.toString()).channels > 3)
-      transparentImageAttributes
-    else
+    if (path.toString().contains(".png")) {
+      val info = loadPngImageInfo(display, path.toString())
+      when (info.channels) {
+        1 -> grayscaleImageAttributes
+        4 -> transparentImageAttributes
+        else -> defaultAttributes
+      }
+    } else
       defaultAttributes
   }
 }

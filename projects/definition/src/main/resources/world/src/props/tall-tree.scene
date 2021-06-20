@@ -30,10 +30,14 @@
 ["foliage3","translation",[0.04088664,-0.12990248,7.9241586]],
 ["tall-tree","",""],
 ["tall-tree","type","distFloor"],
+["tall-tree","biome","forest"],
 ["trunk","parent","tall-tree"],
 ["trunk","mesh","cylinder"],
 ["trunk","translation",[0.0,0.0,2.4513693]],
-["trunk","scale",[1.0,1.0,4.8144245]],
-["trunk","rgba","#2c1a14ff"]
+["trunk","type","solid-static"],
+["trunk","collisionShape","cylinder"],
+["trunk","scale",[1.0,1.0,5.120078]],
+["trunk","texture","cellsGray"],
+["trunk","rgba","#2f1a1aff"]
 ]
 }

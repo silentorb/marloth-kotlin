@@ -4,10 +4,11 @@ import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
 import silentorb.mythic.ent.scenery.getLocalNodeTransform
 import silentorb.mythic.ent.scenery.getNodeLight
+import silentorb.mythic.ent.scenery.getNodeMaterial
+import silentorb.mythic.lookinglass.ResourceInfo
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.getNodeCollisionObject
 import silentorb.mythic.scenery.SceneProperties
-import silentorb.mythic.scenery.Shape
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Quaternion
 import simulation.accessorize.Accessory
@@ -33,14 +34,14 @@ fun getNodeBody(transform: Matrix): Body? {
     )
 }
 
-fun getNodeDepiction(graph: Graph, node: Key): Depiction? {
+fun getNodeDepiction(resourceInfo: ResourceInfo, graph: Graph, node: Key): Depiction? {
   val mesh = getNodeValue<String>(graph, node, SceneProperties.mesh)
   return if (mesh == null)
     null
   else {
     Depiction(
         mesh = mesh,
-        texture = getNodeValue<String>(graph, node, SceneProperties.texture),
+        material = getNodeMaterial(resourceInfo, graph, node),
     )
   }
 }
@@ -72,7 +73,7 @@ fun getPrimaryMode(graph: Graph, node: Key): PrimaryMode? {
 //}
 
 fun getNodeInteractions(graph: Graph, node: Key): List<Any> =
-    getGraphValues<String>(graph, node, GameProperties.interaction)
+    getNodeValues<String>(graph, node, GameProperties.interaction)
         .map { type ->
           Interactable(type = type)
         }
@@ -106,7 +107,7 @@ fun associateHandParentBodies(graph: Graph, hands: Map<String, NewHand>) =
         hand
     }
 
-fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph, keys: Collection<String>,
+fun graphToHands(resourceInfo: ResourceInfo, nextId: IdSource, graph: Graph, keys: Collection<String>,
                  parentTransform: Matrix): List<NewHand> {
   val hands = keys
       .mapNotNull { node ->
@@ -117,8 +118,8 @@ fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph,
         else
           listOfNotNull(
               getNodeBody(transform),
-              getNodeDepiction(graph, node),
-              getNodeCollisionObject(meshShapes, graph, node),
+              getNodeDepiction(resourceInfo, graph, node),
+              getNodeCollisionObject(resourceInfo.meshShapes, graph, node),
               getNodeItemType(graph, node),
               getPrimaryMode(graph, node),
           ) + getNodeInteractions(graph, node)
@@ -136,5 +137,5 @@ fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph,
   return associateHandParentBodies(graph, hands)
 }
 
-fun graphToHands(meshShapes: Map<String, Shape>, nextId: IdSource, graph: Graph, transform: Matrix): List<NewHand> =
-    graphToHands(meshShapes, nextId, graph, getGraphKeys(graph), transform)
+fun graphToHands(resourceInfo: ResourceInfo, nextId: IdSource, graph: Graph, transform: Matrix): List<NewHand> =
+    graphToHands(resourceInfo, nextId, graph, getGraphKeys(graph), transform)

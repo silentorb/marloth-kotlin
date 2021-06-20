@@ -17,21 +17,21 @@ object Textures {
   val woodPanel = "woodPanel"
 }
 
-fun textures() = listOf(
-    "arch",
-    "algae",
-    "animPerlin000",
-    "background",
-    "bricks",
-    "bushOrb",
-    Textures.checkersBlackWhite,
-    "dirt",
-    "doorWood",
-    "cobblestone",
-    "diamondTiles",
-    Textures.grass,
-    "perlinParticle",
-    "redTile",
-    "water",
-    "woodPanel",
-)
+//fun textures() = listOf(
+//    "arch",
+//    "algae",
+//    "animPerlin000",
+//    "background",
+//    "bricks",
+//    "bushOrb",
+//    Textures.checkersBlackWhite,
+//    "dirt",
+//    "doorWood",
+//    "cobblestone",
+//    "diamondTiles",
+//    Textures.grass,
+//    "perlinParticle",
+//    "redTile",
+//    "water",
+//    "woodPanel",
+//)
