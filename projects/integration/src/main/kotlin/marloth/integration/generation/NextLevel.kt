@@ -73,7 +73,7 @@ fun nextLevel(app: GameApp, world: World): World {
 
   return world.copy(
       deck = allHandsToDeck(definitions, nextId, playerHands, deck),
-      navigation = initializeNavigation(generationConfig, graph),
+      navigation = initializeNavigation(generationConfig, graph, deck),
       staticGraph = GraphWrapper(graph),
       bulletState = newBulletStateWithGraph(graph, definitions.resourceInfo.meshShapes),
       nextCommands = listOf(), // At minimum, the nextLevel command needs to be removed to prevent an infinite loop

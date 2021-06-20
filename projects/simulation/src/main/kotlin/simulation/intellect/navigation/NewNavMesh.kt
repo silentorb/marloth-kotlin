@@ -16,14 +16,7 @@ import simulation.misc.cellLength
 var originalNavMeshData: List<TriMesh> = listOf()
 var globalHeightMap: Heightfield? = null
 
-fun newNavMesh(meshShapeMap: Map<String, Shape>, nodes: Collection<Key>, graph: Graph,
-               entities: Set<Id>, deck: Deck): NavMesh? {
-//  val filteredMeshIds = if (getDebugString("NAV_MESH_FILTER") != null)
-//    meshIds.filter { deck.depictions[it]!!.mesh == getDebugString("NAV_MESH_FILTER")!! }.toSet()
-//  else
-//    meshIds
-
-  val meshes = newNavMeshTriMeshes(meshShapeMap, graph, nodes, entities, deck)
+fun newNavMesh(meshes: List<TriMesh>): NavMesh? {
   if (meshes.none())
     return null
 
@@ -31,45 +24,15 @@ fun newNavMesh(meshShapeMap: Map<String, Shape>, nodes: Collection<Key>, graph: 
   originalNavMeshData = meshes
 
   val padding = cellLength * 2f
-//  val minBounds = floatArrayOf(-100f, -100f, -100f)
-//  val maxBounds = floatArrayOf(100f, 100f, 100f)
 
-//  val minBounds = floatArrayOf(
-//      grid.cells.keys.map { it.x }.firstIntSortedBy { it }.toFloat() * cellLength - padding,
-//      grid.cells.keys.map { it.y }.firstIntSortedBy { it }.toFloat() * cellLength - padding,
-//      grid.cells.keys.map { it.z }.firstIntSortedBy { it }.toFloat() * cellLength - padding
-//  )
-//
-//  val maxBounds = floatArrayOf(
-//      grid.cells.keys.map { it.x }.firstIntSortedByDescending { it }.toFloat() * cellLength + padding,
-//      grid.cells.keys.map { it.y }.firstIntSortedByDescending { it }.toFloat() * cellLength + padding,
-//      grid.cells.keys.map { it.z }.firstIntSortedByDescending { it }.toFloat() * cellLength + padding
-//  )
   val minBounds = floatArrayOf(
-//      elements
-//          .map { deck.bodies[it.key]!!.position.x - deck.collisionShapes[it.key]!!.shape.radius }
-//          .firstSortedBy { it } - padding,
-//      elements
-//          .map { deck.bodies[it.key]!!.position.z - deck.collisionShapes[it.key]!!.shape.radius }
-//          .firstSortedBy { it } - padding,
-//      elements
-//          .map { deck.bodies[it.key]!!.position.y - deck.collisionShapes[it.key]!!.shape.radius }
-//          .firstSortedBy { it } - padding
+
       (0 until vertices.size step 3).map { vertices[it] }.firstFloatSortedBy { it } - padding,
       (1 until vertices.size step 3).map { vertices[it] }.firstFloatSortedBy { it } - padding,
       (2 until vertices.size step 3).map { vertices[it] }.firstFloatSortedBy { it } - padding
   )
 
   val maxBounds = floatArrayOf(
-//      elements
-//          .map { deck.bodies[it.key]!!.position.x + deck.collisionShapes[it.key]!!.shape.radius }
-//          .firstSortedByDescending { it } + padding,
-//      elements
-//          .map { deck.bodies[it.key]!!.position.z + deck.collisionShapes[it.key]!!.shape.radius }
-//          .firstSortedByDescending { it } + padding,
-//      elements
-//          .map { deck.bodies[it.key]!!.position.y + deck.collisionShapes[it.key]!!.shape.radius }
-//          .firstSortedByDescending { it } + padding
       (0 until vertices.size step 3).map { vertices[it] }.firstFloatSortedByDescending { it } + padding,
       (1 until vertices.size step 3).map { vertices[it] }.firstFloatSortedByDescending { it } + padding,
       (2 until vertices.size step 3).map { vertices[it] }.firstFloatSortedByDescending { it } + padding

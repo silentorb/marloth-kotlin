@@ -48,11 +48,15 @@ fun generateWorldDeck(nextId: IdSource, definitions: Definitions, generationConf
   return allHandsToDeck(definitions, nextId, hands, deck)
 }
 
-fun initializeNavigation(generationConfig: GenerationConfig, graph: Graph): NavigationState? =
+fun initializeNavigation(generationConfig: GenerationConfig, graph: Graph, deck: Deck): NavigationState? =
     if (generationConfig.includeEnemies) {
       val meshNodes = filterByProperty(graph, SceneProperties.collisionShape)
           .map { it.source }
-      newNavigationState(generationConfig.definitions.resourceInfo.meshShapes, meshNodes, graph, setOf(), Deck())
+      val staticCollisionBodies = deck.collisionObjects
+          .filterKeys { !deck.dynamicBodies.containsKey(it) }
+          .keys
+
+      newNavigationState(generationConfig.definitions.resourceInfo.meshShapes, meshNodes, graph, staticCollisionBodies, deck)
     } else
       null
 
@@ -62,7 +66,7 @@ fun newWorld(db: Database, generationConfig: GenerationConfig, nextId: IdSource,
         deck = deck,
         global = newGlobalState(),
         dice = Dice(),
-        navigation = initializeNavigation(generationConfig, graph),
+        navigation = initializeNavigation(generationConfig, graph, deck),
         staticGraph = GraphWrapper(graph),
         bulletState = newBulletStateWithGraph(graph, generationConfig.resourceInfo.meshShapes),
         definitions = generationConfig.definitions,

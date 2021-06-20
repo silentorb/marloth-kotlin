@@ -13,7 +13,7 @@ fun labRender(state: AppState): RenderSceneHook = { sceneRenderer, scene ->
   }
   val navMesh = state.worlds.last().navigation?.mesh
   if (navMesh != null)
-    renderNavMesh(renderer, navMesh)
+    renderNavMesh(sceneRenderer, navMesh)
 
   conditionalDrawAiTargets(deck, renderer)
   conditionalDrawLights(scene.lights, renderer)

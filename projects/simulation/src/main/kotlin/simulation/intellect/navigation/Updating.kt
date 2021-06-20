@@ -13,7 +13,7 @@ import simulation.main.Deck
 fun newCrowdAgentParams(actor: Id, maxSpeed: Float): CrowdAgentParams {
   val params = CrowdAgentParams()
 
-  params.radius = agentRadius + 0.1f
+  params.radius = agentRadius
   params.height = agentHeight
   params.maxAcceleration = 8f
   params.maxSpeed = maxSpeed

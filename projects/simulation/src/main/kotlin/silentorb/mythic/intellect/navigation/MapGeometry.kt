@@ -9,6 +9,7 @@ import silentorb.mythic.ent.Key
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
 import silentorb.mythic.ent.scenery.getShape
+import silentorb.mythic.physics.PhysicsDeck
 import silentorb.mythic.physics.getBodyTransform
 import silentorb.mythic.scenery.Shape
 import silentorb.mythic.shapemeshes.getShapeVertices
