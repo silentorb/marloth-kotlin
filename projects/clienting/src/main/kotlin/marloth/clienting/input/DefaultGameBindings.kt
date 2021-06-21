@@ -5,12 +5,9 @@ import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.haft.*
 import org.lwjgl.glfw.GLFW
 
-val defaultSharedGamepadBindings = mapOf(
-    GAMEPAD_BUTTON_BACK to GuiCommandType.characterInfo
-)
-
 val gameGamepadBindings = mapOf(
     GAMEPAD_BUTTON_START to GuiCommandType.menu,
+    GAMEPAD_BUTTON_BACK to GuiCommandType.characterInfo,
 
     GAMEPAD_BUTTON_DPAD_UP to CharacterCommands.equipSlot0,
     GAMEPAD_BUTTON_DPAD_LEFT to CharacterCommands.equipSlot1,
@@ -32,7 +29,7 @@ val gameGamepadBindings = mapOf(
     GAMEPAD_BUTTON_B to CharacterCommands.abilityDefense,
     GAMEPAD_BUTTON_A to CharacterCommands.abilityMobility,
     GAMEPAD_BUTTON_RIGHT_THUMB to toggleTargetingCommand
-) + defaultSharedGamepadBindings
+)
 
 fun defaultMouseGameBindings() = mapOf(
     GLFW.GLFW_MOUSE_BUTTON_LEFT to CharacterCommands.abilityAttack
@@ -40,7 +37,6 @@ fun defaultMouseGameBindings() = mapOf(
 
 val defaultSharedKeyboardBindings = mapOf(
     GLFW.GLFW_KEY_GRAVE_ACCENT to DeveloperCommands.editor,
-    GLFW.GLFW_KEY_C to GuiCommandType.characterInfo,
     GLFW.GLFW_KEY_F1 to DeveloperCommands.toggleValue1,
     GLFW.GLFW_KEY_F2 to DeveloperCommands.toggleValue2,
     GLFW.GLFW_KEY_F3 to DeveloperCommands.toggleValue3,
@@ -58,6 +54,7 @@ fun defaultKeyboardGameBindings() = mapOf(
     GLFW.GLFW_KEY_F to CharacterCommands.abilityUtility,
     GLFW.GLFW_KEY_1 to CharacterCommands.previousItem,
     GLFW.GLFW_KEY_2 to CharacterCommands.nextItem,
+    GLFW.GLFW_KEY_C to GuiCommandType.characterInfo,
     GLFW.GLFW_KEY_SPACE to CharacterCommands.abilityMobility
 ) + defaultSharedKeyboardBindings
 

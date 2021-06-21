@@ -32,7 +32,7 @@ val clientActiveContractsView = conversationPage { deck, player, other, characte
 
     boxList2(
         horizontalPlane, 10,
-        menuFlower(menu, state.menuFocusIndex, 100),
+        menuFlower(menu, state.menuFocusIndex, 200),
     )
   }
 }

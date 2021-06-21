@@ -51,7 +51,7 @@ val clientAvailableContractsView = conversationPage { deck, player, other, chara
 
     boxList2(
         horizontalPlane, 10,
-        menuFlower(menu, state.menuFocusIndex, 100),
+        menuFlower(menu, state.menuFocusIndex, 200),
     )
   }
 }

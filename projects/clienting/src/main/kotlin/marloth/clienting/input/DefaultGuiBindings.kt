@@ -49,7 +49,7 @@ fun defaultGamepadMenuBindings() = mapOf(
     GAMEPAD_BUTTON_START to GuiCommandType.menu,
     GAMEPAD_BUTTON_A to GuiCommandType.menuSelect,
     GAMEPAD_BUTTON_B to GuiCommandType.menuBack
-) + defaultSharedGamepadBindings
+)
 
 val firstPersonGamepadBindings = mapOf(
     GAMEPAD_AXIS_RIGHT_UP to CharacterCommands.moveUp,

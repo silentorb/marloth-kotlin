@@ -16,6 +16,7 @@ import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.typography.IndexedTextStyle
+import simulation.misc.Definitions
 import kotlin.math.max
 
 typealias MenuItemFlower = (Boolean) -> Box
@@ -88,51 +89,62 @@ fun fieldWrapper(focusIndex: Int, breadth: Int): (Int, Box) -> Box = { index, bo
   )
 }
 
-fun menuFlower(menu: Menu, focusIndex: Int, titleWidth: Int): Box {
-  val rows = menu
+
+fun layoutMenuItems(menu: Menu, focusIndex: Int): List<Box> {
+  return menu
       .mapIndexed { index, item ->
         val hasFocus = index == focusIndex
         item.flower(hasFocus)
       }
+}
 
-  val gap = 20
+const val defaultMenuGap = 20
 
-  val breadth = boxList(verticalPlane, gap)(rows).dimensions.x
-  return boxList(verticalPlane, gap)(
-      rows.mapIndexed { index, box ->
-        val hasFocus = index == focusIndex
-        val events = menu[index].events
-        val attributes = if (hasFocus)
-          mapOf(onActivateKey to events, onClickKey to events)
-        else
-          mapOf()
-
-        fieldWrapper(focusIndex, max(titleWidth + 100, breadth))(index, box)
-            .copy(
-                attributes = attributes + (menuItemIndexKey to index)
-            )
-      }
+fun layoutMenuItems(rows: List<Box>, delegate: (Int, Box) -> Box): Box {
+  return boxList(verticalPlane, defaultMenuGap)(
+      rows.mapIndexed(delegate)
   )
-      .addAttributes(menuKey to menu)
+}
 
+fun menuFlower(menu: Menu, focusIndex: Int, minWidth: Int): Box {
+  val rows = layoutMenuItems(menu, focusIndex)
+
+  val breadth = boxList(verticalPlane, defaultMenuGap)(rows).dimensions.x
+  return layoutMenuItems(rows) { index, box ->
+    val hasFocus = index == focusIndex
+    val events = menu[index].events
+    val attributes = if (hasFocus)
+      mapOf(onActivateKey to events, onClickKey to events)
+    else
+      mapOf()
+
+    fieldWrapper(focusIndex, max(minWidth, breadth))(index, box)
+        .copy(
+            attributes = attributes + (menuItemIndexKey to index)
+        )
+  }
+      .addAttributes(menuKey to menu)
 }
 
 val faintBlack = black.copy(w = 0.6f)
 
 fun menuFlower(title: Box, menu: Menu): StateFlower = { definitions, state ->
-  dialogContent(title)(menuFlower(menu, state.menuFocusIndex, title.dimensions.x))
+  dialogContent(title)(menuFlower(menu, state.menuFocusIndex, title.dimensions.x + 100))
 }
 
 fun menuFlower(title: Text, menu: Menu): StateFlower = { definitions, state ->
   menuFlower(dialogTitle(definitions.textLibrary(title)), menu)(definitions, state)
 }
 
+fun convertSimpleMenu(definitions: Definitions, source: List<SimpleMenuItem>): Menu =
+    source.map {
+      MenuItem(
+          flower = menuTextFlower(definitions.textLibrary(it.text)),
+          events = it.events
+      )
+    }
+
 fun simpleMenuFlower(title: Text, source: List<SimpleMenuItem>): StateFlower = { definitions, state ->
-  val menu = source.map {
-    MenuItem(
-        flower = menuTextFlower(definitions.textLibrary(it.text)),
-        events = it.events
-    )
-  }
+  val menu = convertSimpleMenu(definitions, source)
   menuFlower(title, menu)(definitions, state)
 }

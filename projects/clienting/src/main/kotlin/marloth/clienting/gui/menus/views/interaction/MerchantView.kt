@@ -55,7 +55,7 @@ val merchantView = conversationPage { deck, player, other, character, otherChara
 
     boxList2(
         horizontalPlane, 10,
-        menuFlower(menu, state.menuFocusIndex, 100),
+        menuFlower(menu, state.menuFocusIndex, 200),
         merchantInfoFlower(definitions.textLibrary, customerMoney),
     )
   }
