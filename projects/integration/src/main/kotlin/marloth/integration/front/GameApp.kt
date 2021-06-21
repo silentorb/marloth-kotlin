@@ -4,7 +4,7 @@ import marloth.clienting.*
 import marloth.clienting.editing.loadDefaultWorldGraph
 import marloth.clienting.editing.marlothEditorProperties
 import marloth.definition.data.persistence.initialHistoricalData
-import marloth.definition.staticDefinitions
+import marloth.integration.misc.staticDefinitions
 import marloth.integration.debug.newDebugHooks
 import marloth.integration.misc.*
 import persistence.Database
@@ -68,8 +68,7 @@ fun conditionalHooks(): GameHooks? =
       null
 
 fun newGameApp(platform: Platform, client: Client): GameApp {
-  val clientDefinitions = definitionsFromClient(client)
-  val definitions = staticDefinitions(clientDefinitions, loadApplicationInfo(), extractPropertiesSerialization(marlothEditorProperties))
+  val definitions = staticDefinitions(client)
   val db = newDatabase("game.db", ::initialHistoricalData)
   return GameApp(
       platform = platform,

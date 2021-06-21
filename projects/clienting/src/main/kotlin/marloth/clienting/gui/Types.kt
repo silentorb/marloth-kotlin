@@ -5,7 +5,6 @@ import marloth.clienting.gui.menus.logic.MenuStack
 import silentorb.mythic.bloom.BloomState
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.Flower
-import silentorb.mythic.bloom.StateBag
 import silentorb.mythic.ent.Id
 import simulation.happenings.Notification
 import simulation.misc.Definitions

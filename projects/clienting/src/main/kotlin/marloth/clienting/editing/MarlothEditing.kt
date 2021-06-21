@@ -3,6 +3,7 @@ package marloth.clienting.editing
 import generation.general.BlockGrid
 import marloth.clienting.Client
 import marloth.clienting.getEditorEvents
+import marloth.clienting.input.DeveloperCommands
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.rendering.characterMeshes
 import marloth.clienting.rendering.characterPlacement
@@ -182,7 +183,7 @@ fun newEditor(textLibrary: TextResourceMapper, meshes: Collection<String>, resou
 
 fun updateEditingActive(commands: Commands, previousIsActive: Boolean): Boolean =
     when {
-      commands.any { it.type == GuiCommandType.editor } -> !previousIsActive
+      commands.any { it.type == DeveloperCommands.editor } -> !previousIsActive
       commands.any { it.type == GuiCommandType.newGame } -> false
       else -> previousIsActive
     }

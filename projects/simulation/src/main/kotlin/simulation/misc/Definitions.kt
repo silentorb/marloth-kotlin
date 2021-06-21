@@ -14,7 +14,6 @@ import silentorb.mythic.particles.ParticleEffectDefinitions
 import silentorb.mythic.scenery.Light
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.performing.ActionDefinition
-import silentorb.mythic.scenery.Shape
 import simulation.characters.CharacterDefinition
 
 typealias AccessoryDefinitions = Map<AccessoryName, AccessoryDefinition>
@@ -23,6 +22,11 @@ typealias Professions = Map<String, CharacterDefinition>
 
 data class ApplicationInfo(
     val version: String
+)
+
+data class InputEventType(
+    val device: Int,
+    val index: Int,
 )
 
 data class Definitions(
@@ -41,4 +45,5 @@ data class Definitions(
     val resourceInfo: ResourceInfo,
     val graphs: GraphStores,
     val propertiesSerialization: PropertiesSerialization,
+    val inputEventTypeNames: Map<InputEventType, String>,
 )

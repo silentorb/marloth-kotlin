@@ -9,10 +9,9 @@ import marloth.clienting.gui.menus.logic.commandsToClientEvents
 import marloth.clienting.gui.menus.logic.eventsFromGuiState
 import marloth.clienting.gui.menus.logic.getMenuItemEvents
 import marloth.clienting.gui.menus.logic.updateGuiState
-import marloth.clienting.input.DebugCommands
+import marloth.clienting.input.DeveloperCommands
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.gatherInputCommands
-import marloth.definition.misc.ClientDefinitions
 import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.Input
@@ -33,7 +32,6 @@ import silentorb.mythic.haft.updateInputDeviceStates
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.handleCommands
-import silentorb.mythic.lookinglass.mapAnimationInfo
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector3
@@ -63,10 +61,10 @@ fun toggleDebugBooleanByNumber(number: Int) {
 
 val handleDebugToggleCommands = handleCommands<Any> { command, _ ->
   when (command.type) {
-    DebugCommands.toggleValue1 -> toggleDebugBooleanByNumber(1)
-    DebugCommands.toggleValue2 -> toggleDebugBooleanByNumber(2)
-    DebugCommands.toggleValue3 -> toggleDebugBooleanByNumber(3)
-    DebugCommands.toggleValue4 -> toggleDebugBooleanByNumber(4)
+    DeveloperCommands.toggleValue1 -> toggleDebugBooleanByNumber(1)
+    DeveloperCommands.toggleValue2 -> toggleDebugBooleanByNumber(2)
+    DeveloperCommands.toggleValue3 -> toggleDebugBooleanByNumber(3)
+    DeveloperCommands.toggleValue4 -> toggleDebugBooleanByNumber(4)
   }
 }
 
@@ -211,11 +209,3 @@ fun updateClient(
       editor = nextEditor,
   )
 }
-
-fun definitionsFromClient(client: Client): ClientDefinitions =
-    ClientDefinitions(
-        animations = mapAnimationInfo(client.renderer.armatures),
-        lightAttachments = gatherMeshLights(client.renderer.meshes),
-        soundDurations = client.soundLibrary.mapValues { it.value.duration },
-        resourceInfo = client.resourceInfo,
-    )

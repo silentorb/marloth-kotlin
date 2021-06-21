@@ -3,8 +3,11 @@ package marloth.clienting.gui.menus
 import marloth.clienting.ClientEventType
 import marloth.clienting.canvasRendererKey
 import marloth.clienting.gui.ViewId
+import silentorb.mythic.bloom.Box
+import silentorb.mythic.bloom.Depiction
+import silentorb.mythic.bloom.Flower
+import silentorb.mythic.bloom.solidBackground
 import silentorb.mythic.ent.Id
-import silentorb.mythic.bloom.*
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.scenery.TextureName

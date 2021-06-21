@@ -7,7 +7,6 @@ import silentorb.mythic.ent.reflectProperties
 
 enum class GuiCommandType {
   characterInfo,
-  editor,
   menu,
   menuBack,
   menuSelect,
@@ -18,22 +17,25 @@ enum class GuiCommandType {
   quit
 }
 
-object DebugCommands {
+object DeveloperCommands {
   val toggleValue1 = "toggleValue1"
   val toggleValue2 = "toggleValue2"
   val toggleValue3 = "toggleValue3"
   val toggleValue4 = "toggleValue4"
+  val editor = "editor"
 }
+
+val developerCommands = reflectProperties<String>(DeveloperCommands)
 
 private fun standardStrokes() = setOf(
     GuiCommandType.characterInfo,
-    GuiCommandType.editor,
+    DeveloperCommands.editor,
     GuiCommandType.menu,
     GuiCommandType.menuSelect,
     GuiCommandType.menuBack,
     GuiCommandType.newGame,
     GuiCommandType.quit
-) + reflectProperties<String>(DebugCommands).toSet()
+) + reflectProperties<String>(DeveloperCommands).toSet()
 
 val commandStrokes =
     mapOf(

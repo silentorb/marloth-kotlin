@@ -39,12 +39,12 @@ fun defaultMouseGameBindings() = mapOf(
 )
 
 val defaultSharedKeyboardBindings = mapOf(
-    GLFW.GLFW_KEY_GRAVE_ACCENT to GuiCommandType.editor,
+    GLFW.GLFW_KEY_GRAVE_ACCENT to DeveloperCommands.editor,
     GLFW.GLFW_KEY_C to GuiCommandType.characterInfo,
-    GLFW.GLFW_KEY_F1 to DebugCommands.toggleValue1,
-    GLFW.GLFW_KEY_F2 to DebugCommands.toggleValue2,
-    GLFW.GLFW_KEY_F3 to DebugCommands.toggleValue3,
-    GLFW.GLFW_KEY_F4 to DebugCommands.toggleValue4,
+    GLFW.GLFW_KEY_F1 to DeveloperCommands.toggleValue1,
+    GLFW.GLFW_KEY_F2 to DeveloperCommands.toggleValue2,
+    GLFW.GLFW_KEY_F3 to DeveloperCommands.toggleValue3,
+    GLFW.GLFW_KEY_F4 to DeveloperCommands.toggleValue4,
 )
 
 fun defaultKeyboardGameBindings() = mapOf(
