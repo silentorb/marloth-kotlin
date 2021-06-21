@@ -12,6 +12,7 @@ import marloth.clienting.gui.menus.views.character.characterInventoryView
 import marloth.clienting.gui.menus.views.character.chooseProfessionMenu
 import marloth.clienting.gui.menus.views.interaction.*
 import marloth.clienting.gui.menus.views.main.*
+import marloth.clienting.gui.menus.views.options.*
 import marloth.clienting.gui.victoryMenu
 import marloth.scenery.enums.TextId
 import silentorb.mythic.ent.Id
@@ -23,6 +24,7 @@ fun viewSelect(world: World?, options: AppOptions, clientState: ClientState, vie
     ViewId.displayChangeConfirmation -> displayChangeConfirmationFlower
     ViewId.displayOptions -> displayOptionsFlower(clientState)
     ViewId.gamepadOptions -> emptyViewFlower
+    ViewId.inputBindings -> inputBindingsFlower(clientState)
     ViewId.inputOptions -> inputOptionsMenu
     ViewId.mouseOptions -> emptyViewFlower
     ViewId.options -> optionsMenu

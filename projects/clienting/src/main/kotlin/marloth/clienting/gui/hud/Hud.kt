@@ -19,7 +19,6 @@ import silentorb.mythic.lookinglass.gpuProfileMeasurements
 import simulation.accessorize.Accessory
 import simulation.characters.Character
 import simulation.combat.general.ResourceContainer
-import simulation.entities.DoorMode
 import simulation.entities.Interactable
 import simulation.entities.Interactions
 import simulation.entities.getInteractionCommandType

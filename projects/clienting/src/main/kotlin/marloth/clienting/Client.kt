@@ -1,6 +1,5 @@
 package marloth.clienting
 
-import marloth.clienting.editing.PlaceholderTextures
 import marloth.clienting.gui.DeviceMode
 import marloth.clienting.gui.GuiState
 import marloth.clienting.gui.TextResources
@@ -9,10 +8,9 @@ import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.baseFonts
 import marloth.definition.texts.englishTextResources
 import silentorb.mythic.aura.SoundLibrary
-import silentorb.mythic.bloom.old.newBloomState
+import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.editing.closeImGui
 import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.glowing.TextureAttributes
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.lookinglass.texturing.DeferredTexture
@@ -22,11 +20,18 @@ import silentorb.mythic.typography.loadFontSets
 
 const val maxPlayerCount = 4
 
-fun newMarlothBloomState(primarydeviceMode: DeviceMode) =
+fun defaultView(): ViewId? {
+  val view = getDebugString("DEFAULT_VIEW")
+  return if (view == null)
+    null
+  else
+    ViewId.values().firstOrNull { it.name == view }
+}
+
+fun newGuiState(primarydeviceMode: DeviceMode) =
     GuiState(
-        bloom = newBloomState(),
         menuStack = listOf(),
-        view = null,
+        view = defaultView(),
         menuFocusIndex = 0,
         primarydeviceMode = primarydeviceMode,
     )

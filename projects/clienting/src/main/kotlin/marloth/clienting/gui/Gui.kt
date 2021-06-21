@@ -29,6 +29,7 @@ enum class ViewId {
   displayChangeConfirmation,
   displayOptions,
   gamepadOptions,
+  inputBindings,
   inputOptions,
   mainMenu,
   conversation,
@@ -75,7 +76,6 @@ fun guiLayout(definitions: Definitions, options: AppOptions, clientState: Client
         val stateFlower = viewSelect(world, options, clientState, state.view, player)
         if (stateFlower != null)
           stateFlower(definitions, state)
-//          dialogWrapperWithExtras(definitions, stateFlower(definitions, state))
         else
           null
       } else
@@ -86,5 +86,10 @@ fun guiLayout(definitions: Definitions, options: AppOptions, clientState: Client
 fun layoutPlayerGui(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, dimensions: Vector2i,
                     player: Id, debugInfo: List<String>): Box {
   val layout = guiLayout(definitions, options, clientState, world, player, debugInfo)
-  return layout(dimensions)
+  val state = clientState.guiStates[player]
+  val seed = Seed(
+      dimensions = dimensions,
+      state = state?.bloomState ?: mapOf(),
+  )
+  return layout(seed)
 }

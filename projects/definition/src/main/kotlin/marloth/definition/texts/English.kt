@@ -18,6 +18,7 @@ val englishTextResources: TextResourceMapper = { text ->
         TextId.gui_audioOptions -> "Audio"
         TextId.gui_displayOptions -> "Display"
         TextId.gui_inputOptions -> "Input"
+        TextId.gui_inputBindings -> "Input Bindings"
         TextId.gui_gamepadOptions -> "Gamepad"
         TextId.gui_mouseOptions -> "Mouse"
 

@@ -33,7 +33,6 @@ import silentorb.mythic.haft.updateInputDeviceStates
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.handleCommands
-import silentorb.mythic.lookinglass.getMeshShapes
 import silentorb.mythic.lookinglass.mapAnimationInfo
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.spatial.Vector2i
@@ -178,11 +177,11 @@ fun updateClient(
               options,
               worlds.lastOrNull()?.deck,
               clientState.guiStates,
-              mousePosition,
               playerBoxes,
               commands2 + externalCommands,
               player,
-              bloomDefinition
+              bloomDefinition,
+              deviceStates
           )
         }
 

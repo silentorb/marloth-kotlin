@@ -1,4 +1,4 @@
-package marloth.clienting.gui.menus.views.main
+package marloth.clienting.gui.menus.views.options
 
 import marloth.clienting.ClientEventType
 import marloth.clienting.ClientState

@@ -20,6 +20,7 @@ enum class TextId : Text {
   gui_chooseAccessoryMenu,
   gui_chooseProfessionMenu,
   gui_displayOptions,
+  gui_inputBindings,
   gui_inputOptions,
   gui_gamepadOptions,
   gui_merchant,

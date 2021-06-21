@@ -4,14 +4,17 @@ import marloth.clienting.*
 import marloth.clienting.gui.*
 import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.CharacterCommands
+import silentorb.mythic.bloom.LogicInput
 import silentorb.mythic.bloom.OffsetBox
 import silentorb.mythic.bloom.old.getHoverBoxes
+import silentorb.mythic.bloom.updateBloomLogic
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
+import silentorb.mythic.haft.InputDeviceState
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.platforming.Devices
-import silentorb.mythic.spatial.Vector2i
+import silentorb.mythic.spatial.toVector2i
 import simulation.happenings.updateNotifications
 import simulation.main.Deck
 import simulation.updating.simulationDelta
@@ -52,10 +55,12 @@ fun updateGuiState(
     options: AppOptions,
     state: GuiState,
     bloomDefinition: BloomDefinition,
-    hoverBoxes: List<OffsetBox>,
+    boxes: List<OffsetBox>,
     commands: Commands,
+    deviceStates: List<InputDeviceState>
 ): GuiState {
   val menuSize = bloomDefinition.menu?.size
+  val hoverBoxes = getHoverBoxes(deviceStates.last().mousePosition.toVector2i(), boxes)
   val menuFocusIndex = updateMenuFocusIndex(state, menuSize, commands, hoverBoxes)
   val displayChange = updateDisplayChangeState(options.display, state, commands)
 
@@ -65,13 +70,19 @@ fun updateGuiState(
     }
   }
 
+  val bloomLogicInput = LogicInput(
+      state = state.bloomState,
+      deviceStates = deviceStates,
+  )
+
   return state.copy(
       view = nextView(state.menuStack)(commands, state.view),
       menuFocusIndex = menuFocusIndex,
       menuStack = updateMenuStack(state)(commands, state.menuStack),
       displayChange = displayChange,
       primarydeviceMode = updatePrimaryDeviceMode(commands, state.primarydeviceMode),
-      notifications = updateNotifications(simulationDelta, commands, state.notifications)
+      notifications = updateNotifications(simulationDelta, commands, state.notifications),
+      bloomState = updateBloomLogic(bloomLogicInput, boxes)
   )
 }
 
@@ -79,19 +90,19 @@ fun updateGuiState(
     options: AppOptions,
     deck: Deck?,
     bloomStates: GuiStateMap,
-    mousePosition: Vector2i,
     boxes: PlayerBoxes,
     commands: Commands,
-    player: Id, bloomDefinition: BloomDefinition): GuiState {
+    player: Id,
+    bloomDefinition: BloomDefinition,
+    deviceStates: List<InputDeviceState>): GuiState {
   val playerCommands = commands.filter { it.target == player }
   val state = bloomStates[player]
-      ?: newMarlothBloomState(if (bloomStates.none()) DeviceMode.mouseKeyboard else DeviceMode.gamepad)
+      ?: newGuiState(if (bloomStates.none()) DeviceMode.mouseKeyboard else DeviceMode.gamepad)
 
   val gameCommands = if (playerCommands.any { it.type == CharacterCommands.interactPrimary })
     getInteractionCommands(deck, player)
   else
     listOf()
 
-  val hoverBoxes = getHoverBoxes(mousePosition, boxes[player]!!)
-  return updateGuiState(options, state, bloomDefinition, hoverBoxes, playerCommands + gameCommands)
+  return updateGuiState(options, state, bloomDefinition, boxes[player]!!, playerCommands + gameCommands, deviceStates)
 }

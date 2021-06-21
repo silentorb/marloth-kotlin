@@ -46,6 +46,19 @@ fun titleBar(title: Box): LengthFlower =
         )
     )
 
+fun dialogContentFlower(title: Box): (Flower) -> Flower = { flower ->
+  { seed ->
+    val testTitlebar = titleBar(title)(seed.dimensions.x)
+    val box = flower(seed.copy(dimensions = seed.dimensions - Vector2i(0, testTitlebar.dimensions.y + 20 + 20 * 2)))
+    boxMargin(20)(
+        boxList(verticalPlane, 20,
+            titleBar(title)(box.dimensions.x),
+            box
+        )
+    ).copy(depiction = menuBackground)
+  }
+}
+
 fun dialogContent(title: Box): WildFlower = { box ->
   val result = boxMargin(20)(
       boxList(verticalPlane, 20,
@@ -71,19 +84,32 @@ fun dialog(definitions: Definitions, title: Text, box: Box): Box {
   return dialogContent(titleBox)(box)
 }
 
-fun dialogWrapperWithExtras(definitions: Definitions, box: Box): Flower =
+fun dialogSurroundings(definitions: Definitions) =
     compose(
         depict(solidBackground(faintBlack)),
         versionDisplay(definitions.applicationInfo.version),
-        centered(
-            alignListItems(verticalPlane, centered)(
-                boxList(verticalPlane, 20)(
-                    listOf(
-                        Box(dimensions = Vector2i(500, 90), depiction = imageDepiction(UiTextures.marlothTitle)),
-                        box
-                    )
-                )
+    )
+
+fun dialogHeader(box: Box) =
+    alignListItems(verticalPlane, centered)(
+        boxList(verticalPlane, 20)(
+            listOf(
+                Box(dimensions = Vector2i(500, 90), depiction = imageDepiction(UiTextures.marlothTitle)),
+                box
             )
+        )
+    )
+
+fun dialogHeader() =
+    alignListItems(verticalPlane, centered)(
+        Box(dimensions = Vector2i(500, 90), depiction = imageDepiction(UiTextures.marlothTitle)),
+    )
+
+fun dialogWrapperWithExtras(definitions: Definitions, box: Box): Flower =
+    compose(
+        dialogSurroundings(definitions),
+        centered(
+            dialogHeader(box)
         )
     )
 
