@@ -89,25 +89,18 @@ fun fieldWrapper(focusIndex: Int, breadth: Int): (Int, Box) -> Box = { index, bo
   )
 }
 
-//fun fieldWrapper(focusIndex: Int): (Int, Flower) -> Flower = { index, flower ->
-//  { seed ->
-//    val gap = 20
-//    val finalLength = seed.dimensions.x
-//    val wrapped = boxMargin(all = gap, top = 12)(
-//        flower
-//    )
-//    Box(
-//        boxes = listOf(
-//            OffsetBox(
-//                child = wrapped,
-//                offset = Vector2i(centered(finalLength, wrapped.dimensions.x), 0)
-//            )
-//        ),
-//        dimensions = Vector2i(finalLength, wrapped.dimensions.y),
-//        depiction = drawMenuButtonBackground(index == focusIndex)
-//    )
-//  }
-//}
+fun stretchyFieldWrapper(focusIndex: Int): (Int, Box) -> Flower = { index, box ->
+  { seed ->
+    val gap = 20
+    val wrapped = boxMargin(all = gap, top = 12)(
+        box
+    )
+    centered(wrapped)(seed)
+        .copy(
+            depiction = drawMenuButtonBackground(index == focusIndex)
+        )
+  }
+}
 
 fun layoutMenuItems(menu: Menu, focusIndex: Int): List<Box> {
   return menu
@@ -125,32 +118,36 @@ fun layoutMenuItems(rows: List<Box>, delegate: (Int, Box) -> Box): Box {
   )
 }
 
-//fun wrapMenuItem(focusIndex: Int, minWidth: Int, events: List<EventUnion>, box:  index: Int) {
-//  val hasFocus = index == focusIndex
-//  val attributes = if (hasFocus)
-//    mapOf(onActivateKey to events, onClickKey to events)
-//  else
-//    mapOf()
-//
-//  return box
-////  fieldWrapper(focusIndex, max(minWidth, breadth))(index, box)
-////      .addAttributes(menuItemIndexKey to index)
-//}
+fun addMenuItemInteractivity(focusIndex: Int, events: List<EventUnion>, index: Int, box: Box): Box {
+  val hasFocus = index == focusIndex
+  val attributes = if (hasFocus)
+    mapOf(onActivateKey to events, onClickKey to events)
+  else
+    mapOf()
+
+  return box
+      .copy(
+          attributes = attributes + (menuItemIndexKey to index)
+      )
+}
+
+fun addMenuItemInteractivity(focusIndex: Int, events: List<EventUnion>, index: Int, flower: Flower): Flower {
+  val hasFocus = index == focusIndex
+  val attributes = if (hasFocus)
+    mapOf(onActivateKey to events, onClickKey to events)
+  else
+    mapOf()
+
+  return withAttributes(attributes + (menuItemIndexKey to index))(flower)
+}
 
 fun menuFlower(menu: Menu, focusIndex: Int, minWidth: Int): Box {
   val rows = layoutMenuItems(menu, focusIndex)
-
   val breadth = boxList(verticalPlane, defaultMenuGap)(rows).dimensions.x
   return layoutMenuItems(rows) { index, box ->
-    val hasFocus = index == focusIndex
-    val events = menu[index].events
-    val attributes = if (hasFocus)
-      mapOf(onActivateKey to events, onClickKey to events)
-    else
-      mapOf()
-
-    fieldWrapper(focusIndex, max(minWidth, breadth))(index, box)
-        .addAttributes(menuItemIndexKey to index)
+    addMenuItemInteractivity(focusIndex, menu[index].events, index,
+        fieldWrapper(focusIndex, max(minWidth, breadth))(index, box)
+    )
   }
       .addAttributes(menuKey to menu)
 }

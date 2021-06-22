@@ -4,8 +4,8 @@ import marloth.clienting.ClientState
 import marloth.clienting.gui.StateFlowerTransform
 import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.general.*
+import marloth.clienting.gui.menus.logic.menuKey
 import marloth.clienting.input.developerCommands
-import marloth.scenery.enums.DevText
 import marloth.scenery.enums.TextId
 import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.centered
@@ -13,12 +13,14 @@ import silentorb.mythic.spatial.Vector2i
 import simulation.misc.InputEventType
 import kotlin.math.max
 
-fun bindingsCommandColumn(rows: List<Box>): Box {
-  val breadth = boxList(verticalPlane, defaultMenuGap)(rows).dimensions.x
-  return layoutMenuItems(rows) { index, box ->
-    fieldWrapper(-1, max(200, breadth))(index, box)
-  }
-}
+//fun bindingsCommandColumn(rows: List<Box>): Box {
+//  val breadth = boxList(verticalPlane, defaultMenuGap)(rows).dimensions.x
+//  return boxList(verticalPlane, defaultMenuGap)(
+//      rows.mapIndexed { index, box ->
+//
+//      }
+//  )
+//}
 
 fun inputBindingsFlower(clientState: ClientState): StateFlowerTransform = { definitions, state ->
   val textLibrary = definitions.textLibrary
@@ -40,39 +42,23 @@ fun inputBindingsFlower(clientState: ClientState): StateFlowerTransform = { defi
             val text = definitions.inputEventTypeNames[InputEventType(binding.device, binding.trigger)]
             text ?: "${binding.device} ${binding.trigger}"
           }
+
           val row = rowOffset + index
+
+          val menuItem = addMenuItemInteractivity(state.menuFocusIndex, listOf(), row,
+              stretchyFieldWrapper(-1)(index,
+                  label(TextStyles.mediumBlack, bindingsText)
+              )
+          )
+
           listOf(
               Vector2i(0, row) to { seed: Seed -> label(TextStyles.gray, formattedCommand) },
-              Vector2i(1, row) to { seed: Seed -> label(TextStyles.mediumBlack, bindingsText) },
+              Vector2i(1, row) to menuItem,
           )
         }
             .flatten()
       }
       .associate { it }
-//      .map { (context, bindings) ->
-
-
-//        val commandRows = groups
-//            .map { (command, _) ->
-//
-//              label(TextStyles.gray, formattedCommand)
-//            }
-//
-//        val menuRows = groups
-//            .map { (_, bindings) ->
-//
-//              MenuItem(
-//                  flower = menuTextFlower(bindingsText),
-//              )
-//            }
-
-//  horizontalList(100)(
-//      listOf(
-//          bindingsCommandColumn(commandRows),
-//          menuFlower(menuRows, state.menuFocusIndex, 200)
-//      )
-//  )
-//      }
 
   compose(
       dialogSurroundings(definitions),
