@@ -89,6 +89,25 @@ fun fieldWrapper(focusIndex: Int, breadth: Int): (Int, Box) -> Box = { index, bo
   )
 }
 
+//fun fieldWrapper(focusIndex: Int): (Int, Flower) -> Flower = { index, flower ->
+//  { seed ->
+//    val gap = 20
+//    val finalLength = seed.dimensions.x
+//    val wrapped = boxMargin(all = gap, top = 12)(
+//        flower
+//    )
+//    Box(
+//        boxes = listOf(
+//            OffsetBox(
+//                child = wrapped,
+//                offset = Vector2i(centered(finalLength, wrapped.dimensions.x), 0)
+//            )
+//        ),
+//        dimensions = Vector2i(finalLength, wrapped.dimensions.y),
+//        depiction = drawMenuButtonBackground(index == focusIndex)
+//    )
+//  }
+//}
 
 fun layoutMenuItems(menu: Menu, focusIndex: Int): List<Box> {
   return menu
@@ -106,6 +125,18 @@ fun layoutMenuItems(rows: List<Box>, delegate: (Int, Box) -> Box): Box {
   )
 }
 
+//fun wrapMenuItem(focusIndex: Int, minWidth: Int, events: List<EventUnion>, box:  index: Int) {
+//  val hasFocus = index == focusIndex
+//  val attributes = if (hasFocus)
+//    mapOf(onActivateKey to events, onClickKey to events)
+//  else
+//    mapOf()
+//
+//  return box
+////  fieldWrapper(focusIndex, max(minWidth, breadth))(index, box)
+////      .addAttributes(menuItemIndexKey to index)
+//}
+
 fun menuFlower(menu: Menu, focusIndex: Int, minWidth: Int): Box {
   val rows = layoutMenuItems(menu, focusIndex)
 
@@ -119,9 +150,7 @@ fun menuFlower(menu: Menu, focusIndex: Int, minWidth: Int): Box {
       mapOf()
 
     fieldWrapper(focusIndex, max(minWidth, breadth))(index, box)
-        .copy(
-            attributes = attributes + (menuItemIndexKey to index)
-        )
+        .addAttributes(menuItemIndexKey to index)
   }
       .addAttributes(menuKey to menu)
 }
