@@ -8,15 +8,15 @@ import marloth.clienting.gui.OnClientEvents
 import marloth.clienting.gui.ViewId
 import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.bloom.OffsetBox
+import silentorb.mythic.bloom.menuItemIndexKey
 import silentorb.mythic.ent.firstNotNull
 import silentorb.mythic.haft.HaftCommand
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.handleCommands
 
-const val menuKey = "silentorb.menu"
+const val menuLengthKey = "silentorb.menuLength"
 const val onActivateKey = "silentorb.onActivate"
 const val onClickKey = "silentorb.onClick"
-const val menuItemIndexKey = "silentorb.menuItemIndex"
 const val onClientEventsKey = "silentorb.onClientEventKey"
 
 fun cycle(value: Int, max: Int): Int {

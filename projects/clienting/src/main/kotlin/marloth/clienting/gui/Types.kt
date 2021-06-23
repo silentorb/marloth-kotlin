@@ -22,6 +22,7 @@ data class GuiState(
     val primarydeviceMode: DeviceMode,
     val notifications: List<Notification> = listOf(),
     val bloomState: BloomState = mapOf(),
+    val previousBloomState: BloomState = mapOf(),
 )
 
 typealias GuiStateMap = Map<Id, GuiState>

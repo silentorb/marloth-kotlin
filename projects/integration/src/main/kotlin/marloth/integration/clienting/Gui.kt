@@ -37,7 +37,8 @@ fun layoutGui(definitions: Definitions, appState: AppState, dimensions: List<Vec
   return if (players.none()) {
     mapOf()
   } else {
-    players.zip(dimensions) { player, d -> player to layoutIntegratedPlayerGui(definitions, appState)(player, d) }
+    players
+        .zip(dimensions) { player, d -> player to layoutIntegratedPlayerGui(definitions, appState)(player, d) }
         .associate { it }
   }
 }

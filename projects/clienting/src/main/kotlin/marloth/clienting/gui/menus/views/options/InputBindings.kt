@@ -4,27 +4,18 @@ import marloth.clienting.ClientState
 import marloth.clienting.gui.StateFlowerTransform
 import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.general.*
-import marloth.clienting.gui.menus.logic.menuKey
+import marloth.clienting.gui.menus.logic.menuLengthKey
 import marloth.clienting.input.developerCommands
 import marloth.scenery.enums.TextId
 import silentorb.mythic.bloom.*
 import silentorb.mythic.bloom.centered
 import silentorb.mythic.spatial.Vector2i
 import simulation.misc.InputEventType
-import kotlin.math.max
-
-//fun bindingsCommandColumn(rows: List<Box>): Box {
-//  val breadth = boxList(verticalPlane, defaultMenuGap)(rows).dimensions.x
-//  return boxList(verticalPlane, defaultMenuGap)(
-//      rows.mapIndexed { index, box ->
-//
-//      }
-//  )
-//}
 
 fun inputBindingsFlower(clientState: ClientState): StateFlowerTransform = { definitions, state ->
   val textLibrary = definitions.textLibrary
   val profiles = clientState.input.inputProfiles
+  var menuLength = 0
   val cells = profiles[1L]!!.bindings
       .entries
       .fold(listOf<Pair<Vector2i, Flower>>()) { a, (context, bindings) ->
@@ -44,13 +35,15 @@ fun inputBindingsFlower(clientState: ClientState): StateFlowerTransform = { defi
           }
 
           val row = rowOffset + index
+//          val key = "binding_$command"
 
-          val menuItem = addMenuItemInteractivity(state.menuFocusIndex, listOf(), row,
-              stretchyFieldWrapper(-1)(index,
+          val menuItem = addMenuItemInteractivity(row, listOf(),
+              stretchyFieldWrapper(row,
                   label(TextStyles.mediumBlack, bindingsText)
               )
           )
 
+          ++menuLength
           listOf(
               Vector2i(0, row) to { seed: Seed -> label(TextStyles.gray, formattedCommand) },
               Vector2i(1, row) to menuItem,
@@ -66,7 +59,8 @@ fun inputBindingsFlower(clientState: ClientState): StateFlowerTransform = { defi
           alignSingleFlower(centered, horizontalPlane,
               dialogContentFlower(dialogTitle(textLibrary(TextId.gui_inputBindings)))(
                   scrollableY("bindingsScrolling",
-                      tableFlower(cells, Vector2i(100, 40))
+                     withAttributes(menuLengthKey to menuLength)(tableFlower(cells, Vector2i(100, 40)))
+
                   )
               )
           )

@@ -5,7 +5,9 @@ import marloth.clienting.gui.GuiState
 import marloth.clienting.gui.ViewId
 import marloth.clienting.input.GuiCommandType
 import silentorb.mythic.bloom.OffsetBox
+import silentorb.mythic.bloom.menuItemIndexKey
 import silentorb.mythic.ent.Id
+import silentorb.mythic.ent.firstNotNull
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.handleCommands
 import simulation.main.Deck
@@ -68,3 +70,10 @@ fun updateMenuFocusIndex(state: GuiState, menuSize: Int?, commands: Commands, ho
       updateMenuFocus(state.menuStack, menuSize, hoverFocusIndex)(commands, state.menuFocusIndex)
     } else
       0
+
+fun updateMenuFocusedElement(state: GuiState, commands: Commands, hoverBoxes: List<OffsetBox>) =
+    if (commands.any { it.type == GuiCommandType.mouseMove })
+      hoverBoxes
+          .firstNotNull { it.attributes[menuItemIndexKey] as? Int }
+    else
+      null

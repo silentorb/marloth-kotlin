@@ -6,8 +6,8 @@ import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.black
 import marloth.clienting.gui.menus.dialogContent
 import marloth.clienting.gui.menus.dialogTitle
-import marloth.clienting.gui.menus.logic.menuItemIndexKey
-import marloth.clienting.gui.menus.logic.menuKey
+import silentorb.mythic.bloom.menuItemIndexKey
+import marloth.clienting.gui.menus.logic.menuLengthKey
 import marloth.clienting.gui.menus.logic.onActivateKey
 import marloth.clienting.gui.menus.logic.onClickKey
 import marloth.scenery.enums.Text
@@ -89,19 +89,6 @@ fun fieldWrapper(focusIndex: Int, breadth: Int): (Int, Box) -> Box = { index, bo
   )
 }
 
-fun stretchyFieldWrapper(focusIndex: Int): (Int, Box) -> Flower = { index, box ->
-  { seed ->
-    val gap = 20
-    val wrapped = boxMargin(all = gap, top = 12)(
-        box
-    )
-    centered(wrapped)(seed)
-        .copy(
-            depiction = drawMenuButtonBackground(index == focusIndex)
-        )
-  }
-}
-
 fun layoutMenuItems(menu: Menu, focusIndex: Int): List<Box> {
   return menu
       .mapIndexed { index, item ->
@@ -131,16 +118,6 @@ fun addMenuItemInteractivity(focusIndex: Int, events: List<EventUnion>, index: I
       )
 }
 
-fun addMenuItemInteractivity(focusIndex: Int, events: List<EventUnion>, index: Int, flower: Flower): Flower {
-  val hasFocus = index == focusIndex
-  val attributes = if (hasFocus)
-    mapOf(onActivateKey to events, onClickKey to events)
-  else
-    mapOf()
-
-  return withAttributes(attributes + (menuItemIndexKey to index))(flower)
-}
-
 fun menuFlower(menu: Menu, focusIndex: Int, minWidth: Int): Box {
   val rows = layoutMenuItems(menu, focusIndex)
   val breadth = boxList(verticalPlane, defaultMenuGap)(rows).dimensions.x
@@ -149,7 +126,7 @@ fun menuFlower(menu: Menu, focusIndex: Int, minWidth: Int): Box {
         fieldWrapper(focusIndex, max(minWidth, breadth))(index, box)
     )
   }
-      .addAttributes(menuKey to menu)
+      .addAttributes(menuLengthKey to menu)
 }
 
 val faintBlack = black.copy(w = 0.6f)

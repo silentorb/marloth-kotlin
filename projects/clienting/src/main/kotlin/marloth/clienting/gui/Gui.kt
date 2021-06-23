@@ -3,10 +3,10 @@ package marloth.clienting.gui
 import marloth.clienting.*
 import marloth.clienting.gui.hud.hudLayout
 import marloth.clienting.gui.menus.*
-import marloth.clienting.gui.menus.general.Menu
 import marloth.clienting.gui.menus.general.newSimpleMenuItem
+import silentorb.mythic.bloom.menuItemIndexKey
 import marloth.clienting.input.GuiCommandType
-import marloth.clienting.gui.menus.logic.menuKey
+import marloth.clienting.gui.menus.logic.menuLengthKey
 import marloth.scenery.enums.Text
 import marloth.scenery.enums.TextId
 import silentorb.mythic.bloom.*
@@ -42,12 +42,12 @@ enum class ViewId {
 }
 
 data class BloomDefinition(
-    val menu: Menu?
+    val menuLength: Int?
 )
 
 fun newBloomDefinition(boxes: List<AttributeHolder>): BloomDefinition =
     BloomDefinition(
-        menu = getAttributeValue<Menu>(boxes, menuKey)
+        menuLength = getAttributeValue<Int>(boxes, menuLengthKey)
     )
 
 fun gameIsActive(world: World?): Boolean =
@@ -83,13 +83,19 @@ fun guiLayout(definitions: Definitions, options: AppOptions, clientState: Client
   ))
 }
 
+fun prepareBloomState(state: GuiState?) =
+    (state?.bloomState ?: mapOf()) + mapOf(
+        menuItemIndexKey to (state?.menuFocusIndex ?: 0)
+    )
+
 fun layoutPlayerGui(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, dimensions: Vector2i,
                     player: Id, debugInfo: List<String>): Box {
   val layout = guiLayout(definitions, options, clientState, world, player, debugInfo)
   val state = clientState.guiStates[player]
   val seed = Seed(
       dimensions = dimensions,
-      state = state?.bloomState ?: mapOf(),
+      state = prepareBloomState(state),
+      previousState = state?.bloomState ?: mapOf(),
   )
   return layout(seed)
 }

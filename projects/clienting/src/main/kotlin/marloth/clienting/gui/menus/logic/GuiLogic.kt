@@ -59,7 +59,7 @@ fun updateGuiState(
     commands: Commands,
     deviceStates: List<InputDeviceState>
 ): GuiState {
-  val menuSize = bloomDefinition.menu?.size
+  val menuSize = bloomDefinition.menuLength
   val hoverBoxes = getHoverBoxes(deviceStates.last().mousePosition.toVector2i(), boxes)
   val menuFocusIndex = updateMenuFocusIndex(state, menuSize, commands, hoverBoxes)
   val displayChange = updateDisplayChangeState(options.display, state, commands)
@@ -71,7 +71,7 @@ fun updateGuiState(
   }
 
   val bloomLogicInput = LogicInput(
-      state = state.bloomState,
+      state = prepareBloomState(state),
       deviceStates = deviceStates,
   )
 
@@ -82,7 +82,8 @@ fun updateGuiState(
       displayChange = displayChange,
       primarydeviceMode = updatePrimaryDeviceMode(commands, state.primarydeviceMode),
       notifications = updateNotifications(simulationDelta, commands, state.notifications),
-      bloomState = updateBloomLogic(bloomLogicInput, boxes)
+      bloomState = updateBloomLogic(bloomLogicInput, boxes),
+      previousBloomState = state.bloomState,
   )
 }
 
