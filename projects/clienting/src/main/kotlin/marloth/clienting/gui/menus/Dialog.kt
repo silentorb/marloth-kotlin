@@ -33,13 +33,6 @@ fun titleBar(title: Box): LengthFlower =
     breadthList(verticalPlane)(
         listOf(
             alignSingle(centered, horizontalPlane, title),
-//            flexList(horizontalPlane, spacing = 10)(
-//                listOf(
-//                    flexFlower(titleBookend),
-//                    flex(title),
-//                    flexFlower(titleBookend),
-//                )
-//            ),
             marginSingle(horizontalPlane, all = 0, left = 30, right = 30)(
                 horizontalLine
             )

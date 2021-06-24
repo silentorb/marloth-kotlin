@@ -24,7 +24,9 @@ fun inputBindingsFlower(clientState: ClientState): StateFlowerTransform = { defi
             .filter { !developerCommands.contains(it.command) }
             .groupBy { it.command }
 
-        a + groups.entries.mapIndexed { index, (command, bindings) ->
+        a + listOf(
+            Vector2i(0, rowOffset) to centered(label(TextStyles.mediumBlack, context.name.capitalize())),
+        ) + groups.entries.mapIndexed { index, (command, bindings) ->
           val formattedCommand = command.toString()
               .replace(Regex("([a-z])([A-Z\\d])")) { m -> m.groups[1]!!.value + " " + m.groups[2]!!.value }
               .capitalize()
@@ -34,7 +36,7 @@ fun inputBindingsFlower(clientState: ClientState): StateFlowerTransform = { defi
             text ?: "${binding.device} ${binding.trigger}"
           }
 
-          val row = rowOffset + index
+          val row = rowOffset + 1 + index
 //          val key = "binding_$command"
 
           val menuItem = addMenuItemInteractivity(row, listOf(),
@@ -59,7 +61,7 @@ fun inputBindingsFlower(clientState: ClientState): StateFlowerTransform = { defi
           alignSingleFlower(centered, horizontalPlane,
               dialogContentFlower(dialogTitle(textLibrary(TextId.gui_inputBindings)))(
                   scrollableY("bindingsScrolling",
-                     withAttributes(menuLengthKey to menuLength)(tableFlower(cells, Vector2i(100, 40)))
+                      withAttributes(menuLengthKey to menuLength)(tableFlower(cells, Vector2i(100, 40)))
 
                   )
               )

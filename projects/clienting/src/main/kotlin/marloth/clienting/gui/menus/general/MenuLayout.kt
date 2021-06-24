@@ -126,7 +126,7 @@ fun menuFlower(menu: Menu, focusIndex: Int, minWidth: Int): Box {
         fieldWrapper(focusIndex, max(minWidth, breadth))(index, box)
     )
   }
-      .addAttributes(menuLengthKey to menu)
+      .addAttributes(menuLengthKey to menu.size)
 }
 
 val faintBlack = black.copy(w = 0.6f)
