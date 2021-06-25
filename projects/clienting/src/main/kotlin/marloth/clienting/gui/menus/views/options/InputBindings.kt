@@ -11,8 +11,11 @@ import marloth.clienting.gui.menus.general.stretchyFieldWrapper
 import marloth.clienting.gui.menus.logic.menuLengthKey
 import marloth.clienting.input.*
 import marloth.scenery.enums.TextId
+import org.lwjgl.glfw.GLFW
 import silentorb.mythic.bloom.*
 import silentorb.mythic.haft.Binding
+import silentorb.mythic.haft.DeviceIndexes
+import silentorb.mythic.haft.GAMEPAD_BUTTON_X
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.spatial.Vector2i
 import simulation.misc.InputEventType
@@ -46,6 +49,17 @@ fun bindingInputItem(row: Int, text: String, events: List<EventUnion>) =
         )
     )
 
+fun newProfileCommand(options: InputOptions, newProfile: InputProfile): Map<String, Command> {
+  val newInputOptions = options.copy(
+      profiles = options.profiles + mapOf(
+          1L to newProfile,
+      )
+  )
+  return mapOf(
+      commandKey to Command(newInputOptionsCommand, value = newInputOptions),
+  )
+}
+
 fun inputBindingsFlower(options: InputOptions): StateFlowerTransform = { definitions, state ->
   val textLibrary = definitions.textLibrary
   val profiles = options.profiles
@@ -61,7 +75,10 @@ fun inputBindingsFlower(options: InputOptions): StateFlowerTransform = { definit
       })(bindingInputItem(0, "Reset to Defaults", listOf())),
   )
   val bindingsEditing = state.bloomState[bindingsEditingKey] as? Int
-  val profileBindings = profiles[1L]!!.bindings
+  val profile = profiles[defaultInputProfile]!!
+  val profileBindings = profile.bindings
+  val focusIndex = getFocusIndex(state.bloomState)
+
   val cells = profileBindings
       .entries
       .fold(firstRow) { a, (context, contextBindings) ->
@@ -82,52 +99,67 @@ fun inputBindingsFlower(options: InputOptions): StateFlowerTransform = { definit
             "Press Any Key"
           else
             bindings.joinToString(", ") { binding ->
-              val text = definitions.inputEventTypeNames[InputEventType(binding.device, binding.trigger)]
-              text ?: "${binding.device} ${binding.trigger}"
+              val text = definitions.inputEventTypeNames[InputEventType(binding.device, binding.index)]
+              text ?: "${binding.device} ${binding.index}"
             }
 
-          val activateLogic = if (isEditingRow)
+          val logic = if (isEditingRow)
             withLogic { input, _ ->
               val event = input.deviceStates.last().events.firstOrNull()
               if (event != null) {
+                val previousBinding = contextBindings
+                    .firstOrNull { it.device == event.device && it.index == event.index }
+
                 val newBinding = Binding(
                     device = event.device,
-                    trigger = event.index,
+                    index = event.index,
                     command = command,
                 )
-                val newProfile = profiles[1L]!!.copy(
+                val newProfile = profile.copy(
                     bindings = profileBindings.plus(
-                        context to contextBindings.plus(
-                            newBinding
-                        )
-                    )
-                )
-
-                val newInputOptions = options.copy(
-                    profiles = options.profiles + mapOf(
-                        1L to newProfile,
+                        context to contextBindings
+                            .minus(listOfNotNull(previousBinding))
+                            .plus(newBinding)
                     )
                 )
 
                 mapOf(
                     bindingsEditingKey to deleteMe,
                     isolatedInput to deleteMe,
-                    commandKey to Command(newInputOptionsCommand, value = newInputOptions),
-                )
-              } else
-                mapOf()
+                ) + newProfileCommand(options, newProfile)
+              }
+              mapOf()
             }
           else
             withLogic(
-                onActivate { _, _ ->
-                  mapOf(
-                      bindingsEditingKey to row,
-                      isolatedInput to row,
-                  )
-                }
+                composeLogicNotNull(
+                    onActivate { _, _ ->
+                      mapOf(
+                          bindingsEditingKey to row,
+                          isolatedInput to row,
+                      )
+                    },
+                    if (row == focusIndex)
+                      { input, _ ->
+                        if (input.isPressed(DeviceIndexes.keyboard, GLFW.GLFW_KEY_DELETE) ||
+                            input.isPressed(DeviceIndexes.gamepad, GAMEPAD_BUTTON_X)) {
+                          val newProfile = profile.copy(
+                              bindings = profileBindings.plus(
+                                  context to contextBindings
+                                      .filter { it.command != command }
+                              )
+                          )
+
+                          newProfileCommand(options, newProfile)
+                        } else
+                          mapOf()
+                      }
+                    else
+                      null
+                )
             )
 
-          val menuItem = activateLogic(
+          val menuItem = logic(
               bindingInputItem(row, bindingsText, listOf())
           )
           ++menuLength
