@@ -17,8 +17,15 @@ import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.toVector2
 
-data class GameInputConfig(
-    val placeholder: Boolean = true
+fun defaultInputProfiles() =
+    mapOf(
+        defaultInputProfile to InputProfile(
+            bindings = defaultInputBindings(),
+        )
+    )
+
+data class InputOptions(
+    val profiles: Map<InputProfileId, InputProfile> = defaultInputProfiles(),
 )
 
 enum class InputContext {
@@ -35,25 +42,19 @@ typealias InputProfileId = Long
 
 data class InputState(
     val deviceStates: List<InputDeviceState>,
-    val config: GameInputConfig,
-    val inputProfiles: Map<InputProfileId, InputProfile>,
     val playerProfiles: Map<Id, InputProfileId>,
     val deviceTypeMap: DeviceTypeMap,
     val devicePlayers: Map<Int, Id>
 )
 
-fun newInputState(input: PlatformInput, config: GameInputConfig) =
+fun defaultInputBindings() = mapOf(
+    InputContext.game to defaultGameInputBindings(),
+    InputContext.menu to defaultMenuInputProfile()
+)
+
+fun newInputState(input: PlatformInput) =
     InputState(
         deviceStates = listOf(newInputDeviceState(input)),
-        config = config,
-        inputProfiles = mapOf(
-            defaultInputProfile to InputProfile(
-                bindings = mapOf(
-                    InputContext.game to defaultGameInputBindings(),
-                    InputContext.menu to defaultMenuInputProfile()
-                )
-            )
-        ),
         playerProfiles = mapOf(),
         deviceTypeMap = mapOf(),
         devicePlayers = mapOf()
@@ -73,9 +74,9 @@ fun joiningGamepads(events: List<InputEvent>, deviceTypeMap: DeviceTypeMap): Lis
       .distinct()
 }
 
-fun getInputProfile(inputState: InputState, player: Id): InputProfile? {
+fun getInputProfile(options: InputOptions, inputState: InputState, player: Id): InputProfile? {
   val playerProfile = inputState.playerProfiles[player]
-  return inputState.inputProfiles[playerProfile]
+  return options.profiles[playerProfile]
 }
 
 fun isStroke(context: InputContext, type: Any): Boolean =
@@ -108,10 +109,10 @@ fun gatherInputCommandsWithoutPlayers(deviceStates: List<InputDeviceState>): Com
   return mapInputToCommands(strokes, bindings, deviceStates)
 }
 
-fun gatherInputCommandsForPlayers(inputState: InputState, playerViews: PlayerViews): Commands =
+fun gatherInputCommandsForPlayers(options: InputOptions, inputState: InputState, playerViews: PlayerViews): Commands =
     playerViews
         .flatMap { (player, view) ->
-          val profile = getInputProfile(inputState, player)
+          val profile = getInputProfile(options, inputState, player)
           if (profile == null)
             listOf()
           else {
@@ -127,12 +128,12 @@ fun gatherInputCommandsForPlayers(inputState: InputState, playerViews: PlayerVie
           }
         }
 
-fun gatherInputCommands(previous: InputState, next: InputState, playerViews: PlayerViews): Commands {
+fun gatherInputCommands(options: InputOptions, previous: InputState, next: InputState, playerViews: PlayerViews): Commands {
   val deviceStates = next.deviceStates
   val commands = if (playerViews.none())
     gatherInputCommandsWithoutPlayers(deviceStates)
   else
-    gatherInputCommandsForPlayers(next, playerViews)
+    gatherInputCommandsForPlayers(options, next, playerViews)
 
   val firstPlayer = playerViews.keys.firstOrNull()
   val mouseCommands = if (firstPlayer != null)

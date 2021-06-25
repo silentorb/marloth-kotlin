@@ -7,6 +7,7 @@ import marloth.clienting.gui.menus.general.newSimpleMenuItem
 import silentorb.mythic.bloom.menuItemIndexKey
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.gui.menus.logic.menuLengthKey
+import marloth.clienting.gui.menus.views.options.commandKey
 import marloth.scenery.enums.Text
 import marloth.scenery.enums.TextId
 import silentorb.mythic.bloom.*
@@ -86,7 +87,7 @@ fun guiLayout(definitions: Definitions, options: AppOptions, clientState: Client
 fun prepareBloomState(state: GuiState?) =
     (state?.bloomState ?: mapOf()) + mapOf(
         menuItemIndexKey to (state?.menuFocusIndex ?: 0)
-    )
+    ) - commandKey
 
 fun layoutPlayerGui(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, dimensions: Vector2i,
                     player: Id, debugInfo: List<String>): Box {

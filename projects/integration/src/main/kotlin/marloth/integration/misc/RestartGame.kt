@@ -30,7 +30,7 @@ fun restartWorld(app: GameApp, oldWorld: World, graph: Graph, graphLibrary: Grap
 
 fun restartClientState(input: PlatformInput, client: ClientState, playerMap: Map<Id, Id>): ClientState =
     client.copy(
-        input = newInputState(input, client.input.config),
+        input = newInputState(input),
         guiStates = mapOf(),
         commands = listOf(),
         players = playerMap.values.toList(),

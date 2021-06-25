@@ -5,9 +5,8 @@ import marloth.clienting.editing.newEditor
 import marloth.clienting.gui.GuiState
 import marloth.clienting.input.InputState
 import marloth.clienting.gui.ViewId
-import marloth.clienting.input.GameInputConfig
+import marloth.clienting.input.InputOptions
 import marloth.clienting.input.newInputState
-import marloth.scenery.enums.MeshShapeMap
 import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.aura.AudioState
 import silentorb.mythic.aura.newAudioState
@@ -49,13 +48,13 @@ data class ClientState(
 fun newClientState(
     textLibrary: TextResourceMapper,
     platform: Platform,
-    inputConfig: GameInputConfig,
+    inputOptions: InputOptions,
     audioConfig: AudioConfig,
     displayModes: List<DisplayMode>,
     client: Client
 ) =
     ClientState(
-        input = newInputState(platform.input, inputConfig),
+        input = newInputState(platform.input),
         guiStates = mapOf(),
         audio = newAudioState(audioConfig.soundVolume),
         commands = listOf(),

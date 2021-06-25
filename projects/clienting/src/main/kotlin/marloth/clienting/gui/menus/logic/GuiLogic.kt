@@ -2,6 +2,8 @@ package marloth.clienting.gui.menus.logic
 
 import marloth.clienting.*
 import marloth.clienting.gui.*
+import marloth.clienting.gui.menus.views.options.commandKey
+import marloth.clienting.gui.menus.views.options.isolatedInput
 import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.bloom.LogicInput
@@ -90,20 +92,25 @@ fun updateGuiState(
 fun updateGuiState(
     options: AppOptions,
     deck: Deck?,
-    bloomStates: GuiStateMap,
+    guiStates: GuiStateMap,
     boxes: PlayerBoxes,
     commands: Commands,
     player: Id,
     bloomDefinition: BloomDefinition,
     deviceStates: List<InputDeviceState>): GuiState {
   val playerCommands = commands.filter { it.target == player }
-  val state = bloomStates[player]
-      ?: newGuiState(if (bloomStates.none()) DeviceMode.mouseKeyboard else DeviceMode.gamepad)
+  val state = guiStates[player]
+      ?: newGuiState(if (guiStates.none()) DeviceMode.mouseKeyboard else DeviceMode.gamepad)
 
   val gameCommands = if (playerCommands.any { it.type == CharacterCommands.interactPrimary })
     getInteractionCommands(deck, player)
   else
     listOf()
 
-  return updateGuiState(options, state, bloomDefinition, boxes[player]!!, playerCommands + gameCommands, deviceStates)
+  val guiCommands = if (state.bloomState.containsKey(isolatedInput))
+    listOf()
+  else
+    playerCommands + gameCommands
+
+  return updateGuiState(options, state, bloomDefinition, boxes[player]!!, guiCommands, deviceStates)
 }

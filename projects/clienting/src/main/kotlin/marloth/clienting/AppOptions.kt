@@ -3,7 +3,7 @@ package marloth.clienting
 import silentorb.mythic.configuration.loadYamlFile
 import silentorb.mythic.configuration.saveYamlFile
 import marloth.clienting.audio.AudioConfig
-import marloth.clienting.input.GameInputConfig
+import marloth.clienting.input.InputOptions
 import silentorb.mythic.lookinglass.DisplayOptions
 
 data class GameConfig(
@@ -14,7 +14,7 @@ data class AppOptions(
     val audio: AudioConfig = AudioConfig(),
     val display: DisplayOptions = DisplayOptions(),
     val game: GameConfig = GameConfig(),
-    val input: GameInputConfig = GameInputConfig()
+    val input: InputOptions = InputOptions()
 )
 
 const val gameConfigFile = "gameConfig.yaml"

@@ -9,6 +9,7 @@ import marloth.clienting.gui.menus.logic.commandsToClientEvents
 import marloth.clienting.gui.menus.logic.eventsFromGuiState
 import marloth.clienting.gui.menus.logic.getMenuItemEvents
 import marloth.clienting.gui.menus.logic.updateGuiState
+import marloth.clienting.gui.menus.views.options.commandKey
 import marloth.clienting.input.DeveloperCommands
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.gatherInputCommands
@@ -153,9 +154,16 @@ fun updateClient(
   val input = clientState.input.copy(
       deviceStates = deviceStates
   )
-  val commands = gatherInputCommands(clientState.input, input, playerViews(clientState))
+  val commands = gatherInputCommands(options.input, clientState.input, input, playerViews(clientState))
   val mousePosition = clientState.input.deviceStates.first().mousePosition.toVector2i()
   val events = gatherUserEvents(options, clientState, playerBoxes, mousePosition, commands)
+
+  val bloomCommands = clientState.guiStates
+      .mapNotNull { (player, guiState) ->
+        val bloomCommand = guiState.bloomState[commandKey] as? Command
+        bloomCommand?.copy(target = player)
+      }
+
   val commands2 = commands + events.filterIsInstance<Command>() +
       listOfNotNull(
           if (worlds.size > 1 && worlds.last().global.gameOver?.winningFaction == Factions.misfits &&
@@ -163,7 +171,7 @@ fun updateClient(
             Command(ClientEventType.navigate, ViewId.victory, worlds.last().deck.players.keys.first())
           else
             null
-      )
+      ) + bloomCommands
 
   applyCommandsToExternalSystem(client, commands2)
   val nextGuiStates = if (clientState.isEditorActive)

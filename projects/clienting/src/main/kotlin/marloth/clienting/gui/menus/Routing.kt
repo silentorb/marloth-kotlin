@@ -24,7 +24,7 @@ fun viewSelect(world: World?, options: AppOptions, clientState: ClientState, vie
     ViewId.displayChangeConfirmation -> displayChangeConfirmationFlower
     ViewId.displayOptions -> displayOptionsFlower(clientState)
     ViewId.gamepadOptions -> emptyViewFlower
-    ViewId.inputBindings -> inputBindingsFlower(clientState)
+    ViewId.inputBindings -> inputBindingsFlower(options.input)
     ViewId.inputOptions -> inputOptionsMenu
     ViewId.mouseOptions -> emptyViewFlower
     ViewId.options -> optionsMenu

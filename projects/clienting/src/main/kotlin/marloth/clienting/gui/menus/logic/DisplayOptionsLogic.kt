@@ -7,6 +7,7 @@ import marloth.clienting.gui.GuiState
 import marloth.clienting.gui.ViewId
 import marloth.clienting.input.GuiCommandType
 import silentorb.mythic.ent.firstNotNull
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.lookinglass.DisplayOptions
 import silentorb.mythic.lookinglass.toPlatformDisplayConfig
 import silentorb.mythic.platforming.PlatformDisplay
@@ -72,7 +73,7 @@ fun updateDisplayChangeState(
   )
 }
 
-fun updateDisplayOptions(clientState: ClientState, options: DisplayOptions, event: ClientEvent): DisplayOptions =
+fun updateDisplayOptions(clientState: ClientState, options: DisplayOptions, event: Command): DisplayOptions =
     when (event.type) {
       ClientEventType.saveDisplayChange -> clientState.guiStates.values
           .firstNotNull { it.displayChange?.options } ?: options
