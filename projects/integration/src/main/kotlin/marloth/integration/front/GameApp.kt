@@ -90,10 +90,10 @@ fun runApp(platform: Platform, options: AppOptions) {
       platform.display.getDisplayModes(),
       app.client,
   )
-  val worlds = if (clientState.isEditorActive)
-    listOf()
-  else
+  val worlds = if (!clientState.isEditorActive && getDebugBoolean("NEW_GAME_ON_START"))
     listOf(newWorld(app, loadDefaultWorldGraph(meshShapes)))
+  else
+    listOf()
 
   val state = AppState(
       client = clientState,

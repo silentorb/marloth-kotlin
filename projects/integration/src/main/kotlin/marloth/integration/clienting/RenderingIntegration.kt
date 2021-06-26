@@ -55,6 +55,15 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
           renderLayout(box, canvas, getDebugBoolean("MARK_BLOOM_PASS"))
         }
       }
+    } else {
+      val viewport = viewports.firstOrNull()
+      val box = boxes.values.firstOrNull()
+      if (viewport != null && box != null) {
+        val dimensions = viewport.zw()
+        val canvas = createCanvas(client.renderer, client.customBloomResources, dimensions)
+        applyRenderedBuffers(renderer, windowInfo)
+        renderLayout(box, canvas, getDebugBoolean("MARK_BLOOM_PASS"))
+      }
     }
 
     val onRenderPost = appState.hooks?.onRenderPost

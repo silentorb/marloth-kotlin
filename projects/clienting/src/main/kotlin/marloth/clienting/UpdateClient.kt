@@ -148,12 +148,16 @@ fun clientCommandsFromWorld(worlds: List<World>) =
           null
     )
 
-fun gatherPlayerManagementCommands(deck: Deck, player: Id, guiState: GuiState): Commands =
+fun gatherPlayerManagementCommands(deck: Deck?, player: Id, guiState: GuiState): Commands =
     listOfNotNull(
-        if (!deck.characters.containsKey(player) && guiState.view == null)
+        if (deck == null && guiState.view == null)
+          Command(ClientEventType.navigate, ViewId.mainMenu, player)
+        else
+          null,
+        if (deck != null && !deck.characters.containsKey(player) && guiState.view == null)
           Command(ClientEventType.navigate, ViewId.chooseProfessionMenu, player)
         else
-          null
+          null,
     )
 
 fun updateClient(
@@ -181,10 +185,7 @@ fun updateClient(
       .flatMap { (player, guiState) ->
         val bloomCommand = guiState.bloomState[commandKey] as? Command
         listOfNotNull(bloomCommand?.copy(target = player)) +
-            if (deck != null)
-              gatherPlayerManagementCommands(deck, player, guiState)
-            else
-              listOf()
+            gatherPlayerManagementCommands(deck, player, guiState)
       }
 
   val commands = initialCommands + events.filterIsInstance<Command>() +

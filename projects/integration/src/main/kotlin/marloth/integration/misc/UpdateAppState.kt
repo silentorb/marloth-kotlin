@@ -40,13 +40,18 @@ fun updateClientFromWorld(worlds: List<World>, clientState: ClientState): Client
   val world = worlds.lastOrNull()
 
   return if (world == null)
-    clientState
+    clientState.copy(
+        players = if (clientState.players.none())
+          listOf(1L)
+        else
+          clientState.players
+    )
   else
     clientState.copy(
         players = if (clientState.commands.any { it.type == GuiCommandType.newGame })
           listOf()
         else
-          updateClientPlayers(world.deck.players)(clientState.players)
+          world.deck.players.keys.toList()
     )
 }
 
