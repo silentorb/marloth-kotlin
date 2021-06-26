@@ -12,7 +12,7 @@ val inputOptionsMenu =
     dialogWrapperWithExtras(
         simpleMenuFlower(TextId.gui_optionsMenu,
             listOfNotNull(
-                newSimpleMenuItem(event = ClientEvent(ClientEventType.drillDown, ViewId.inputBindings), text = TextId.gui_inputBindings),
+                newSimpleMenuItem(TextId.gui_inputBindings, ClientEvent(ClientEventType.drillDown, ViewId.inputBindings)),
 //                newSimpleMenuItem(event = ClientEvent(ClientEventType.drillDown, ViewId.gamepadOptions), text = TextId.gui_gamepadOptions),
 //                newSimpleMenuItem(event = ClientEvent(ClientEventType.drillDown, ViewId.mouseOptions), text = TextId.gui_mouseOptions)
             )

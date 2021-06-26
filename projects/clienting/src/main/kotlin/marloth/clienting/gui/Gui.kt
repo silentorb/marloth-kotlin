@@ -63,7 +63,7 @@ data class OnClientEvents(
 val menuBackground: Depiction = solidBackground(grayTone(0.5f))
 
 fun victoryMenu() = listOfNotNull(
-    newSimpleMenuItem(TextId.message_victory, event = ClientEvent(GuiCommandType.newGame))
+    newSimpleMenuItem(TextId.message_victory, ClientEvent(GuiCommandType.newGame))
 )
 
 val emptyViewFlower: StateFlowerTransform = { _, _ -> emptyFlower }

@@ -4,6 +4,7 @@
 ["common-wall","mine","open"],
 ["common-wall","other","anyOpen"],
 ["common-wall","type","blockSide"],
+["mesh","type","solid-box"],
 ["mesh","mesh","squareWallBeveled"],
 ["mesh","parent","common-wall"],
 ["mesh","rotation",[0.0,0.0,-1.5707964]],

@@ -8,6 +8,7 @@
 ["mesh","parent","common-wall"],
 ["mesh","rotation",[0.0,0.0,-1.5707964]],
 ["mesh","translation",[2.26,0.0,0.24]],
-["mesh","scale",[1.0,1.0,1.2376]]
+["mesh","scale",[1.0,1.0,1.2376]],
+["mesh","type","solid-box"]
 ]
 }

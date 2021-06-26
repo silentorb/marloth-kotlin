@@ -233,7 +233,7 @@ fun actionAccessories(): ActionAccessoryMap = mapOf(
 
     AccessoryIdOld.shotgun to ActionAccessory(
         accessory = AccessoryDefinition(
-            name = TextId.unnamed,
+            name = DevText("Shotgun"),
             equippedMesh = MeshId.shotgun
         ),
         action = ActionDefinition(

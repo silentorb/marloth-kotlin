@@ -13,10 +13,10 @@ import marloth.scenery.enums.TextId
 import simulation.main.World
 
 fun mainMenuItems(isGameActive: Boolean): List<SimpleMenuItem> = listOfNotNull(
-    if (isGameActive) newSimpleMenuItem(event = ClientEvent(GuiCommandType.menuBack), text = TextId.menu_continueGame) else null,
-    newSimpleMenuItem(event = ClientEvent(GuiCommandType.newGame), text = TextId.menu_newGame),
-    newSimpleMenuItem(event = ClientEvent(ClientEventType.drillDown, ViewId.options), text = TextId.gui_optionsMenu),
-    newSimpleMenuItem(event = ClientEvent(GuiCommandType.quit), text = TextId.menu_quit)
+    if (isGameActive) newSimpleMenuItem(TextId.menu_continueGame, ClientEvent(GuiCommandType.menuBack)) else null,
+    newSimpleMenuItem(TextId.menu_newGame, ClientEvent(GuiCommandType.newGame)),
+    newSimpleMenuItem(TextId.gui_optionsMenu, ClientEvent(ClientEventType.drillDown, ViewId.options)),
+    newSimpleMenuItem(TextId.menu_quit, ClientEvent(GuiCommandType.quit))
 )
 
 fun mainMenu(world: World?) =

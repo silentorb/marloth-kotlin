@@ -31,10 +31,10 @@ data class SimpleMenuItem(
     val events: List<EventUnion> = listOf()
 )
 
-fun newSimpleMenuItem(text: Text, event: EventUnion? = null) =
+fun newSimpleMenuItem(text: Text, vararg events: EventUnion) =
     SimpleMenuItem(
         text = text,
-        events = listOfNotNull(event)
+        events = events.toList()
     )
 
 typealias Menu = List<MenuItem>

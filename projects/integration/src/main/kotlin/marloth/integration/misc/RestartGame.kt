@@ -48,16 +48,16 @@ fun restartGame(app: GameApp, appState: AppState, scene: String): AppState {
     else -> loadWorldGraph(getMeshShapes(app.client.renderer), scene)
   }
 
+  val graphLibrary = (editor?.graphLibrary ?: mapOf()).minus(activeWorldKey)
   return if (appState.worlds.none()) {
     AppState(
         client = appState.client,
         options = appState.options,
-        worlds = listOf(newWorld(app, graph)),
+        worlds = listOf(newWorld(app, graph, graphLibrary)),
         timestep = newTimestepState()
     )
   } else {
     val previousWorld = appState.worlds.last()
-    val graphLibrary = (editor?.graphLibrary ?: mapOf()).minus(activeWorldKey)
     val world = restartWorld(app, previousWorld, graph, graphLibrary)
     // Right now order doesn't matter for new player characters since each one is identical other than location.
     // Eventually they will need to be more carefully mapped to preserve proper association

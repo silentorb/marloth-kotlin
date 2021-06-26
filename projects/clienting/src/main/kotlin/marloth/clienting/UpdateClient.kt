@@ -4,6 +4,7 @@ import marloth.clienting.audio.updateClientAudio
 import marloth.clienting.editing.*
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.EventUnion
+import marloth.clienting.gui.GuiState
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.logic.commandsToClientEvents
 import marloth.clienting.gui.menus.logic.eventsFromGuiState
@@ -138,6 +139,23 @@ fun getEditorEvents(editor: Editor) = handleCommands<List<ClientEvent>> { comman
   }
 }
 
+fun clientCommandsFromWorld(worlds: List<World>) =
+    listOfNotNull(
+        if (worlds.size > 1 && worlds.last().global.gameOver?.winningFaction == Factions.misfits &&
+            worlds.dropLast(1).last().global.gameOver?.winningFaction != Factions.misfits)
+          Command(ClientEventType.navigate, ViewId.victory, worlds.last().deck.players.keys.first())
+        else
+          null
+    )
+
+fun gatherPlayerManagementCommands(deck: Deck, player: Id, guiState: GuiState): Commands =
+    listOfNotNull(
+        if (!deck.characters.containsKey(player) && guiState.view == null)
+          Command(ClientEventType.navigate, ViewId.chooseProfessionMenu, player)
+        else
+          null
+    )
+
 fun updateClient(
     client: Client,
     textLibrary: TextResourceMapper,
@@ -154,26 +172,26 @@ fun updateClient(
   val input = clientState.input.copy(
       deviceStates = deviceStates
   )
-  val commands = gatherInputCommands(options.input, clientState.input, input, playerViews(clientState))
+  val initialCommands = gatherInputCommands(options.input, clientState.input, input, playerViews(clientState))
   val mousePosition = clientState.input.deviceStates.first().mousePosition.toVector2i()
-  val events = gatherUserEvents(options, clientState, playerBoxes, mousePosition, commands)
+  val events = gatherUserEvents(options, clientState, playerBoxes, mousePosition, initialCommands)
+  val deck = worlds.lastOrNull()?.deck
 
-  val bloomCommands = clientState.guiStates
-      .mapNotNull { (player, guiState) ->
+  val playerGuiCommands = clientState.guiStates
+      .flatMap { (player, guiState) ->
         val bloomCommand = guiState.bloomState[commandKey] as? Command
-        bloomCommand?.copy(target = player)
+        listOfNotNull(bloomCommand?.copy(target = player)) +
+            if (deck != null)
+              gatherPlayerManagementCommands(deck, player, guiState)
+            else
+              listOf()
       }
 
-  val commands2 = commands + events.filterIsInstance<Command>() +
-      listOfNotNull(
-          if (worlds.size > 1 && worlds.last().global.gameOver?.winningFaction == Factions.misfits &&
-              worlds.dropLast(1).last().global.gameOver?.winningFaction != Factions.misfits)
-            Command(ClientEventType.navigate, ViewId.victory, worlds.last().deck.players.keys.first())
-          else
-            null
-      ) + bloomCommands
+  val commands = initialCommands + events.filterIsInstance<Command>() +
+      clientCommandsFromWorld(worlds) +
+      playerGuiCommands
 
-  applyCommandsToExternalSystem(client, commands2)
+  applyCommandsToExternalSystem(client, commands)
   val nextGuiStates = if (clientState.isEditorActive)
     clientState.guiStates
   else
@@ -184,7 +202,7 @@ fun updateClient(
               worlds.lastOrNull()?.deck,
               clientState.guiStates,
               playerBoxes,
-              commands2 + externalCommands,
+              commands + externalCommands,
               player,
               bloomDefinition,
               deviceStates
@@ -201,7 +219,7 @@ fun updateClient(
     previousEditor to listOf()
 
   checkSaveEditor(clientState.editor, nextEditor)
-  val nextIsEditorActive = updateEditingActive(commands + editorEvents1, clientState.isEditorActive)
+  val nextIsEditorActive = updateEditingActive(initialCommands + editorEvents1, clientState.isEditorActive)
   val editorEvents2 = if (!nextIsEditorActive && clientState.isEditorActive && nextEditor != null)
     listOf(ClientEvent(ClientEventType.setWorldGraph, expandDefaultWorldGraph(nextEditor)))
   else
@@ -211,7 +229,7 @@ fun updateClient(
       audio = updateClientAudio(client, worlds, clientState.audio),
       input = input,
       guiStates = nextGuiStates,
-      commands = commands2 + editorEvents1 + editorEvents2,
+      commands = commands + editorEvents1 + editorEvents2,
       events = events,
       isEditorActive = nextIsEditorActive,
       editor = nextEditor,

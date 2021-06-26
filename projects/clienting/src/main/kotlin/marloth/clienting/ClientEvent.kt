@@ -21,10 +21,4 @@ enum class ClientEventType {
   setWorldGraph,
 }
 
-//data class ClientEvent(
-//    val type: Any,
-//    val value: Any? = null,
-//    val target: Any? = null
-//)
-
 typealias ClientEvent = Command

@@ -42,8 +42,6 @@ fun nextView(stack: MenuStack) = handleCommands<ViewId?> { command, view ->
         command.value as? ViewId ?: view
     }
 
-    view == ViewId.chooseProfessionMenu -> null
-
     else -> view
   }
 }
@@ -70,10 +68,3 @@ fun updateMenuFocusIndex(state: GuiState, menuSize: Int?, commands: Commands, ho
       updateMenuFocus(state.menuStack, menuSize, hoverFocusIndex)(commands, state.menuFocusIndex)
     } else
       0
-
-fun updateMenuFocusedElement(state: GuiState, commands: Commands, hoverBoxes: List<OffsetBox>) =
-    if (commands.any { it.type == GuiCommandType.mouseMove })
-      hoverBoxes
-          .firstNotNull { it.attributes[menuItemIndexKey] as? Int }
-    else
-      null

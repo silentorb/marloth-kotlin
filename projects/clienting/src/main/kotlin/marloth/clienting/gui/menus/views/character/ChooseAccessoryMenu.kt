@@ -12,8 +12,8 @@ fun chooseAccessoryMenu(definitions: Definitions, actor: Id, accessoryOptions: A
         .map { id ->
           val definition = definitions.accessories[id]!!
           newSimpleMenuItem(
-              text = definition.name,
-              event = ChooseImprovedAccessory(
+              definition.name,
+              ChooseImprovedAccessory(
                   actor = actor,
                   accessory = id
               )
