@@ -26,7 +26,7 @@ fun newPlayerIdHand(id: Id) =
     )
 
 fun getDebugProfession() =
-    getDebugString("CHARACTER_CLASS")
+    getDebugString("PLAYER_PROFESSION")
 
 fun newPlayerCharacter(nextId: IdSource, id: Id, definitions: Definitions, profession: ProfessionId, location: Vector3, angle: Float): NewHand {
   return newCharacter(id, definitions,
