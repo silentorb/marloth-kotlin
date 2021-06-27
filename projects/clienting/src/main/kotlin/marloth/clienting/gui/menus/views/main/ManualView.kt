@@ -1,16 +1,18 @@
 package marloth.clienting.gui.menus.views.main
 
-import marloth.clienting.gui.menus.TextStyles
-import marloth.clienting.gui.menus.dialogContent
-import marloth.clienting.gui.menus.dialogTitle
-import marloth.clienting.gui.menus.dialogWrapperWithExtras
+import marloth.clienting.gui.GuiState
+import marloth.clienting.gui.StateFlower
+import marloth.clienting.gui.StateFlowerTransform
+import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.general.verticalList
+import marloth.clienting.gui.menus.logic.menuLengthKey
+import marloth.scenery.enums.TextId
 import org.commonmark.node.*
 import org.commonmark.parser.Parser
-import silentorb.mythic.bloom.BloomState
-import silentorb.mythic.bloom.Box
-import silentorb.mythic.bloom.label
+import silentorb.mythic.bloom.*
 import silentorb.mythic.resource_loading.loadTextResource
+import silentorb.mythic.spatial.Vector2i
+import simulation.misc.Definitions
 
 private val manualContentKey = "silentorb.content.manual"
 
@@ -20,7 +22,7 @@ fun gatherLines(node: Node?): List<Box> {
   while (currentNode != null) {
     when (currentNode) {
       is BulletList, is Paragraph, is ListItem, is Heading -> {
-        gatherLines(currentNode.firstChild)
+        lines += gatherLines(currentNode.firstChild)
       }
       is Text -> {
         lines.add(label(TextStyles.mediumBlack, currentNode.literal))
@@ -54,16 +56,24 @@ fun loadDocument(state: BloomState, key: String, filename: String): Box {
   }
 }
 
-fun manualView() =
-    dialogWrapperWithExtras(
-        { definitions, state ->
-          val content = loadDocument(state.bloomState, manualContentKey, "docs/manual.md")
-          dialogContent(dialogTitle("Manual"))(
-              content
-          )
-              .addLogic { input, _ ->
-                mapOf()
+fun manualView(): StateFlowerTransform = { definitions, state ->
+  val content = loadDocument(state.bloomState, manualContentKey, "docs/manual.md")
+  compose(
+      dialogSurroundings(definitions),
+      flowerMargin(all = 50)(
+          alignSingleFlower(centered, horizontalPlane,
+              dialogContentFlower(dialogTitle("Manual"))(
+                  scrollableY("bindingsScrolling",
+                      { seed ->
+                        content
+                            .addLogic { input, _ ->
+                              mapOf()
 //                mapOf(manualContentKey to content)
-              }
-        }
-    )
+                            }
+                      }
+                  )
+              )
+          )
+      )
+  )
+}
