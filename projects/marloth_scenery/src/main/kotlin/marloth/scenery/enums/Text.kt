@@ -25,6 +25,7 @@ enum class TextId : Text {
   gui_gamepadOptions,
   gui_merchant,
   gui_mainMenu,
+  gui_manual,
   gui_money,
   gui_mouseOptions,
   gui_optionsMenu,

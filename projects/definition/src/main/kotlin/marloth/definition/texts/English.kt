@@ -41,6 +41,7 @@ val englishTextResources: TextResourceMapper = { text ->
         TextId.gui_chooseProfessionMenu -> "Profession"
         TextId.gui_merchant -> "Merchant"
         TextId.gui_mainMenu -> "Menu"
+        TextId.gui_manual -> "Manual"
         TextId.gui_profession -> "Profession"
         TextId.gui_resistances -> "Resistances"
         TextId.gui_take -> "Take"

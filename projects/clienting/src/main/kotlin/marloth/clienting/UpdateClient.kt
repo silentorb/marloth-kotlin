@@ -90,7 +90,11 @@ fun getListenerPosition(deck: Deck): Vector3? {
 typealias PlayerBoxes = Map<Id, List<OffsetBox>>
 
 fun flattenToPlayerBoxes(boxes: Map<Id, Box>): PlayerBoxes =
-    boxes.mapValues { flattenAllBoxes(OffsetBox(it.value)).filter(::hasAttributes) }
+    boxes.mapValues {
+      flattenAllBoxes(OffsetBox(it.value)).filter { box ->
+        box.attributes.any() || box.handler != null || box.child.logic != null
+      }
+    }
 
 fun gatherUserEvents(
     options: AppOptions,

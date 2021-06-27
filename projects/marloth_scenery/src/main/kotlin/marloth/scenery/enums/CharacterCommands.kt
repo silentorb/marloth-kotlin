@@ -41,7 +41,7 @@ object CharacterCommands {
   const val abilityAttack = "abilityAttack"
   const val abilityDefense = "abilityDefense"
   const val abilityMobility = "abilityMobility"
-  const val abilityUtility = "abilityUtility"
+  const val useItem = "abilityUtility"
 
   // Commands that are contextual and not normally bound to user input buttons
   const val interactWith = "interactWith"

@@ -46,7 +46,7 @@ val commandStrokes =
                     CharacterRigCommands.switchView,
                     CharacterCommands.interactPrimary,
                     CharacterCommands.stopInteracting,
-                    CharacterCommands.abilityUtility,
+                    CharacterCommands.useItem,
                     CharacterCommands.abilityDefense,
                     CharacterCommands.abilityMobility,
                     CharacterCommands.previousItem,

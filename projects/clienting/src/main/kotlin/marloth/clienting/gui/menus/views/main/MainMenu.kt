@@ -16,6 +16,7 @@ fun mainMenuItems(isGameActive: Boolean): List<SimpleMenuItem> = listOfNotNull(
     if (isGameActive) newSimpleMenuItem(TextId.menu_continueGame, ClientEvent(GuiCommandType.menuBack)) else null,
     newSimpleMenuItem(TextId.menu_newGame, ClientEvent(GuiCommandType.newGame)),
     newSimpleMenuItem(TextId.gui_optionsMenu, ClientEvent(ClientEventType.drillDown, ViewId.options)),
+    newSimpleMenuItem(TextId.gui_manual, ClientEvent(ClientEventType.drillDown, ViewId.manual)),
     newSimpleMenuItem(TextId.menu_quit, ClientEvent(GuiCommandType.quit))
 )
 

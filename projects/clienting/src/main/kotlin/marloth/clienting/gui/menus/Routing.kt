@@ -33,6 +33,7 @@ fun viewSelect(world: World?, options: AppOptions, clientState: ClientState, vie
     ViewId.characterContracts -> characterContractsView(world!!.deck, player)
     ViewId.chooseProfessionMenu -> dialogWrapper(simpleMenuFlower(TextId.gui_chooseProfessionMenu, chooseProfessionMenu(player)))
     ViewId.mainMenu -> mainMenu(world)
+    ViewId.manual -> manualView()
     ViewId.conversation -> conversationView(world!!.deck, player)
     ViewId.conversationActiveContracts -> clientActiveContractsView(world!!.deck, player)
     ViewId.conversationAvailableContracts -> clientAvailableContractsView(world!!.deck, player)

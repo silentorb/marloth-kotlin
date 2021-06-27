@@ -25,7 +25,7 @@ val gameGamepadBindings = mapOf(
     GAMEPAD_AXIS_RIGHT_RIGHT to CharacterCommands.lookRight,
 
     GAMEPAD_BUTTON_X to CharacterCommands.abilityAttack,
-    GAMEPAD_BUTTON_Y to CharacterCommands.abilityUtility,
+    GAMEPAD_BUTTON_Y to CharacterCommands.useItem,
     GAMEPAD_BUTTON_B to CharacterCommands.abilityDefense,
     GAMEPAD_BUTTON_A to CharacterCommands.abilityMobility,
     GAMEPAD_BUTTON_RIGHT_THUMB to toggleTargetingCommand
@@ -51,7 +51,7 @@ fun defaultKeyboardGameBindings() = mapOf(
     GLFW.GLFW_KEY_ESCAPE to GuiCommandType.menu,
     GLFW.GLFW_KEY_E to CharacterCommands.interactPrimary,
     GLFW.GLFW_KEY_Q to CharacterCommands.abilityDefense,
-    GLFW.GLFW_KEY_F to CharacterCommands.abilityUtility,
+    GLFW.GLFW_KEY_F to CharacterCommands.useItem,
     GLFW.GLFW_KEY_1 to CharacterCommands.previousItem,
     GLFW.GLFW_KEY_2 to CharacterCommands.nextItem,
     GLFW.GLFW_KEY_C to GuiCommandType.characterInfo,

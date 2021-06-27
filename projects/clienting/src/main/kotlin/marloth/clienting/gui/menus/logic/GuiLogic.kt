@@ -77,14 +77,22 @@ fun updateGuiState(
       deviceStates = deviceStates,
   )
 
+  val view = nextView(state.menuStack)(commands, state.view)
+
+  // Clear menu state when there are no menus
+  val bloomState = if (view == null)
+    mapOf()
+  else
+    updateBloomLogic(bloomLogicInput, boxes)
+
   return state.copy(
-      view = nextView(state.menuStack)(commands, state.view),
+      view = view,
       menuFocusIndex = menuFocusIndex,
       menuStack = updateMenuStack(state)(commands, state.menuStack),
       displayChange = displayChange,
       primarydeviceMode = updatePrimaryDeviceMode(commands, state.primarydeviceMode),
       notifications = updateNotifications(simulationDelta, commands, state.notifications),
-      bloomState = updateBloomLogic(bloomLogicInput, boxes),
+      bloomState = bloomState,
       previousBloomState = state.bloomState,
   )
 }

@@ -11,13 +11,13 @@ dependencies {
   implementation("silentorb.mythic:bloom_input")
   implementation("silentorb.mythic:drawing")
   implementation("silentorb.mythic:aura")
-  api("silentorb.mythic:fathom")
 
   api("org.lwjgl:lwjgl-glfw:${Versions.lwjgl}")
   implementation("org.lwjgl:lwjgl:${Versions.lwjgl}")
   implementation("org.lwjgl:lwjgl:${Versions.lwjgl}:${Natives.lwjgl}")
   implementation("org.lwjgl:lwjgl-opengl:${Versions.lwjgl}")
   implementation("org.lwjgl:lwjgl-opengl:${Versions.lwjgl}:${Natives.lwjgl}")
+  implementation("org.commonmark:commonmark:0.17.2")
 
   implementation("silentorb.imp:parsing")
   implementation("silentorb.imp:execution")

@@ -13,7 +13,7 @@ fun characterCommandToEquipmentSlot(type: Any): EquipmentSlot =
       CharacterCommands.abilityAttack -> EquipmentSlot.attack
       CharacterCommands.abilityDefense -> EquipmentSlot.defense
       CharacterCommands.abilityMobility -> EquipmentSlot.mobility
-      CharacterCommands.abilityUtility -> EquipmentSlot.utility
+      CharacterCommands.useItem -> EquipmentSlot.utility
       else -> throw Error("Not supported")
     }
 
@@ -23,7 +23,7 @@ fun commandsToEvents(definitions: Definitions, deck: Deck, commands: Commands): 
       if (actor != null) {
         when (command.type) {
           CharacterCommands.abilityAttack,
-          CharacterCommands.abilityUtility,
+          CharacterCommands.useItem,
           CharacterCommands.abilityDefense,
           CharacterCommands.abilityMobility -> {
             val slot = characterCommandToEquipmentSlot(command.type)

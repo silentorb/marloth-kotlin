@@ -1,26 +1,20 @@
 package marloth.clienting.rendering
 
 import marloth.scenery.enums.MeshId
-import silentorb.imp.campaign.*
-import silentorb.imp.core.*
-import silentorb.imp.execution.executeToSingleValue
-import silentorb.imp.library.standard.standardLibrary
-import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.drawing.createCircleList
-import silentorb.mythic.fathom.fathomLibrary
-import silentorb.mythic.fathom.marching.marchingMesh
-import silentorb.mythic.fathom.misc.ModelFunction
 import silentorb.mythic.glowing.*
-import silentorb.mythic.imaging.texturing.texturingLibrary
-import silentorb.mythic.lookinglass.*
-import silentorb.mythic.lookinglass.meshes.*
+import silentorb.mythic.lookinglass.Armature
+import silentorb.mythic.lookinglass.LodRanges
+import silentorb.mythic.lookinglass.ModelMesh
+import silentorb.mythic.lookinglass.meshes.VertexSchemas
+import silentorb.mythic.lookinglass.meshes.createBillboardMesh
+import silentorb.mythic.lookinglass.meshes.createLineMesh
+import silentorb.mythic.lookinglass.meshes.createModelElements
 import silentorb.mythic.lookinglass.meshes.loading.loadGltf
 import silentorb.mythic.resource_loading.getUrlPath
 import silentorb.mythic.resource_loading.listFiles
 import silentorb.mythic.scenery.MeshName
-import silentorb.mythic.scenery.Shape
 import java.nio.file.Path
-import java.nio.file.Paths
 
 fun getModelFilenames(): List<Path> {
   val modelRoot = getUrlPath("models")
@@ -51,14 +45,13 @@ fun createHollowCircleMesh(vertexSchema: VertexSchema, resolution: Int): General
   )
 }
 
-fun newImpLibrary() =
-    listOf(
-        defaultImpNamespace(),
-        standardLibrary(),
-//      auraLibrary(),
-        texturingLibrary(),
-        fathomLibrary()
-    )
+//fun newImpLibrary() =
+//    listOf(
+//        defaultImpNamespace(),
+//        standardLibrary(),
+////      auraLibrary(),
+//        texturingLibrary(),
+//    )
 
 val defaultLodRanges: LodRanges = listOf(
     60f,

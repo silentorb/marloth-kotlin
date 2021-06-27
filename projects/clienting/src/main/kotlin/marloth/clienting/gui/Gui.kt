@@ -33,6 +33,7 @@ enum class ViewId {
   inputBindings,
   inputOptions,
   mainMenu,
+  manual,
   conversation,
   conversationActiveContracts,
   conversationAvailableContracts,
