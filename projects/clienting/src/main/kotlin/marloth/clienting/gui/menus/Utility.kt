@@ -3,6 +3,7 @@ package marloth.clienting.gui.menus
 import marloth.clienting.ClientEventType
 import marloth.clienting.canvasRendererKey
 import marloth.clienting.gui.ViewId
+import marloth.clienting.resources.UiTextures
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.Depiction
 import silentorb.mythic.bloom.Flower

@@ -81,6 +81,7 @@ fun dialogSurroundings(definitions: Definitions) =
     compose(
         depict(solidBackground(faintBlack)),
         versionDisplay(definitions.applicationInfo.version),
+        silentOrbDisplay(),
     )
 
 fun dialogHeader(box: Box) =
@@ -91,11 +92,6 @@ fun dialogHeader(box: Box) =
                 box
             )
         )
-    )
-
-fun dialogHeader() =
-    alignListItems(verticalPlane, centered)(
-        Box(dimensions = Vector2i(500, 90), depiction = imageDepiction(UiTextures.marlothTitle)),
     )
 
 fun dialogWrapperWithExtras(definitions: Definitions, box: Box): Flower =

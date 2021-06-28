@@ -121,7 +121,7 @@ fun manualView(options: InputOptions): StateFlowerTransform = { definitions, sta
   val content = loadDocument(definitions, bindings, state.bloomState, manualContentKey, "docs/manual.md")
   compose(
       dialogSurroundings(definitions),
-      flowerMargin(all = 50)(
+      flowerMargin(all = 100)(
           alignSingleFlower(centered, horizontalPlane,
               dialogContentFlower(dialogTitle("Manual"))(
                   scrollableY("bindingsScrolling") { _ ->
