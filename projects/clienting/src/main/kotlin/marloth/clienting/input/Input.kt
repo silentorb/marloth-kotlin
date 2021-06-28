@@ -75,7 +75,7 @@ fun joiningGamepads(events: List<InputEvent>, deviceTypeMap: DeviceTypeMap): Lis
 }
 
 fun getInputProfile(options: InputOptions, inputState: InputState, player: Id): InputProfile? {
-  val playerProfile = inputState.playerProfiles[player]
+  val playerProfile = inputState.playerProfiles[player] ?: defaultInputProfile
   return options.profiles[playerProfile]
 }
 

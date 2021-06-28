@@ -1,18 +1,26 @@
 package marloth.clienting.gui.menus.views.main
 
 import marloth.clienting.gui.Colors
+import marloth.clienting.gui.GuiState
 import marloth.clienting.gui.StateFlowerTransform
 import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.dialogContentFlower
 import marloth.clienting.gui.menus.dialogSurroundings
 import marloth.clienting.gui.menus.dialogTitle
+import marloth.clienting.gui.menus.views.options.formatBindingsText
+import marloth.clienting.input.InputContext
+import marloth.clienting.input.InputOptions
+import marloth.clienting.input.defaultInputProfile
 import org.commonmark.node.*
 import org.commonmark.parser.Parser
 import silentorb.mythic.bloom.*
+import silentorb.mythic.haft.Bindings
+import silentorb.mythic.lookinglass.toCamelCase
 import silentorb.mythic.resource_loading.loadTextResource
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.spatial.toVector2
+import simulation.misc.Definitions
 
 private val manualContentKey = "silentorb.content.manual"
 
@@ -21,7 +29,20 @@ fun circleDepiction(radius: Float, color: Vector4): Depiction = { bounds, canvas
   canvas.drawCircle(position, radius, canvas.solid(color))
 }
 
-fun gatherLines(node: Node?, initialDepth: Int = 0): List<Box> {
+private val replacementPattern = Regex("""\$\$([\w\-]+)""")
+
+fun applyBindingsText(definitions: Definitions, bindings: Bindings, text: String): String =
+    text.replace(replacementPattern) { match ->
+      val key = match.groups[1]?.value
+      if (key == null)
+        ""
+      else {
+        val command = toCamelCase(key)
+        formatBindingsText(definitions, bindings.filter { it.command == command })
+      }
+    }
+
+fun gatherLines(definitions: Definitions, bindings: Bindings, node: Node?, initialDepth: Int = 0): List<Box> {
   val lines = mutableListOf<Box>()
   var currentNode = node
   var depth = initialDepth
@@ -29,10 +50,10 @@ fun gatherLines(node: Node?, initialDepth: Int = 0): List<Box> {
   while (currentNode != null) {
     when (currentNode) {
       is Paragraph, is ListItem ->
-        lines += gatherLines(currentNode.firstChild, depth)
+        lines += gatherLines(definitions, bindings, currentNode.firstChild, depth)
       is BulletList ->
         lines += boxList(verticalPlane, 18)(
-            gatherLines(currentNode.firstChild, depth)
+            gatherLines(definitions, bindings, currentNode.firstChild, depth)
                 .map { box ->
                   boxMargin(left = (depth - 1) * tabLength + 10)(
                       horizontalList(16)(listOf(
@@ -65,21 +86,21 @@ fun gatherLines(node: Node?, initialDepth: Int = 0): List<Box> {
         }
       }
       is Text ->
-        lines.add(label(TextStyles.smallBlack, currentNode.literal))
+        lines.add(label(TextStyles.smallBlack, applyBindingsText(definitions, bindings, currentNode.literal)))
     }
     currentNode = currentNode.next
   }
   return lines
 }
 
-fun formatDocument(document: Node): Box {
+fun formatDocument(definitions: Definitions, bindings: Bindings, document: Node): Box {
   val node: Node? = document.firstChild
-  val lines = gatherLines(node) + Box(dimensions = Vector2i(8, 10))
+  val lines = gatherLines(definitions, bindings, node) + Box(dimensions = Vector2i(8, 10))
 
   return boxList(verticalPlane, 0)(lines)
 }
 
-fun loadDocument(state: BloomState, key: String, filename: String): Box {
+fun loadDocument(definitions: Definitions, bindings: Bindings, state: BloomState, key: String, filename: String): Box {
   val existing = state[key] as? Box
   return if (existing != null)
     existing
@@ -90,13 +111,14 @@ fun loadDocument(state: BloomState, key: String, filename: String): Box {
       label(TextStyles.mediumBlack, "Could not load content.")
     else {
       val document = parser.parse(text)
-      formatDocument(document)
+      formatDocument(definitions, bindings, document)
     }
   }
 }
 
-fun manualView(): StateFlowerTransform = { definitions, state ->
-  val content = loadDocument(state.bloomState, manualContentKey, "docs/manual.md")
+fun manualView(options: InputOptions): StateFlowerTransform = { definitions, state ->
+  val bindings = options.profiles[defaultInputProfile]!!.bindings[InputContext.game]!!
+  val content = loadDocument(definitions, bindings, state.bloomState, manualContentKey, "docs/manual.md")
   compose(
       dialogSurroundings(definitions),
       flowerMargin(all = 50)(

@@ -14,10 +14,12 @@ import marloth.scenery.enums.TextId
 import org.lwjgl.glfw.GLFW
 import silentorb.mythic.bloom.*
 import silentorb.mythic.haft.Binding
+import silentorb.mythic.haft.Bindings
 import silentorb.mythic.haft.DeviceIndexes
 import silentorb.mythic.haft.GAMEPAD_BUTTON_X
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.spatial.Vector2i
+import simulation.misc.Definitions
 import simulation.misc.InputEventType
 
 const val bindingsEditingKey = "silentorb.bindingsEditing"
@@ -60,6 +62,13 @@ fun newProfileCommand(options: InputOptions, newProfile: InputProfile): Map<Stri
   )
 }
 
+fun formatBindingsText(definitions: Definitions, bindings: Bindings) =
+    bindings.joinToString(", ") { binding ->
+      val text = definitions.inputEventTypeNames[InputEventType(binding.device, binding.index)]
+      text ?: "${binding.device} ${binding.index}"
+    }
+
+
 fun inputBindingsFlower(options: InputOptions): StateFlowerTransform = { definitions, state ->
   val textLibrary = definitions.textLibrary
   val profiles = options.profiles
@@ -87,7 +96,7 @@ fun inputBindingsFlower(options: InputOptions): StateFlowerTransform = { definit
             .associateWith { command -> contextBindings.filter { it.command == command } }
 
         a + listOf(
-            Vector2i(0, rowOffset) to centered(label(TextStyles.mediumBlack, context.name.capitalize())),
+            Vector2i(0, rowOffset) to centered(label(TextStyles.h3, context.name.capitalize())),
         ) + groups.entries.mapIndexed { index, (command, bindings) ->
           val row = rowOffset + 2 + index
           val formattedCommand = command.toString()
@@ -98,10 +107,7 @@ fun inputBindingsFlower(options: InputOptions): StateFlowerTransform = { definit
           val bindingsText = if (isEditingRow)
             "Press Any Key"
           else
-            bindings.joinToString(", ") { binding ->
-              val text = definitions.inputEventTypeNames[InputEventType(binding.device, binding.index)]
-              text ?: "${binding.device} ${binding.index}"
-            }
+            formatBindingsText(definitions, bindings)
 
           val logic = if (isEditingRow)
             withLogic { input, _ ->
