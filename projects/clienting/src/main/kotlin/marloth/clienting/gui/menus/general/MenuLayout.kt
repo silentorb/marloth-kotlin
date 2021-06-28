@@ -1,7 +1,7 @@
 package marloth.clienting.gui.menus.general
 
-import marloth.clienting.gui.StateFlower
 import marloth.clienting.gui.EventUnion
+import marloth.clienting.gui.StateFlower
 import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.black
 import marloth.clienting.gui.menus.dialogContent
@@ -122,11 +122,12 @@ fun menuFlower(menu: Menu, focusIndex: Int, minWidth: Int): Box {
   val rows = layoutMenuItems(menu, focusIndex)
   val breadth = boxList(verticalPlane, defaultMenuGap)(rows).dimensions.x
   return layoutMenuItems(rows) { index, box ->
-    addMenuItemInteractivity(focusIndex, menu[index].events, index,
-        fieldWrapper(focusIndex, max(minWidth, breadth))(index, box)
+    val absoluteIndex = index + 1
+    addMenuItemInteractivity(focusIndex, menu[index].events, absoluteIndex,
+        fieldWrapper(focusIndex, max(minWidth, breadth))(absoluteIndex, box)
     )
   }
-      .addAttributes(menuLengthKey to menu.size)
+      .addAttributes(menuLengthKey to menu.size + 1)
 }
 
 val faintBlack = black.copy(w = 0.6f)

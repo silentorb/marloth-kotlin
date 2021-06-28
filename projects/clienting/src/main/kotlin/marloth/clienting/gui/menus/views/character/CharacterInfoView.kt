@@ -1,6 +1,6 @@
 package marloth.clienting.gui.menus.views.character
 
-import marloth.clienting.gui.StateFlowerTransform
+import marloth.clienting.gui.StateFlower
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.general.Tab
@@ -53,7 +53,7 @@ fun accessoriesView(definitions: Definitions, deck: Deck, actor: Id): Box {
   ))
 }
 
-fun characterContractsView(deck: Deck, actor: Id): StateFlowerTransform = characterView { definitions, state ->
+fun characterContractsView(deck: Deck, actor: Id): StateFlower = characterView { definitions, state ->
   val contracts = deck.contracts.filter { it.value.agent == actor }
   if (contracts.any())
     verticalList(
@@ -65,10 +65,10 @@ fun characterContractsView(deck: Deck, actor: Id): StateFlowerTransform = charac
     label(TextStyles.smallBlack, "You have no contracts.  Get a job.")
 }
 
-fun characterInventoryView(deck: Deck, actor: Id): StateFlowerTransform = characterView { definitions, state ->
+fun characterInventoryView(deck: Deck, actor: Id): StateFlower = characterView { definitions, state ->
   accessoriesView(definitions, deck, actor)
 }
 
-fun characterInfoView(deck: Deck, actor: Id): StateFlowerTransform = characterView { definitions, state ->
+fun characterInfoView(deck: Deck, actor: Id): StateFlower = characterView { definitions, state ->
   generalCharacterInfo(definitions, deck, actor)
 }

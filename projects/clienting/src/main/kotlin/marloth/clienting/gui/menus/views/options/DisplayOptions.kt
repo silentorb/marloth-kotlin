@@ -2,7 +2,7 @@ package marloth.clienting.gui.menus.views.options
 
 import marloth.clienting.ClientEventType
 import marloth.clienting.ClientState
-import marloth.clienting.gui.StateFlowerTransform
+import marloth.clienting.gui.StateFlower
 import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.general.forms.clientEventSpinHandlers
 import marloth.clienting.gui.menus.general.forms.menuField
@@ -13,7 +13,7 @@ import marloth.clienting.gui.menus.general.menuFlower
 import marloth.scenery.enums.Text
 import marloth.scenery.enums.TextId
 import marloth.scenery.enums.TextResourceMapper
-import silentorb.mythic.bloom.emptyBox
+import silentorb.mythic.bloom.emptyFlower
 import silentorb.mythic.bloom.label
 import silentorb.mythic.lookinglass.DisplayOptions
 import silentorb.mythic.platforming.DisplayMode
@@ -79,12 +79,12 @@ fun resolutionField(textLibrary: TextResourceMapper, displayModes: List<DisplayM
   )
 }
 
-fun displayOptionsFlower(clientState: ClientState): StateFlowerTransform =
+fun displayOptionsFlower(clientState: ClientState): StateFlower =
     dialogWrapperWithExtras { definitions, state ->
       val textLibrary = definitions.textLibrary
       val options = state.displayChange?.options
       if (options == null)
-        emptyBox
+        emptyFlower
       else {
         menuFlower(TextId.gui_displayOptions, listOf(
             windowModeField(textLibrary, options.windowMode),

@@ -2,7 +2,7 @@ package marloth.clienting.gui.menus
 
 import marloth.clienting.AppOptions
 import marloth.clienting.ClientState
-import marloth.clienting.gui.StateFlowerTransform
+import marloth.clienting.gui.StateFlower
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.emptyViewFlower
 import marloth.clienting.gui.menus.general.simpleMenuFlower
@@ -18,7 +18,7 @@ import marloth.scenery.enums.TextId
 import silentorb.mythic.ent.Id
 import simulation.main.World
 
-fun viewSelect(world: World?, options: AppOptions, clientState: ClientState, view: ViewId?, player: Id): StateFlowerTransform? {
+fun viewSelect(world: World?, options: AppOptions, clientState: ClientState, view: ViewId?, player: Id): StateFlower? {
   return when (view) {
     ViewId.audioOptions -> emptyViewFlower
     ViewId.displayChangeConfirmation -> displayChangeConfirmationFlower

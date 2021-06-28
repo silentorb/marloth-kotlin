@@ -1,14 +1,20 @@
 package marloth.clienting.gui.menus
 
+import marloth.clienting.ClientEventType
 import marloth.clienting.gui.StateFlower
-import marloth.clienting.gui.StateFlowerTransform
 import marloth.clienting.gui.hud.versionDisplay
 import marloth.clienting.gui.menuBackground
+import marloth.clienting.gui.menus.general.addMenuItemInteractivity
 import marloth.clienting.gui.menus.general.faintBlack
+import marloth.clienting.gui.menus.general.fieldWrapper
+import marloth.clienting.gui.menus.general.stretchyFieldWrapper
 import marloth.clienting.resources.UiTextures
 import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
+import silentorb.mythic.happenings.Command
+import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Vector2i
+import silentorb.mythic.spatial.toVector2
 import simulation.misc.Definitions
 
 const val titleContentHeight = 40
@@ -18,8 +24,8 @@ val horizontalLineDepiction: Depiction = { bounds, canvas ->
   canvas.drawLine(bounds.left.toFloat(), middleY, bounds.right.toFloat(), middleY, black, 2f)
 }
 
-val horizontalLine: LengthFlower = { length ->
-  Box(dimensions = Vector2i(length, 15), depiction = horizontalLineDepiction)
+val horizontalLine: Flower = { seed ->
+  Box(dimensions = Vector2i(seed.dimensions.x, 15), depiction = horizontalLineDepiction)
 }
 
 val titleBookendDepiction: Depiction = { bounds, canvas ->
@@ -28,12 +34,36 @@ val titleBookendDepiction: Depiction = { bounds, canvas ->
 }
 
 val titleBookend: Flower = depict(titleBookendDepiction)
+val rotatedDepictionTransform: DepictionTransform = { b, c ->
+  c.transformScalar(b.position.toVector2(), b.dimensions.toVector2())
+      .translate(0.5f, 0.5f, 0f)
+      .rotateZ(-Pi / 2f)
+      .translate(-0.5f, -0.5f, 0f)
+}
 
-fun titleBar(title: Box): LengthFlower =
-    breadthList(verticalPlane)(
+fun spadeDepiction() =
+    addMenuItemInteractivity(0, listOf(Command(ClientEventType.menuBack)),
+        fieldWrapper(0,
+            Box(
+                dimensions = Vector2i(32),
+                depiction =
+                imageDepiction(UiTextures.cardSpade, rotatedDepictionTransform)
+            )
+        )
+    )
+
+fun titleBar(title: Box): Flower =
+    flowerList(verticalPlane)(
         listOf(
-            alignSingle(centered, horizontalPlane, title),
-            marginSingle(horizontalPlane, all = 0, left = 30, right = 30)(
+            alignSingleFlower(centered, horizontalPlane,
+                flowerList(horizontalPlane, 10)(
+                    listOf(
+                        spadeDepiction(),
+                        title.toFlower()
+                    )
+                )
+            ),
+            flowerMargin(all = 0, left = 30, right = 30)(
                 horizontalLine
             )
         )
@@ -41,25 +71,26 @@ fun titleBar(title: Box): LengthFlower =
 
 fun dialogContentFlower(title: Box): (Flower) -> Flower = { flower ->
   { seed ->
-    val testTitlebar = titleBar(title)(seed.dimensions.x)
+    val testTitlebar = titleBar(title)(seed)
     val box = flower(seed.copy(dimensions = seed.dimensions - Vector2i(0, testTitlebar.dimensions.y + 20 + 20 * 2)))
     boxMargin(20)(
         boxList(verticalPlane, 20,
-            titleBar(title)(box.dimensions.x),
+            titleBar(title)(seed.copy(dimensions = box.dimensions)),
             box
         )
     ).copy(depiction = menuBackground)
   }
 }
 
-fun dialogContent(title: Box): WildFlower = { box ->
-  val result = boxMargin(20)(
-      boxList(verticalPlane, 20,
-          titleBar(title)(box.dimensions.x),
-          box
-      )
-  ).copy(depiction = menuBackground)
-  result
+fun dialogContent(title: Box): (Box) -> Flower = { box ->
+  { seed ->
+    boxMargin(20)(
+        boxList(verticalPlane, 20,
+            titleBar(title)(seed.copy(dimensions = box.dimensions)),
+            box
+        )
+    ).copy(depiction = menuBackground)
+  }
 }
 
 fun dialogTitle(text: String) =
@@ -72,7 +103,7 @@ fun dialog(title: Box): WildFlower = { box ->
 fun dialog(title: String): WildFlower =
     dialog(dialogTitle(title))
 
-fun dialog(definitions: Definitions, title: Text, box: Box): Box {
+fun dialog(definitions: Definitions, title: Text, box: Box): Flower {
   val titleBox = dialogTitle(definitions.textLibrary(title))
   return dialogContent(titleBox)(box)
 }
@@ -94,18 +125,18 @@ fun dialogHeader(box: Box) =
         )
     )
 
-fun dialogWrapperWithExtras(definitions: Definitions, box: Box): Flower =
+fun dialogWrapperWithExtras(definitions: Definitions, flower: Flower): Flower =
     compose(
         dialogSurroundings(definitions),
-        centered(
-            dialogHeader(box)
-        )
+        centeredFlower { seed ->
+          dialogHeader(flower(seed))
+        }
     )
 
-fun dialogWrapper(flower: StateFlower): StateFlowerTransform = { definitions, guiState ->
-  centered(flower(definitions, guiState))
+fun dialogWrapper(flower: StateFlower): StateFlower = { definitions, guiState ->
+  centeredFlower(flower(definitions, guiState))
 }
 
-fun dialogWrapperWithExtras(flower: StateFlower): StateFlowerTransform = { definitions, guiState ->
+fun dialogWrapperWithExtras(flower: StateFlower): StateFlower = { definitions, guiState ->
   dialogWrapperWithExtras(definitions, flower(definitions, guiState))
 }

@@ -67,7 +67,7 @@ fun victoryMenu() = listOfNotNull(
     newSimpleMenuItem(TextId.message_victory, ClientEvent(GuiCommandType.newGame))
 )
 
-val emptyViewFlower: StateFlowerTransform = { _, _ -> emptyFlower }
+val emptyViewFlower: StateFlower = { _, _ -> emptyFlower }
 
 fun guiLayout(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, player: Id,
               debugInfo: List<String>): Flower {

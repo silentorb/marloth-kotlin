@@ -1,7 +1,7 @@
 package marloth.clienting.gui.menus.views.interaction
 
+import marloth.clienting.gui.StateBox
 import marloth.clienting.gui.StateFlower
-import marloth.clienting.gui.StateFlowerTransform
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.general.Tab
@@ -14,13 +14,13 @@ import simulation.entities.ContractStatus
 import simulation.entities.getContracts
 import simulation.main.Deck
 
-fun emptyStateFlowerTransform(): StateFlowerTransform = { _, _ -> redirectFlower(null) }
+fun emptyStateFlowerTransform(): StateFlower = { _, _ -> redirectFlower(null) }
 
-typealias ConversationPageContent = (Deck, Id, Id, Character, Character) -> StateFlower
+typealias ConversationPageContent = (Deck, Id, Id, Character, Character) -> StateBox
 
 fun emptyConversationView(
     merchantCharacter: Character
-): StateFlowerTransform = dialogWrapper { definitions, state ->
+): StateFlower = dialogWrapper { definitions, state ->
   dialog(definitions, merchantCharacter.definition.name,
       label(TextStyles.smallBlack, "There's nothing left to say other than...bye.")
   )
@@ -56,7 +56,7 @@ fun getConversationTabs(deck: Deck, player: Id): List<Tab> {
     listOf()
 }
 
-fun conversationPage(content: ConversationPageContent): (Deck, Id) -> StateFlowerTransform =
+fun conversationPage(content: ConversationPageContent): (Deck, Id) -> StateFlower =
     { deck, player ->
       val other = getPlayerInteractingWith(deck, player)
       val character = deck.characters[player]
@@ -69,7 +69,7 @@ fun conversationPage(content: ConversationPageContent): (Deck, Id) -> StateFlowe
         emptyStateFlowerTransform()
     }
 
-fun conversationView(deck: Deck, player: Id): StateFlowerTransform {
+fun conversationView(deck: Deck, player: Id): StateFlower {
   val tabs = getConversationTabs(deck, player)
   return if (tabs.none()) {
     val other = getPlayerInteractingWith(deck, player)

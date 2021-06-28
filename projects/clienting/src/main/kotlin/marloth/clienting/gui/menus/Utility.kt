@@ -4,17 +4,13 @@ import marloth.clienting.ClientEventType
 import marloth.clienting.canvasRendererKey
 import marloth.clienting.gui.ViewId
 import marloth.clienting.resources.UiTextures
-import silentorb.mythic.bloom.Box
-import silentorb.mythic.bloom.Depiction
-import silentorb.mythic.bloom.Flower
-import silentorb.mythic.bloom.solidBackground
+import silentorb.mythic.bloom.*
+import silentorb.mythic.drawing.Canvas
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.scenery.TextureName
-import silentorb.mythic.spatial.Vector2i
-import silentorb.mythic.spatial.Vector4
-import silentorb.mythic.spatial.toVector2
+import silentorb.mythic.spatial.*
 import simulation.accessorize.AccessoryDefinition
 import simulation.main.Deck
 import simulation.misc.Definitions
@@ -24,11 +20,18 @@ fun getPlayerInteractingWith(deck: Deck, player: Id): Id? =
 
 val debugDepiction = solidBackground(Vector4(1f, 0f, 0f, 1f))
 
-fun imageDepiction(texture: TextureName): Depiction = { b, c ->
+typealias DepictionTransform = (Bounds, Canvas) -> Matrix
+
+val basicDepictionTransform: DepictionTransform = { b, c ->
+  c.transformScalar(b.position.toVector2(), b.dimensions.toVector2())
+}
+
+fun imageDepiction(texture: TextureName, depictionTransform: DepictionTransform = basicDepictionTransform): Depiction = { b, c ->
   val renderer = c.custom[canvasRendererKey]!! as Renderer
   val textureResource = renderer.textures[texture]
   if (textureResource != null) {
-    c.drawImage(b.position.toVector2(), b.dimensions.toVector2(), c.image(textureResource))
+    val transform = depictionTransform(b, c)
+    c.drawImage(transform, c.image(textureResource))
   }
 }
 

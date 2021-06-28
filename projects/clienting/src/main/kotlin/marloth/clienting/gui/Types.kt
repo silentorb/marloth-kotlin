@@ -26,5 +26,5 @@ data class GuiState(
 )
 
 typealias GuiStateMap = Map<Id, GuiState>
-typealias StateFlower = (Definitions, GuiState) -> Box
-typealias StateFlowerTransform = (Definitions, GuiState) -> Flower
+typealias StateBox = (Definitions, GuiState) -> Box
+typealias StateFlower = (Definitions, GuiState) -> Flower

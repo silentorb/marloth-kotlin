@@ -1,7 +1,7 @@
 package marloth.clienting.gui.menus.views.options
 
 import marloth.clienting.gui.EventUnion
-import marloth.clienting.gui.StateFlowerTransform
+import marloth.clienting.gui.StateFlower
 import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.dialogContentFlower
 import marloth.clienting.gui.menus.dialogSurroundings
@@ -69,7 +69,7 @@ fun formatBindingsText(definitions: Definitions, bindings: Bindings) =
     }
 
 
-fun inputBindingsFlower(options: InputOptions): StateFlowerTransform = { definitions, state ->
+fun inputBindingsFlower(options: InputOptions): StateFlower = { definitions, state ->
   val textLibrary = definitions.textLibrary
   val profiles = options.profiles
   var menuLength = 0

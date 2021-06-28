@@ -1,8 +1,8 @@
 package marloth.clienting.gui.menus.general
 
 import marloth.clienting.ClientEventType
+import marloth.clienting.gui.StateBox
 import marloth.clienting.gui.StateFlower
-import marloth.clienting.gui.StateFlowerTransform
 import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.dialog
@@ -55,13 +55,13 @@ fun tabView(textLibrary: TextResourceMapper, tabs: List<Tab>, view: ViewId): Box
       }
 }
 
-fun tabDialog(title: Text, tabs: List<Tab>): (StateFlower) -> StateFlowerTransform = { flower ->
+fun tabDialog(title: Text, tabs: List<Tab>): (StateBox) -> StateFlower = { flower ->
   dialogWrapper { definitions, state ->
     if (tabs.none { it.view == state.view })
       if (tabs.any())
-        redirectBox(tabs.first().view)
+        redirectBox(tabs.first().view).toFlower()
       else
-        redirectBox(null)
+        redirectBox(null).toFlower()
     else
       dialog(definitions, title,
           boxList(verticalPlane, 10)(

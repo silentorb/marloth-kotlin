@@ -6,8 +6,6 @@ import marloth.clienting.gui.menus.logic.onActivateKey
 import marloth.clienting.gui.menus.logic.onClickKey
 import silentorb.mythic.bloom.*
 
-const val focusOnHoverKey = "silentorb.focusOnHover"
-
 val stretchyFieldWrapper: (Int, Box) -> Flower = { index, box ->
   { seed ->
     val gap = 20
@@ -18,6 +16,22 @@ val stretchyFieldWrapper: (Int, Box) -> Flower = { index, box ->
         .copy(
             depiction = drawMenuButtonBackground(index == getFocusIndex(seed.state))
         )
+  }
+}
+
+val fieldWrapper: (Int, Box) -> Flower = { index, box ->
+  { seed ->
+    if (index == getFocusIndex(seed.state)) {
+      val gap = 0
+      val wrapped = boxMargin(all = gap, right = 2)(
+          box
+      )
+      wrapped
+          .copy(
+              depiction = drawMenuButtonBackground(true)
+          )
+    } else
+      box
   }
 }
 

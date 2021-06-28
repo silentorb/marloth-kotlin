@@ -1,8 +1,7 @@
 package marloth.clienting.gui.menus.views.main
 
 import marloth.clienting.gui.Colors
-import marloth.clienting.gui.GuiState
-import marloth.clienting.gui.StateFlowerTransform
+import marloth.clienting.gui.StateFlower
 import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.dialogContentFlower
 import marloth.clienting.gui.menus.dialogSurroundings
@@ -116,7 +115,7 @@ fun loadDocument(definitions: Definitions, bindings: Bindings, state: BloomState
   }
 }
 
-fun manualView(options: InputOptions): StateFlowerTransform = { definitions, state ->
+fun manualView(options: InputOptions): StateFlower = { definitions, state ->
   val bindings = options.profiles[defaultInputProfile]!!.bindings[InputContext.game]!!
   val content = loadDocument(definitions, bindings, state.bloomState, manualContentKey, "docs/manual.md")
   compose(
