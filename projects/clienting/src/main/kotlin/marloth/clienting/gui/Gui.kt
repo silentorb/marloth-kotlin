@@ -87,7 +87,7 @@ fun guiLayout(definitions: Definitions, options: AppOptions, clientState: Client
 
 fun prepareBloomState(state: GuiState?) =
     (state?.bloomState ?: mapOf()) + mapOf(
-        menuItemIndexKey to (state?.menuFocusIndex ?: 0)
+        menuItemIndexKey to (state?.menuFocusIndex ?: defaultMenuFocusIndex)
     ) - commandKey
 
 fun layoutPlayerGui(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, dimensions: Vector2i,

@@ -91,13 +91,22 @@ fun newRenderer(
 }
 
 fun newClient(platform: Platform, displayOptions: DisplayOptions): Client {
-  val textures = gatherTextures(platform.display, displayOptions)
+  val initialDeferredTextures = gatherTextures(platform.display, displayOptions)
+  val loadTexturesInBackground = getDebugBoolean("LOAD_TEXTURES_ASYNC")
   val windowInfo = platform.display.getInfo()
   val renderer = newRenderer(
       dimensions = windowInfo.dimensions,
       options = displayOptions,
       fontSource = ::gatherFontSets
   )
+  val deferredTextures = if (loadTexturesInBackground)
+    initialDeferredTextures
+  else {
+    val loaded = loadDeferredTextures(initialDeferredTextures)
+    renderer.textures += texturesToGpu(loaded)
+    listOf()
+  }
+
   setGlobalFonts(renderer.fonts)
   platform.audio.start(50)
   val soundLibrary = loadSounds(platform.audio)
@@ -106,14 +115,14 @@ fun newClient(platform: Platform, displayOptions: DisplayOptions): Client {
       renderer = renderer,
       soundLibrary = soundLibrary,
 //      meshLoadingState = MeshLoadingState(impMeshes),
-      textureLoadingState = TextureLoadingState(textures),
+      textureLoadingState = TextureLoadingState(deferredTextures),
       customBloomResources = mapOf(
           cooldownMeshKey to createCooldownCircleMesh(),
           canvasRendererKey to renderer
       ),
       resourceInfo = ResourceInfo(
           meshShapes = getMeshShapes(renderer),
-          textures = getClientTextures(renderer, textures),
+          textures = getClientTextures(renderer, deferredTextures),
       )
   )
 }

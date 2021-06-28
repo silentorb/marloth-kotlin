@@ -1,6 +1,7 @@
 package marloth.clienting.gui.menus.logic
 
 import marloth.clienting.ClientEventType
+import marloth.clienting.defaultMenuFocusIndex
 import marloth.clienting.gui.GuiState
 import marloth.clienting.gui.ViewId
 import marloth.clienting.input.GuiCommandType
@@ -67,4 +68,4 @@ fun updateMenuFocusIndex(state: GuiState, menuSize: Int?, commands: Commands, ho
 
       updateMenuFocus(state.menuStack, menuSize, hoverFocusIndex)(commands, state.menuFocusIndex)
     } else
-      0
+      defaultMenuFocusIndex

@@ -28,11 +28,13 @@ fun defaultView(): ViewId? {
     ViewId.values().firstOrNull { it.name == view }
 }
 
+const val defaultMenuFocusIndex = 1
+
 fun newGuiState(primarydeviceMode: DeviceMode) =
     GuiState(
         menuStack = listOf(),
         view = defaultView(),
-        menuFocusIndex = 0,
+        menuFocusIndex = defaultMenuFocusIndex,
         primarydeviceMode = primarydeviceMode,
     )
 
