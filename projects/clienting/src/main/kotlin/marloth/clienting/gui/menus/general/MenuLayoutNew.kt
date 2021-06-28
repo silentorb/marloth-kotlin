@@ -19,8 +19,9 @@ val stretchyFieldWrapper: (Int, Box) -> Flower = { index, box ->
   }
 }
 
-val fieldWrapper: (Int, Box) -> Flower = { index, box ->
+val fieldWrapper: (Int, Flower) -> Flower = { index, flower ->
   { seed ->
+    val box = flower(seed)
     if (index == getFocusIndex(seed.state)) {
       val gap = 0
       val wrapped = boxMargin(all = gap, right = 2)(

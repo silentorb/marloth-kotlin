@@ -7,7 +7,6 @@ import marloth.clienting.gui.menuBackground
 import marloth.clienting.gui.menus.general.addMenuItemInteractivity
 import marloth.clienting.gui.menus.general.faintBlack
 import marloth.clienting.gui.menus.general.fieldWrapper
-import marloth.clienting.gui.menus.general.stretchyFieldWrapper
 import marloth.clienting.resources.UiTextures
 import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
@@ -34,6 +33,7 @@ val titleBookendDepiction: Depiction = { bounds, canvas ->
 }
 
 val titleBookend: Flower = depict(titleBookendDepiction)
+
 val rotatedDepictionTransform: DepictionTransform = { b, c ->
   c.transformScalar(b.position.toVector2(), b.dimensions.toVector2())
       .translate(0.5f, 0.5f, 0f)
@@ -42,15 +42,19 @@ val rotatedDepictionTransform: DepictionTransform = { b, c ->
 }
 
 fun spadeDepiction() =
-    addMenuItemInteractivity(0, listOf(Command(ClientEventType.menuBack)),
-        fieldWrapper(0,
-            Box(
-                dimensions = Vector2i(32),
-                depiction =
-                imageDepiction(UiTextures.cardSpade, rotatedDepictionTransform)
-            )
-        )
-    )
+    addMenuItemInteractivity(0, listOf(Command(ClientEventType.menuBack))
+    ) { seed ->
+      val image = if (seed.state[menuItemIndexKey] == 0)
+        UiTextures.cardSpadeHighlight
+      else
+        UiTextures.cardSpade
+
+      Box(
+          dimensions = Vector2i(32),
+          depiction =
+          imageDepiction(image, rotatedDepictionTransform)
+      )
+    }
 
 fun titleBar(title: Box): Flower =
     flowerList(verticalPlane)(
