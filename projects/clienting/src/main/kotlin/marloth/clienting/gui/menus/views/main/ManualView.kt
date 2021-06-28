@@ -6,7 +6,6 @@ import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.dialogContentFlower
 import marloth.clienting.gui.menus.dialogSurroundings
 import marloth.clienting.gui.menus.dialogTitle
-import marloth.clienting.gui.menus.general.verticalList
 import org.commonmark.node.*
 import org.commonmark.parser.Parser
 import silentorb.mythic.bloom.*
@@ -22,28 +21,47 @@ fun circleDepiction(radius: Float, color: Vector4): Depiction = { bounds, canvas
   canvas.drawCircle(position, radius, canvas.solid(color))
 }
 
-fun gatherLines(node: Node?): List<Box> {
+fun gatherLines(node: Node?, initialDepth: Int = 0): List<Box> {
   val lines = mutableListOf<Box>()
   var currentNode = node
+  var depth = initialDepth
+  var tabLength = 20
   while (currentNode != null) {
     when (currentNode) {
       is Paragraph, is ListItem ->
-        lines += gatherLines(currentNode.firstChild)
+        lines += gatherLines(currentNode.firstChild, depth)
       is BulletList ->
-        lines += gatherLines(currentNode.firstChild)
-            .map { box ->
-              horizontalList(20)(listOf(
-                  depictBox(Vector2i(10, 16), circleDepiction(5f, Colors.black)),
-                  box,
-              ))
-            }
+        lines += boxList(verticalPlane, 18)(
+            gatherLines(currentNode.firstChild, depth)
+                .map { box ->
+                  boxMargin(left = (depth - 1) * tabLength + 10)(
+                      horizontalList(16)(listOf(
+                          depictBox(Vector2i(10, 16), circleDepiction(5f, Colors.black)),
+                          box,
+                      ))
+                  )
+                }
+        )
       is Heading -> {
-        if (lines.any()) {
-          lines += Box(dimensions = Vector2i(10, 1))
-        }
-        val textNode = currentNode.firstChild as? Text
-        if (textNode != null) {
-          lines += label(TextStyles.mediumBlackBold, textNode.literal)
+        if (currentNode.level > 1) { // Skip the title Header because the view already has a title header
+          depth = currentNode.level - 2
+          val textNode = currentNode.firstChild as? Text
+          if (textNode != null) {
+            val textStyle = when (currentNode.level) {
+              2 -> TextStyles.mediumSemiBlackBold
+              else -> TextStyles.h3
+            }
+            val header = label(textStyle, textNode.literal)
+            val marginLeft = depth * tabLength
+            val topMargin = if (currentNode.previous is Heading)
+              10
+            else when (currentNode.level) {
+              2 -> 40
+              else -> 30
+            }
+            lines += boxMargin(left = marginLeft, top = topMargin, bottom = 22)(header)
+          }
+          depth = currentNode.level - 1
         }
       }
       is Text ->
@@ -56,9 +74,9 @@ fun gatherLines(node: Node?): List<Box> {
 
 fun formatDocument(document: Node): Box {
   val node: Node? = document.firstChild
-  val lines = gatherLines(node)
+  val lines = gatherLines(node) + Box(dimensions = Vector2i(8, 10))
 
-  return boxList(verticalPlane, 16)(lines)
+  return boxList(verticalPlane, 0)(lines)
 }
 
 fun loadDocument(state: BloomState, key: String, filename: String): Box {

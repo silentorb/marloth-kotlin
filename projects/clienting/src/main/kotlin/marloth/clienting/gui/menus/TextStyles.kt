@@ -59,7 +59,7 @@ object TextStyles {
       color = black
   )
 
-  val mediumBlackBold = IndexedTextStyle(
+  val mediumSemiBlackBold = IndexedTextStyle(
       1,
       mainFontSize,
       color = black
@@ -80,5 +80,11 @@ object TextStyles {
       0,
       smallFontSize,
       color = grayColor
+  )
+
+  val h3 = IndexedTextStyle(
+      1,
+      26,
+      color = black
   )
 }

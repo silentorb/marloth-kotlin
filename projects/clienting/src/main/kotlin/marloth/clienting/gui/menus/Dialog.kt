@@ -63,7 +63,7 @@ fun dialogContent(title: Box): WildFlower = { box ->
 }
 
 fun dialogTitle(text: String) =
-    label(TextStyles.mediumBlack, text)
+    label(TextStyles.mediumSemiBlackBold, text)
 
 fun dialog(title: Box): WildFlower = { box ->
   dialogContent(title)(box)
