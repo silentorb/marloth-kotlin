@@ -124,15 +124,12 @@ fun manualView(options: InputOptions): StateFlowerTransform = { definitions, sta
       flowerMargin(all = 50)(
           alignSingleFlower(centered, horizontalPlane,
               dialogContentFlower(dialogTitle("Manual"))(
-                  scrollableY("bindingsScrolling",
-                      { seed ->
-                        content
-                            .addLogic { input, _ ->
-                              mapOf()
-//                mapOf(manualContentKey to content)
-                            }
-                      }
-                  )
+                  scrollableY("bindingsScrolling") { _ ->
+                    content
+                        .addLogic { _, _ ->
+                          mapOf(manualContentKey to content)
+                        }
+                  }
               )
           )
       )
