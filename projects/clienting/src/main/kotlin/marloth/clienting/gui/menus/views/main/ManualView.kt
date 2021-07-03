@@ -41,8 +41,8 @@ fun applyBindingsText(definitions: Definitions, bindings: Bindings, text: String
       }
     }
 
-fun gatherLines(definitions: Definitions, bindings: Bindings, node: Node?, initialDepth: Int = 0): List<Box> {
-  val lines = mutableListOf<Box>()
+fun gatherLines(definitions: Definitions, bindings: Bindings, node: Node?, initialDepth: Int = 0): List<Flower> {
+  val lines = mutableListOf<Flower>()
   var currentNode = node
   var depth = initialDepth
   var tabLength = 20
@@ -51,13 +51,13 @@ fun gatherLines(definitions: Definitions, bindings: Bindings, node: Node?, initi
       is Paragraph, is ListItem ->
         lines += gatherLines(definitions, bindings, currentNode.firstChild, depth)
       is BulletList ->
-        lines += boxList(verticalPlane, 18)(
+        lines += flowerList(verticalPlane, 18)(
             gatherLines(definitions, bindings, currentNode.firstChild, depth)
-                .map { box ->
-                  boxMargin(left = (depth - 1) * tabLength + 10)(
-                      horizontalList(16)(listOf(
-                          depictBox(Vector2i(10, 16), circleDepiction(5f, Colors.black)),
-                          box,
+                .map { flower ->
+                  flowerMargin(left = (depth - 1) * tabLength + 10)(
+                      flowerList(horizontalPlane, 16)(listOf(
+                          depictBox(Vector2i(10, 16), circleDepiction(5f, Colors.black)).toFlower(),
+                          flower,
                       ))
                   )
                 }
@@ -71,7 +71,7 @@ fun gatherLines(definitions: Definitions, bindings: Bindings, node: Node?, initi
               2 -> TextStyles.mediumSemiBlackBold
               else -> TextStyles.h3
             }
-            val header = label(textStyle, textNode.literal)
+            val header = textBox(textStyle, textNode.literal)
             val marginLeft = depth * tabLength
             val topMargin = if (currentNode.previous is Heading)
               10
@@ -79,35 +79,36 @@ fun gatherLines(definitions: Definitions, bindings: Bindings, node: Node?, initi
               2 -> 40
               else -> 30
             }
-            lines += boxMargin(left = marginLeft, top = topMargin, bottom = 22)(header)
+            lines += flowerMargin(left = marginLeft, top = topMargin, bottom = 22)(header)
           }
           depth = currentNode.level - 1
         }
       }
       is Text ->
-        lines.add(label(TextStyles.smallBlack, applyBindingsText(definitions, bindings, currentNode.literal)))
+        lines.add(textBox(TextStyles.smallBlack, applyBindingsText(definitions, bindings, currentNode.literal)))
     }
     currentNode = currentNode.next
   }
   return lines
 }
 
-fun formatDocument(definitions: Definitions, bindings: Bindings, document: Node): Box {
+fun formatDocument(definitions: Definitions, bindings: Bindings, document: Node): Flower {
   val node: Node? = document.firstChild
-  val lines = gatherLines(definitions, bindings, node) + Box(dimensions = Vector2i(8, 10))
+  val lines = gatherLines(definitions, bindings, node) +
+      { _: Seed -> Box(dimensions = Vector2i(8, 10)) }
 
-  return boxList(verticalPlane, 0)(lines)
+  return flowerList(verticalPlane, 0)(lines)
 }
 
-fun loadDocument(definitions: Definitions, bindings: Bindings, state: BloomState, key: String, filename: String): Box {
-  val existing = state[key] as? Box
+fun loadDocument(definitions: Definitions, bindings: Bindings, state: BloomState, key: String, filename: String): Flower {
+  val existing = state[key] as? Flower
   return if (existing != null)
     existing
   else {
     val parser = Parser.builder().build()
     val text = loadTextResource(filename)
     if (text == null)
-      label(TextStyles.mediumBlack, "Could not load content.")
+      textBox(TextStyles.mediumBlack, "Could not load content.")
     else {
       val document = parser.parse(text)
       formatDocument(definitions, bindings, document)
@@ -123,12 +124,12 @@ fun manualView(options: InputOptions): StateFlower = { definitions, state ->
       flowerMargin(all = 100)(
           alignSingleFlower(centered, horizontalPlane,
               dialogContentFlower(dialogTitle("Manual"))(
-                  scrollableY("bindingsScrolling") { _ ->
-                    content
-                        .addLogic { _, _ ->
-                          mapOf(manualContentKey to content)
-                        }
-                  }
+                  scrollableY("bindingsScrolling",
+                      withLogic { _, _ ->
+//                        mapOf(manualContentKey to content)
+                        mapOf()
+                      }(content)
+                  )
               )
           )
       )
