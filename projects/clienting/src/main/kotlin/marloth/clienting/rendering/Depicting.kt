@@ -17,7 +17,6 @@ import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.getBodyTransform
 import silentorb.mythic.scenery.MeshName
 import silentorb.mythic.scenery.Shape
-import silentorb.mythic.scenery.TextureName
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Pi
 import silentorb.mythic.spatial.Vector3
@@ -294,8 +293,12 @@ fun gatherVisualElements(definitions: Definitions, deck: Deck, playerRig: Id, ch
 
   val simpleElements =
       simple.mapNotNull {
-        convertSimpleDepiction(deck, it.key, it.value)
+        val meshElement = convertSimpleDepiction(deck, it.key, it.value)
+        if (meshElement != null)
+          ElementGroup(meshes = listOf(meshElement))
+        else
+          null
       }
 
-  return initial + complexElements + ElementGroup(simpleElements)
+  return initial + complexElements + simpleElements
 }
