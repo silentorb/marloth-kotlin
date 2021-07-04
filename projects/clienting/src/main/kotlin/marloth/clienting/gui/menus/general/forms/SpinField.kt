@@ -11,6 +11,7 @@ import marloth.clienting.gui.menus.logic.onClickKey
 import marloth.clienting.gui.menus.logic.onClientEventsKey
 import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.bloom.*
+import silentorb.mythic.happenings.Command
 
 fun spinButton(text: String, attributes: Map<String, Any?>): Box =
     label(TextStyles.mediumBlack, text)
@@ -36,7 +37,7 @@ fun spinField(valueText: String, handlers: SpinHandlers): MenuItemFlower = { has
   val box = horizontalList(spacing = 10)(
       listOf(
           spinButton("<", mapOf(onClickKey to decrementEvent)),
-          label(TextStyles.mediumBlack, valueText).addAttributes(onClickKey to incrementEvent),
+          label(TextStyles.mediumBlack, valueText),
           spinButton(">", mapOf(onClickKey to incrementEvent))
       )
   )
@@ -61,6 +62,6 @@ fun spinField(valueText: String, handlers: SpinHandlers): MenuItemFlower = { has
 
 fun <T> clientEventSpinHandlers(eventType: String, options: List<T>, id: T) =
     SpinHandlers(
-        incrementEvents = listOf(ClientEvent(eventType, cycle(options, 1, id))),
-        decrementEvents = listOf(ClientEvent(eventType, cycle(options, -1, id)))
+        incrementEvents = listOf(Command(eventType, cycle(options, 1, id))),
+        decrementEvents = listOf(Command(eventType, cycle(options, -1, id)))
     )

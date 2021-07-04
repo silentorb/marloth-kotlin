@@ -9,12 +9,14 @@ import marloth.clienting.gui.menus.general.forms.menuField
 import marloth.clienting.gui.menus.general.forms.spinField
 import marloth.clienting.gui.menus.general.MenuItem
 import marloth.clienting.gui.menus.general.MenuItemFlower
+import marloth.clienting.gui.menus.general.forms.cycle
 import marloth.clienting.gui.menus.general.menuFlower
 import marloth.scenery.enums.Text
 import marloth.scenery.enums.TextId
 import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.bloom.emptyFlower
 import silentorb.mythic.bloom.label
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.lookinglass.DisplayOptions
 import silentorb.mythic.platforming.DisplayMode
 import silentorb.mythic.platforming.WindowMode
@@ -40,7 +42,8 @@ fun windowModeField(textLibrary: TextResourceMapper, windowMode: WindowMode): Me
           spinField(textLibrary(windowModeTextMap(windowMode)),
               clientEventSpinHandlers(ClientEventType.setStagingWindowMode, windowModeOptions, windowMode)
           )
-      )
+      ),
+      events = listOf(Command(ClientEventType.setStagingWindowMode, cycle(windowModeOptions, 1, windowMode)))
   )
 }
 
@@ -75,7 +78,8 @@ fun resolutionField(textLibrary: TextResourceMapper, displayModes: List<DisplayM
   return MenuItem(
       flower = menuField(textLibrary(TextId.gui_resolution),
           valueEditor
-      )
+      ),
+      events = listOf(Command(setResolutionEventType, cycle(resolutionOptions, 1, resolution)))
   )
 }
 
