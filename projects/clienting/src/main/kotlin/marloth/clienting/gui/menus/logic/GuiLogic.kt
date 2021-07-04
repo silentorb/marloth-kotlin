@@ -34,16 +34,16 @@ fun eventsFromGuiState(state: GuiState): List<ClientEvent> {
 
 fun commandToClientEvents(options: AppOptions, state: GuiState, command: Command): List<ClientEvent> =
     when (command.type) {
-      GuiCommandType.menuBack -> {
+      ClientEventType.menuBack -> {
         if (needsWindowChange(options.display, state.displayChange?.options))
           listOf(ClientEvent(ClientEventType.menuReplace, ViewId.displayChangeConfirmation))
         else
-          listOf(ClientEvent(ClientEventType.menuBack))
+          listOf()
       }
       else -> listOf()
     }
 
-fun commandsToClientEvents(options: AppOptions, state: GuiState, commands: Commands): List<ClientEvent> =
+fun clientEventsFromEvents(options: AppOptions, state: GuiState, commands: Commands): List<ClientEvent> =
     commands.flatMap { commandToClientEvents(options, state, it) }
 
 fun updatePrimaryDeviceMode(commands: Commands, primarydeviceMode: DeviceMode): DeviceMode =

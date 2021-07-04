@@ -47,7 +47,7 @@ val bindingCommandKeys: Map<InputContext, List<Any>> = defaultInputBindings()
 fun bindingInputItem(row: Int, text: String, events: List<EventUnion>) =
     addMenuItemInteractivity(row, events,
         stretchyFieldWrapper(row,
-            label(TextStyles.mediumBlack, text)
+            label(TextStyles.smallBlack, text)
         )
     )
 
@@ -81,7 +81,7 @@ fun inputBindingsFlower(options: InputOptions): StateFlower = { definitions, sta
         mapOf(
             commandKey to Command(newInputOptionsCommand, value = newInputOptions)
         )
-      })(bindingInputItem(0, "Reset to Defaults", listOf())),
+      })(bindingInputItem(1, "Reset to Defaults", listOf())),
   )
   val bindingsEditing = state.bloomState[bindingsEditingKey] as? Int
   val profile = profiles[defaultInputProfile]!!
@@ -98,12 +98,13 @@ fun inputBindingsFlower(options: InputOptions): StateFlower = { definitions, sta
         a + listOf(
             Vector2i(0, rowOffset) to centered(label(TextStyles.h3, context.name.capitalize())),
         ) + groups.entries.mapIndexed { index, (command, bindings) ->
-          val row = rowOffset + 2 + index
+          val menuIndex = rowOffset + index + 2
+          val row = menuIndex - 1
           val formattedCommand = command.toString()
               .replace(Regex("([a-z])([A-Z\\d])")) { m -> m.groups[1]!!.value + " " + m.groups[2]!!.value }
               .capitalize()
 
-          val isEditingRow = row == bindingsEditing
+          val isEditingRow = menuIndex == bindingsEditing
           val bindingsText = if (isEditingRow)
             "Press Any Key"
           else
@@ -133,19 +134,19 @@ fun inputBindingsFlower(options: InputOptions): StateFlower = { definitions, sta
                     bindingsEditingKey to deleteMe,
                     isolatedInput to deleteMe,
                 ) + newProfileCommand(options, newProfile)
-              }
-              mapOf()
+              } else
+                mapOf()
             }
           else
             withLogic(
                 composeLogicNotNull(
                     onActivate { _, _ ->
                       mapOf(
-                          bindingsEditingKey to row,
-                          isolatedInput to row,
+                          bindingsEditingKey to menuIndex,
+                          isolatedInput to menuIndex,
                       )
                     },
-                    if (row == focusIndex)
+                    if (menuIndex == focusIndex)
                       { input, _ ->
                         if (input.isPressed(DeviceIndexes.keyboard, GLFW.GLFW_KEY_DELETE) ||
                             input.isPressed(DeviceIndexes.gamepad, GAMEPAD_BUTTON_X)) {
@@ -166,7 +167,7 @@ fun inputBindingsFlower(options: InputOptions): StateFlower = { definitions, sta
             )
 
           val menuItem = logic(
-              bindingInputItem(row, bindingsText, listOf())
+              bindingInputItem(menuIndex, bindingsText, listOf())
           )
           ++menuLength
 
@@ -185,7 +186,7 @@ fun inputBindingsFlower(options: InputOptions): StateFlower = { definitions, sta
           alignSingleFlower(centered, horizontalPlane,
               dialogContentFlower(dialogTitle(textLibrary(TextId.gui_inputBindings)))(
                   scrollableY("bindingsScrolling",
-                      withAttributes(menuLengthKey to menuLength)(tableFlower(cells, Vector2i(100, 40)))
+                      withAttributes(menuLengthKey to menuLength)(tableFlower(cells, Vector2i(40, 40)))
                   )
               )
           )

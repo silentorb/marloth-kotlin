@@ -6,7 +6,7 @@ import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.EventUnion
 import marloth.clienting.gui.GuiState
 import marloth.clienting.gui.ViewId
-import marloth.clienting.gui.menus.logic.commandsToClientEvents
+import marloth.clienting.gui.menus.logic.clientEventsFromEvents
 import marloth.clienting.gui.menus.logic.eventsFromGuiState
 import marloth.clienting.gui.menus.logic.getMenuItemEvents
 import marloth.clienting.gui.menus.logic.updateGuiState
@@ -21,7 +21,6 @@ import silentorb.mythic.bloom.OffsetBox
 import silentorb.mythic.bloom.commandsFromBoxes
 import silentorb.mythic.bloom.old.flattenAllBoxes
 import silentorb.mythic.bloom.old.getHoverBoxes
-import silentorb.mythic.bloom.old.hasAttributes
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.debugging.toggleDebugBoolean
@@ -121,7 +120,7 @@ fun gatherUserEvents(
             else
               event
           } +
-              (commandsToClientEvents(options, state, playerCommands) + eventsFromGuiState(state))
+              (clientEventsFromEvents(options, state, playerCommands) + eventsFromGuiState(state))
                   .map { event ->
                     event.copy(
                         target = player

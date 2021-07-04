@@ -59,7 +59,7 @@ fun spinField(valueText: String, handlers: SpinHandlers): MenuItemFlower = { has
     box
 }
 
-fun <T> clientEventSpinHandlers(eventType: ClientEventType, options: List<T>, id: T) =
+fun <T> clientEventSpinHandlers(eventType: String, options: List<T>, id: T) =
     SpinHandlers(
         incrementEvents = listOf(ClientEvent(eventType, cycle(options, 1, id))),
         decrementEvents = listOf(ClientEvent(eventType, cycle(options, -1, id)))

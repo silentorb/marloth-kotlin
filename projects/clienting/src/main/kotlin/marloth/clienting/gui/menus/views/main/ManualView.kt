@@ -13,6 +13,7 @@ import marloth.clienting.input.defaultInputProfile
 import org.commonmark.node.*
 import org.commonmark.parser.Parser
 import silentorb.mythic.bloom.*
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.haft.Bindings
 import silentorb.mythic.lookinglass.toCamelCase
 import silentorb.mythic.resource_loading.loadTextResource
@@ -41,6 +42,8 @@ fun applyBindingsText(definitions: Definitions, bindings: Bindings, text: String
       }
     }
 
+val bulletBox = depictBox(Vector2i(10, 16), circleDepiction(5f, Colors.black))
+
 fun gatherLines(definitions: Definitions, bindings: Bindings, node: Node?, initialDepth: Int = 0): List<Flower> {
   val lines = mutableListOf<Flower>()
   var currentNode = node
@@ -55,8 +58,8 @@ fun gatherLines(definitions: Definitions, bindings: Bindings, node: Node?, initi
             gatherLines(definitions, bindings, currentNode.firstChild, depth)
                 .map { flower ->
                   flowerMargin(left = (depth - 1) * tabLength + 10)(
-                      flowerList(horizontalPlane, 16)(listOf(
-                          depictBox(Vector2i(10, 16), circleDepiction(5f, Colors.black)).toFlower(),
+                      flowerBoxList(horizontalPlane, 16)(listOf(
+                          bulletBox,
                           flower,
                       ))
                   )
@@ -126,8 +129,10 @@ fun manualView(options: InputOptions): StateFlower = { definitions, state ->
               dialogContentFlower(dialogTitle("Manual"))(
                   scrollableY("bindingsScrolling",
                       withLogic { _, _ ->
-//                        mapOf(manualContentKey to content)
-                        mapOf()
+                        if (getDebugBoolean("DEBUG_MD_RENDERINg"))
+                          mapOf()
+                        else
+                          mapOf(manualContentKey to content)
                       }(content)
                   )
               )

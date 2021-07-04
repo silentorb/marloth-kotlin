@@ -21,6 +21,7 @@ import simulation.main.World
 fun viewSelect(world: World?, options: AppOptions, clientState: ClientState, view: ViewId?, player: Id): StateFlower? {
   return when (view) {
     ViewId.audioOptions -> emptyViewFlower
+    ViewId.dev -> devView()
     ViewId.displayChangeConfirmation -> displayChangeConfirmationFlower
     ViewId.displayOptions -> displayOptionsFlower(clientState)
     ViewId.gamepadOptions -> emptyViewFlower

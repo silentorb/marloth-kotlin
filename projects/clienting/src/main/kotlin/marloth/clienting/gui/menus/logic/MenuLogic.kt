@@ -81,7 +81,8 @@ fun updateMenuFocus(stack: MenuStack, menuSize: Int, hoverFocusIndex: Int?) =
         CharacterRigCommands.moveBackward -> cycle(index + 1, menuSize)
         CharacterRigCommands.moveForward -> cycle(index - 1, menuSize)
         ClientEventType.navigate, ClientEventType.drillDown -> 0
-        ClientEventType.menuBack -> stack.lastOrNull()?.focusIndex ?: 0
+        ClientEventType.menuBack ->
+          stack.lastOrNull()?.focusIndex ?: 0
         else -> hoverFocusIndex ?: index
       }
     }

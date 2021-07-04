@@ -112,7 +112,7 @@ fun syncDisplayOptions(
     val preview = previous.guiStates
         .entries.firstOrNull { (player, guiState) ->
           guiState.view == ViewId.displayOptions &&
-              next.commands.any { it.type == GuiCommandType.menuBack && it.target == player }
+              next.commands.any { it.type == ClientEventType.menuBack && it.target == player }
         }?.value?.displayChange?.options
 
     val destination = preview ?: if (needsWindowChange(previousOptions, options))

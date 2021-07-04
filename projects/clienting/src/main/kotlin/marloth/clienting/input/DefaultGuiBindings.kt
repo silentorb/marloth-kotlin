@@ -1,5 +1,6 @@
 package marloth.clienting.input
 
+import marloth.clienting.ClientEventType
 import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.haft.*
 import org.lwjgl.glfw.GLFW
@@ -13,7 +14,7 @@ fun defaultKeyboardMenuBindings() = mapOf(
     GLFW.GLFW_KEY_LEFT to CharacterCommands.moveLeft,
     GLFW.GLFW_KEY_RIGHT to CharacterCommands.moveRight,
     GLFW.GLFW_KEY_DOWN to CharacterCommands.moveDown,
-    GLFW.GLFW_KEY_ESCAPE to GuiCommandType.menuBack,
+    GLFW.GLFW_KEY_ESCAPE to ClientEventType.menuBack,
     GLFW.GLFW_KEY_ENTER to GuiCommandType.menuSelect,
     GLFW.GLFW_KEY_SPACE to GuiCommandType.menuSelect,
     GLFW.GLFW_KEY_TAB to GuiCommandType.tabNext,
@@ -48,7 +49,7 @@ fun defaultGamepadMenuBindings() = mapOf(
 
     GAMEPAD_BUTTON_START to GuiCommandType.menu,
     GAMEPAD_BUTTON_A to GuiCommandType.menuSelect,
-    GAMEPAD_BUTTON_B to GuiCommandType.menuBack
+    GAMEPAD_BUTTON_B to ClientEventType.menuBack
 )
 
 val firstPersonGamepadBindings = mapOf(

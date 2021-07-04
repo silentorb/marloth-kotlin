@@ -27,6 +27,7 @@ enum class ViewId {
   characterInventory,
   characterStatus,
   chooseProfessionMenu,
+  dev,
   displayChangeConfirmation,
   displayOptions,
   gamepadOptions,

@@ -76,7 +76,7 @@ fun titleBar(title: Box): Flower =
 fun dialogContentFlower(title: Box): (Flower) -> Flower = { flower ->
   { seed ->
     val testTitlebar = titleBar(title)(seed)
-    val box = flower(seed.copy(dimensions = seed.dimensions - Vector2i(0, testTitlebar.dimensions.y + 20 + 20 * 2)))
+    val box = flower(seed.copy(dimensions = floorDimensions(seed.dimensions - Vector2i(0, testTitlebar.dimensions.y + 20 + 20 * 2))))
     boxMargin(20)(
         boxList(verticalPlane, 20,
             titleBar(title)(seed.copy(dimensions = box.dimensions)),

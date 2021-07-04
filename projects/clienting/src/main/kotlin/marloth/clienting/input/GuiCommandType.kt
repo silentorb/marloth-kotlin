@@ -1,20 +1,20 @@
 package marloth.clienting.input
 
+import marloth.clienting.ClientEventType
 import marloth.clienting.gui.hud.toggleTargetingCommand
 import marloth.scenery.enums.CharacterCommands
 import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.ent.reflectProperties
 
-enum class GuiCommandType {
-  characterInfo,
-  menu,
-  menuBack,
-  menuSelect,
-  mouseMove,
-  newGame,
-  tabNext,
-  tabPrevious,
-  quit
+object GuiCommandType {
+  val characterInfo = "characterInfo"
+  val menu = "menu"
+  val menuSelect = "menuSelect"
+  val mouseMove = "mouseMove"
+  val newGame = "newGame"
+  val tabNext = "tabNext"
+  val tabPrevious = "tabPrevious"
+  val quit = "quit"
 }
 
 object DeveloperCommands {
@@ -32,7 +32,7 @@ private fun standardStrokes() = setOf(
     DeveloperCommands.editor,
     GuiCommandType.menu,
     GuiCommandType.menuSelect,
-    GuiCommandType.menuBack,
+    ClientEventType.menuBack,
     GuiCommandType.newGame,
     GuiCommandType.quit
 ) + reflectProperties<String>(DeveloperCommands).toSet()

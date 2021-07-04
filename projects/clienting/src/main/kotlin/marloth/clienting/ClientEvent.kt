@@ -2,23 +2,23 @@ package marloth.clienting
 
 import silentorb.mythic.happenings.Command
 
-enum class ClientEventType {
+object ClientEventType {
 
-  navigate,
-  menuBack,
-  menuReplace,
-  drillDown,
+  val navigate = "navigate"
+  val menuBack = "menuBack"
+  val menuReplace = "menuReplace"
+  val drillDown = "drillDown"
 
   //  Display Options
-  setStagingWindowMode,
-  setStagingWindowedResolution,
-  setStagingFullscreenResolution,
+  val setStagingWindowMode = "setStagingWindowMode"
+  val setStagingWindowedResolution = "setStagingWindowedResolution"
+  val setStagingFullscreenResolution = "setStagingFullscreenResolution"
 
   // Display Options Workflow
-  saveDisplayChange,
-  revertDisplayChanges,
+  val saveDisplayChange = "saveDisplayChange"
+  val revertDisplayChanges = "revertDisplayChanges"
 
-  setWorldGraph,
+  val setWorldGraph = "setWorldGraph"
 }
 
 typealias ClientEvent = Command
