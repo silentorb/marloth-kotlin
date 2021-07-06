@@ -30,6 +30,7 @@ data class InputOptions(
 
 enum class InputContext {
   game,
+  interaction,
   menu
 }
 
@@ -49,6 +50,7 @@ data class InputState(
 
 fun defaultInputBindings() = mapOf(
     InputContext.game to defaultGameInputBindings(),
+    InputContext.interaction to defaultInteractionInputProfile(),
     InputContext.menu to defaultMenuInputProfile()
 )
 
@@ -61,10 +63,21 @@ fun newInputState(input: PlatformInput) =
     )
 
 fun bindingContext(playerViews: PlayerViews, player: Id): InputContext =
-    if (playerViews[player] != null)
-      InputContext.menu
-    else
-      InputContext.game
+    when {
+      playerViews[player] != null -> InputContext.menu
+      else -> InputContext.game
+    }
+
+fun getBindings(bindings: Map<InputContext, Bindings>, playerViews: PlayerViews, interactions: Collection<Id>, player: Id): Bindings? =
+    when {
+      interactions.contains(player) -> {
+        val original = bindings[InputContext.interaction] ?: listOf()
+        val overrides = bindings[InputContext.interaction] ?: listOf()
+        original.filter {it.}
+      }
+      playerViews[player] != null -> bindings[InputContext.menu]
+      else -> bindings[InputContext.game]
+    }
 
 fun joiningGamepads(events: List<InputEvent>, deviceTypeMap: DeviceTypeMap): List<Int> {
   val currentDevices = deviceTypeMap.keys
@@ -109,9 +122,10 @@ fun gatherInputCommandsWithoutPlayers(deviceStates: List<InputDeviceState>): Com
   return mapInputToCommands(strokes, bindings, deviceStates)
 }
 
-fun gatherInputCommandsForPlayers(options: InputOptions, inputState: InputState, playerViews: PlayerViews): Commands =
+fun gatherInputCommandsForPlayers(options: InputOptions, inputState: InputState, playerViews: PlayerViews,
+                                  interactions: Collection<Id>): Commands =
     playerViews
-        .flatMap { (player, view) ->
+        .flatMap { (player, _) ->
           val profile = getInputProfile(options, inputState, player)
           if (profile == null)
             listOf()
@@ -128,12 +142,13 @@ fun gatherInputCommandsForPlayers(options: InputOptions, inputState: InputState,
           }
         }
 
-fun gatherInputCommands(options: InputOptions, previous: InputState, next: InputState, playerViews: PlayerViews): Commands {
+fun gatherInputCommands(options: InputOptions, previous: InputState, next: InputState, playerViews: PlayerViews,
+                        interactions: Collection<Id>): Commands {
   val deviceStates = next.deviceStates
   val commands = if (playerViews.none())
     gatherInputCommandsWithoutPlayers(deviceStates)
   else
-    gatherInputCommandsForPlayers(options, next, playerViews)
+    gatherInputCommandsForPlayers(options, next, playerViews, interactions)
 
   val firstPlayer = playerViews.keys.firstOrNull()
   val mouseCommands = if (firstPlayer != null)

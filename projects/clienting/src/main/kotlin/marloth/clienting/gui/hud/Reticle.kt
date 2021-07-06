@@ -1,7 +1,6 @@
 package marloth.clienting.gui.hud
 
 import silentorb.mythic.bloom.*
-import silentorb.mythic.glowing.globalState
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4

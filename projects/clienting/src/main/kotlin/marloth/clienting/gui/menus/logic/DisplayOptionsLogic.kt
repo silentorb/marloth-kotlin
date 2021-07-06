@@ -5,7 +5,6 @@ import marloth.clienting.ClientEventType
 import marloth.clienting.ClientState
 import marloth.clienting.gui.GuiState
 import marloth.clienting.gui.ViewId
-import marloth.clienting.input.GuiCommandType
 import silentorb.mythic.ent.firstNotNull
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.lookinglass.DisplayOptions

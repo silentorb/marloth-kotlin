@@ -4,6 +4,7 @@ import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
+import simulation.characters.Character
 import simulation.main.Deck
 
 object Interactions {
@@ -28,7 +29,7 @@ data class Interaction(
 
 fun getInteractionCommandType(interactionType: String?, mode: String?): String? =
     when (interactionType) {
-      Interactions.openClose -> when(mode) {
+      Interactions.openClose -> when (mode) {
         DoorMode.open -> Interactions.close
         DoorMode.closed -> Interactions.open
         else -> null

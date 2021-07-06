@@ -13,8 +13,8 @@ import silentorb.mythic.editing.closeImGui
 import silentorb.mythic.ent.Id
 import silentorb.mythic.glowing.TextureAttributes
 import silentorb.mythic.lookinglass.*
-import silentorb.mythic.lookinglass.texturing.DeferredTexture
-import silentorb.mythic.lookinglass.texturing.TextureLoadingState
+import silentorb.mythic.lookinglass.DeferredTexture
+import silentorb.mythic.lookinglass.TextureLoadingState
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.typography.loadFontSets
 

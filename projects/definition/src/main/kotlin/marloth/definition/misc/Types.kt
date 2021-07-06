@@ -3,8 +3,6 @@ package marloth.definition.misc
 import silentorb.mythic.aura.SoundDurations
 import silentorb.mythic.breeze.AnimationInfoMap
 import silentorb.mythic.lookinglass.ResourceInfo
-import silentorb.mythic.lookinglass.TextureInfoMap
-import silentorb.mythic.scenery.Shape
 import simulation.misc.LightAttachmentMap
 
 data class ClientDefinitions(

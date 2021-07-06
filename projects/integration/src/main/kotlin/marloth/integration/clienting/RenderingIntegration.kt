@@ -13,7 +13,7 @@ import silentorb.mythic.lookinglass.pipeline.applyFilters
 import silentorb.mythic.lookinglass.pipeline.applyRenderedBuffers
 import silentorb.mythic.lookinglass.pipeline.finishRender
 import silentorb.mythic.lookinglass.pipeline.prepareRender
-import silentorb.mythic.lookinglass.texturing.updateAsyncTextureLoading
+import silentorb.mythic.lookinglass.updateAsyncTextureLoading
 import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.spatial.Vector4i
 import simulation.misc.interpolateWorlds

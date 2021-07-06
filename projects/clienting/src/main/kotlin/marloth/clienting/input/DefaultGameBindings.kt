@@ -49,7 +49,6 @@ fun defaultKeyboardGameBindings() = mapOf(
     GLFW.GLFW_KEY_D to CharacterCommands.moveRight,
     GLFW.GLFW_KEY_S to CharacterCommands.moveDown,
     GLFW.GLFW_KEY_ESCAPE to GuiCommandType.menu,
-    GLFW.GLFW_KEY_E to CharacterCommands.interactPrimary,
     GLFW.GLFW_KEY_Q to CharacterCommands.abilityDefense,
     GLFW.GLFW_KEY_F to CharacterCommands.useItem,
     GLFW.GLFW_KEY_1 to CharacterCommands.previousItem,
@@ -62,3 +61,11 @@ fun defaultGameInputBindings(): Bindings =
     createBindings(DeviceIndexes.keyboard, defaultKeyboardGameBindings())
         .plus(createBindings(DeviceIndexes.mouse, defaultMouseGameBindings()))
         .plus(createBindings(DeviceIndexes.gamepad, gameGamepadBindings))
+
+fun defaultInteractionInputProfile() =
+    createBindings(DeviceIndexes.keyboard, mapOf(
+        GLFW.GLFW_KEY_E to CharacterCommands.interactPrimary,
+    ))
+        .plus(createBindings(DeviceIndexes.gamepad, mapOf(
+            GAMEPAD_BUTTON_A to CharacterCommands.interactPrimary,
+        )))

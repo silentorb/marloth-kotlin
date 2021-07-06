@@ -18,7 +18,7 @@ data class AudioConfig(
 fun updateAudioStateSounds(client: Client, previousSounds: Table<Sound>, nextSounds: Table<Sound>, listenerPosition: Vector3?): (AudioState) -> AudioState = { state ->
   //  val samples = client.platform.audio.availableBuffer / 4
   val newSounds = nextSounds.filterKeys { !previousSounds.keys.contains(it) }
-      .filterValues { (it.position == null && listenerPosition == null) || it.position!!.distance(listenerPosition!!) < maxSoundDistance }
+      .filterValues { (it.position == null || listenerPosition == null) || it.position!!.distance(listenerPosition) < maxSoundDistance }
   val sounds = updateSoundPlaying(client.platform.audio, newSounds, client.soundLibrary, listenerPosition, state.volume)(state.sounds)
 
   state.copy(

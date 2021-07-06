@@ -2,9 +2,7 @@ package marloth.clienting.gui.menus.logic
 
 import marloth.clienting.*
 import marloth.clienting.gui.*
-import marloth.clienting.gui.menus.views.options.commandKey
 import marloth.clienting.gui.menus.views.options.isolatedInput
-import marloth.clienting.input.GuiCommandType
 import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.bloom.LogicInput
 import silentorb.mythic.bloom.OffsetBox

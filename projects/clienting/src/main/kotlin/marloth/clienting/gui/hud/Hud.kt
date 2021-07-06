@@ -195,7 +195,6 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
       deck.interactables[character.canInteractWith]
     else null
 
-
     val cooldowns = accessories
         .mapNotNull { (accessory, accessoryRecord) ->
           val cooldown = deck.actions[accessory]?.cooldown

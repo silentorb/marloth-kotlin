@@ -2,10 +2,9 @@ package marloth.clienting.editing
 
 import marloth.clienting.Client
 import marloth.clienting.rendering.defaultLightingConfig
-import silentorb.mythic.debugging.getDebugFloat
 import silentorb.mythic.editing.*
 import silentorb.mythic.editing.lookinglass.renderEditor
-import silentorb.mythic.lookinglass.texturing.updateAsyncTextureLoading
+import silentorb.mythic.lookinglass.updateAsyncTextureLoading
 import silentorb.mythic.platforming.WindowInfo
 import silentorb.mythic.scenery.LightingConfig
 

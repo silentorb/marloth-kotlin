@@ -179,10 +179,17 @@ fun updateClient(
   val input = clientState.input.copy(
       deviceStates = deviceStates
   )
-  val initialCommands = gatherInputCommands(options.input, clientState.input, input, playerViews(clientState))
+  val deck = worlds.lastOrNull()?.deck
+  val interactions = if (deck != null)
+    deck.players
+        .filter { deck.characters[it.key]?.canInteractWith != null }
+        .keys
+  else
+    setOf()
+
+  val initialCommands = gatherInputCommands(options.input, clientState.input, input, playerViews(clientState), interactions)
   val mousePosition = clientState.input.deviceStates.first().mousePosition.toVector2i()
   val events = gatherUserEvents(options, clientState, playerBoxes, mousePosition, initialCommands)
-  val deck = worlds.lastOrNull()?.deck
 
   val playerGuiCommands = clientState.guiStates
       .flatMap { (player, guiState) ->

@@ -2,7 +2,6 @@ package marloth.integration.front
 
 import marloth.clienting.*
 import marloth.clienting.editing.loadDefaultWorldGraph
-import marloth.clienting.editing.marlothEditorProperties
 import marloth.definition.data.persistence.initialHistoricalData
 import marloth.integration.misc.staticDefinitions
 import marloth.integration.debug.newDebugHooks
@@ -11,7 +10,6 @@ import persistence.Database
 import persistence.newDatabase
 import silentorb.mythic.debugging.checkDotEnvChanged
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.editing.extractPropertiesSerialization
 import silentorb.mythic.lookinglass.Scene
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.lookinglass.getMeshShapes

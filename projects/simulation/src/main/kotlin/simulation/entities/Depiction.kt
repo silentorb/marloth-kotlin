@@ -2,7 +2,6 @@ package simulation.entities
 
 import silentorb.mythic.lookinglass.Material
 import silentorb.mythic.scenery.MeshName
-import silentorb.mythic.scenery.TextureName
 
 enum class DepictionType {
   billboard,

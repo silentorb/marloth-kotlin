@@ -36,11 +36,24 @@ tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
   jvmOptions = setOf("-ea", "-XX:MaxGCPauseMillis=8")
   headerType = "gui"
   outputDir = "dist/marloth-${project.properties["version"]}"
-  dependsOn("copyFonts", "runtime")
+  dependsOn("copyFonts", "copyManual", "runtime")
 }
 
 tasks.register<Copy>("copyFonts") {
   from("fonts")
   include("*.ttf")
   into("$buildDir/dist/marloth-${project.properties["version"]}/fonts")
+}
+
+tasks.register<Copy>("copyManual") {
+  from(project.rootDir.resolveSibling("marloth-assets/assets/src/main/resources/docs/manual.md"))
+  into("$buildDir/dist/marloth-${project.properties["version"]}")
+  rename { "README.md" }
+}
+
+tasks.register<Zip>("zipDist") {
+  archiveFileName.set("$buildDir/dist/marloth-${project.properties["version"]}.zip")
+  destinationDirectory.set(layout.buildDirectory.dir("dist"))
+  from(layout.buildDirectory.dir("dist/marloth-${project.properties["version"]}"))
+  dependsOn("createAllExecutables")
 }

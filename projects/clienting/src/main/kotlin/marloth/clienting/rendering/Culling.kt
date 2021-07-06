@@ -3,7 +3,6 @@ package marloth.clienting.rendering
 import marloth.scenery.enums.MeshShapeMap
 import silentorb.mythic.lookinglass.ElementGroup
 import silentorb.mythic.lookinglass.ElementGroups
-import silentorb.mythic.lookinglass.ModelMeshMap
 import silentorb.mythic.scenery.Camera
 import silentorb.mythic.spatial.Vector3
 import kotlin.math.max
