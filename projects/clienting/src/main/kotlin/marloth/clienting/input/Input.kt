@@ -62,23 +62,6 @@ fun newInputState(input: PlatformInput) =
         devicePlayers = mapOf()
     )
 
-fun bindingContext(playerViews: PlayerViews, player: Id): InputContext =
-    when {
-      playerViews[player] != null -> InputContext.menu
-      else -> InputContext.game
-    }
-
-fun getBindings(bindings: Map<InputContext, Bindings>, playerViews: PlayerViews, interactions: Collection<Id>, player: Id): Bindings? =
-    when {
-      interactions.contains(player) -> {
-        val original = bindings[InputContext.interaction] ?: listOf()
-        val overrides = bindings[InputContext.interaction] ?: listOf()
-        original.filter {it.}
-      }
-      playerViews[player] != null -> bindings[InputContext.menu]
-      else -> bindings[InputContext.game]
-    }
-
 fun joiningGamepads(events: List<InputEvent>, deviceTypeMap: DeviceTypeMap): List<Int> {
   val currentDevices = deviceTypeMap.keys
   return events
@@ -122,6 +105,25 @@ fun gatherInputCommandsWithoutPlayers(deviceStates: List<InputDeviceState>): Com
   return mapInputToCommands(strokes, bindings, deviceStates)
 }
 
+fun bindingContext(playerViews: PlayerViews, player: Id): InputContext =
+    when {
+      playerViews[player] != null -> InputContext.menu
+      else -> InputContext.game
+    }
+
+fun getBindings(bindings: Map<InputContext, Bindings>, playerViews: PlayerViews, interactions: Collection<Id>, player: Id): Bindings? =
+    when {
+      interactions.contains(player) -> {
+        val original = bindings[InputContext.game] ?: listOf()
+        val overrides = bindings[InputContext.interaction] ?: listOf()
+        original
+            .filter { binding -> overrides.none { it.device == binding.device && it.index == binding.index } }
+            .plus(overrides)
+      }
+      playerViews[player] != null -> bindings[InputContext.menu]
+      else -> bindings[InputContext.game]
+    }
+
 fun gatherInputCommandsForPlayers(options: InputOptions, inputState: InputState, playerViews: PlayerViews,
                                   interactions: Collection<Id>): Commands =
     playerViews
@@ -132,7 +134,7 @@ fun gatherInputCommandsForPlayers(options: InputOptions, inputState: InputState,
           else {
             val inputContext = bindingContext(playerViews, player)
             val strokes = commandStrokes[inputContext] ?: setOf()
-            val bindings = profile.bindings[inputContext] ?: listOf()
+            val bindings = getBindings(profile.bindings, playerViews, interactions, player) ?: listOf()
             mapInputToCommands(strokes, bindings, inputState.deviceStates)
                 .map { command ->
                   command.copy(
