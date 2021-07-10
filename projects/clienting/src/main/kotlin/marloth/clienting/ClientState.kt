@@ -7,6 +7,7 @@ import marloth.clienting.input.InputState
 import marloth.clienting.gui.ViewId
 import marloth.clienting.input.InputOptions
 import marloth.clienting.input.newInputState
+import marloth.clienting.rendering.LoadingTask
 import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.aura.AudioState
 import silentorb.mythic.aura.newAudioState
@@ -38,7 +39,7 @@ data class ClientState(
     val displayModes: List<DisplayMode>,
     val editor: Editor? = null,
     val isEditorActive: Boolean = getDebugBoolean("START_EDITOR"),
-    val isLoading: Boolean,
+    val activeLoadingTasks: Set<LoadingTask>,
 
     // Player ids could be purely maintained in the world deck except the world does not care about player order.
     // Player order is only a client concern, and only for local multiplayer.
@@ -63,5 +64,5 @@ fun newClientState(
         events = listOf(),
         displayModes = displayModes,
         editor = initialEditor(textLibrary, client.renderer.meshes.keys, client.resourceInfo),
-        isLoading = false,
+        activeLoadingTasks = setOf(),
     )

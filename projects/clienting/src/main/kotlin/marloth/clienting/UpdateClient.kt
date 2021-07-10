@@ -14,6 +14,7 @@ import marloth.clienting.gui.menus.views.options.commandKey
 import marloth.clienting.input.DeveloperCommands
 import marloth.clienting.input.GuiCommandType
 import marloth.clienting.input.gatherInputCommands
+import marloth.clienting.rendering.LoadingTask
 import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.bloom.Box
 import silentorb.mythic.bloom.Input
@@ -47,7 +48,13 @@ fun updateMousePointerVisibility(platform: Platform, clientState: ClientState) {
     val windowHasFocus = platform.display.hasFocus()
     val view = clientState.guiStates[clientState.players.firstOrNull()]?.view
     val isEditing = clientState.isEditorActive && !(clientState.editor?.flyThrough ?: false)
-    platform.input.setMouseVisibility(!windowHasFocus || view != null || isEditing)
+    val visible = !windowHasFocus ||
+        view != null ||
+        isEditing ||
+        clientState.activeLoadingTasks.any() ||
+        clientState.players.none()
+
+    platform.input.setMouseVisibility(visible)
   } else {
     platform.input.setMouseVisibility(true)
   }
@@ -163,6 +170,19 @@ fun gatherPlayerManagementCommands(deck: Deck?, player: Id, guiState: GuiState):
           null,
     )
 
+fun updateActiveLoadingTasks(client: Client, clientState: ClientState): Set<LoadingTask> =
+    if (getDebugBoolean("DEV_LOADING_SCREEN"))
+      setOf(LoadingTask.dev)
+    else {
+      val tasks = clientState.activeLoadingTasks
+      val remaining = client.textureLoadingState.remaining
+      when {
+        remaining.none() -> tasks - LoadingTask.textures
+        remaining.any() -> tasks + LoadingTask.textures
+        else -> tasks
+      }
+    }
+
 fun updateClient(
     client: Client,
     textLibrary: TextResourceMapper,
@@ -244,6 +264,6 @@ fun updateClient(
       events = events,
       isEditorActive = nextIsEditorActive,
       editor = nextEditor,
-      isLoading = getDebugBoolean("DEV_LOADING_SCREEN") || clientState.isLoading,
+      activeLoadingTasks = updateActiveLoadingTasks(client, clientState),
   )
 }

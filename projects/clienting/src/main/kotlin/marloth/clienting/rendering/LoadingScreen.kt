@@ -20,6 +20,18 @@ import kotlin.math.min
 private var shortHandRotation = 0f
 private var longHandRotation = Pi / 2f
 
+enum class LoadingTask {
+  dev,
+  textures,
+  world,
+}
+
+val loadingImages = listOf(
+    Textures.loadingClock,
+    Textures.longHand,
+    Textures.shortHand,
+)
+
 fun renderLoadingScreen(client: Client, windowInfo: WindowInfo) {
   val dimensions = windowInfo.dimensions
   val clockBaseLength = 1024

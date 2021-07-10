@@ -26,7 +26,7 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
   profileGpu("all") {
     updateAsyncTextureLoading(client.textureLoadingState, renderer.textures)
     prepareRender(renderer, windowInfo)
-    if (appState.client.isLoading) {
+    if (appState.client.activeLoadingTasks.any()) {
       renderLoadingScreen(client, windowInfo)
     } else {
       val world =

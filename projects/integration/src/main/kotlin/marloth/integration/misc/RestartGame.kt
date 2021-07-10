@@ -7,6 +7,7 @@ import marloth.clienting.editing.loadWorldGraph
 import marloth.clienting.editing.mainScene
 import marloth.clienting.getNewGameCommand
 import marloth.clienting.input.newInputState
+import marloth.clienting.rendering.LoadingTask
 import marloth.integration.front.GameApp
 import marloth.integration.generation.generateNewWorld
 import marloth.integration.generation.newGenerationConfig
@@ -40,7 +41,7 @@ fun restartClientState(input: PlatformInput, client: ClientState, playerMap: Map
         players = playerMap.values.toList(),
         events = listOf(),
         isEditorActive = client.isEditorActive,
-        isLoading = false,
+        activeLoadingTasks = setOf(),
     )
 
 fun newOrRestartWorld(app: GameApp, appState: AppState, scene: String): World {
@@ -95,8 +96,8 @@ fun checkRestartGame(app: GameApp, appState: AppState, clientState: ClientState)
   return if (localAsyncAppState != null) {
     asyncWorld = null
     newOrRestartGame(app, appState.copy(client = clientState), localAsyncAppState)
-  } else if (clientState.isLoading)
-    appState
+  } else if (clientState.activeLoadingTasks.any())
+    appState.copy(client = clientState)
   else {
     val newGameCommand = getNewGameCommand(clientState.commands)
 
@@ -109,7 +110,7 @@ fun checkRestartGame(app: GameApp, appState: AppState, clientState: ClientState)
       appState.copy(
           client = restartClientState(app.platform.input, appState.client, mapOf())
               .copy(
-                  isLoading = true,
+                  activeLoadingTasks = setOf(LoadingTask.world),
               )
       )
     } else

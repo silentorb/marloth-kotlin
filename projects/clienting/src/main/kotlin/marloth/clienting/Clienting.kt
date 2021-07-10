@@ -1,13 +1,10 @@
-package marloth.integration.misc
+package marloth.clienting
 
-import marloth.clienting.Client
 import marloth.clienting.audio.loadSounds
-import marloth.clienting.canvasRendererKey
-import marloth.clienting.gatherFontSets
-import marloth.clienting.getClientTextures
 import marloth.clienting.gui.hud.cooldownMeshKey
 import marloth.clienting.gui.hud.createCooldownCircleMesh
 import marloth.clienting.rendering.createMeshes
+import marloth.clienting.rendering.loadingImages
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.drawing.setGlobalFonts
 import silentorb.mythic.glowing.Glow
@@ -87,22 +84,19 @@ fun newRenderer(
   )
 }
 
+
 fun newClient(platform: Platform, displayOptions: DisplayOptions): Client {
   val initialDeferredTextures = gatherTextures(platform.display, displayOptions)
-  val loadTexturesInBackground = getDebugBoolean("LOAD_TEXTURES_ASYNC")
   val windowInfo = platform.display.getInfo()
   val renderer = newRenderer(
       dimensions = windowInfo.dimensions,
       options = displayOptions,
       fontSource = ::gatherFontSets
   )
-  val deferredTextures = if (loadTexturesInBackground)
-    initialDeferredTextures
-  else {
-    val loaded = loadDeferredTextures(initialDeferredTextures)
-    renderer.textures += texturesToGpu(loaded)
-    listOf()
-  }
+  val (immediateTextures, deferredTextures) = initialDeferredTextures
+      .partition { loadingImages.contains(it.name) }
+
+  renderer.textures += texturesToGpu(loadDeferredTextures(immediateTextures))
 
   setGlobalFonts(renderer.fonts)
   platform.audio.start(50)
