@@ -1,16 +1,13 @@
 package marloth.integration.misc
 
-import marloth.clienting.ClientState
-import marloth.clienting.PlayerBoxes
+import marloth.clienting.*
 import marloth.clienting.editing.mainScene
 import marloth.clienting.editing.renderEditorViewport
-import marloth.clienting.flattenToPlayerBoxes
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.menus.logic.syncDisplayOptions
 import marloth.clienting.gui.menus.logic.updateAppOptions
 import marloth.clienting.gui.newBloomDefinition
 import marloth.clienting.input.GuiCommandType
-import marloth.clienting.updateClient
 import marloth.integration.clienting.layoutGui
 import marloth.integration.clienting.renderMain
 import marloth.integration.clienting.updateAppStateForFirstNewPlayer
@@ -57,17 +54,6 @@ fun updateClientFromWorld(worlds: List<World>, clientState: ClientState): Client
 
 fun getPlayerViewports(clientState: ClientState, windowDimensions: Vector2i): List<Vector4i> =
     getPlayerViewports(clientState.players.size, windowDimensions)
-
-fun checkRestartGame(app: GameApp, appState: AppState, clientState: ClientState): AppState? {
-  val newGameCommand = clientState.commands
-      .firstOrNull { it.type == GuiCommandType.newGame }
-
-  return if (newGameCommand != null) {
-    val scene = newGameCommand.value as? String ?: mainScene()
-    restartGame(app, appState.copy(client = clientState), scene)
-  } else
-    null
-}
 
 fun updateAppStateWorlds(app: GameApp, appState: AppState, clientState: ClientState): AppState {
   val worlds = if (appState.worlds.none() || getDebugBoolean("PAUSE_SIMULATION"))

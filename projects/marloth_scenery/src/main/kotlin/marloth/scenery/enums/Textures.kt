@@ -11,27 +11,11 @@ object Textures {
   val cobblestone = "cobblestone"
   val diamondTiles = "diamondTiles"
   val grass = "grass"
+  val loadingClock = "loadingClock"
+  val longHand = "longHand"
   val perlinParticle = "perlinParticle"
   val redTile = "redTile"
+  val shortHand = "shortHand"
   val woodDoor = "woodDoor"
   val woodPanel = "woodPanel"
 }
-
-//fun textures() = listOf(
-//    "arch",
-//    "algae",
-//    "animPerlin000",
-//    "background",
-//    "bricks",
-//    "bushOrb",
-//    Textures.checkersBlackWhite,
-//    "dirt",
-//    "doorWood",
-//    "cobblestone",
-//    "diamondTiles",
-//    Textures.grass,
-//    "perlinParticle",
-//    "redTile",
-//    "water",
-//    "woodPanel",
-//)

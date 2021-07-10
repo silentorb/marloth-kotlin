@@ -244,5 +244,6 @@ fun updateClient(
       events = events,
       isEditorActive = nextIsEditorActive,
       editor = nextEditor,
+      isLoading = getDebugBoolean("DEV_LOADING_SCREEN") || clientState.isLoading,
   )
 }

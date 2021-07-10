@@ -38,6 +38,7 @@ data class ClientState(
     val displayModes: List<DisplayMode>,
     val editor: Editor? = null,
     val isEditorActive: Boolean = getDebugBoolean("START_EDITOR"),
+    val isLoading: Boolean,
 
     // Player ids could be purely maintained in the world deck except the world does not care about player order.
     // Player order is only a client concern, and only for local multiplayer.
@@ -61,5 +62,6 @@ fun newClientState(
         players = listOf(),
         events = listOf(),
         displayModes = displayModes,
-        editor = initialEditor(textLibrary, client.renderer.meshes.keys, client.resourceInfo)
+        editor = initialEditor(textLibrary, client.renderer.meshes.keys, client.resourceInfo),
+        isLoading = false,
     )
