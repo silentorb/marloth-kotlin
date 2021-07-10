@@ -10,6 +10,7 @@ import marloth.clienting.input.newInputState
 import marloth.integration.front.GameApp
 import marloth.integration.generation.generateNewWorld
 import marloth.integration.generation.newGenerationConfig
+import marloth.integration.generation.newWorldFromGenerated
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.GraphLibrary
@@ -21,9 +22,9 @@ import silentorb.mythic.quartz.newTimestepState
 import simulation.main.World
 import kotlin.concurrent.thread
 
-fun newWorld(gameApp: GameApp, graph: Graph, graphLibrary: GraphLibrary = mapOf()): World {
-  val generationConfig = newGenerationConfig(gameApp, graphLibrary)
-  return generateNewWorld(gameApp.db, graph, generationConfig)
+fun newWorld(app: GameApp, graph: Graph, graphLibrary: GraphLibrary = mapOf()): World {
+  val generationConfig = newGenerationConfig(app, graphLibrary)
+  return newWorldFromGenerated(app.definitions, generateNewWorld(app.db, graph, generationConfig))
 }
 
 fun restartWorld(app: GameApp, oldWorld: World, graph: Graph, graphLibrary: GraphLibrary): World {
@@ -94,7 +95,9 @@ fun checkRestartGame(app: GameApp, appState: AppState, clientState: ClientState)
   return if (localAsyncAppState != null) {
     asyncWorld = null
     newOrRestartGame(app, appState.copy(client = clientState), localAsyncAppState)
-  } else {
+  } else if (clientState.isLoading)
+    appState
+  else {
     val newGameCommand = getNewGameCommand(clientState.commands)
 
     if (newGameCommand != null) {

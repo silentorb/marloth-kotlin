@@ -24,10 +24,7 @@ import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Matrix
 import simulation.intellect.navigation.NavigationState
 import simulation.intellect.navigation.newNavigationState
-import simulation.main.Deck
-import simulation.main.World
-import simulation.main.allHandsToDeck
-import simulation.main.newGlobalState
+import simulation.main.*
 import simulation.misc.Definitions
 import simulation.misc.GameProperties
 
@@ -60,17 +57,27 @@ fun initializeNavigation(generationConfig: GenerationConfig, graph: Graph, deck:
     } else
       null
 
-fun newWorld(db: Database, generationConfig: GenerationConfig, nextId: IdSource, graph: Graph, deck: Deck): World =
-    World(
+fun newGeneratedWorld(db: Database, generationConfig: GenerationConfig, nextId: IdSource, graph: Graph, deck: Deck): GeneratedWorld =
+    GeneratedWorld(
         nextId = SharedNextId(nextId()),
         deck = deck,
         global = newGlobalState(),
-        dice = Dice(),
         navigation = initializeNavigation(generationConfig, graph, deck),
-        staticGraph = GraphWrapper(graph),
-        bulletState = newBulletStateWithGraph(graph, generationConfig.resourceInfo.meshShapes),
-        definitions = generationConfig.definitions,
+        graph = graph,
         persistence = queryEntries(db, persistenceTable).toSet(),
+    )
+
+fun newWorldFromGenerated(definitions: Definitions, source: GeneratedWorld): World =
+    World(
+        nextId = source.nextId,
+        deck = source.deck,
+        global = source.global,
+        dice = Dice(),
+        navigation = source.navigation,
+        staticGraph = GraphWrapper(source.graph),
+        bulletState = newBulletStateWithGraph(source.graph, definitions.resourceInfo.meshShapes),
+        definitions = definitions,
+        persistence = source.persistence,
         step = 0L,
     )
 
@@ -128,9 +135,9 @@ fun generateWorldGraphAndDeck(nextId: IdSource, generationConfig: GenerationConf
   return graph2 to deck
 }
 
-fun generateNewWorld(db: Database, graph: Graph, generationConfig: GenerationConfig): World {
+fun generateNewWorld(db: Database, graph: Graph, generationConfig: GenerationConfig): GeneratedWorld {
   val nextId = newIdSource(1)
   val (graph2, deck) = generateWorldGraphAndDeck(nextId, generationConfig)
   val deck2 = addNewPlayerCharacters(nextId, generationConfig, graph2, deck)
-  return newWorld(db, generationConfig, nextId, graph2, deck2)
+  return newGeneratedWorld(db, generationConfig, nextId, graph2, deck2)
 }

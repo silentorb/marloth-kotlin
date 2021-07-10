@@ -5,6 +5,7 @@ import marloth.clienting.editing.loadDefaultWorldGraph
 import marloth.definition.data.persistence.initialHistoricalData
 import marloth.integration.misc.staticDefinitions
 import marloth.integration.debug.newDebugHooks
+import marloth.integration.generation.newWorldFromGenerated
 import marloth.integration.misc.*
 import persistence.Database
 import persistence.newDatabase
