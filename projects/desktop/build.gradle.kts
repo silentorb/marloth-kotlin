@@ -6,6 +6,10 @@ plugins {
 
 dependencies {
   implementation("silentorb.mythic:mythic-desktop")
+  implementation("silentorb.mythic:mythic-logging")
+  implementation("org.tinylog:tinylog-api:2.3.2")
+  runtimeOnly("org.tinylog:tinylog-impl:2.3.2")
+  runtimeOnly("org.tinylog:slf4j-tinylog:2.3.2")
 }
 
 requires(project, "integration")
