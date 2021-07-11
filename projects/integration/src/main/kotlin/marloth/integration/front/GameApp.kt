@@ -10,6 +10,7 @@ import persistence.Database
 import persistence.newDatabase
 import silentorb.mythic.debugging.checkDotEnvChanged
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.lookinglass.Scene
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.lookinglass.getMeshShapes
@@ -78,6 +79,9 @@ fun newGameApp(platform: Platform, client: Client): GameApp {
 
 fun runApp(platform: Platform, options: AppOptions) {
   platform.display.initialize(toPlatformDisplayConfig(options.display))
+  if (getDebugString("TEST_ERROR") == "startup")
+    throw Error("Test Startup Error")
+
   val app = newGameApp(platform, newClient(platform, options.display))
   val meshShapes = getMeshShapes(app.client.renderer)
   val clientState = newClientState(

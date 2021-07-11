@@ -12,6 +12,11 @@ object App {
     val gameConfig = loadGameConfig()
     val platformDisplayConfig = toPlatformDisplayConfig(gameConfig.display)
     val platform = createDesktopPlatform("Marloth", platformDisplayConfig)
-    runApp(platform, gameConfig)
+    try {
+      runApp(platform, gameConfig)
+    }
+    catch (error: Throwable){
+      platform.process.messageBox("Oh No!", "There was a problem and the game is dead!")
+    }
   }
 }

@@ -42,22 +42,21 @@ import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Factions
 
-
 fun updateMousePointerVisibility(platform: Platform, clientState: ClientState) {
-  if (!getDebugBoolean("DISABLE_MOUSE")) {
+  val visible = if (getDebugBoolean("DISABLE_MOUSE"))
+    true
+  else {
     val windowHasFocus = platform.display.hasFocus()
     val view = clientState.guiStates[clientState.players.firstOrNull()]?.view
     val isEditing = clientState.isEditorActive && !(clientState.editor?.flyThrough ?: false)
-    val visible = !windowHasFocus ||
+    !windowHasFocus ||
         view != null ||
         isEditing ||
         clientState.activeLoadingTasks.any() ||
         clientState.players.none()
-
-    platform.input.setMouseVisibility(visible)
-  } else {
-    platform.input.setMouseVisibility(true)
   }
+
+  platform.input.setMouseVisibility(visible)
 }
 
 fun toggleDebugBooleanByNumber(number: Int) {

@@ -19,9 +19,6 @@ dependencies {
   implementation("org.lwjgl:lwjgl-opengl:${Versions.lwjgl}:${Natives.lwjgl}")
   implementation("org.commonmark:commonmark:0.17.2")
 
-  implementation("silentorb.imp:parsing")
-  implementation("silentorb.imp:execution")
-  implementation("silentorb.imp:libraries_standard")
   implementation("silentorb.mythic:imaging")
   implementation("silentorb.mythic:debugging")
   implementation("silentorb.imp:campaign")
