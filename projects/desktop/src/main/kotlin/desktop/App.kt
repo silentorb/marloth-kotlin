@@ -17,7 +17,7 @@ object App {
       runApp(platform, gameConfig)
     } catch (error: Throwable) {
       logger.error("Game closed with the following error", error)
-      platform.process.messageBox("Oh No!", "There was a problem and the game is dead!")
+      platform.process.messageBox("Oh No!  The Game is Dead!", error.stackTraceToString())
     }
   }
 }

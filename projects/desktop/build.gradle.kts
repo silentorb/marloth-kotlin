@@ -21,9 +21,16 @@ runtime {
       "java.xml", // Needed for Jackson
       "jdk.unsupported", // Needed for Unsafe LWJGL memory functions
       "jdk.zipfs", // Needed for loading enumerated resources from JAR files
-      "java.sql" // Needed for SQLite
+      "java.sql", // Needed for SQLite
+      "java.management" // Needed for Tinylog
   ))
-  jreDir.set(project.layout.buildDirectory.dir("dist/marloth-${project.properties["version"]}/jre"))
+  jreDir.set(rootDir.resolve("out/dist/marloth-${project.properties["version"]}/jre"))
+}
+
+tasks.register<Copy>("compileDist") {
+  from(buildDir.resolve("launch4j"))
+  into(rootDir.resolve("out/dist/marloth-${project.properties["version"]}"))
+  dependsOn("copyFonts", "copyManual", "runtime", "createAllExecutables")
 }
 
 // Build the executable
@@ -31,33 +38,33 @@ tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
   outfile = "marloth.exe"
   mainClassName = "desktop.App"
   icon = "$projectDir/icons/m.ico"
-  productName = "marloth"
+  productName = "Marloth"
+  fileDescription = "Marloth"
   bundledJre64Bit = true
   jreMinVersion = "14.0.0"
   jreMaxVersion = "14.0.2"
   bundledJrePath = "./jre"
   jreRuntimeBits = "64"
-  jvmOptions = setOf("-ea", "-XX:MaxGCPauseMillis=8")
+  jvmOptions = setOf("-XX:MaxGCPauseMillis=8")
   headerType = "gui"
-  outputDir = "dist/marloth-${project.properties["version"]}"
-  dependsOn("copyFonts", "copyManual", "runtime")
+  copyright = "©Silent Orb"
 }
 
 tasks.register<Copy>("copyFonts") {
   from("fonts")
   include("*.ttf")
-  into("$buildDir/dist/marloth-${project.properties["version"]}/fonts")
+  into(rootDir.resolve("out/dist/marloth-${project.properties["version"]}/fonts"))
 }
 
 tasks.register<Copy>("copyManual") {
   from(project.rootDir.resolveSibling("marloth-assets/assets/src/main/resources/docs/manual.md"))
-  into("$buildDir/dist/marloth-${project.properties["version"]}")
+  into(rootDir.resolve("out/dist/marloth-${project.properties["version"]}"))
   rename { "README.md" }
 }
 
 tasks.register<Zip>("zipDist") {
-  archiveFileName.set("$buildDir/dist/marloth-${project.properties["version"]}.zip")
-  destinationDirectory.set(layout.buildDirectory.dir("dist"))
-  from(layout.buildDirectory.dir("dist/marloth-${project.properties["version"]}"))
+  archiveFileName.set("marloth-${project.properties["version"]}.zip")
+  destinationDirectory.set(rootDir.resolve("out/dist"))
+  from(rootDir.resolve("out/dist/marloth-${project.properties["version"]}"))
   dependsOn("createAllExecutables")
 }

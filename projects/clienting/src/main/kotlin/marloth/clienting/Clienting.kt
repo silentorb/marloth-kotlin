@@ -16,9 +16,14 @@ import silentorb.mythic.platforming.ImageInfo
 import silentorb.mythic.platforming.ImageLoader
 import silentorb.mythic.platforming.Platform
 import silentorb.mythic.platforming.PlatformDisplay
+import silentorb.mythic.resource_loading.scanResources
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.Vector4
 import silentorb.mythic.typography.FontSet
+import java.nio.file.Path
+
+fun scanTextureResources(rootPath: String): List<Path> =
+    scanResources(rootPath, listOf(".jpg", ".png"))
 
 fun gatherTextures(loadImage: ImageLoader, attributes: TextureAttributeMapper): List<DeferredTexture> =
     scanTextureResources("models")
