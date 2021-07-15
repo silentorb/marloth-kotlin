@@ -40,7 +40,7 @@ fun restartClientState(input: PlatformInput, client: ClientState, playerMap: Map
         commands = listOf(),
         players = playerMap.values.toList(),
         events = listOf(),
-        isEditorActive = client.isEditorActive,
+        editingMode = client.editingMode,
         activeLoadingTasks = setOf(),
     )
 

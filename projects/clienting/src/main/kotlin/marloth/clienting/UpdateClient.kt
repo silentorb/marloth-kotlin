@@ -28,7 +28,7 @@ import silentorb.mythic.debugging.toggleDebugBoolean
 import silentorb.mythic.editing.Editor
 import silentorb.mythic.editing.EditorCommands
 import silentorb.mythic.editing.checkSaveEditor
-import silentorb.mythic.editing.ensureImGuiIsInitialized
+import silentorb.mythic.editing.general.ensureImGuiIsInitialized
 import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.updateInputDeviceStates
 import silentorb.mythic.happenings.Command
@@ -48,7 +48,7 @@ fun updateMousePointerVisibility(platform: Platform, clientState: ClientState) {
   else {
     val windowHasFocus = platform.display.hasFocus()
     val view = clientState.guiStates[clientState.players.firstOrNull()]?.view
-    val isEditing = clientState.isEditorActive && !(clientState.editor?.flyThrough ?: false)
+    val isEditing = clientState.editingMode != EditingMode.none && !(clientState.editor?.flyThrough ?: false)
     !windowHasFocus ||
         view != null ||
         isEditing ||
@@ -222,7 +222,7 @@ fun updateClient(
       playerGuiCommands
 
   applyCommandsToExternalSystem(client, commands)
-  val nextGuiStates = if (clientState.isEditorActive)
+  val nextGuiStates = if (clientState.editingMode != EditingMode.none)
     clientState.guiStates
   else
     playerBloomDefinitions
@@ -241,16 +241,25 @@ fun updateClient(
 
   val previousEditor = clientState.editor
   val windowInfo = client.getWindowInfo()
-  val (nextEditor, editorEvents1) = if (clientState.isEditorActive) {
+  val (nextEditor, editorEvents1) = if (clientState.editingMode != EditingMode.none) {
     ensureImGuiIsInitialized(editorFonts, windowInfo.id)
-    val editor = previousEditor ?: newEditor(textLibrary, client.renderer.meshes.keys, newEditorResourceInfo(client))
-    updateMarlothEditor(deviceStates, worlds.lastOrNull(), editor)
+    when (clientState.editingMode) {
+      EditingMode.editor -> {
+        val editor = previousEditor ?: newEditor(textLibrary, client.renderer.meshes.keys, newEditorResourceInfo(client))
+        updateMarlothEditor(deviceStates, worlds.lastOrNull(), editor)
+      }
+      EditingMode.aura -> {
+//        previousEditor to listOf()
+        throw Error("Not yet implemented")
+      }
+      else -> throw Error("Not supported")
+    }
   } else
     previousEditor to listOf()
 
   checkSaveEditor(clientState.editor, nextEditor)
-  val nextIsEditorActive = updateEditingActive(initialCommands + editorEvents1, clientState.isEditorActive)
-  val editorEvents2 = if (!nextIsEditorActive && clientState.isEditorActive && nextEditor != null)
+  val nextEditingMode = updateEditingActive(initialCommands + editorEvents1, clientState.editingMode)
+  val editorEvents2 = if (nextEditingMode != EditingMode.editor && clientState.editingMode == EditingMode.editor && nextEditor != null)
     listOf(ClientEvent(ClientEventType.setWorldGraph, expandDefaultWorldGraph(nextEditor)))
   else
     listOf()
@@ -261,7 +270,7 @@ fun updateClient(
       guiStates = nextGuiStates,
       commands = commands + editorEvents1 + editorEvents2,
       events = events,
-      isEditorActive = nextIsEditorActive,
+      editingMode = nextEditingMode,
       editor = nextEditor,
       activeLoadingTasks = updateActiveLoadingTasks(client, clientState),
   )

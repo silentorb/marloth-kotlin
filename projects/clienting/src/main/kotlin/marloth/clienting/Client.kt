@@ -9,7 +9,7 @@ import marloth.clienting.gui.menus.baseFonts
 import marloth.definition.texts.englishTextResources
 import silentorb.mythic.aura.SoundLibrary
 import silentorb.mythic.debugging.getDebugString
-import silentorb.mythic.editing.closeImGui
+import silentorb.mythic.editing.general.closeImGui
 import silentorb.mythic.ent.Id
 import silentorb.mythic.glowing.TextureAttributes
 import silentorb.mythic.lookinglass.*

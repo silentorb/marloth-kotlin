@@ -1,11 +1,13 @@
 package marloth.clienting
 
 import marloth.clienting.audio.AudioConfig
+import marloth.clienting.editing.EditingMode
+import marloth.clienting.editing.newEditingMode
 import marloth.clienting.editing.newEditor
 import marloth.clienting.gui.GuiState
-import marloth.clienting.input.InputState
 import marloth.clienting.gui.ViewId
 import marloth.clienting.input.InputOptions
+import marloth.clienting.input.InputState
 import marloth.clienting.input.newInputState
 import marloth.clienting.rendering.LoadingTask
 import marloth.scenery.enums.TextResourceMapper
@@ -38,7 +40,7 @@ data class ClientState(
     val events: List<Any>,
     val displayModes: List<DisplayMode>,
     val editor: Editor? = null,
-    val isEditorActive: Boolean = getDebugBoolean("START_EDITOR"),
+    val editingMode: EditingMode = newEditingMode(),
     val activeLoadingTasks: Set<LoadingTask>,
 
     // Player ids could be purely maintained in the world deck except the world does not care about player order.

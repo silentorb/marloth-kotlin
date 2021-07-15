@@ -11,6 +11,7 @@ object Sounds {
   val hogAmbient02 = "hogAmbient02"
   val hogAmbient03 = "hogAmbient03"
   val hogDeath = "hogDeath"
+  val landOnFloor = "landOnFloor"
   val pistolFire = "pistolFire"
   val takePlant = "takePlant"
   val throwWeapon = "throwWeapon"

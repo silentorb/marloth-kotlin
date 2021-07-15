@@ -2,6 +2,7 @@ package marloth.clienting.input
 
 import marloth.clienting.ClientState
 import marloth.clienting.PlayerViews
+import marloth.clienting.editing.EditingMode
 import silentorb.mythic.characters.rigs.mouseLookEvent
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
@@ -165,7 +166,7 @@ fun firstPlayer(clientState: ClientState) =
     clientState.players.firstOrNull()
 
 fun isGameMouseActive(platform: Platform, clientState: ClientState): Boolean =
-    clientState.isEditorActive ||
+    clientState.editingMode != EditingMode.none ||
         getDebugBoolean("DISABLE_MOUSE") ||
         clientState.guiStates[firstPlayer(clientState)]?.view != null ||
         !platform.display.hasFocus()

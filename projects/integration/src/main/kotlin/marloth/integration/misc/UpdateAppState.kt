@@ -1,7 +1,7 @@
 package marloth.integration.misc
 
 import marloth.clienting.*
-import marloth.clienting.editing.mainScene
+import marloth.clienting.editing.EditingMode
 import marloth.clienting.editing.renderEditorViewport
 import marloth.clienting.gui.BloomDefinition
 import marloth.clienting.gui.menus.logic.syncDisplayOptions
@@ -122,7 +122,7 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
   }
 
   val layoutBoxes = singleValueCache { source: AppState ->
-    if (appState.client.isEditorActive)
+    if (appState.client.editingMode != EditingMode.none)
       mapOf()
     else
       layoutBoxes(app, source)
@@ -138,7 +138,7 @@ fun updateAppState(app: GameApp): (AppState) -> AppState = { appState ->
     val viewports = getPlayerViewports(appState.client, windowInfo.dimensions)
     val boxes = layoutBoxes(nextAppState)
     val editor = nextAppState.client.editor
-    if (appState.client.isEditorActive && editor != null) {
+    if (appState.client.editingMode == EditingMode.editor && editor != null) {
       val selectionQuery = renderEditorViewport(app.client, windowInfo, editor)
       if (selectionQuery != editor.selectionQuery) {
         nextAppState = nextAppState.copy(

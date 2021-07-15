@@ -1,6 +1,7 @@
 package marloth.integration.front
 
 import marloth.clienting.*
+import marloth.clienting.editing.EditingMode
 import marloth.clienting.editing.loadDefaultWorldGraph
 import marloth.definition.data.persistence.initialHistoricalData
 import marloth.integration.misc.staticDefinitions
@@ -92,7 +93,7 @@ fun runApp(platform: Platform, options: AppOptions) {
       platform.display.getDisplayModes(),
       app.client,
   )
-  val worlds = if (!clientState.isEditorActive && getDebugBoolean("NEW_GAME_ON_START"))
+  val worlds = if (clientState.editingMode == EditingMode.none && getDebugBoolean("NEW_GAME_ON_START"))
     listOf(newWorld(app, loadDefaultWorldGraph(meshShapes)))
   else
     listOf()

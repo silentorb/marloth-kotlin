@@ -23,6 +23,7 @@ object DeveloperCommands {
   val toggleValue3 = "toggleValue3"
   val toggleValue4 = "toggleValue4"
   val editor = "editor"
+  val aura = "aura"
 }
 
 val developerCommands = reflectProperties<String>(DeveloperCommands)

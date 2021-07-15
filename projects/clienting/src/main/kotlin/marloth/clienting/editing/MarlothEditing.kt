@@ -11,9 +11,11 @@ import marloth.definition.data.characterDefinitions
 import marloth.definition.misc.loadMarlothGraphLibrary
 import marloth.scenery.enums.MeshShapeMap
 import marloth.scenery.enums.TextResourceMapper
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.editing.*
 import silentorb.mythic.editing.components.gizmoMenuToggleState
+import silentorb.mythic.editing.general.Typeface
 import silentorb.mythic.editing.updating.prepareEditorUpdate
 import silentorb.mythic.editing.updating.updateEditor
 import silentorb.mythic.editing.updating.updateGraphStateAndHistory
@@ -181,11 +183,15 @@ fun newEditor(textLibrary: TextResourceMapper, meshes: Collection<String>, resou
   )
 }
 
-fun updateEditingActive(commands: Commands, previousIsActive: Boolean): Boolean =
+fun toggleEditor(current: EditingMode, toggled: EditingMode): EditingMode =
+    if (current == toggled) EditingMode.none else toggled
+
+fun updateEditingActive(commands: Commands, editingMode: EditingMode): EditingMode =
     when {
-      commands.any { it.type == DeveloperCommands.editor } -> !previousIsActive
-      commands.any { it.type == GuiCommandType.newGame } -> false
-      else -> previousIsActive
+      commands.any { it.type == DeveloperCommands.editor } -> toggleEditor(editingMode, EditingMode.editor)
+      commands.any { it.type == DeveloperCommands.aura } -> toggleEditor(editingMode, EditingMode.aura)
+      commands.any { it.type == GuiCommandType.newGame } -> EditingMode.none
+      else -> editingMode
     }
 
 fun filterOutEditorOnlyNodes(graph: Graph): Graph {
@@ -257,3 +263,16 @@ fun updateMarlothEditor(deviceStates: List<InputDeviceState>, world: World?, edi
 
   return finalEditor to editorEvents
 }
+
+enum class EditingMode {
+  none,
+  editor,
+  aura,
+}
+
+fun newEditingMode(): EditingMode =
+    when {
+      getDebugBoolean("START_EDITOR") -> EditingMode.editor
+      getDebugBoolean("START_AURA") -> EditingMode.aura
+      else -> EditingMode.none
+    }

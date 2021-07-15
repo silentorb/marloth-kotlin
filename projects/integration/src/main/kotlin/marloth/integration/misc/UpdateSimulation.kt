@@ -3,6 +3,7 @@ package marloth.integration.misc
 import marloth.clienting.ClientEvent
 import marloth.clienting.ClientEventType
 import marloth.clienting.ClientState
+import marloth.clienting.editing.EditingMode
 import marloth.clienting.gui.hud.updateTargeting
 import marloth.clienting.input.firstPlayer
 import marloth.clienting.input.isGameMouseActive
@@ -112,7 +113,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
 }
 
 fun updateWorlds(app: GameApp, previousClient: ClientState, clientState: ClientState): (List<World>) -> List<World> = { worlds ->
-  val commands = if (clientState.isEditorActive)
+  val commands = if (clientState.editingMode != EditingMode.none)
     listOf()
   else
     clientState.commands
