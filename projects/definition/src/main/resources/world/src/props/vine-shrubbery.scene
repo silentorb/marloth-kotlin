@@ -1,9 +1,9 @@
 {
 "graph" : [
 ["bounds","parent","vine-shrubbery"],
-["bounds","type","solid-box"],
 ["bounds","scale",[2.0,0.05,1.0]],
 ["bounds","translation",[0.0,0.0,0.5]],
+["bounds","type","transparent-static"],
 ["vine-shrubbery","",""],
 ["visual","",""],
 ["visual","mesh","squareFace"],

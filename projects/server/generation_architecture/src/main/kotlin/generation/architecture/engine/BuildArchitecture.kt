@@ -55,9 +55,8 @@ fun buildBlockCell(general: ArchitectureInput, block: Block, builder: Builder, l
       turns = block.turns,
       height = block.heightOffset,
   )
-  val graph = builder(input) as Graph
+  val graph = HashedList.from(builder(input) as Graph)
   val result = transformBlockOutput(block, location, graph)
-  val k = result.filter {it.property == SceneProperties.mesh}
   return result
 }
 

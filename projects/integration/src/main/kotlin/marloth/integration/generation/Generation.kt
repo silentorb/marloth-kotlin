@@ -36,12 +36,12 @@ fun prepareWorldGraph(generationConfig: GenerationConfig, dice: Dice, graph: Gra
       if (getDebugBoolean("ENABLE_EDITOR")) {
         staticDebugBlockGrid = blockGrid
       }
-      architectureSource
+      HashedList.from(architectureSource)
     }
 
 fun generateWorldDeck(nextId: IdSource, definitions: Definitions, generationConfig: GenerationConfig, dice: Dice,
                       graph: Graph, deck: Deck): Deck {
-  val hands = populateWorld(nextId, generationConfig, dice, graph)
+  val hands = populateWorld(nextId, generationConfig, dice, HashedList.from(graph))
   return allHandsToDeck(definitions, nextId, hands, deck)
 }
 
@@ -130,7 +130,7 @@ fun generateWorldGraphAndDeck(nextId: IdSource, generationConfig: GenerationConf
 
   val staticHands = graphToHands(definitions.resourceInfo, nextId, graph, staticEntities, Matrix.identity)
   val initialDeck = allHandsToDeck(definitions, nextId, staticHands, Deck())
-  val graph2 = removeNodesAndChildren(graph, staticEntities)
+  val graph2 = HashedList.from(removeNodesAndChildren(graph, staticEntities))
   val deck = generateWorldDeck(nextId, definitions, generationConfig, dice, graph2, initialDeck)
   return graph2 to deck
 }

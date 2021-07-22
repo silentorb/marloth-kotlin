@@ -10,6 +10,7 @@ object App {
   @JvmStatic
   fun main(args: Array<String>) {
     System.setProperty("joml.format", "false")
+    configureLogging()
     val gameConfig = loadGameConfig()
     val platformDisplayConfig = toPlatformDisplayConfig(gameConfig.display)
     val platform = createDesktopPlatform("Marloth", platformDisplayConfig)

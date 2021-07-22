@@ -13,6 +13,7 @@ import marloth.integration.generation.generateNewWorld
 import marloth.integration.generation.newGenerationConfig
 import marloth.integration.generation.newWorldFromGenerated
 import silentorb.mythic.debugging.getDebugBoolean
+import silentorb.mythic.debugging.logExecutionTime
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.GraphLibrary
 import silentorb.mythic.ent.Id
@@ -23,9 +24,11 @@ import silentorb.mythic.quartz.newTimestepState
 import simulation.main.World
 import kotlin.concurrent.thread
 
-fun newWorld(app: GameApp, graph: Graph, graphLibrary: GraphLibrary = mapOf()): World {
-  val generationConfig = newGenerationConfig(app, graphLibrary)
-  return newWorldFromGenerated(app.definitions, generateNewWorld(app.db, graph, generationConfig))
+fun newWorld(app: GameApp, graph: Graph = listOf(), graphLibrary: GraphLibrary = mapOf()): World {
+  return logExecutionTime("World generation", getDebugBoolean("PROFILE_WORLD_GENERATION")) {
+    val generationConfig = newGenerationConfig(app, graphLibrary)
+    newWorldFromGenerated(app.definitions, generateNewWorld(app.db, graph, generationConfig))
+  }
 }
 
 fun restartWorld(app: GameApp, oldWorld: World, graph: Graph, graphLibrary: GraphLibrary): World {

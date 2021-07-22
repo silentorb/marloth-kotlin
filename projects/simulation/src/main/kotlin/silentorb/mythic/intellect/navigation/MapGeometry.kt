@@ -8,6 +8,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Key
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
+import silentorb.mythic.ent.scenery.getLocalTransforms
 import silentorb.mythic.ent.scenery.getShape
 import silentorb.mythic.physics.PhysicsDeck
 import silentorb.mythic.physics.getBodyTransform
@@ -32,6 +33,7 @@ data class GeometryProvider(
 
 fun newNavMeshTriMeshes(meshShapeMap: Map<String, Shape>, graph: Graph, architectureElements: Collection<Key>,
                         entities: Set<Id>, deck: Deck): List<TriMesh> {
+  val localTransforms = getLocalTransforms(graph)
   return architectureElements
       .map { node ->
         val shape = getShape(meshShapeMap, graph, node)!!
@@ -39,7 +41,7 @@ fun newNavMeshTriMeshes(meshShapeMap: Map<String, Shape>, graph: Graph, architec
         Pair(node, mesh)
       }
       .map { (node, mesh) ->
-        val transform = getAbsoluteNodeTransform(graph, node)
+        val transform = getAbsoluteNodeTransform(graph, localTransforms, node)
         val vertices = mesh.vertices.flatMap {
           val temp = it.transform(transform)
           // Convert to an array and Recast's Y-up coordinate system

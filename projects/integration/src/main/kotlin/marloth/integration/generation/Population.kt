@@ -71,7 +71,7 @@ fun placeMonster(definitions: Definitions, dice: Dice, definition: CharacterDefi
 }
 
 fun populateNewMonsters(definitions: Definitions, locations: List<Matrix>, nextId: IdSource, dice: Dice): List<NewHand> {
-  println("Monster count: ${locations.size}")
+//  println("Monster count: ${locations.size}")
   return if (locations.none())
     listOf()
   else {

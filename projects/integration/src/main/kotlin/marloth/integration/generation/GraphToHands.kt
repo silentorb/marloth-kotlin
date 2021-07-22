@@ -1,10 +1,7 @@
 package marloth.integration.generation
 
 import silentorb.mythic.ent.*
-import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
-import silentorb.mythic.ent.scenery.getLocalNodeTransform
-import silentorb.mythic.ent.scenery.getNodeLight
-import silentorb.mythic.ent.scenery.getNodeMaterial
+import silentorb.mythic.ent.scenery.*
 import silentorb.mythic.lookinglass.ResourceInfo
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.getNodeCollisionObject
@@ -109,9 +106,10 @@ fun associateHandParentBodies(graph: Graph, hands: Map<String, NewHand>) =
 
 fun graphToHands(resourceInfo: ResourceInfo, nextId: IdSource, graph: Graph, keys: Collection<String>,
                  parentTransform: Matrix): List<NewHand> {
+  val localTransforms = getLocalTransforms(graph)
   val hands = keys
       .mapNotNull { node ->
-        val transform = parentTransform * getAbsoluteNodeTransform(graph, node)
+        val transform = parentTransform * getAbsoluteNodeTransform(graph, localTransforms, node)
         val light = getNodeLight(graph, node, transform)
         val components = if (light != null)
           listOf(light)

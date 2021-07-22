@@ -78,12 +78,16 @@ fun newGameApp(platform: Platform, client: Client): GameApp {
   )
 }
 
-fun runApp(platform: Platform, options: AppOptions) {
+fun newGameApp(platform: Platform, options: AppOptions): GameApp {
   platform.display.initialize(toPlatformDisplayConfig(options.display))
   if (getDebugString("TEST_ERROR") == "startup")
     throw Error("Test Startup Error")
 
-  val app = newGameApp(platform, newClient(platform, options.display))
+  return newGameApp(platform, newClient(platform, options.display))
+}
+
+fun runApp(platform: Platform, options: AppOptions) {
+  val app = newGameApp(platform, options)
   val meshShapes = getMeshShapes(app.client.renderer)
   val clientState = newClientState(
       app.definitions.textLibrary,
@@ -106,7 +110,6 @@ fun runApp(platform: Platform, options: AppOptions) {
       hooks = conditionalHooks()
   )
   gameLoop(app, state)
-  println("Closing")
   val onClose = state.hooks?.onClose
   if (onClose != null)
     onClose()
