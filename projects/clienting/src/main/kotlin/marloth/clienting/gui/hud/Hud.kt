@@ -119,7 +119,7 @@ fun playerStats(world: World, actor: Id, debugInfo: List<String>, accessories: M
 //      label(textStyle, "Energy AC: ${character.energyAccumulator}"),
 //      if (getDebugBoolean("HUD_DRAW_RAW_NOURISHMENT")) label(textStyle, "RawNourish: ${character.nourishment}") else null,
 //      label(textStyle, "Doom: ${world.global.doom}")
-//      label(textStyle, "Sanity: ${resourceString(data.madness)}")
+      label(textStyle, "Sanity: ${character.sanity}/100")
   ) + listOfNotNull(
       if (accessoryPoints > 0) label(textStyle, "Ability Points: $accessoryPoints") else null,
       if (utilityItemText != null) label(textStyle, utilityItemText) else null,
@@ -151,6 +151,7 @@ fun getInteractKeyText(deviceMode: DeviceMode) =
 fun getInteractableLabelText(interactable: Interactable, mode: String?): String? =
     when (getInteractionCommandType(interactable.type, mode)) {
       Interactions.sleep -> "Sleep"
+      Interactions.devotion -> "Read"
       Interactions.take -> "Take"
       Interactions.open -> "Open"
       Interactions.close -> "Close"

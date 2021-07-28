@@ -55,20 +55,6 @@ fun getPrimaryMode(graph: Graph, node: Key): PrimaryMode? {
     null
 }
 
-//fun getDynamicBody(graph: Graph, node: Key): DynamicBody? {
-//  val mass = getNodeValue<Float>(graph, node, MarlothProperties.mass)
-//  val resistance = getNodeValue<Float>(graph, node, MarlothProperties.mass)
-//  val mass = getNodeValue<Float>(graph, node, MarlothProperties.mass)
-//  return if (mass != null)
-//    DynamicBody(
-//        mass = mass,
-//        gravity = false,
-//        resistance =
-//    )
-//  else
-//    null
-//}
-
 fun getNodeInteractions(graph: Graph, node: Key): List<Any> =
     getNodeValues<String>(graph, node, GameProperties.interaction)
         .map { type ->

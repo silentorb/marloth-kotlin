@@ -105,6 +105,10 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
   val energyAccumulator = character.energyAccumulator - mainEnergyExpense - shadowEnergyExpense
   val energyAccumulation = getRoundedAccumulation(energyAccumulator)
 
+  val sanityExpense = getEnergyExpense(standardSanityRates, velocity = toInt1000(body.velocity.length()))
+  val sanityAccumulator = character.sanityAccumulator - sanityExpense
+  val sanityAccumulation = getRoundedAccumulation(sanityAccumulator)
+
   return character.copy(
       isAlive = isAlive,
       isInfinitelyFalling = isInfinitelyFalling(position),
@@ -115,6 +119,8 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
       accessoryOptions = updateAccessoryOptions(definitions, dice, deck, events, actor, character),
       energy = modifyResourceWithEvents(events, actor, ResourceTypes.energy, character.energy, destructible.health, energyAccumulation),
       energyAccumulator = energyAccumulator - energyAccumulation * highIntScale,
+      sanity = modifyResourceWithEvents(events, actor, ResourceTypes.sanity, character.sanity, maxSanity, sanityAccumulation),
+      sanityAccumulator = sanityAccumulator - sanityAccumulation * highIntScale,
       availableContracts = updateAvailableContracts(commands, character.availableContracts),
       utilityItem = updateUtilityItem(definitions, deck, commands, actor, character),
       stepCounter = updateStepCounter(rig, body, character.stepCounter),

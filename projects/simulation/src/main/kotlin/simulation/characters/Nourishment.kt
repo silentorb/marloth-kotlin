@@ -23,5 +23,3 @@ fun getNourishmentEventsAdjustment(definitions: Definitions, deck: Deck, actor: 
               .filterIsInstance<Nutrient>()
               .sumBy { it.value }
         }
-
-//val updateNourishment = updatePercentageResource(nourishmentRates)

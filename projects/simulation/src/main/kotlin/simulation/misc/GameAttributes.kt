@@ -57,6 +57,7 @@ object GameProperties {
   const val blockRotations = "blockRotations"
   const val heightVariant = "heightVariant"
   const val interaction = "interaction"
+  const val onInteract = "onInteract"
   const val itemType = "itemType"
   const val modeType = "modeType"
   const val mode = "mode"

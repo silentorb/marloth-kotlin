@@ -54,6 +54,7 @@ data class Character(
     val definition: CharacterDefinition,
     val faction: Id,
     val sanity: Int = 100,
+    val sanityAccumulator: Int = 0,
     val isAlive: Boolean,
     val canInteractWith: Id? = null,
     val interactingWith: Id? = null,

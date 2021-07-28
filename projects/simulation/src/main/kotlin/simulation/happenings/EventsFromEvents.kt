@@ -6,6 +6,7 @@ import silentorb.mythic.characters.rigs.characterMovementsToImpulses
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
+import simulation.abilities.eventsFromDevotion
 import simulation.abilities.eventsFromSleep
 import simulation.accessorize.eventsFromItemPickup
 import simulation.characters.newMoveSpeedTable
@@ -60,6 +61,7 @@ fun eventsFromEvents(world: World, freedomTable: FreedomTable, events: Events): 
       mapEvents(onAttack(toSpatialCombatWorld(world))),
       mapInteractions(Interactions.take, eventsFromItemPickup(world)),
       mapInteractions(Interactions.sleep, eventsFromSleep(world)),
+      mapInteractions(Interactions.devotion, eventsFromDevotion(world)),
       mapInteractions(Interactions.open, eventsFromDoorOpening(world)),
       mapInteractions(Interactions.close, eventsFromDoorClosing(world)),
   )

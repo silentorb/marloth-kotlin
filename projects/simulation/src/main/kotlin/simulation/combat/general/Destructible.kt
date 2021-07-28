@@ -4,7 +4,7 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.emptyId
 import silentorb.mythic.happenings.Events
 import simulation.characters.getNourishmentEventsAdjustment
-import simulation.characters.getNourishmentExpense
+import simulation.characters.getResourceTimeCost
 import simulation.characters.getRoundedAccumulation
 import simulation.characters.healthTimeDrainDuration
 import simulation.main.Deck
@@ -76,7 +76,7 @@ fun updateDestructibleHealth(definitions: Definitions, deck: Deck, events: Event
     }
     val nourishmentAdjustment = getNourishmentEventsAdjustment(definitions, deck, actor, events)
     val healthAccumulator = if (destructible.drainDuration != 0)
-      result.healthAccumulator - getNourishmentExpense(healthTimeDrainDuration, 1)
+      result.healthAccumulator - getResourceTimeCost(healthTimeDrainDuration, 1)
     else
       result.healthAccumulator
 

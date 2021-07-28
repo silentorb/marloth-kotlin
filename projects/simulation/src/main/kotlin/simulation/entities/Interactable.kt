@@ -12,6 +12,7 @@ object Interactions {
   val open = "open"
   val openClose = "openClose"
   val sleep = "sleep"
+  val devotion = "devotion"
   val take = "take"
 }
 
