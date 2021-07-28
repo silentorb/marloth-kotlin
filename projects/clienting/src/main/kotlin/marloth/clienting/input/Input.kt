@@ -17,6 +17,8 @@ import silentorb.mythic.platforming.PlatformInput
 import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector2i
 import silentorb.mythic.spatial.toVector2
+import simulation.misc.Definitions
+import simulation.misc.InputEventType
 
 fun defaultInputProfiles() =
     mapOf(
@@ -186,3 +188,12 @@ fun mouseLookEvents(dimensions: Vector2i, previousState: InputDeviceState?, next
       } else
         listOf()
     }
+
+
+fun getCommandKeyText(definitions: Definitions, bindings: Bindings, device: Int, command: String): String? {
+  val binding = bindings.firstOrNull { it.device == device && it.command == command }
+  return if (binding != null)
+    definitions.inputEventTypeNames[InputEventType(binding.device, binding.index)]
+  else
+    null
+}

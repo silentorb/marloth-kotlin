@@ -8,6 +8,7 @@
 ["item","mesh","key"],
 ["item","type","solid-box"],
 ["item","interaction","take"],
+["item","onInteract","take"],
 ["item","itemType","apple3"],
 ["item","scale",[3.0049183,3.0049183,3.0049183]],
 ["item","translation",[0.0,0.0,0.90644264]]

@@ -80,7 +80,4 @@ fun marlothPropertiesSchema(): PropertySchema = mapOf(
     GameProperties.heightVariant to PropertyInfo(
         manyToMany = true,
     ),
-    GameProperties.interaction to PropertyInfo(
-        manyToMany = true,
-    ),
 )

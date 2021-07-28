@@ -4,6 +4,7 @@
 ["mattress","parent","bed"],
 ["mattress","mesh","cube"],
 ["mattress","interaction","sleep"],
+["mattress","onInteract","sleep"],
 ["mattress","type","solid-box"],
 ["mattress","scale",[1.03499568,1.8973972,0.2240189]],
 ["pillow","mesh","cube"],

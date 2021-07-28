@@ -1,5 +1,6 @@
 package marloth.clienting.gui.hud
 
+import marloth.clienting.AppOptions
 import marloth.clienting.ClientState
 import marloth.clienting.gui.Colors
 import marloth.clienting.gui.DeviceMode
@@ -9,6 +10,10 @@ import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.actionItemText
 import marloth.clienting.gui.menus.black
 import marloth.clienting.gui.menus.general.verticalList
+import marloth.clienting.input.InputContext
+import marloth.clienting.input.defaultInputProfile
+import marloth.clienting.input.getCommandKeyText
+import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.bloom.*
 import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.characters.rigs.isGrounded
@@ -16,15 +21,17 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugOverrides
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.gpuProfileMeasurements
+import silentorb.mythic.platforming.Devices
 import simulation.accessorize.Accessory
 import simulation.characters.Character
 import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
-import simulation.entities.Interactions
+import simulation.entities.InteractionActions
 import simulation.entities.getInteractionCommandType
 import simulation.happenings.Notification
 import simulation.main.World
 import simulation.misc.Definitions
+import simulation.misc.InputEventType
 import kotlin.math.roundToInt
 
 private val textStyle = TextStyles.smallGray
@@ -142,19 +149,13 @@ fun playerStats(world: World, actor: Id, debugInfo: List<String>, accessories: M
   )
 }
 
-fun getInteractKeyText(deviceMode: DeviceMode) =
-    when (deviceMode) {
-      DeviceMode.gamepad -> "(A)"
-      DeviceMode.mouseKeyboard -> "E"
-    }
-
 fun getInteractableLabelText(interactable: Interactable, mode: String?): String? =
-    when (getInteractionCommandType(interactable.type, mode)) {
-      Interactions.sleep -> "Sleep"
-      Interactions.devotion -> "Read"
-      Interactions.take -> "Take"
-      Interactions.open -> "Open"
-      Interactions.close -> "Close"
+    when (getInteractionCommandType(interactable.action, mode)) {
+      InteractionActions.sleep -> "Sleep"
+      InteractionActions.read -> "Read"
+      InteractionActions.take -> "Take"
+      InteractionActions.open -> "Open"
+      InteractionActions.close -> "Close"
       else -> null
     }
 
@@ -176,7 +177,7 @@ fun interactionDialog(primaryInteractText: String, textResources: TextResources,
   }
 }
 
-fun hudLayout(textResources: TextResources, world: World, clientState: ClientState, player: Id,
+fun hudLayout(textResources: TextResources, world: World, options: AppOptions, clientState: ClientState, player: Id,
               debugInfo: List<String>, view: ViewId?): Flower? {
   val deck = world.deck
   val definitions = world.definitions
@@ -271,9 +272,21 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
             .map { (key, value) -> "$key: $value" }
 
     compose(listOfNotNull(
-        if (interactable != null)
-          interactionDialog(getInteractKeyText(guiState.primarydeviceMode), textResources, interactable, deck.primaryModes[character.canInteractWith]?.mode)
-        else
+        if (interactable != null) {
+          val bindings = options.input.profiles[defaultInputProfile]!!.bindings[InputContext.interaction]
+          val keyText = if (bindings != null) {
+            val device = if (guiState.primarydeviceMode == DeviceMode.gamepad)
+              Devices.gamepadFirst
+            else
+              Devices.keyboard
+
+            getCommandKeyText(definitions, bindings, device, CharacterCommands.interactPrimary)
+                ?: "?"
+          } else
+            "?"
+
+          interactionDialog(keyText, textResources, interactable, deck.primaryModes[character.canInteractWith]?.mode)
+        } else
           null,
         playerStats(world, player, debugInfo, accessories),
         if (notifications.any()) notificationsFlower(notifications) else null,

@@ -2,6 +2,8 @@
 "graph" : [
 ["book","",""],
 ["book","mesh","book"],
+["book","interaction","read"],
+["book","onInteract","devotion"],
 ["bounds","parent","book"],
 ["bounds","type","solid-box"],
 ["bounds","scale",[0.18716992,0.28848964,0.04449739]]

@@ -18,10 +18,17 @@ fun castInteractableRay(dynamicsWorld: btDiscreteDynamicsWorld, deck: Deck, play
   val callback = firstRayHit(dynamicsWorld, start, end, CollisionGroups.tangibleMask)
   return if (callback != null) {
     val id = callback.collisionObject as? Id
-    if (deck.interactables.containsKey(id))
-      id
-    else
+    if (id == null)
       null
+    else if (deck.interactables.containsKey(id))
+      id
+    else {
+      val parent = deck.bodies[id]?.parent
+      if (parent != null && deck.interactables.containsKey(parent)) {
+        parent
+      } else
+        null
+    }
   } else
     null
 }

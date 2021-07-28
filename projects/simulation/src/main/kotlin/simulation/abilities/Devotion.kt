@@ -15,7 +15,6 @@ fun eventsFromDevotion(world: World): (Interaction, Id) -> Events = { _, actor -
   if (character == null)
     listOf()
   else {
-
     val gainedSanity = max(0, maxSanity - character.sanity)
     val flatExpense = 20
     val timeExpense = gainedSanity / 10

@@ -1,12 +1,10 @@
 package marloth.definition.data
 
-import marloth.scenery.enums.DevText
-import simulation.entities.Interactable
-import simulation.entities.Interactions
+import simulation.entities.InteractionActions
 
 val interactionLabels = mapOf(
-    Interactions.sleep to "Sleep",
-    Interactions.take to "Take",
+    InteractionActions.sleep to "Sleep",
+    InteractionActions.take to "Take",
 )
 
 //fun newInteraction(type: String) =

@@ -74,7 +74,7 @@ fun guiLayout(definitions: Definitions, options: AppOptions, clientState: Client
               debugInfo: List<String>): Flower {
   val state = clientState.guiStates[player]
   return compose(listOfNotNull(
-      if (world != null) hudLayout(definitions.textLibrary, world, clientState, player, debugInfo, state?.view) else null,
+      if (world != null) hudLayout(definitions.textLibrary, world, options, clientState, player, debugInfo, state?.view) else null,
       if (state != null) {
         val stateFlower = viewSelect(world, options, clientState, state.view, player)
         if (stateFlower != null)

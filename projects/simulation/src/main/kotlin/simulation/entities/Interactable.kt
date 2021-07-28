@@ -4,10 +4,18 @@ import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
-import simulation.characters.Character
 import simulation.main.Deck
 
-object Interactions {
+object InteractionActions {
+  val close = "close"
+  val open = "open"
+  val openClose = "openClose"
+  val sleep = "sleep"
+  val read = "read"
+  val take = "take"
+}
+
+object InteractionBehaviors {
   val close = "close"
   val open = "open"
   val openClose = "openClose"
@@ -17,7 +25,8 @@ object Interactions {
 }
 
 data class Interactable(
-    val type: String,
+    val action: String,
+    val onInteract: String,
 )
 
 private const val interactableMaxDistance = 5f
@@ -30,9 +39,9 @@ data class Interaction(
 
 fun getInteractionCommandType(interactionType: String?, mode: String?): String? =
     when (interactionType) {
-      Interactions.openClose -> when (mode) {
-        DoorMode.open -> Interactions.close
-        DoorMode.closed -> Interactions.open
+      InteractionActions.openClose -> when (mode) {
+        DoorMode.open -> InteractionActions.close
+        DoorMode.closed -> InteractionActions.open
         else -> null
       }
       else -> interactionType
@@ -43,7 +52,7 @@ fun gatherInteractionEvents(deck: Deck, commands: Commands): Events {
     if (commands.any { it.type == CharacterCommands.interactPrimary && it.target == player }) {
       val target = deck.characters[player]?.canInteractWith
       val interaction = deck.interactables[target]
-      val commandType = getInteractionCommandType(interaction?.type, deck.primaryModes[target]?.mode)
+      val commandType = getInteractionCommandType(interaction?.onInteract, deck.primaryModes[target]?.mode)
       if (commandType != null && target != null)
         Interaction(
             type = commandType,

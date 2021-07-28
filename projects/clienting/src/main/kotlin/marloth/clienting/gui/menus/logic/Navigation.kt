@@ -6,9 +6,7 @@ import marloth.clienting.gui.GuiState
 import marloth.clienting.gui.ViewId
 import marloth.clienting.input.GuiCommandType
 import silentorb.mythic.bloom.OffsetBox
-import silentorb.mythic.bloom.menuItemIndexKey
 import silentorb.mythic.ent.Id
-import silentorb.mythic.ent.firstNotNull
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.handleCommands
 import simulation.main.Deck
@@ -53,7 +51,7 @@ fun getInteractionCommands(deck: Deck?, player: Id): Commands =
     else {
       val interactingWith = deck.characters[player]?.interactingWith
       val interaction = deck.interactables[interactingWith]
-      when (interaction?.type) {
+      when (interaction?.action) {
 //        ClientCommand.showConversationView -> listOf(Command(type = ClientEventType.navigate, target = player, value = ViewId.conversation))
         else -> listOf()
       }

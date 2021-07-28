@@ -5,6 +5,7 @@
 ["child","translation",[0.6,0.0,1.0]],
 ["child","collisionShape","box"],
 ["wood-door","interaction","openClose"],
+["wood-door","onInteract","openClose"],
 ["wood-door","mode","closed"],
 ["wood-door","modeType","door"],
 ["wood-door","collisionGroups",2],

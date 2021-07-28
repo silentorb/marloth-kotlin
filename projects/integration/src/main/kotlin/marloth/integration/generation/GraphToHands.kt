@@ -55,11 +55,20 @@ fun getPrimaryMode(graph: Graph, node: Key): PrimaryMode? {
     null
 }
 
-fun getNodeInteractions(graph: Graph, node: Key): List<Any> =
-    getNodeValues<String>(graph, node, GameProperties.interaction)
-        .map { type ->
-          Interactable(type = type)
-        }
+fun getNodeInteractions(graph: Graph, node: Key): Interactable? {
+  val action = getNodeValue<String>(graph, node, GameProperties.interaction)
+  return if (action != null) {
+    val onInteract = getNodeValue<String>(graph, node, GameProperties.onInteract)
+    if (onInteract != null)
+      Interactable(
+          action = action,
+          onInteract = onInteract,
+      )
+    else
+      null
+  } else
+    null
+}
 
 fun getNodeItemType(graph: Graph, node: Key): Accessory? {
   val itemType = getNodeValue<String>(graph, node, GameProperties.itemType)
@@ -106,7 +115,8 @@ fun graphToHands(resourceInfo: ResourceInfo, nextId: IdSource, graph: Graph, key
               getNodeCollisionObject(resourceInfo.meshShapes, graph, node),
               getNodeItemType(graph, node),
               getPrimaryMode(graph, node),
-          ) + getNodeInteractions(graph, node)
+              getNodeInteractions(graph, node),
+          )
 
         if (components.any())
           node to NewHand(

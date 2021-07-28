@@ -59,11 +59,11 @@ fun eventsFromEvents(world: World, freedomTable: FreedomTable, events: Events): 
   return listOf(
       mapEvents(eventsFromTryAction(world, freedomTable)),
       mapEvents(onAttack(toSpatialCombatWorld(world))),
-      mapInteractions(Interactions.take, eventsFromItemPickup(world)),
-      mapInteractions(Interactions.sleep, eventsFromSleep(world)),
-      mapInteractions(Interactions.devotion, eventsFromDevotion(world)),
-      mapInteractions(Interactions.open, eventsFromDoorOpening(world)),
-      mapInteractions(Interactions.close, eventsFromDoorClosing(world)),
+      mapInteractions(InteractionBehaviors.take, eventsFromItemPickup(world)),
+      mapInteractions(InteractionBehaviors.sleep, eventsFromSleep(world)),
+      mapInteractions(InteractionBehaviors.devotion, eventsFromDevotion(world)),
+      mapInteractions(InteractionBehaviors.open, eventsFromDoorOpening(world)),
+      mapInteractions(InteractionBehaviors.close, eventsFromDoorClosing(world)),
   )
       .fold(events) { a, b -> a + b(a) }
       .plus(characterMovementEvents)

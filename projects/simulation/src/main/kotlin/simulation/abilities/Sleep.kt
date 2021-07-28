@@ -6,7 +6,7 @@ import silentorb.mythic.happenings.Events
 import simulation.combat.general.ModifyResource
 import simulation.combat.general.ResourceTypes
 import simulation.entities.Interaction
-import simulation.entities.Interactions
+import simulation.entities.InteractionActions
 import simulation.main.World
 import kotlin.math.max
 
@@ -37,7 +37,7 @@ fun eventsFromSleep(world: World): (Interaction, Id) -> Events = { _, actor ->
 }
 
 fun nextCommandsFromSleep(events: Events): Commands =
-    if (events.filterIsInstance<Interaction>().any { it.type == Interactions.sleep })
+    if (events.filterIsInstance<Interaction>().any { it.type == InteractionActions.sleep })
       listOf(
 //          Command(
 //              type = CharacterCommands.nextWorld,
