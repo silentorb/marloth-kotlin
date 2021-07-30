@@ -9,6 +9,7 @@ object Accessories {
     val apple = "apple"
     val apple2 = "apple2"
     val apple3 = "apple3"
+    val berries = "berries"
     val cancelShadowSpirit = "cancelShadowSpirit"
     val shadowSpirit = "shadowSpirit"
 }

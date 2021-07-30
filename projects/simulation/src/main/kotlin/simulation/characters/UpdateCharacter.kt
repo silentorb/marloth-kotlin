@@ -17,6 +17,7 @@ import simulation.accessorize.updateUtilityItem
 import simulation.combat.general.ResourceTypes
 import simulation.combat.general.modifyResourceWithEvents
 import simulation.entities.ContractCommands
+import simulation.entities.canInteractWith
 import simulation.entities.updateAvailableContracts
 import simulation.main.Deck
 import simulation.misc.*
@@ -88,9 +89,13 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
   val rig = deck.characterRigs[actor]!!
   val position = body.position
   val isAlive = isAlive(destructible.health, character, position)
-  val canInteractWith = if (deck.players.containsKey(actor))
-    castInteractableRay(bulletState.dynamicsWorld, deck, actor)
-  else
+  val canInteractWith = if (deck.players.containsKey(actor)) {
+    val hit = castInteractableRay(bulletState.dynamicsWorld, deck, actor)
+    if (hit != null && canInteractWith(deck, hit))
+      hit
+    else
+      null
+  } else
     null
 
   val shadowSpirit = getShadowSpirit(deck, actor)

@@ -11,6 +11,8 @@ object Textures {
   val cobblestone = "cobblestone"
   val diamondTiles = "diamondTiles"
   val grass = "grass"
+  val leafBerries = "leafBerries"
+  val leafFloor = "leafFloor"
   val loadingClock = "loadingClock"
   val longHand = "longHand"
   val perlinParticle = "perlinParticle"

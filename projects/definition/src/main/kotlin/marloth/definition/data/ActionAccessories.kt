@@ -204,6 +204,22 @@ fun actionAccessories(): ActionAccessoryMap = mapOf(
         ),
     ),
 
+    Accessories.berries to ActionAccessory(
+        accessory = AccessoryDefinition(
+            name = DevText("Berries"),
+            isConsumable = true,
+            pickupSound = Sounds.takePlant,
+            components = listOf(
+                Nutrient(
+                    value = 30
+                )
+            )
+        ),
+        action = ActionDefinition(
+            equipmentSlot = EquipmentSlot.utility
+        ),
+    ),
+
     Accessories.shadowSpirit to ActionAccessory(
         accessory = AccessoryDefinition(
             name = DevText("Shadow Spirit"),

@@ -8,7 +8,6 @@ import simulation.main.Deck
 
 object InteractionActions {
   val close = "close"
-  val harvest = "harvest"
   val open = "open"
   val openClose = "openClose"
   val sleep = "sleep"
@@ -48,6 +47,17 @@ fun getInteractionCommandType(interactionType: String?, mode: String?): String? 
       }
       else -> interactionType
     }
+
+fun canInteractWith(deck: Deck, item: Id): Boolean {
+  val interactable = deck.interactables[item]
+  return when (interactable?.onInteract) {
+    InteractionBehaviors.harvest -> {
+      val accessory = deck.accessories[item]
+      accessory?.quantity ?: 0 > 0
+    }
+    else -> true
+  }
+}
 
 fun gatherInteractionEvents(deck: Deck, commands: Commands): Events {
   return deck.players.keys.mapNotNull { player ->
