@@ -8,6 +8,7 @@ import simulation.main.Deck
 
 object InteractionActions {
   val close = "close"
+  val harvest = "harvest"
   val open = "open"
   val openClose = "openClose"
   val sleep = "sleep"
@@ -17,6 +18,7 @@ object InteractionActions {
 
 object InteractionBehaviors {
   val close = "close"
+  val harvest = "harvest"
   val open = "open"
   val openClose = "openClose"
   val sleep = "sleep"

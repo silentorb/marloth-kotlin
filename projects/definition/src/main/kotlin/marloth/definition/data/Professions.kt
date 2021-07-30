@@ -9,21 +9,21 @@ import simulation.characters.CharacterDefinition
 import simulation.entities.DepictionType
 
 object Professions {
-  val soldier = CharacterDefinition(
-      name = TextId.id_soldier,
-      health = 250,
-      accessories = listOf(AccessoryIdOld.shotgun),
-      depictionType = DepictionType.child,
-      deathSound = Sounds.girlScream,
-      money = 200,
-      runSpeed = 7f,
-      damageMultipliers = mapOf()
-  )
+//  val soldier = CharacterDefinition(
+//      name = TextId.id_soldier,
+//      health = 250,
+//      accessories = listOf(AccessoryIdOld.shotgun),
+//      depictionType = DepictionType.child,
+//      deathSound = Sounds.girlScream,
+//      money = 200,
+//      runSpeed = 7f,
+//      damageMultipliers = mapOf()
+//  )
 
   val magician = CharacterDefinition(
       name = TextId.id_magician,
       health = 200,
-      accessories = listOf(AccessoryIdOld.rocketLauncher, Accessories.shadowSpirit),
+      accessories = listOf(Accessories.shadowSpirit),
       depictionType = DepictionType.child,
       deathSound = Sounds.girlScream,
       damageMultipliers = mapOf(),
@@ -34,12 +34,23 @@ object Professions {
   val alchemist = CharacterDefinition(
       name = DevText("Alchemist"),
       health = 200,
-      accessories = listOf(AccessoryIdOld.grenadeLauncher, Accessories.shadowSpirit),
+      accessories = listOf(Accessories.shadowSpirit),
       depictionType = DepictionType.child,
       deathSound = Sounds.girlScream,
       damageMultipliers = mapOf(),
       money = 200,
       runSpeed = 6f
+  )
+
+  val gardener = CharacterDefinition(
+      name = DevText("Gardener"),
+      health = 250,
+      accessories = listOf(),
+      depictionType = DepictionType.child,
+      deathSound = Sounds.girlScream,
+      money = 200,
+      runSpeed = 7f,
+      damageMultipliers = mapOf()
   )
 }
 

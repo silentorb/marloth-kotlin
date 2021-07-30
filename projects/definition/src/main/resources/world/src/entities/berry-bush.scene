@@ -1,0 +1,18 @@
+{
+"graph" : [
+["berry-bush","type","distFood"],
+["berry-bush","type","distFloor"],
+["berry-bush","",""],
+["berry-bush","onInteract","harvest"],
+["berry-bush","interaction","harvest"],
+["berry-bush1","type","distFloor"],
+["berry-bush1","",""],
+["berry-bush1","mesh","berryBush"],
+["berry-bush1","collisionShape","sphere"],
+["berry-bush1","type","solid-static"],
+["berry-bush1","onInteract","harvest"],
+["berry-bush1","interaction","harvest"],
+["berry-bush1","parent","berry-bush"],
+["berry-bush1","translation",[0.0,0.0,0.42584395]]
+]
+}

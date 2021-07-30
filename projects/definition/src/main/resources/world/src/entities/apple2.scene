@@ -1,8 +1,6 @@
 {
 "graph" : [
 ["apple2","",""],
-["apple2","type","distFood"],
-["apple2","type","distFloor"],
 ["item","parent","apple2"],
 ["item","texture","arch"],
 ["item","mesh","key"],
