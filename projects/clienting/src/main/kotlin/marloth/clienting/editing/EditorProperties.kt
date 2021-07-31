@@ -1,10 +1,7 @@
 package marloth.clienting.editing
 
 import generation.architecture.biomes.Biomes
-import generation.general.CellDirection
-import generation.general.Direction
-import generation.general.StandardHeights
-import generation.general.directionNames
+import generation.general.*
 import imgui.ImGui
 import marloth.definition.misc.blockSides
 import silentorb.mythic.editing.*
@@ -66,7 +63,7 @@ val cellDirectionSerialization = Serialization(
 )
 
 val biomeIds = reflectProperties<String>(Biomes)
-val blockRotationOptions =  BlockRotations.values().associate { it to it.name }
+val blockRotationOptions = BlockRotations.values().associate { it to it.name }
 val blockRotationsWidget: PropertyWidget = labeledDropDownWidget { blockRotationOptions }
 val interactionIds = reflectProperties<String>(InteractionActions)
 
@@ -146,5 +143,10 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
         serialization = floatSerialization,
         widget = propertyDecimalTextField,
         defaultValue = { 20f },
+    ),
+    GameProperties.rarity to PropertyDefinition(
+        displayName = "Rarity",
+        widget = dropDownWidget { Rarity.values().indices.map { it + 1 } },
+        defaultValue = { 1 },
     ),
 ) + commonPropertyDefinitions()

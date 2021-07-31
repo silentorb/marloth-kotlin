@@ -115,6 +115,7 @@
 ["dungeon-complex","biome","dungeon"],
 ["dungeon-complex","blockRotations","all"],
 ["dungeon-complex","type","heteroBlock"],
+["dungeon-complex","rarity",3],
 ["floor","",""],
 ["floor","collisionMask",38],
 ["floor","collisionGroups",17],

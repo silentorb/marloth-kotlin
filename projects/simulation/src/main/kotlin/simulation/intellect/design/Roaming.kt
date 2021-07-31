@@ -10,16 +10,23 @@ import simulation.intellect.navigation.nearestPolygon
 import simulation.main.World
 
 fun startRoaming(world: World, actor: Id, knowledge: Knowledge): Vector3? {
-  val post = world.deck.spirits[actor]?.post
-  val body = world.deck.bodies[actor]
-  return if (post != null && body != null) {
+  val deck = world.deck
+  val post = deck.spirits[actor]?.post
+  val body = deck.bodies[actor]
+  return if (body != null) {
     val dice = world.dice
     val range = 5f
-    val target = post + Vector3(
+    val base = if (post != null)
+      post
+    else
+      dice.takeOne(deck.bodies.values).position
+
+    val target = base + Vector3(
         dice.getFloat(-range, range),
         dice.getFloat(-range, range),
         dice.getFloat(-range, range)
     )
+
     val polygon = nearestPolygon(world.navigation!!, target)
     if (polygon != null) {
       val point = fromRecastVector3(polygon.result.nearestPos)
@@ -44,7 +51,7 @@ fun updateRoamingTargetPosition(world: World, actor: Id, knowledge: Knowledge, p
     startRoaming(world, actor, knowledge)
   else {
     val body = world.deck.bodies[actor]!!
-    if (body.position.distance(pursuit.targetPosition) < 2f)
+    if (body.position.distance(pursuit.targetPosition) < 3f)
       startRoaming(world, actor, knowledge)
     else
       pursuit.targetPosition

@@ -2,6 +2,7 @@ package generation.general
 
 import generation.abstracted.GroupedBlocks
 import silentorb.mythic.randomly.Dice
+import silentorb.mythic.randomly.getAliasedIndex
 import silentorb.mythic.spatial.Vector3i
 import simulation.misc.BlockAttributes
 import simulation.misc.CellAttribute
@@ -71,13 +72,22 @@ fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock): (Block) -> V
 }
 
 fun matchBlock(dice: Dice, blocks: Set<Block>, getBlock: GetBlock, surroundingSides: SideMap): Pair<Vector3i, Block>? {
-  val shuffledBlocks = dice.shuffle(blocks)
-  for (block in shuffledBlocks) {
+  val options = blocks.mapNotNull { block ->
     val offset = checkBlockMatch(surroundingSides, getBlock)(block)
     if (offset != null)
-      return offset to block
+      offset to block
+    else
+      null
   }
-  return null
+  return if (options.none())
+    null
+  else {
+    val rarities = options.map { it.second.rarity }.distinct()
+    val rarityTable = newRarityTable(rarities)
+    val rarity = rarities[getAliasedIndex(rarityTable, dice)]
+    val rarityBlocks = options.filter { it.second.rarity == rarity }
+    dice.takeOne(rarityBlocks)
+  }
 }
 
 fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, grid: BlockGrid, location: Vector3i): Pair<Vector3i, Block>? {
@@ -96,7 +106,7 @@ fun fallbackBiomeMatchConnectingBlock(dice: Dice, biomeBlocks: Map<String, Group
   for (option in options) {
     val blocks = biomeBlocks[option]
     if (blocks != null) {
-     val result = matchConnectingBlock(dice, blocks.all, grid, location)
+      val result = matchConnectingBlock(dice, blocks.all, grid, location)
       if (result != null) {
         return result
       }

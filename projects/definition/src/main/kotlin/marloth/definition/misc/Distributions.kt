@@ -1,5 +1,6 @@
 package marloth.definition.misc
 
+import generation.general.Rarity
 import marloth.scenery.enums.CreatureId
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.debugging.getDebugString
@@ -16,16 +17,16 @@ enum class DistributionGroup {
 
 typealias DistributionMap = Map<DistributionGroup, Int>
 
-fun enemyDistributions(): Map<String, Int> =
+fun monsterDistributions(): Map<String, Rarity> =
     if (getDebugString("MONSTER_TYPE") != null)
       mapOf(
-          getDebugString("MONSTER_TYPE")!! to 1
+          getDebugString("MONSTER_TYPE")!! to Rarity.common
       )
     else
       mapOf(
-          CreatureId.hogMan to 4,
-          CreatureId.sentinel to 12,
-          CreatureId.hound to 8
+          CreatureId.hogMan to Rarity.rare,
+          CreatureId.sentinel to Rarity.uncommon,
+          CreatureId.hound to Rarity.common
       )
 
 fun scalingDistributions(): DistributionMap = mapOf(

@@ -149,6 +149,7 @@ fun blockFromGraph(graph: Graph, cells: Map<Vector3i, BlockCell>, root: String, 
                    biomes: Collection<String>,
                    heightOffset: Int): Block {
   val rotation = getNodeValue<BlockRotations>(graph, root, GameProperties.blockRotations)
+  val rarity = getNodeValue<Int>(graph, root, GameProperties.rarity)
   val traversable = getTraversable(cells)
   val blockAttributes = getNodesWithAttribute(graph, root).toSet()
   return Block(
@@ -160,6 +161,10 @@ fun blockFromGraph(graph: Graph, cells: Map<Vector3i, BlockCell>, root: String, 
       heightOffset = heightOffset,
       significantCellCount = traversable.size + interpolateTraversibleCellCount(traversable),
       attributes = blockAttributes,
+      rarity = if (rarity != null)
+        Rarity.values()[rarity - 1]
+      else
+        Rarity.uncommon
   )
 }
 

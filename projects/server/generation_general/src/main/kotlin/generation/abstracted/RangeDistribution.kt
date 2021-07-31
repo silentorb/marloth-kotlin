@@ -1,5 +1,6 @@
 package generation.abstracted
 
+import generation.general.Rarity
 import silentorb.mythic.randomly.Dice
 
 // This assumes that there is no entry with a weight of zero
@@ -66,4 +67,22 @@ fun <T> distributeToSlots(dice: Dice, slotCount: Int, scaling: Map<T, Int>, fixe
         (1..count).map { key }
       })
   return dice.shuffle(pool)
+}
+
+fun <T> distributeToRaritySlots(dice: Dice, slotCount: Int, scaling: Map<T, Rarity>): List<T> {
+  val rarities = scaling.values
+      .distinct()
+      .sortedByDescending { it.probability }
+
+  val rarityTotal = rarities.sumBy { it.probability }
+
+  val distribution = rarities
+      .flatMap { rarity ->
+        val raritySize = slotCount * rarity.probability / rarityTotal
+        val rarityPool = scaling.filter { it.value == rarity }.keys
+        (0 until raritySize).map { dice.takeOne(rarityPool) }
+      }
+      .take(slotCount)
+
+  return dice.shuffle(distribution)
 }

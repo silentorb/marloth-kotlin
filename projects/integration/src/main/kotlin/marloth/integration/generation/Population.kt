@@ -1,9 +1,9 @@
 package marloth.integration.generation
 
-import generation.abstracted.distributeToSlots
+import generation.abstracted.distributeToRaritySlots
 import generation.architecture.engine.GenerationConfig
 import marloth.clienting.editing.biomeIds
-import marloth.definition.misc.enemyDistributions
+import marloth.definition.misc.monsterDistributions
 import marloth.definition.misc.monsterLimit
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.Graph
@@ -63,7 +63,7 @@ fun placeMonster(definitions: Definitions, dice: Dice, definition: CharacterDefi
   return newCharacter(nextId, definitions, definition2, transform, Factions.monsters)
       .plusComponents(
           Spirit(
-              post = transform.translation(),
+//              post = transform.translation(),
               attributes = setOf(SpiritAttributes.isAggressive)
           ),
           newKnowledge()
@@ -75,7 +75,7 @@ fun populateNewMonsters(definitions: Definitions, locations: List<Matrix>, nextI
   return if (locations.none())
     listOf()
   else {
-    val distributions = distributeToSlots(dice, locations.size, enemyDistributions(), mapOf())
+    val distributions = distributeToRaritySlots(dice, locations.size, monsterDistributions())
     locations
         .zip(distributions) { transform, definitionName ->
           val definition = definitions.professions[definitionName]!!

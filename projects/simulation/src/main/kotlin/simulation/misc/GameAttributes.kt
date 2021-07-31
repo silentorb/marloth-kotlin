@@ -61,6 +61,7 @@ object GameProperties {
   const val itemType = "itemType"
   const val modeType = "modeType"
   const val mode = "mode"
+  const val rarity = "rarity"
 
   const val mass = "mass"
 //  const val resistance = "resistance"
