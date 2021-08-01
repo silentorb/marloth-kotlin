@@ -10,11 +10,16 @@ data class GameConfig(
     val placeholder: Boolean = true
 )
 
+data class UiOptions(
+    val showHud: Boolean = true,
+)
+
 data class AppOptions(
     val audio: AudioConfig = AudioConfig(),
     val display: DisplayOptions = DisplayOptions(),
     val game: GameConfig = GameConfig(),
-    val input: InputOptions = InputOptions()
+    val input: InputOptions = InputOptions(),
+    val ui: UiOptions = UiOptions(),
 )
 
 const val gameConfigFile = "gameConfig.yaml"

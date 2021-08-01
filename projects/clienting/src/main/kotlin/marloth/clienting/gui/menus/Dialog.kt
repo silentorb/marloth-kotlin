@@ -6,7 +6,6 @@ import marloth.clienting.gui.hud.versionDisplay
 import marloth.clienting.gui.menuBackground
 import marloth.clienting.gui.menus.general.addMenuItemInteractivity
 import marloth.clienting.gui.menus.general.faintBlack
-import marloth.clienting.gui.menus.general.fieldWrapper
 import marloth.clienting.resources.UiTextures
 import marloth.scenery.enums.Text
 import silentorb.mythic.bloom.*
@@ -56,16 +55,19 @@ fun spadeDepiction() =
       )
     }
 
-fun titleBar(title: Box): Flower =
+fun titleBar(title: Box, showBackButton: Boolean = true): Flower =
     flowerList(verticalPlane)(
         listOf(
             alignSingleFlower(centered, horizontalPlane,
-                flowerList(horizontalPlane, 10)(
-                    listOf(
-                        spadeDepiction(),
-                        title.toFlower()
-                    )
-                )
+                if (showBackButton)
+                  flowerList(horizontalPlane, 10)(
+                      listOf(
+                          spadeDepiction(),
+                          title.toFlower()
+                      )
+                  )
+                else
+                  title.toFlower()
             ),
             flowerMargin(all = 0, left = 30, right = 30)(
                 horizontalLine
@@ -86,14 +88,19 @@ fun dialogContentFlower(title: Box): (Flower) -> Flower = { flower ->
   }
 }
 
-fun dialogContent(title: Box): (Box) -> Flower = { box ->
-  { seed ->
+fun dialogContent(box: Box) =
     boxMargin(20)(
+        box
+    ).copy(depiction = menuBackground)
+
+fun dialogContentWithTitle(title: Flower): (Box) -> Flower = { box ->
+  { seed ->
+    dialogContent(
         boxList(verticalPlane, 20,
-            titleBar(title)(seed.copy(dimensions = box.dimensions)),
+            title(seed.copy(dimensions = box.dimensions)),
             box
         )
-    ).copy(depiction = menuBackground)
+    )
   }
 }
 
@@ -101,7 +108,7 @@ fun dialogTitle(text: String) =
     label(TextStyles.mediumSemiBlackBold, text)
 
 fun dialog(title: Box): WildFlower = { box ->
-  dialogContent(title)(box)
+  dialogContentWithTitle(titleBar(title))(box)
 }
 
 fun dialog(title: String): WildFlower =
@@ -109,7 +116,7 @@ fun dialog(title: String): WildFlower =
 
 fun dialog(definitions: Definitions, title: Text, box: Box): Flower {
   val titleBox = dialogTitle(definitions.textLibrary(title))
-  return dialogContent(titleBox)(box)
+  return dialogContentWithTitle(titleBar(titleBox))(box)
 }
 
 fun dialogSurroundings(definitions: Definitions) =

@@ -1,7 +1,7 @@
 package marloth.clienting.gui
 
 import marloth.clienting.*
-import marloth.clienting.gui.hud.hudLayout
+import marloth.clienting.gui.hud.overlayLayout
 import marloth.clienting.gui.menus.*
 import marloth.clienting.gui.menus.general.newSimpleMenuItem
 import silentorb.mythic.bloom.menuItemIndexKey
@@ -74,7 +74,11 @@ fun guiLayout(definitions: Definitions, options: AppOptions, clientState: Client
               debugInfo: List<String>): Flower {
   val state = clientState.guiStates[player]
   return compose(listOfNotNull(
-      if (world != null) hudLayout(definitions.textLibrary, world, options, clientState, player, debugInfo, state?.view) else null,
+      if (world != null)
+        overlayLayout(definitions.textLibrary, world, options, clientState, player, debugInfo, state?.view)
+      else
+        null,
+
       if (state != null) {
         val stateFlower = viewSelect(world, options, clientState, state.view, player)
         if (stateFlower != null)

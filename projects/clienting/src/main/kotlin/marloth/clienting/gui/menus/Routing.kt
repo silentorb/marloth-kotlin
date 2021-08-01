@@ -23,7 +23,7 @@ fun viewSelect(world: World?, options: AppOptions, clientState: ClientState, vie
     ViewId.audioOptions -> emptyViewFlower
     ViewId.dev -> devView()
     ViewId.displayChangeConfirmation -> displayChangeConfirmationFlower
-    ViewId.displayOptions -> displayOptionsFlower(clientState)
+    ViewId.displayOptions -> displayOptionsFlower(clientState, options)
     ViewId.gamepadOptions -> emptyViewFlower
     ViewId.inputBindings -> inputBindingsFlower(options.input)
     ViewId.inputOptions -> inputOptionsMenu

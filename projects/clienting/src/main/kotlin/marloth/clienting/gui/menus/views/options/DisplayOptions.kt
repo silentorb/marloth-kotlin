@@ -1,16 +1,15 @@
 package marloth.clienting.gui.menus.views.options
 
+import marloth.clienting.AppOptions
 import marloth.clienting.ClientEventType
 import marloth.clienting.ClientState
 import marloth.clienting.gui.StateFlower
 import marloth.clienting.gui.menus.*
-import marloth.clienting.gui.menus.general.forms.clientEventSpinHandlers
-import marloth.clienting.gui.menus.general.forms.menuField
-import marloth.clienting.gui.menus.general.forms.spinField
 import marloth.clienting.gui.menus.general.MenuItem
 import marloth.clienting.gui.menus.general.MenuItemFlower
-import marloth.clienting.gui.menus.general.forms.cycle
+import marloth.clienting.gui.menus.general.forms.*
 import marloth.clienting.gui.menus.general.menuFlower
+import marloth.scenery.enums.DevText
 import marloth.scenery.enums.Text
 import marloth.scenery.enums.TextId
 import marloth.scenery.enums.TextResourceMapper
@@ -83,16 +82,17 @@ fun resolutionField(textLibrary: TextResourceMapper, displayModes: List<DisplayM
   )
 }
 
-fun displayOptionsFlower(clientState: ClientState): StateFlower =
+fun displayOptionsFlower(clientState: ClientState, options: AppOptions): StateFlower =
     dialogWrapperWithExtras { definitions, state ->
       val textLibrary = definitions.textLibrary
-      val options = state.displayChange?.options
-      if (options == null)
+      val displayChangeOptions = state.displayChange?.options
+      if (displayChangeOptions == null)
         emptyFlower
       else {
         menuFlower(TextId.gui_displayOptions, listOf(
-            windowModeField(textLibrary, options.windowMode),
-            resolutionField(textLibrary, clientState.displayModes, options),
+            toggleOptionField(options, textLibrary(DevText("Show HUD")), "ui.showHud"),
+            windowModeField(textLibrary, displayChangeOptions.windowMode),
+            resolutionField(textLibrary, clientState.displayModes, displayChangeOptions),
         ))(definitions, state)
       }
     }

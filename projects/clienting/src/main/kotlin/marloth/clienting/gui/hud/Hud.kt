@@ -177,99 +177,116 @@ fun interactionDialog(primaryInteractText: String, textResources: TextResources,
   }
 }
 
-fun hudLayout(textResources: TextResources, world: World, options: AppOptions, clientState: ClientState, player: Id,
-              debugInfo: List<String>, view: ViewId?): Flower? {
+fun hudLayout(textResources: TextResources, world: World, clientState: ClientState, player: Id,
+              debugInfo: List<String>): List<Flower> {
+  val deck = world.deck
+  val definitions = world.definitions
+  val character = deck.characters[player]!!
+  val characterRig = deck.characterRigs[player]
+  val body = deck.bodies[player]!!
+  val accessories = deck.accessories
+      .filter { it.value.owner == player }
+
+  val cooldowns = accessories
+      .mapNotNull { (accessory, accessoryRecord) ->
+        val cooldown = deck.actions[accessory]?.cooldown
+        if (cooldown != null && cooldown != 0f) {
+          val accessoryDefinition = definitions.accessories[accessoryRecord.type]
+          val definitionCooldown = definitions.actions[accessoryRecord.type]?.cooldown
+          if (accessoryDefinition != null && definitionCooldown != null)
+            Cooldown(
+                name = textResources(accessoryDefinition.name)!!,
+                value = 1f - cooldown / definitionCooldown,
+            )
+          else
+            null
+        } else
+          null
+      }
+      .plus(
+          accessories
+              .mapNotNull { (id, accessory) ->
+                val timer = deck.timersFloat[id]
+                if (timer != null) {
+                  val definition = definitions.accessories[accessory.type]
+                  if (definition != null)
+                    Cooldown(
+                        name = textResources(definition.name)!!,
+                        value = 1f - timer.duration / timer.original
+                    )
+                  else
+                    null
+                } else
+                  null
+              }
+      )
+
+  val viewMode = characterRig?.viewMode ?: ViewMode.firstPerson
+  val debugInfo = listOfNotNull(
+//            "LR: ${floatToRoundedString(lightRating(deck, player))}",
+      if (getDebugBoolean("HUD_DRAW_PLAYER_VELOCITY")) "Velocity: ${floatToRoundedString(body.velocity.length())}" else null,
+      if (getDebugBoolean("HUD_DRAW_CELL_LOCATION"))
+        "${body.position.x.toInt() / 5} ${body.position.y.toInt() / 5} ${body.position.z.toInt() / 5}"
+      else
+        null,
+      if (getDebugBoolean("HUD_DRAW_PLAYER_ROTATION"))
+        "${characterRig?.facingRotation?.x} ${characterRig?.facingRotation?.y}"
+      else
+        null,
+//            floatToRoundedString(deck.thirdPersonRigs[player]!!.rotation.x)
+//            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()
+//        if (getDebugString() != "") getDebugString() else null,
+      if (getDebugBoolean("HUD_DRAW_LOCATION"))
+        "${floatToRoundedString(body.position.x)} ${floatToRoundedString(body.position.y)} ${floatToRoundedString(body.position.z)}"
+      else
+        null,
+      if (getDebugBoolean("HUD_DRAW_MOUSE_LOCATION"))
+        clientState.input.deviceStates.first().mousePosition.toString()
+      else
+        null,
+      if (characterRig != null && getDebugBoolean("HUD_DRAW_GROUNDED"))
+        if (isGrounded(characterRig)) "Grounded" else "Air"
+      else
+        null,
+      if (getDebugBoolean("HUD_DRAW_GROUND_DISTANCE"))
+        characterRig?.groundDistance?.toString() ?: "?"
+      else
+        null,
+      if (getDebugBoolean("HUD_DRAW_GPU_RENDER_TIME")) {
+        val time = getGpuTime()
+        "GPU: " + String.format("%,d", time).padStart(14, ' ')
+      } else
+        null,
+  ) + debugInfo +
+      getDebugOverrides()
+          .map { (key, value) -> "$key: $value" }
+
+  return listOfNotNull(
+      playerStats(world, player, debugInfo, accessories),
+      if (cooldowns.any()) cooldownIndicatorPlacement(cooldowns) else null,
+      if (viewMode == ViewMode.firstPerson && character.isAlive) reticlePlacement() else null,
+  )
+}
+
+fun overlayLayout(textResources: TextResources, world: World, options: AppOptions, clientState: ClientState, player: Id,
+                  debugInfo: List<String>, view: ViewId?): Flower? {
   val deck = world.deck
   val definitions = world.definitions
   val guiState = clientState.guiStates[player]
   val notifications = guiState?.notifications ?: listOf()
   val character = deck.characters[player]
-  val characterRig = deck.characterRigs[player]
+
   return if (character == null || guiState == null)
     null
   else {
-    val body = deck.bodies[player]!!
-
-    val accessories = deck.accessories
-        .filter { it.value.owner == player }
-
     val interactable = if (view == null && character.isAlive)
       deck.interactables[character.canInteractWith]
     else null
 
-    val cooldowns = accessories
-        .mapNotNull { (accessory, accessoryRecord) ->
-          val cooldown = deck.actions[accessory]?.cooldown
-          if (cooldown != null && cooldown != 0f) {
-            val accessoryDefinition = definitions.accessories[accessoryRecord.type]
-            val definitionCooldown = definitions.actions[accessoryRecord.type]?.cooldown
-            if (accessoryDefinition != null && definitionCooldown != null)
-              Cooldown(
-                  name = textResources(accessoryDefinition.name)!!,
-                  value = 1f - cooldown / definitionCooldown,
-              )
-            else
-              null
-          } else
-            null
-        }
-        .plus(
-            accessories
-                .mapNotNull { (id, accessory) ->
-                  val timer = deck.timersFloat[id]
-                  if (timer != null) {
-                    val definition = definitions.accessories[accessory.type]
-                    if (definition != null)
-                      Cooldown(
-                          name = textResources(definition.name)!!,
-                          value = 1f - timer.duration / timer.original
-                      )
-                    else
-                      null
-                  } else
-                    null
-                }
-        )
-
-    val viewMode = characterRig?.viewMode ?: ViewMode.firstPerson
-    val debugInfo = listOfNotNull(
-//            "LR: ${floatToRoundedString(lightRating(deck, player))}",
-        if (getDebugBoolean("HUD_DRAW_PLAYER_VELOCITY")) "Velocity: ${floatToRoundedString(body.velocity.length())}" else null,
-        if (getDebugBoolean("HUD_DRAW_CELL_LOCATION"))
-          "${body.position.x.toInt() / 5} ${body.position.y.toInt() / 5} ${body.position.z.toInt() / 5}"
-        else
-          null,
-        if (getDebugBoolean("HUD_DRAW_PLAYER_ROTATION"))
-          "${characterRig?.facingRotation?.x} ${characterRig?.facingRotation?.y}"
-        else
-          null,
-//            floatToRoundedString(deck.thirdPersonRigs[player]!!.rotation.x)
-//            deck.characterRigs[player]!!.hoverCamera!!.pitch.toString()
-//        if (getDebugString() != "") getDebugString() else null,
-        if (getDebugBoolean("HUD_DRAW_LOCATION"))
-          "${floatToRoundedString(body.position.x)} ${floatToRoundedString(body.position.y)} ${floatToRoundedString(body.position.z)}"
-        else
-          null,
-        if (getDebugBoolean("HUD_DRAW_MOUSE_LOCATION"))
-          clientState.input.deviceStates.first().mousePosition.toString()
-        else
-          null,
-        if (characterRig != null && getDebugBoolean("HUD_DRAW_GROUNDED"))
-          if (isGrounded(characterRig)) "Grounded" else "Air"
-        else
-          null,
-        if (getDebugBoolean("HUD_DRAW_GROUND_DISTANCE"))
-          characterRig?.groundDistance?.toString() ?: "?"
-        else
-          null,
-        if (getDebugBoolean("HUD_DRAW_GPU_RENDER_TIME")) {
-          val time = getGpuTime()
-          "GPU: " + String.format("%,d", time).padStart(14, ' ')
-        } else
-          null,
-    ) + debugInfo +
-        getDebugOverrides()
-            .map { (key, value) -> "$key: $value" }
+    val hud = if (options.ui.showHud)
+      hudLayout(textResources, world, clientState, player, debugInfo)
+    else
+      listOf()
 
     compose(listOfNotNull(
         if (interactable != null) {
@@ -288,10 +305,9 @@ fun hudLayout(textResources: TextResources, world: World, options: AppOptions, c
           interactionDialog(keyText, textResources, interactable, deck.primaryModes[character.canInteractWith]?.mode)
         } else
           null,
-        playerStats(world, player, debugInfo, accessories),
+
         if (notifications.any()) notificationsFlower(notifications) else null,
-        if (cooldowns.any()) cooldownIndicatorPlacement(cooldowns) else null,
-        if (viewMode == ViewMode.firstPerson && character.isAlive) reticlePlacement() else null,
-    ))
+
+        ).plus(hud))
   }
 }

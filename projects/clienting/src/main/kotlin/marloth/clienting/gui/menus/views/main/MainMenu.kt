@@ -22,5 +22,5 @@ fun mainMenuItems(isGameActive: Boolean): List<SimpleMenuItem> = listOfNotNull(
 
 fun mainMenu(world: World?) =
     dialogWrapperWithExtras(
-        simpleMenuFlower(TextId.gui_mainMenu, mainMenuItems(gameIsActive(world)))
+        simpleMenuFlower(TextId.gui_mainMenu, mainMenuItems(gameIsActive(world)), false)
     )

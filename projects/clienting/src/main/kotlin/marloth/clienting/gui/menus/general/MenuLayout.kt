@@ -2,10 +2,8 @@ package marloth.clienting.gui.menus.general
 
 import marloth.clienting.gui.EventUnion
 import marloth.clienting.gui.StateFlower
-import marloth.clienting.gui.menus.TextStyles
-import marloth.clienting.gui.menus.black
-import marloth.clienting.gui.menus.dialogContent
-import marloth.clienting.gui.menus.dialogTitle
+import marloth.clienting.gui.menus.*
+import marloth.clienting.gui.menus.general.menuFlower
 import silentorb.mythic.bloom.menuItemIndexKey
 import marloth.clienting.gui.menus.logic.menuLengthKey
 import marloth.clienting.gui.menus.logic.onActivateKey
@@ -132,12 +130,16 @@ fun menuFlower(menu: Menu, focusIndex: Int, minWidth: Int): Box {
 
 val faintBlack = black.copy(w = 0.6f)
 
-fun menuFlower(title: Box, menu: Menu): StateFlower = { definitions, state ->
-  dialogContent(title)(menuFlower(menu, state.menuFocusIndex, title.dimensions.x + 100))
+fun menuFlower(title: Box, menu: Menu, showBackButton: Boolean = true): StateFlower = { definitions, state ->
+  dialogContentWithTitle(titleBar(title, showBackButton))(menuFlower(menu, state.menuFocusIndex, title.dimensions.x + 100))
 }
 
-fun menuFlower(title: Text, menu: Menu): StateFlower = { definitions, state ->
-  menuFlower(dialogTitle(definitions.textLibrary(title)), menu)(definitions, state)
+fun menuFlower(title: Text, menu: Menu, showBackButton: Boolean = true): StateFlower = { definitions, state ->
+  menuFlower(dialogTitle(definitions.textLibrary(title)), menu, showBackButton)(definitions, state)
+}
+
+fun menuFlower(menu: Menu): StateFlower = { definitions, state ->
+  dialogContent(menuFlower(menu, state.menuFocusIndex, 0)).toFlower()
 }
 
 fun convertSimpleMenu(definitions: Definitions, source: List<SimpleMenuItem>): Menu =
@@ -148,7 +150,7 @@ fun convertSimpleMenu(definitions: Definitions, source: List<SimpleMenuItem>): M
       )
     }
 
-fun simpleMenuFlower(title: Text, source: List<SimpleMenuItem>): StateFlower = { definitions, state ->
+fun simpleMenuFlower(title: Text, source: List<SimpleMenuItem>, showBackButton: Boolean = true): StateFlower = { definitions, state ->
   val menu = convertSimpleMenu(definitions, source)
-  menuFlower(title, menu)(definitions, state)
+  menuFlower(title, menu, showBackButton)(definitions, state)
 }

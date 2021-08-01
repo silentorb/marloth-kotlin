@@ -30,7 +30,7 @@ val displayChangeConfirmationFlower: StateFlower =
           ),
       ), state.menuFocusIndex, title.dimensions.x)
 
-      dialogContent(title)(
+      dialogContentWithTitle(titleBar(title))(
           boxList(verticalPlane)(
               listOf(
                   menuBox,

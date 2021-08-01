@@ -13,6 +13,7 @@ object ClientEventType {
   val setStagingWindowMode = "setStagingWindowMode"
   val setStagingWindowedResolution = "setStagingWindowedResolution"
   val setStagingFullscreenResolution = "setStagingFullscreenResolution"
+  val setOption = "SetOption"
 
   // Display Options Workflow
   val saveDisplayChange = "saveDisplayChange"
