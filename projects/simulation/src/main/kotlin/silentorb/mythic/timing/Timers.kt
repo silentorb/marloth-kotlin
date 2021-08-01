@@ -1,10 +1,14 @@
 package silentorb.mythic.timing
 
 import silentorb.mythic.ent.*
+import silentorb.mythic.happenings.Events
+import simulation.main.Deck
+import simulation.main.NewHand
+import simulation.updating.simulationDelta
 
 data class IntTimer(
     val duration: Int,
-    val interval: Int
+    val interval: Int,
 )
 
 val updateTimer: (IntTimer) -> IntTimer = { timer ->
@@ -15,7 +19,8 @@ val updateTimer: (IntTimer) -> IntTimer = { timer ->
 
 data class FloatTimer(
     val duration: Float,
-    val original: Float = duration
+    val original: Float = duration,
+    val onFinished: Events = listOf(),
 )
 
 fun updateFloatTimer(delta: Float): (FloatTimer) -> FloatTimer = { timer ->
@@ -36,3 +41,8 @@ fun expiredTimers(timersFloat: Table<FloatTimer>, timersInt: Table<IntTimer>): S
                 .filter { it.value.duration < 0 }
                 .keys
         )
+
+fun eventsFromTimers(deck: Deck): Events =
+    deck.timersFloat
+        .filter { it.value.duration - simulationDelta < 0f }
+        .flatMap { it.value.onFinished }

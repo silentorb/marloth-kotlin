@@ -12,6 +12,7 @@ import silentorb.mythic.performing.isPerforming
 import simulation.abilities.isEntangled
 import simulation.accessorize.Accessory
 import simulation.accessorize.hasAccessory
+import simulation.characters.CharacterActivity
 import simulation.happenings.canUseSimple
 import simulation.main.Deck
 
@@ -27,15 +28,24 @@ fun canUseMobility(deck: Deck): (Id) -> Boolean = { actor ->
 
 fun getFreedoms(deck: Deck): (Id) -> Freedoms = { actor ->
   val character = deck.characters[actor]
-  val disabled = hasAccessory(disableFreedomsBuff, deck.accessories, actor)
-  if (disabled || (character != null && !character.isAlive))
+  val activity = character?.activity
+  if (character == null ||
+      activity == CharacterActivity.startingAbsence ||
+      activity == CharacterActivity.sleeping ||
+      activity == CharacterActivity.finishingAbsence
+  )
     Freedom.none
   else {
-    val isPerforming = isPerforming(deck.performances, actor)
-    val canWalk = /*!isPerforming && */ !isEntangled(deck.accessories, actor) && (!getDebugBoolean("ENABLE_MOBILITY") || hasMobilityModifier(deck.accessories, actor))
-    val walking = if (canWalk) Freedom.walking else Freedom.none
-    val acting = if (!isPerforming) Freedom.acting else Freedom.none
-    Freedom.orbiting or Freedom.turning or walking or acting
+    val disabled = hasAccessory(disableFreedomsBuff, deck.accessories, actor)
+    if (disabled || (!character.isAlive))
+      Freedom.none
+    else {
+      val isPerforming = isPerforming(deck.performances, actor)
+      val canWalk = /*!isPerforming && */ !isEntangled(deck.accessories, actor) && (!getDebugBoolean("ENABLE_MOBILITY") || hasMobilityModifier(deck.accessories, actor))
+      val walking = if (canWalk) Freedom.walking else Freedom.none
+      val acting = if (!isPerforming) Freedom.acting else Freedom.none
+      Freedom.orbiting or Freedom.turning or walking or acting
+    }
   }
 }
 

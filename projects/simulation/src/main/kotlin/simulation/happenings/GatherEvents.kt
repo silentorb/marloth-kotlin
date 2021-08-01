@@ -5,6 +5,7 @@ import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.happenings.filterCharacterCommandsFromEvents
+import silentorb.mythic.timing.eventsFromTimers
 import simulation.abilities.eventsFromShadowSpiritRemoval
 import simulation.abilities.nextCommandsFromSleep
 import simulation.combat.spatial.eventsFromMissiles
@@ -41,6 +42,7 @@ fun withSimulationEvents(definitions: Definitions, previousDeck: Deck, world: Wo
 
   val events = listOf(
       externalEvents,
+      eventsFromTimers(deck),
       eventsFromPerformances(definitions, deck),
       commandsToEvents(definitions, deck, commands),
       eventsFromMissiles(toSpatialCombatWorld(world), collisions),

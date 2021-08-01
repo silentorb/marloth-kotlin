@@ -6,9 +6,10 @@ import silentorb.mythic.characters.rigs.characterMovementsToImpulses
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
-import simulation.abilities.eventsFromDevotion
-import simulation.abilities.eventsFromSleep
+import simulation.abilities.*
 import simulation.accessorize.eventsFromItemPickup
+import simulation.characters.ActivityEvents
+import simulation.characters.eventsFromAbsenceStart
 import simulation.characters.newMoveSpeedTable
 import simulation.combat.spatial.onAttack
 import simulation.combat.toSpatialCombatWorld
@@ -55,8 +56,8 @@ fun mapInteractions(type: String, transform: (Interaction, Id) -> Events): (Even
 
 val interactionEventsMap = mapOf(
     InteractionBehaviors.take to ::eventsFromItemPickup,
-    InteractionBehaviors.sleep to ::eventsFromSleep,
-    InteractionBehaviors.devotion to ::eventsFromDevotion,
+    InteractionBehaviors.sleep to eventsFromAbsenceStart(sleepingEvent),
+    InteractionBehaviors.devotion to eventsFromAbsenceStart(devotionEvent),
     InteractionBehaviors.open to ::eventsFromDoorOpening,
     InteractionBehaviors.close to ::eventsFromDoorClosing,
     InteractionBehaviors.harvest to ::harvestEvents,
@@ -75,6 +76,8 @@ fun eventsFromEvents(world: World, freedomTable: FreedomTable, events: Events): 
   return listOf(
       mapEvents(eventsFromTryAction(world, freedomTable)),
       mapEvents(onAttack(toSpatialCombatWorld(world))),
+      mapCommands(sleepingEvent, eventsFromSleeping(world)),
+      mapCommands(devotionEvent, eventsFromDevotion(world)),
   )
       .plus(mapInteractionEvents(world))
       .fold(events) { a, b -> a + b(a) }

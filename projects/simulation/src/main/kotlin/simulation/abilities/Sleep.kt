@@ -1,16 +1,23 @@
 package simulation.abilities
 
 import silentorb.mythic.ent.Id
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.timing.FloatTimer
+import simulation.characters.ActivityEvents
+import simulation.characters.finishAbsence
 import simulation.combat.general.ModifyResource
 import simulation.combat.general.ResourceTypes
 import simulation.entities.Interaction
 import simulation.entities.InteractionActions
+import simulation.main.NewHand
 import simulation.main.World
 import kotlin.math.max
 
-fun eventsFromSleep(world: World): (Interaction, Id) -> Events = { _, actor ->
+const val sleepingEvent = "sleeping"
+
+fun eventsFromSleeping(world: World): (Command, Id) -> Events = { _, actor ->
   val deck = world.deck
   val character = deck.characters[actor]
   val destructible = deck.destructibles[actor]
@@ -31,7 +38,8 @@ fun eventsFromSleep(world: World): (Interaction, Id) -> Events = { _, actor ->
             actor = actor,
             resource = ResourceTypes.health,
             amount = -totalExpense,
-        )
+        ),
+        finishAbsence(actor),
     )
   }
 }

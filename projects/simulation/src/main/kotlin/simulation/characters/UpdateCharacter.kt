@@ -8,6 +8,7 @@ import silentorb.mythic.ent.pipe2
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.happenings.handleCommands
 import silentorb.mythic.physics.Body
 import silentorb.mythic.physics.BulletState
 import silentorb.mythic.randomly.Dice
@@ -82,6 +83,15 @@ fun updateStepCounter(rig: CharacterRig, body: Body, stepCounter: Float): Float 
     else
       stepCounter
 
+val updateCharacterActivity = handleCommands<String> { command, activity ->
+  when (command.type) {
+    ActivityEvents.startingAbsence -> CharacterActivity.startingAbsence
+    ActivityEvents.finishingAbsence -> CharacterActivity.finishingAbsence
+    ActivityEvents.finishedAbsence -> CharacterActivity.nothing
+    else -> activity
+  }
+}
+
 fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletState: BulletState, actor: Id, character: Character,
                     commands: Commands, events: Events): Character {
   val destructible = deck.destructibles[actor]!!
@@ -129,6 +139,7 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
       availableContracts = updateAvailableContracts(commands, character.availableContracts),
       utilityItem = updateUtilityItem(definitions, deck, commands, actor, character),
       stepCounter = updateStepCounter(rig, body, character.stepCounter),
+      activity = updateCharacterActivity(commands, character.activity),
   )
 }
 
