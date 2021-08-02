@@ -12,6 +12,7 @@ object Textures {
   val diamondTiles = "diamondTiles"
   val grass = "grass"
   val leafBerries = "leafBerries"
+  val leafBerriesLess = "leafBerriesLess"
   val leafFloor = "leafFloor"
   val loadingClock = "loadingClock"
   val longHand = "longHand"

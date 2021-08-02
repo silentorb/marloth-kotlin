@@ -9,7 +9,9 @@ import silentorb.mythic.editing.components.*
 import silentorb.mythic.ent.Serialization
 import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.spatial.Vector3i
+import simulation.entities.DepictionType
 import simulation.entities.InteractionActions
+import simulation.entities.depictionTypes
 import simulation.misc.BlockRotations
 import simulation.misc.GameProperties
 import simulation.misc.modeTypes
@@ -148,5 +150,10 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
         displayName = "Rarity",
         widget = dropDownWidget { Rarity.values().indices.map { it + 1 } },
         defaultValue = { 1 },
+    ),
+    GameProperties.depiction to PropertyDefinition(
+        displayName = "Depiction",
+        widget = dropDownWidget { depictionTypes },
+        defaultValue = { DepictionType.staticMesh },
     ),
 ) + commonPropertyDefinitions()

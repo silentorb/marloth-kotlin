@@ -88,7 +88,7 @@ fun spawners(): GraphLibrary = listOf(
       )// + editorLabel(key, key)
     }
 
-fun creatureDepiction(depictionType: DepictionType): EditorDepiction = { graph, node ->
+fun creatureDepiction(depictionType: String): EditorDepiction = { graph, node ->
   val initialTransform = getAbsoluteNodeTransform(graph, node)
   val transform = characterPlacement(initialTransform.translation(), 1f, initialTransform.rotation().z)
   val meshes = characterMeshes(depictionType)

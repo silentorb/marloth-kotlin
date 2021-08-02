@@ -1,24 +1,22 @@
 package simulation.entities
 
+import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.lookinglass.Material
 import silentorb.mythic.scenery.MeshName
 
-enum class DepictionType {
-  billboard,
-  child,
-  hound,
-  spikyBall,
-  monster,
-  person,
-  none,
-  sentinel,
-  staticMesh,
-  test,
-  world
+object DepictionType {
+   val berryBush = "berryBush"
+   val child = "child"
+   val hound = "hound"
+   val person = "person"
+   val sentinel = "sentinel"
+   val staticMesh = "staticMesh"
 }
 
+val depictionTypes = reflectProperties<String>(DepictionType)
+
 data class Depiction(
-    val type: DepictionType = DepictionType.staticMesh,
+    val type: String = DepictionType.staticMesh,
     val mesh: MeshName? = null,
     val material: Material? = null,
 )

@@ -60,6 +60,7 @@ object GameProperties {
   const val onInteract = "onInteract"
   const val itemType = "itemType"
   const val modeType = "modeType"
+  const val depiction = "depiction"
   const val mode = "mode"
   const val rarity = "rarity"
 

@@ -10,6 +10,7 @@ import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Quaternion
 import simulation.accessorize.Accessory
 import simulation.entities.Depiction
+import simulation.entities.DepictionType
 import simulation.entities.Interactable
 import simulation.entities.PrimaryMode
 import simulation.main.NewHand
@@ -33,12 +34,14 @@ fun getNodeBody(transform: Matrix): Body? {
 
 fun getNodeDepiction(resourceInfo: ResourceInfo, graph: Graph, node: Key): Depiction? {
   val mesh = getNodeValue<String>(graph, node, SceneProperties.mesh)
+  val depiction = getNodeValue<String>(graph, node, GameProperties.depiction)
   return if (mesh == null)
     null
   else {
     Depiction(
         mesh = mesh,
         material = getNodeMaterial(resourceInfo, graph, node),
+        type = depiction ?: DepictionType.staticMesh
     )
   }
 }

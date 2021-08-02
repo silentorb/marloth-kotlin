@@ -24,16 +24,6 @@ val graphElementCache = singleValueCache<Pair<ResourceInfo, GraphWrapper>, Eleme
     listOf()
 }
 
-val gridElementCache = singleValueCache<Deck, ElementGroup> { deck ->
-  ElementGroup(
-      meshes = deck.depictions
-          .filter { !isComplexDepiction(it.value) }
-          .mapNotNull {
-            convertSimpleDepiction(deck, it.key, it.value)
-          }
-  )
-}
-
 fun gatherLightsFromLayers(layers: List<SceneLayer>): List<Light> =
     layers
         .flatMap { layer ->

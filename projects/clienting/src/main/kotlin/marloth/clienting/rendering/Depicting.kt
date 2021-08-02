@@ -23,24 +23,24 @@ import silentorb.mythic.spatial.Vector3
 import simulation.combat.spatial.executeMarker
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
+import simulation.entities.depictionTypes
 import simulation.main.Deck
 import simulation.misc.Definitions
 import simulation.updating.simulationDelta
 import kotlin.math.floor
 
-val simplePainterMap = reflectProperties<String>(MeshId).mapNotNull { meshId ->
-  val depictionType = DepictionType.values().firstOrNull { it.name == meshId }
-  if (depictionType != null)
-    Pair(depictionType, meshId)
-  else
-    null
-}.associate { it }
-    .plus(
-        mapOf(
-            DepictionType.child to MeshId.personBody
-        )
-    )
-
+//val simplePainterMap = reflectProperties<String>(MeshId).mapNotNull { meshId ->
+//  val depictionType = depictionTypes.firstOrNull { it == meshId }
+//  if (depictionType != null)
+//    Pair(depictionType, meshId)
+//  else
+//    null
+//}.associate { it }
+//    .plus(
+//        mapOf(
+//            DepictionType.child to MeshId.personBody
+//        )
+//    )
 
 fun filterDepictions(depictions: Table<Depiction>, playerRig: Id, characterRig: CharacterRig): Table<Depiction> =
     if (characterRig.viewMode == ViewMode.firstPerson && !getDebugBoolean("FLY_THROUGH_CAMERA"))
@@ -83,25 +83,23 @@ fun convertSimpleDepiction(deck: Deck, id: Id, mesh: MeshName, material: Materia
 }
 
 fun convertSimpleDepiction(deck: Deck, id: Id, depiction: Depiction): MeshElement? {
-  val mesh = if (depiction.type == DepictionType.staticMesh)
-    depiction.mesh
+  val mesh = depiction.mesh
+  return if (mesh != null)
+    when (depiction.type) {
+      DepictionType.berryBush -> berryBushDepiction(deck, id, mesh, depiction)
+      else -> convertSimpleDepiction(deck, id, mesh, depiction.material)
+    }
   else
-    simplePainterMap[depiction.type]
-
-  if (mesh == null)
-    return null
-
-  return convertSimpleDepiction(deck, id, mesh, depiction.material)
+    null
 }
 
 fun accessoryDebugName(definitions: Definitions, accessoryType: AccessoryName): String {
   val definition = definitions.accessories[accessoryType]
-  return if (definition == null)
-    "???"
-  else if (definition.name == TextId.unnamed)
-    definition.debugName ?: "???"
-  else
-    definitions.textLibrary(definition.name)
+  return when {
+    definition == null -> "???"
+    definition.name == TextId.unnamed -> definition.debugName ?: "???"
+    else -> definitions.textLibrary(definition.name)
+  }
 }
 
 fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footPosition: Vector3, shape: Shape): List<TextBillboard> =
@@ -149,7 +147,7 @@ fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footP
       listOfNotNull(performanceBillboard, modifierBillboard)
     }
 
-fun characterMeshes(depictionType: DepictionType) =
+fun characterMeshes(depictionType: String) =
     when (depictionType) {
       DepictionType.child -> listOf(
           MeshId.personBody,

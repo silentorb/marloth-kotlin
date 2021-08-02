@@ -48,7 +48,7 @@ fun harvestEvents(world: World): (Interaction, Id) -> Events = { interaction, ac
     listOf()
   else
     listOfNotNull(
-        changeBushTexture(deck, worldItem, Textures.leafFloor),
+//        changeBushTexture(deck, worldItem, Textures.leafFloor),
         ModifyItemQuantityEvent(worldItem, -1),
         if (sound != null && itemBody != null)
           NewSound(

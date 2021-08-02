@@ -6,11 +6,11 @@
 ["berry-bush","onInteract","harvest"],
 ["berry-bush","interaction","take"],
 ["berry-bush","itemType","berries"],
-["berry-bush1","type","distFloor"],
-["berry-bush1","mesh","berryBush"],
-["berry-bush1","collisionShape","sphere"],
-["berry-bush1","type","solid-static"],
-["berry-bush1","parent","berry-bush"],
+["berry-bush","depiction","berryBush"],
+["berry-bush","type","distFloor"],
+["berry-bush","mesh","berryBush"],
+["berry-bush","collisionShape","sphere"],
+["berry-bush","type","solid-static"],
 ["berry-bush1","translation",[0.0,0.0,0.42584395]]
 ]
 }
