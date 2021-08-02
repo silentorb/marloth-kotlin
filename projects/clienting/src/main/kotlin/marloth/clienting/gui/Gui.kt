@@ -70,15 +70,10 @@ fun victoryMenu() = listOfNotNull(
 
 val emptyViewFlower: StateFlower = { _, _ -> emptyFlower }
 
-fun guiLayout(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, player: Id,
-              debugInfo: List<String>): Flower {
+fun guiLayout(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?,
+              player: Id): Flower {
   val state = clientState.guiStates[player]
   return compose(listOfNotNull(
-      if (world != null)
-        overlayLayout(definitions.textLibrary, world, options, clientState, player, debugInfo, state?.view)
-      else
-        null,
-
       if (state != null) {
         val stateFlower = viewSelect(world, options, clientState, state.view, player)
         if (stateFlower != null)
@@ -96,8 +91,8 @@ fun prepareBloomState(state: GuiState?) =
     ) - commandKey
 
 fun layoutPlayerGui(definitions: Definitions, options: AppOptions, clientState: ClientState, world: World?, dimensions: Vector2i,
-                    player: Id, debugInfo: List<String>): Box {
-  val layout = guiLayout(definitions, options, clientState, world, player, debugInfo)
+                    player: Id): Box {
+  val layout = guiLayout(definitions, options, clientState, world, player)
   val state = clientState.guiStates[player]
   val seed = Seed(
       dimensions = dimensions,

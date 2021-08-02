@@ -87,7 +87,7 @@ val updateCharacterActivity = handleCommands<String> { command, activity ->
   when (command.type) {
     ActivityEvents.startingAbsence -> CharacterActivity.startingAbsence
     ActivityEvents.finishingAbsence -> CharacterActivity.finishingAbsence
-    ActivityEvents.finishedAbsence -> CharacterActivity.nothing
+    ActivityEvents.finishedAbsence -> CharacterActivity.idle
     else -> activity
   }
 }

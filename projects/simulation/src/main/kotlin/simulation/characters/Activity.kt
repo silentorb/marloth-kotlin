@@ -10,7 +10,7 @@ import simulation.main.NewHand
 import simulation.main.World
 
 object CharacterActivity {
-  const val nothing = "nothing"
+  const val idle = "nothing"
   const val sleeping = "sleeping"
   const val startingAbsence = "startingAbsence"
   const val finishingAbsence = "finishingAbsence"

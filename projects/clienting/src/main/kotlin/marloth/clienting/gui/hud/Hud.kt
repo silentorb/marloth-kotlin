@@ -5,7 +5,6 @@ import marloth.clienting.ClientState
 import marloth.clienting.gui.Colors
 import marloth.clienting.gui.DeviceMode
 import marloth.clienting.gui.TextResources
-import marloth.clienting.gui.ViewId
 import marloth.clienting.gui.menus.TextStyles
 import marloth.clienting.gui.menus.actionItemText
 import marloth.clienting.gui.menus.black
@@ -24,6 +23,7 @@ import silentorb.mythic.lookinglass.gpuProfileMeasurements
 import silentorb.mythic.platforming.Devices
 import simulation.accessorize.Accessory
 import simulation.characters.Character
+import simulation.characters.CharacterActivity
 import simulation.combat.general.ResourceContainer
 import simulation.entities.Interactable
 import simulation.entities.InteractionActions
@@ -31,7 +31,6 @@ import simulation.entities.getInteractionCommandType
 import simulation.happenings.Notification
 import simulation.main.World
 import simulation.misc.Definitions
-import simulation.misc.InputEventType
 import kotlin.math.roundToInt
 
 private val textStyle = TextStyles.smallGray
@@ -269,7 +268,7 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
 }
 
 fun overlayLayout(textResources: TextResources, world: World, options: AppOptions, clientState: ClientState, player: Id,
-                  debugInfo: List<String>, view: ViewId?): Flower? {
+                  debugInfo: List<String>): Flower? {
   val deck = world.deck
   val definitions = world.definitions
   val guiState = clientState.guiStates[player]
@@ -279,7 +278,7 @@ fun overlayLayout(textResources: TextResources, world: World, options: AppOption
   return if (character == null || guiState == null)
     null
   else {
-    val interactable = if (view == null && character.isAlive)
+    val interactable = if (character.isAlive && character.activity == CharacterActivity.idle && guiState.view == null)
       deck.interactables[character.canInteractWith]
     else null
 

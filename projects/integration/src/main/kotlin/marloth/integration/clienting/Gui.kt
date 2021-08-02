@@ -27,8 +27,7 @@ fun layoutIntegratedPlayerGui(definitions: Definitions, appState: AppState): (Id
     emptyBox
   else {
     val world = appState.worlds.lastOrNull()
-    val hudDebugInfo = getHudDebugInfo(appState)
-    layoutPlayerGui(definitions, appState.options, appState.client, world, dimensions, player, hudDebugInfo)
+    layoutPlayerGui(definitions, appState.options, appState.client, world, dimensions, player)
   }
 }
 

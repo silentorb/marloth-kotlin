@@ -116,7 +116,7 @@ fun bindingContext(playerViews: PlayerViews, player: Id): InputContext =
 
 fun getBindings(bindings: Map<InputContext, Bindings>, playerViews: PlayerViews, interactions: Collection<Id>, player: Id): Bindings? =
     when {
-      interactions.contains(player) -> {
+      interactions.contains(player) && playerViews[player] == null -> {
         val original = bindings[InputContext.game] ?: listOf()
         val overrides = bindings[InputContext.interaction] ?: listOf()
         original

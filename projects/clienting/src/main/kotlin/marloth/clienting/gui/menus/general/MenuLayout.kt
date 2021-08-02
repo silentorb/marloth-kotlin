@@ -116,30 +116,29 @@ fun addMenuItemInteractivity(focusIndex: Int, events: List<EventUnion>, index: I
       )
 }
 
-fun menuFlower(menu: Menu, focusIndex: Int, minWidth: Int): Box {
+fun menuFlower(menu: Menu, focusIndex: Int, minWidth: Int, showBackButton: Boolean = true): Box {
   val rows = layoutMenuItems(menu, focusIndex)
   val breadth = boxList(verticalPlane, defaultMenuGap)(rows).dimensions.x
+  val indexOffset = if (showBackButton) 1 else 0
   return layoutMenuItems(rows) { index, box ->
-    val absoluteIndex = index + 1
+    val absoluteIndex = index + indexOffset
     addMenuItemInteractivity(focusIndex, menu[index].events, absoluteIndex,
         fieldWrapper(focusIndex, max(minWidth, breadth))(absoluteIndex, box)
     )
   }
-      .addAttributes(menuLengthKey to menu.size + 1)
+      .addAttributes(menuLengthKey to menu.size + indexOffset)
 }
 
 val faintBlack = black.copy(w = 0.6f)
 
-fun menuFlower(title: Box, menu: Menu, showBackButton: Boolean = true): StateFlower = { definitions, state ->
-  dialogContentWithTitle(titleBar(title, showBackButton))(menuFlower(menu, state.menuFocusIndex, title.dimensions.x + 100))
+fun menuFlower(title: Box, menu: Menu, showBackButton: Boolean = true): StateFlower = { _, state ->
+  dialogContentWithTitle(titleBar(title, showBackButton))(
+      menuFlower(menu, state.menuFocusIndex, title.dimensions.x + 100, showBackButton)
+  )
 }
 
 fun menuFlower(title: Text, menu: Menu, showBackButton: Boolean = true): StateFlower = { definitions, state ->
   menuFlower(dialogTitle(definitions.textLibrary(title)), menu, showBackButton)(definitions, state)
-}
-
-fun menuFlower(menu: Menu): StateFlower = { definitions, state ->
-  dialogContent(menuFlower(menu, state.menuFocusIndex, 0)).toFlower()
 }
 
 fun convertSimpleMenu(definitions: Definitions, source: List<SimpleMenuItem>): Menu =
