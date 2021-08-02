@@ -11,6 +11,6 @@
 ["berry-bush","mesh","berryBush"],
 ["berry-bush","collisionShape","sphere"],
 ["berry-bush","type","solid-static"],
-["berry-bush1","translation",[0.0,0.0,0.42584395]]
+["berry-bush","translation",[0.0,0.0,0.42584395]]
 ]
 }

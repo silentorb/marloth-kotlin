@@ -24,12 +24,12 @@ runtime {
       "java.sql", // Needed for SQLite
       "java.management" // Needed for Tinylog
   ))
-  jreDir.set(rootDir.resolve("out/dist/marloth-${project.properties["version"]}/jre"))
+  jreDir.set(rootDir.resolve("out/dist/marloth-${project.properties["version"]}-win64/jre"))
 }
 
 tasks.register<Copy>("compileDist") {
   from(buildDir.resolve("launch4j"))
-  into(rootDir.resolve("out/dist/marloth-${project.properties["version"]}"))
+  into(rootDir.resolve("out/dist/marloth-${project.properties["version"]}-win64"))
   dependsOn("copyFonts", "copyManual", "runtime", "createAllExecutables")
 }
 
@@ -53,18 +53,23 @@ tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
 tasks.register<Copy>("copyFonts") {
   from("fonts")
   include("*.ttf")
-  into(rootDir.resolve("out/dist/marloth-${project.properties["version"]}/fonts"))
+  into(rootDir.resolve("out/dist/marloth-${project.properties["version"]}-win64/fonts"))
 }
 
 tasks.register<Copy>("copyManual") {
   from(project.rootDir.resolveSibling("marloth-assets/assets/src/main/resources/docs/manual.md"))
-  into(rootDir.resolve("out/dist/marloth-${project.properties["version"]}"))
+  into(rootDir.resolve("out/dist/marloth-${project.properties["version"]}-win64"))
   rename { "README.md" }
+  val keyStrokePattern = Regex("\\s*\\(\\$\\$.*?\\)")
+  filter { line ->
+    line.replace(keyStrokePattern, "")
+  }
+  expand("version" to project.properties["version"])
 }
 
 tasks.register<Zip>("zipDist") {
   archiveFileName.set("marloth-${project.properties["version"]}.zip")
   destinationDirectory.set(rootDir.resolve("out/dist"))
-  from(rootDir.resolve("out/dist/marloth-${project.properties["version"]}"))
+  from(rootDir.resolve("out/dist/marloth-${project.properties["version"]}-win64"))
   dependsOn("createAllExecutables")
 }
