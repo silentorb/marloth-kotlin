@@ -1,5 +1,6 @@
 package marloth.clienting
 
+import marloth.clienting.audio.MusicPlayer
 import marloth.clienting.gui.DeviceMode
 import marloth.clienting.gui.GuiState
 import marloth.clienting.gui.TextResources
@@ -51,10 +52,12 @@ data class Client(
     val textResources: TextResources = englishTextResources,
     val customBloomResources: Map<String, Any>,
     val resourceInfo: ResourceInfo,
+    val music: MusicPlayer?,
 ) {
   fun getWindowInfo() = platform.display.getInfo()
 
   fun shutdown() {
+//    music?.stop()
     logGpuProfiling()
     closeImGui()
     platform.display.shutdown()

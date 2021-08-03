@@ -27,9 +27,8 @@ fun getFinished(soundDurations: SoundDurations, events: Events, deck: Deck): Set
 }
 
 fun exhaustedAccessories(accessories: Table<Accessory>) =
-    accessories.filter {
-      val quantity = it.value.quantity
-      quantity != null && quantity < 1
+    accessories.filterValues {
+      it.removeOnEmpty && it.quantity < 1
     }.keys
 
 // Gathers all entities that need to be deleted

@@ -75,9 +75,11 @@ fun getNodeInteractions(graph: Graph, node: Key): Interactable? {
 
 fun getNodeItemType(graph: Graph, node: Key): Accessory? {
   val itemType = getNodeValue<String>(graph, node, GameProperties.itemType)
+  val removeOnEmpty = getNodeValue<Boolean>(graph, node, GameProperties.removeOnEmpty) ?: true
   return if (itemType != null)
     Accessory(
         type = itemType,
+        removeOnEmpty = removeOnEmpty,
     )
   else
     null

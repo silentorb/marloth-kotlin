@@ -17,6 +17,7 @@ data class Accessory(
     val source: Id = 0,
     val owner: Id? = null,
     val quantity: Int = 1,
+    val removeOnEmpty: Boolean = true,
 )
 
 typealias AccessoryName = String

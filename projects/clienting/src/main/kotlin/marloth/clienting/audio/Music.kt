@@ -1,0 +1,48 @@
+package marloth.clienting.audio
+
+import silentorb.mythic.debugging.getDebugString
+import java.io.File
+import java.io.FileInputStream
+import javax.sound.midi.*
+
+data class MusicPlayer(
+    val sequencer: Sequencer,
+    val synthesizer: Synthesizer,
+) {
+  fun start() {
+    sequencer.start()
+  }
+
+  fun stop() {
+    sequencer.stop()
+    synthesizer.close()
+    sequencer.close()
+  }
+}
+
+fun newMusicPlayer(): MusicPlayer? {
+  val soundfontPath = getDebugString("SOUNDFONT_PATH") ?: return null
+  val midiFilePath = getDebugString("MIDI_PATH") ?: return null
+  val soundfont: Soundbank = MidiSystem.getSoundbank(FileInputStream(File(soundfontPath)))
+
+  val sequence = Sequence(0f, 120)
+  val track = sequence.createTrack()
+  val sequencer = MidiSystem.getSequencer()
+  val synthesizer = MidiSystem.getSynthesizer()
+
+  sequencer.open()
+  synthesizer.open()
+  synthesizer.loadAllInstruments(soundfont)
+
+  sequencer.transmitter.receiver = synthesizer.receiver
+  sequencer.sequence = sequence
+//  sequencer.setSequence(FileInputStream(File(midiFilePath)))
+  val s = sequencer.sequence
+
+//  sequencer.
+
+  return MusicPlayer(
+      sequencer = sequencer,
+      synthesizer = synthesizer,
+  )
+}

@@ -6,6 +6,7 @@
 ["berry-bush","onInteract","harvest"],
 ["berry-bush","interaction","take"],
 ["berry-bush","itemType","berries"],
+["berry-bush","removeOnEmpty",false],
 ["berry-bush","depiction","berryBush"],
 ["berry-bush","type","distFloor"],
 ["berry-bush","mesh","berryBush"],

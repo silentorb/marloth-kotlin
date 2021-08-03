@@ -59,6 +59,7 @@ object GameProperties {
   const val interaction = "interaction"
   const val onInteract = "onInteract"
   const val itemType = "itemType"
+  const val removeOnEmpty = "removeOnEmpty"
   const val modeType = "modeType"
   const val depiction = "depiction"
   const val mode = "mode"

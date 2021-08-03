@@ -1,6 +1,7 @@
 package marloth.clienting
 
 import marloth.clienting.audio.loadSounds
+import marloth.clienting.audio.newMusicPlayer
 import marloth.clienting.gui.hud.cooldownMeshKey
 import marloth.clienting.gui.hud.createCooldownCircleMesh
 import marloth.clienting.rendering.createMeshes
@@ -89,7 +90,6 @@ fun newRenderer(
   )
 }
 
-
 fun newClient(platform: Platform, displayOptions: DisplayOptions): Client {
   val initialDeferredTextures = gatherTextures(platform.display, displayOptions)
   val windowInfo = platform.display.getInfo()
@@ -106,11 +106,13 @@ fun newClient(platform: Platform, displayOptions: DisplayOptions): Client {
   setGlobalFonts(renderer.fonts)
   platform.audio.start(50)
   val soundLibrary = loadSounds(platform.audio)
+  val music = newMusicPlayer()
+//  music?.start()
+
   return Client(
       platform = platform,
       renderer = renderer,
       soundLibrary = soundLibrary,
-//      meshLoadingState = MeshLoadingState(impMeshes),
       textureLoadingState = TextureLoadingState(deferredTextures),
       customBloomResources = mapOf(
           cooldownMeshKey to createCooldownCircleMesh(),
@@ -119,6 +121,7 @@ fun newClient(platform: Platform, displayOptions: DisplayOptions): Client {
       resourceInfo = ResourceInfo(
           meshShapes = getMeshShapes(renderer),
           textures = getClientTextures(renderer, deferredTextures),
-      )
+      ),
+      music = music,
   )
 }
