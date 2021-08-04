@@ -1,6 +1,9 @@
 package simulation.main
 
 import silentorb.mythic.ent.Id
+import silentorb.mythic.happenings.Commands
+
+const val newHandCommand = "newHand"
 
 data class NewHand(
     val components: List<Any>,
@@ -43,3 +46,8 @@ inline fun <reified T> replaceComponent(hand: NewHand, transform: (T) -> T): New
             component
         }
     )
+
+fun getNewHandsFromCommands(commands: Commands): List<NewHand> =
+    commands
+        .filter { it.type == newHandCommand }
+        .mapNotNull { it.value as? NewHand }

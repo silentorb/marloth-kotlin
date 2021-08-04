@@ -8,6 +8,7 @@ import simulation.abilities.sleepingEvent
 import simulation.entities.Interaction
 import simulation.main.NewHand
 import simulation.main.World
+import simulation.main.newHandCommand
 
 object CharacterActivity {
   const val idle = "nothing"
@@ -46,10 +47,13 @@ fun eventsFromAbsenceStart(nextCommandType: String): (World) -> (Interaction, Id
 }
 
 fun finishAbsence(actor: Id) =
-    NewHand(
-        components = listOf(
-            FloatTimer(1f, onFinished = listOf(
-                Command(ActivityEvents.finishedAbsence, target = actor),
-            ))
+    Command(
+        type = newHandCommand,
+        value = NewHand(
+            components = listOf(
+                FloatTimer(1f, onFinished = listOf(
+                    Command(ActivityEvents.finishedAbsence, target = actor),
+                ))
+            )
         )
     )

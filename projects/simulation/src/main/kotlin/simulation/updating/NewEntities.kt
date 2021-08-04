@@ -3,6 +3,7 @@ package simulation.updating
 import silentorb.mythic.audio.soundsFromEvents
 import silentorb.mythic.breeze.AnimationInfoMap
 import silentorb.mythic.ent.*
+import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.performing.Performance
 import silentorb.mythic.performing.performancesFromEvents
@@ -66,6 +67,7 @@ fun incorporateNewAccessories(definitions: Definitions, previous: Table<Accessor
 }
 
 fun newEntities(definitions: Definitions, graph: Graph, step: Long, previous: Deck, events: Events, nextId: IdSource): (Deck) -> Deck = { next ->
+  val commands = events.filterIsInstance<Command>()
   val idHands = listOf(
 //      newRespawnCountdowns(nextId, previous, next),
       newPerformances(definitions, previous, events, nextId),
@@ -87,7 +89,8 @@ fun newEntities(definitions: Definitions, graph: Graph, step: Long, previous: De
       newDamageVisualEffects(next, events) +
       newAccessories(events, definitions) +
       newEntangleEntities(previous) +
-      events.filterIsInstance<NewHand>()
+      events.filterIsInstance<NewHand>() +
+      getNewHandsFromCommands(commands)
 
   allHandsToDeck(definitions, nextId, newHands, lastDeck, step)
 }

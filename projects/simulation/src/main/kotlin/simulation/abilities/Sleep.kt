@@ -11,6 +11,8 @@ import simulation.combat.general.ModifyResource
 import simulation.combat.general.ResourceTypes
 import simulation.entities.Interaction
 import simulation.entities.InteractionActions
+import simulation.macro.hours
+import simulation.macro.newMacroUpdate
 import simulation.main.NewHand
 import simulation.main.World
 import kotlin.math.max
@@ -28,18 +30,21 @@ fun eventsFromSleeping(world: World): (Command, Id) -> Events = { _, actor ->
     val flatExpense = 20
     val timeExpense = gainedEnergy / 10
     val totalExpense = flatExpense + timeExpense
+    val duration = 8 * hours
     listOf(
-        ModifyResource(
-            actor = actor,
-            resource = ResourceTypes.energy,
-            amount = gainedEnergy,
-        ),
-        ModifyResource(
-            actor = actor,
-            resource = ResourceTypes.health,
-            amount = -totalExpense,
-        ),
-        finishAbsence(actor),
+//        ModifyResource(
+//            actor = actor,
+//            resource = ResourceTypes.energy,
+//            amount = gainedEnergy,
+//        ),
+//        ModifyResource(
+//            actor = actor,
+//            resource = ResourceTypes.health,
+//            amount = -totalExpense,
+//        ),
+        newMacroUpdate(duration, listOf(
+            finishAbsence(actor),
+        )),
     )
   }
 }

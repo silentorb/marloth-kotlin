@@ -17,7 +17,7 @@ data class World(
     val bulletState: BulletState,
     val definitions: Definitions,
     val persistence: Graph,
-    val step: Long,
+    val step: Long, // With an update rate of 60 frames per second, this variable can safely track 48745201446 years
     val nextCommands: Commands = listOf(),
 )
 
