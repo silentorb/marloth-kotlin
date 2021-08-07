@@ -9,6 +9,13 @@ import simulation.misc.CellAttribute
 
 typealias GetBlock = (Vector3i) -> BlockCell?
 
+fun getOppositeCellDirection(cellDirection: CellDirection): CellDirection {
+  val oppositeSide = oppositeDirections[cellDirection.direction]!!
+  val offset = directionVectors[cellDirection.direction]!!
+  val position = cellDirection.cell + offset
+  return CellDirection(position, oppositeSide)
+}
+
 fun getOtherSide(getBlock: GetBlock, origin: Vector3i): (Direction) -> Side? = { direction ->
   val oppositeSide = oppositeDirections[direction]!!
   val offset = directionVectors[direction]!!
@@ -49,31 +56,35 @@ fun getSurroundingSides(blockGrid: BlockGrid, location: Vector3i): SideMap {
   return getSurroundingSides(getBlock, location)
 }
 
-fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock): (Block) -> Vector3i? = { block ->
+fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock,
+                    essentialDirectionSide: Direction): (Block) -> Vector3i? = { block ->
   val match = block.traversable
       .firstOrNull { baseOffset ->
-        block.cells
-            .all { (cellOffset, cell) ->
-              val appliedOffset = cellOffset - baseOffset
-              if (getBlock(appliedOffset) != null)
-                false
-              else {
-                val surroundingSides2 = if (appliedOffset == Vector3i.zero)
-                  surroundingSides
-                else
-                  getSurroundingSides(getBlock, appliedOffset)
+        val essentialCell = block.cells[baseOffset]
+        essentialCell != null && essentialCell.sides[essentialDirectionSide]?.isTraversable ?: false &&
+            block.cells
+                .all { (cellOffset, cell) ->
+                  val appliedOffset = cellOffset - baseOffset
+                  if (getBlock(appliedOffset) != null)
+                    false
+                  else {
+                    val surroundingSides2 = if (appliedOffset == Vector3i.zero)
+                      surroundingSides
+                    else
+                      getSurroundingSides(getBlock, appliedOffset)
 
-                surroundingSides2.all { side -> sidesMatch(cell.sides, side.key, side.value) }
-              }
-            }
+                    surroundingSides2.all { side -> sidesMatch(cell.sides, side.key, side.value) }
+                  }
+                }
       }
 
   match
 }
 
-fun matchBlock(dice: Dice, blocks: Set<Block>, getBlock: GetBlock, surroundingSides: SideMap): Pair<Vector3i, Block>? {
+fun matchBlock(dice: Dice, blocks: Set<Block>, getBlock: GetBlock, surroundingSides: SideMap,
+               essentialDirectionSide: Direction): Pair<Vector3i, Block>? {
   val options = blocks.mapNotNull { block ->
-    val offset = checkBlockMatch(surroundingSides, getBlock)(block)
+    val offset = checkBlockMatch(surroundingSides, getBlock, essentialDirectionSide)(block)
     if (offset != null)
       offset to block
     else
@@ -90,14 +101,16 @@ fun matchBlock(dice: Dice, blocks: Set<Block>, getBlock: GetBlock, surroundingSi
   }
 }
 
-fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, grid: BlockGrid, location: Vector3i): Pair<Vector3i, Block>? {
+fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, grid: BlockGrid, location: Vector3i,
+                         essentialDirectionSide: Direction): Pair<Vector3i, Block>? {
   val surroundingSides = getSurroundingSides(grid, location)
   val getBlock: GetBlock = { grid[it + location]?.cell }
-  return matchBlock(dice, blocks, getBlock, surroundingSides)
+  return matchBlock(dice, blocks, getBlock, surroundingSides, essentialDirectionSide)
 }
 
 fun fallbackBiomeMatchConnectingBlock(dice: Dice, biomeBlocks: Map<String, GroupedBlocks>, grid: BlockGrid,
-                                      location: Vector3i, biome: String): Pair<Vector3i, Block>? {
+                                      location: Vector3i, biome: String,
+                                      essentialDirectionSide: Direction): Pair<Vector3i, Block>? {
   val options = directionVectors.values
       .mapNotNull { offset -> grid[location + offset]?.source?.biomes }
       .distinct()
@@ -106,7 +119,7 @@ fun fallbackBiomeMatchConnectingBlock(dice: Dice, biomeBlocks: Map<String, Group
   for (option in options) {
     val blocks = biomeBlocks[option]
     if (blocks != null) {
-      val result = matchConnectingBlock(dice, blocks.all, grid, location)
+      val result = matchConnectingBlock(dice, blocks.all, grid, location, essentialDirectionSide)
       if (result != null) {
         return result
       }
@@ -121,7 +134,7 @@ fun openSides(blockGrid: BlockGrid, position: Vector3i): Map<Direction, Vector3i
   return directionVectors
       .filter { direction ->
         val side = block.cell.sides[direction.key]
-        side != null && !blockGrid.containsKey(position + direction.value)
+        side != null && side.isTraversable && !blockGrid.containsKey(position + direction.value)
       }
 }
 

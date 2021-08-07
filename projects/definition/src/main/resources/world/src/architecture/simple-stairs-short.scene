@@ -7,6 +7,6 @@
 ["bounds","translation",[0.2,0.0,0.1]],
 ["bounds","scale",[2.8,2.0,2.0]],
 ["simple-stairs","",""],
-["simple-stairs","mesh","stairNarrow"]
+["simple-stairs","mesh","stairNarrowHalf"]
 ]
 }

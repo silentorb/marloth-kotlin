@@ -1,0 +1,26 @@
+{
+"graph" : [
+["bounds","parent","simple-stairs"],
+["bounds","mesh","slope"],
+["bounds","type","solid-custom"],
+["bounds","depiction","none"],
+["bounds","scale",[1.72,1.0,1.0]],
+["bounds","translation",[0.11077781,0.0,0.5]],
+["ramp","type","solid-custom"],
+["ramp","depiction","none"],
+["ramp","parent","simple-stairs"],
+["ramp","mesh","halfPyramid"],
+["ramp","rotation",[0.0,0.0,-1.5707964]],
+["ramp","translation",[0.8051461,-0.5,0.0]],
+["ramp","scale",[0.32641912,0.32641912,0.09585327]],
+["ramp1","type","solid-custom"],
+["ramp1","depiction","none"],
+["ramp1","mesh","halfPyramid"],
+["ramp1","scale",[0.32641912,0.32641912,0.09585327]],
+["ramp1","parent","simple-stairs"],
+["ramp1","translation",[0.8051461,0.5,0.0]],
+["ramp1","rotation",[0.0,0.0,1.5707964]],
+["simple-stairs","",""],
+["simple-stairs","mesh","stairNarrow"]
+]
+}

@@ -6,7 +6,6 @@ import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3i
 import simulation.misc.BlockAttributes
-import simulation.misc.CellAttribute
 import simulation.misc.cellLength
 import kotlin.math.pow
 
@@ -135,10 +134,11 @@ tailrec fun addPathStep(
       throw Error("Biome mismatch")
 
     val blocks = getAvailableBlocks(groupedBlocks, incompleteSides, grid[state.lastCell]?.source)
+    val essentialDirectionSideDirection = oppositeDirections[incompleteSide.direction]!!
 
-    val matchResult = matchConnectingBlock(dice, blocks, grid, nextPosition)
-        ?: matchConnectingBlock(dice, groupedBlocks.all - blocks, grid, nextPosition)
-        ?: fallbackBiomeMatchConnectingBlock(dice, state.biomeBlocks, grid, nextPosition, biome)
+    val matchResult = matchConnectingBlock(dice, blocks, grid, nextPosition, essentialDirectionSideDirection)
+        ?: matchConnectingBlock(dice, groupedBlocks.all - blocks, grid, nextPosition, essentialDirectionSideDirection)
+        ?: fallbackBiomeMatchConnectingBlock(dice, state.biomeBlocks, grid, nextPosition, biome, essentialDirectionSideDirection)
 
     val nextState = if (matchResult == null) {
       state.copy(
@@ -148,8 +148,9 @@ tailrec fun addPathStep(
       val (blockOffset, block) = matchResult
       worldGenerationLog { "Block: ${block.name}" }
       val cellAdditions = extractCells(block, nextPosition - blockOffset)
-      if (!cellAdditions.containsKey(nextPosition))
-        matchConnectingBlock(dice, groupedBlocks.all - blocks, grid, nextPosition)
+//      if (!cellAdditions.containsKey(nextPosition))
+//        matchConnectingBlock(dice, groupedBlocks.all - blocks, grid, nextPosition, incompleteSide)
+
       assert(cellAdditions.containsKey(nextPosition))
       assert(cellAdditions.any { it.value.offset == Vector3i.zero })
       assert(cellAdditions.none { grid.containsKey(it.key) })

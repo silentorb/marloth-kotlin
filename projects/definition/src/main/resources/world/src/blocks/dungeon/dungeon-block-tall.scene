@@ -7,6 +7,7 @@
 ["ceiling","translation",[0.0,0.0,7.26]],
 ["dungeon-block","",""],
 ["dungeon-block","biome","dungeon"],
+["dungeon-block","rarity",1],
 ["floor","type","solid-box"],
 ["floor","texture","cobblestone"],
 ["floor","mesh","floorSquare"],

@@ -1,5 +1,6 @@
 package generation.architecture.engine
 
+import generation.general.Block
 import generation.general.BlockGrid
 import generation.general.CellDirection
 import marloth.scenery.enums.MeshInfoMap
@@ -11,6 +12,7 @@ import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Quaternion
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
+import simulation.main.Hand
 import simulation.main.NewHand
 import simulation.misc.CellAttribute
 import simulation.misc.Definitions
@@ -71,3 +73,14 @@ data class BuilderInput(
 )
 
 typealias Builder = (BuilderInput) -> Any
+
+typealias BlockBuilder = Pair<Block, Builder>
+
+fun mergeBuilders(vararg builders: Builder): Builder {
+    return { input ->
+        builders.flatMap { it(input) as List<Hand> }
+    }
+}
+
+operator fun Builder.plus(builder: Builder): Builder =
+    mergeBuilders(this, builder)

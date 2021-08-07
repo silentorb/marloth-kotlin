@@ -1,6 +1,5 @@
 package generation.architecture.engine
 
-import generation.architecture.matrical.BlockBuilder
 import generation.general.*
 import marloth.scenery.enums.MeshInfoMap
 import silentorb.mythic.ent.Graph
@@ -96,24 +95,3 @@ tailrec fun expandSideGroups(sideGroups: Map<String, Set<String>>, value: Collec
 
 fun getCellDirection(graph: Graph, node: String): CellDirection? =
     getNodeValue<CellDirection>(graph, node, GameProperties.direction)
-
-fun gatherSides(sideGroups: Map<String, Set<String>>, graph: Graph, sideNodes: List<String>): List<Pair<CellDirection, Side?>> =
-    sideNodes
-        .mapNotNull { node ->
-          val mine = getNodeValue<String>(graph, node, GameProperties.mine)
-          val initialOther = getNodeValues<String>(graph, node, GameProperties.other)
-          val other = expandSideGroups(sideGroups, initialOther)
-          val cellDirection = getCellDirection(graph, node)
-          if (cellDirection == null)
-            null
-          else if (mine == null || other.none())
-            cellDirection to null
-          else {
-            val height = getNodeValue<Int>(graph, node, GameProperties.sideHeight) ?: StandardHeights.first
-            cellDirection to Side(
-                mine = mine,
-                other = other.toSet(),
-                height = height,
-            )
-          }
-        }

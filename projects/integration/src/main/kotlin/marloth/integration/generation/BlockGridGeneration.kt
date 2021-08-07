@@ -2,11 +2,11 @@ package marloth.integration.generation
 
 import generation.architecture.biomes.Biomes
 import generation.architecture.engine.*
-import generation.architecture.matrical.BlockBuilder
+import generation.architecture.engine.BlockBuilder
 import generation.general.*
 import marloth.clienting.editing.*
+import marloth.definition.misc.nonTraversableBlockSides
 import marloth.definition.misc.sideGroups
-import marloth.definition.misc.traversableBlockSides
 import marloth.scenery.enums.Textures
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.*
@@ -83,7 +83,7 @@ fun cellsFromSides(sides: List<Pair<CellDirection, Side?>>): Map<Vector3i, Block
             .filter { it.second != null }
             .associate { it.first.direction to it.second!! }
 
-        val isTraversable = sides.any { traversableBlockSides.contains(it.value.mine) }
+        val isTraversable = sides.any { it.value.isTraversable }
         val attributes = setOfNotNull(
             if (isTraversable) CellAttribute.isTraversable else null,
         )
@@ -243,7 +243,7 @@ fun graphToBlockBuilder(name: String, graph: Graph): List<BlockBuilder> {
   else {
     val heights = listOf(0) + getNodeValues(graph, root, GameProperties.heightVariant)
     val sideNodes = getNodesWithAttribute(graph, GameAttributes.blockSide)
-    val sides = gatherSides(sideGroups, graph, sideNodes)
+    val sides = gatherSides(sideGroups, graph, sideNodes, nonTraversableBlockSides)
     return heights.map { height ->
       val adjustedSides = adjustSideHeights(sides, height)
       val cells = cellsFromSides(adjustedSides)

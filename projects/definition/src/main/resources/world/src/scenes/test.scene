@@ -1,8 +1,12 @@
 {
 "graph" : [
-["a","parent","test"],
-["a","type","vine-shrubbery"],
-["a","translation",[3.0,0.0,0.0]],
+["cube","type","solid-custom"],
+["cube","parent","test"],
+["cube","mesh","cube"],
+["floor","texture","checkersBlackWhite"],
+["floor","mesh","floorDiagonal"],
+["floor","type","solid-custom"],
+["floor","parent","test"],
 ["test","",""]
 ]
 }

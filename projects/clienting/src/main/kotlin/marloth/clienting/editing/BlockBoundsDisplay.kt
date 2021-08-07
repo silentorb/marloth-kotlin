@@ -6,6 +6,7 @@ import generation.architecture.engine.getCellDirection
 import generation.general.*
 import imgui.ImColor
 import imgui.ImDrawList
+import marloth.definition.misc.nonTraversableBlockSides
 import marloth.definition.misc.sideGroups
 import silentorb.mythic.editing.*
 import silentorb.mythic.ent.Graph
@@ -64,7 +65,7 @@ object LineColors {
 fun getSideHeightLines(selection: Collection<CellDirection>, sides: List<Pair<CellDirection, Side>>): List<LineSegment> =
     sides
         .mapNotNull { (cellDirection, side) ->
-          val height = side!!.height
+          val height = side.height
           val dir = horizontalDirectionVectors[cellDirection.direction]?.toVector3()
           if (dir == null)
             null
@@ -120,7 +121,7 @@ fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
       .distinct()
 
   val sideNodes = getNodesWithAttribute(graph, GameAttributes.blockSide)
-  val sides = gatherSides(sideGroups, graph, sideNodes)
+  val sides = gatherSides(sideGroups, graph, sideNodes, nonTraversableBlockSides)
       .filter { it.second != null } as List<Pair<CellDirection, Side>>
 
   val variableSides = selection.mapNotNull { node ->
