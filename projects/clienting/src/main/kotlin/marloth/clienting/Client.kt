@@ -57,7 +57,7 @@ data class Client(
   fun getWindowInfo() = platform.display.getInfo()
 
   fun shutdown() {
-//    music?.stop()
+    music?.stop()
     logGpuProfiling()
     closeImGui()
     platform.display.shutdown()

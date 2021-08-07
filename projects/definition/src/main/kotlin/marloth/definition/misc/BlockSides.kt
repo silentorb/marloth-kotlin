@@ -12,7 +12,6 @@ object BlockSides {
   val slopeRightQuarter = "slopeRightQuarter"
 }
 
-
 val traversableBlockSides = setOf(
     BlockSides.open,
 )

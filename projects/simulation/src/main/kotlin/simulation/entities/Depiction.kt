@@ -8,6 +8,7 @@ object DepictionType {
    val berryBush = "berryBush"
    val child = "child"
    val hound = "hound"
+   val none = "none"
    val person = "person"
    val sentinel = "sentinel"
    val staticMesh = "staticMesh"

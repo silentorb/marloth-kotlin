@@ -2,7 +2,7 @@
 "graph" : [
 ["a","parent","test"],
 ["a","type","vine-shrubbery"],
-["a","translation",[-9.246219,-3.6659563,3.9411578]],
+["a","translation",[3.0,0.0,0.0]],
 ["test","",""]
 ]
 }

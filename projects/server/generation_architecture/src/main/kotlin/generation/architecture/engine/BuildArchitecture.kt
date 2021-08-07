@@ -4,6 +4,7 @@ import generation.general.*
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.getGraphRoots
 import silentorb.mythic.ent.scenery.getAbsoluteNodeTransform
+import silentorb.mythic.ent.scenery.integrateTransform
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.*
 import simulation.misc.absoluteCellPosition
@@ -24,8 +25,7 @@ fun gatherNeighbors(grid: BlockGrid, block: Block, position: Vector3i): Map<Cell
                 if (contract != null) {
                   val rotatedCell = rotateZ(-block.turns, cell)
                   CellDirection(rotatedCell, direction) to contract
-                }
-                else
+                } else
                   null
               }
         }
@@ -35,12 +35,12 @@ fun transformBlockOutput(block: Block, position: Vector3i, graph: Graph): Graph 
   val zRotation = (block.turns.toFloat()) * quarterAngle
   val rotation = Vector3(0f, 0f, zRotation)
   val location = absoluteCellPosition(position) + Vector3(0f, 0f, block.heightOffset.toFloat() / 100f * cellLength)
+  val parentTransform = integrateTransform(location, rotation)
   val roots = getGraphRoots(graph)
   val rootTransforms = roots.flatMap { root ->
-    val transform = getAbsoluteNodeTransform(graph, root)
+    val localTransform = getAbsoluteNodeTransform(graph, root)
     listOf(
-        Entry(root, SceneProperties.translation, transform.translation() + location),
-        Entry(root, SceneProperties.rotation, transform.rotation() + rotation),
+        Entry(root, SceneProperties.transform, parentTransform * localTransform),
     )
   }
   return replaceValues(graph, rootTransforms)

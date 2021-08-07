@@ -1,7 +1,7 @@
 {
 "graph" : [
-["test2","",""],
-["wide-tunnel","parent","test2"],
-["wide-tunnel","type","wide-tunnel"]
+["b","mesh","Cylinder"],
+["b","parent","test2"],
+["test2","",""]
 ]
 }

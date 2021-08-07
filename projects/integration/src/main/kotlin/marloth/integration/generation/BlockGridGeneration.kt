@@ -268,7 +268,10 @@ fun graphsToBlockBuilders(graphLibrary: GraphLibrary): List<BlockBuilder> {
   val library = newExpansionLibrary(graphLibrary, mapOf())
   return graphLibrary
       .filterValues { graph ->
-        graph.any { it.property == SceneProperties.type && it.target == GameAttributes.blockSide }
+        graph.any {
+          (it.property == SceneProperties.type && it.target == GameAttributes.blockSide) ||
+              it.property == GameProperties.mine
+        }
       }
       .keys
       .flatMap { key ->

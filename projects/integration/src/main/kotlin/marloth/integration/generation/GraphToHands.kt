@@ -35,7 +35,7 @@ fun getNodeBody(transform: Matrix): Body? {
 fun getNodeDepiction(resourceInfo: ResourceInfo, graph: Graph, node: Key): Depiction? {
   val mesh = getNodeValue<String>(graph, node, SceneProperties.mesh)
   val depiction = getNodeValue<String>(graph, node, GameProperties.depiction)
-  return if (mesh == null)
+  return if (mesh == null || depiction == DepictionType.none)
     null
   else {
     Depiction(
