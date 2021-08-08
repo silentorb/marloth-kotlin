@@ -3,7 +3,6 @@ package simulation.updating
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.mapTable
 import silentorb.mythic.ent.pipe
-import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Events
 import silentorb.mythic.physics.applyBodyChanges
 import simulation.characters.newMoveSpeedTable
@@ -14,11 +13,11 @@ import simulation.combat.toModifierDeck
 import simulation.happenings.gatherNextCommands
 import simulation.intellect.navigation.NavigationState
 import simulation.intellect.navigation.updateNavigation
-import simulation.macro.MacroUpdate
-import simulation.macro.applyMacroUpdates
-import simulation.macro.getMacroUpdateCommands
 import simulation.macro.updateMacro
-import simulation.main.*
+import simulation.main.Deck
+import simulation.main.Frames
+import simulation.main.World
+import simulation.main.updateGlobalState
 import simulation.misc.Definitions
 import simulation.physics.updatePhysics
 import kotlin.math.max
@@ -51,7 +50,8 @@ fun updateDeck(definitions: Definitions, events: Events, world: World,
         newEntities(definitions, world.staticGraph.value, world.step, world.deck, events, nextId)
     )
 
-fun updateWorld(definitions: Definitions, events: Events, delta: Float, world: World): World {
+fun updateMicro(definitions: Definitions, events: Events, world: World): World {
+  val delta = simulationDelta
   val withPhysics = updatePhysics(events)(world)
   val moveSpeedTable = newMoveSpeedTable(definitions, withPhysics.deck)
   val navigation = if (withPhysics.navigation != null)
@@ -63,7 +63,7 @@ fun updateWorld(definitions: Definitions, events: Events, delta: Float, world: W
   val deck = updateDeck(definitions, events, withPhysics, navigation, nextId)(withPhysics.deck)
   applyBodyChanges(withPhysics.bulletState, withPhysics.deck.bodies, deck.bodies)
 
-  val postWorld = withPhysics.copy(
+  return withPhysics.copy(
       deck = deck,
       global = updateGlobalState(deck, world.staticGraph.value, withPhysics.global),
       navigation = navigation,
@@ -71,5 +71,19 @@ fun updateWorld(definitions: Definitions, events: Events, delta: Float, world: W
       step = world.step + 1L,
   )
 
-  return applyMacroUpdates(events.filterIsInstance<Command>(), postWorld)
+//  return applyMacroUpdates(events.filterIsInstance<Command>(), postWorld)
+}
+
+fun updateWorld(definitions: Definitions, events: Events, frames: Frames, world: World): World {
+  return if (frames < 1L)
+    world
+  else {
+    // `microUpdate` is called even for macro updates so that macro updates can worry less about events
+    // by already having incoming events integrated.
+    val microUpdate = updateMicro(definitions, events, world)
+    if (frames > 1L)
+      updateMacro(definitions, frames - 1, microUpdate)
+    else
+      microUpdate
+  }
 }

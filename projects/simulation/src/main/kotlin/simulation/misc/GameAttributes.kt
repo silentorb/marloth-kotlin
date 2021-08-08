@@ -25,7 +25,7 @@ object GameAttributes {
   val heteroBlock = BlockAttributes.hetero
 
   val wallSlot = "wallSlot"
-
+  val isEssentialSide = "isEssentialSide"
 }
 
 object DistAttributes {

@@ -6,6 +6,7 @@
 ["0-0-0-east","sideLevel",60],
 ["0-0-0-east","mine","partialOpen"],
 ["0-0-0-east","other","open"],
+["0-0-0-east","type","isEssentialSide"],
 ["0-0-0-north","parent","sides"],
 ["0-0-0-north","type","blockSide"],
 ["0-0-0-north","direction",[0,0,0,"north"]],

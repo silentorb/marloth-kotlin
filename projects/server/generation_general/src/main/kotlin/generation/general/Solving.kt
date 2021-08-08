@@ -61,7 +61,8 @@ fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock,
   val match = block.traversable
       .firstOrNull { baseOffset ->
         val essentialCell = block.cells[baseOffset]
-        essentialCell != null && essentialCell.sides[essentialDirectionSide]?.isTraversable ?: false &&
+        val essentialCellSide = essentialCell?.sides?.getOrDefault(essentialDirectionSide, null)
+        essentialCellSide != null && essentialCellSide.isTraversable && essentialCellSide.canMatchEssential &&
             block.cells
                 .all { (cellOffset, cell) ->
                   val appliedOffset = cellOffset - baseOffset

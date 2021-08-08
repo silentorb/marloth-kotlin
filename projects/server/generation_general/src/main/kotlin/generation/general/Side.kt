@@ -14,5 +14,7 @@ data class Side(
     val mine: String,
     val other: Set<String>,
     val height: Int = StandardHeights.first,
-    val isTraversable: Boolean = true
+    val isTraversable: Boolean = true,
+    val isEssential: Boolean = false,
+    val canMatchEssential: Boolean = true,
 )

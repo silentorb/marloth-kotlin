@@ -2,10 +2,7 @@ package simulation.macro
 
 import silentorb.mythic.happenings.Commands
 import simulation.main.Deck
-
-typealias Frames = Long
-const val minutes: Long = 60 * 60
-const val hours: Long = 60 * minutes
+import simulation.main.Frames
 
 typealias MacroDeckUpdater = (Frames, Deck) -> Deck
 

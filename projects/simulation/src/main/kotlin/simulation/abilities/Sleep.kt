@@ -4,16 +4,11 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
-import silentorb.mythic.timing.FloatTimer
-import simulation.characters.ActivityEvents
 import simulation.characters.finishAbsence
-import simulation.combat.general.ModifyResource
-import simulation.combat.general.ResourceTypes
 import simulation.entities.Interaction
 import simulation.entities.InteractionActions
-import simulation.macro.hours
+import simulation.main.hours
 import simulation.macro.newMacroUpdate
-import simulation.main.NewHand
 import simulation.main.World
 import kotlin.math.max
 
