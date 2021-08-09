@@ -11,7 +11,7 @@ data class Pursuit(
 )
 
 data class Spirit(
-    val post: Vector3? = null,
+    val origin: Vector3? = null,
     val attributes: Set<Any> = setOf(),
     val pursuit: Pursuit? = null
 )

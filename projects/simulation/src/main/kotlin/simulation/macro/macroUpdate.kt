@@ -3,6 +3,8 @@ package simulation.macro
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.mapTable
 import silentorb.mythic.happenings.Events
+import silentorb.mythic.physics.Body
+import silentorb.mythic.physics.applyBodyChanges
 import simulation.accessorize.Accessory
 import simulation.accessorize.IntrinsicReplenishment
 import simulation.accessorize.limitQuantity
@@ -74,6 +76,19 @@ fun updateAccessoryMacro(): (Id, Accessory) -> Accessory {
   }
 }
 
+fun updateBodyMacro(deck: Deck): (Id, Body) -> Body {
+  return { actor, body ->
+    val spirit = deck.spirits[actor]
+    val origin = spirit?.origin
+    if (origin != null)
+      body.copy(
+          position = origin
+      )
+    else
+      body
+  }
+}
+
 fun updateDestructibleMacro(events: Events): (Id, Destructible) -> Destructible {
   return { actor, destructible ->
     destructible.copy(
@@ -97,6 +112,7 @@ fun updateCharacterMacro(deck: Deck, events: Events): (Id, Character) -> Charact
 fun updateDeckMacro(frames: Frames, definitions: Definitions, events: Events, deck: Deck) =
     deck.copy(
         accessories = mapTable(deck.accessories, updateAccessoryMacro()),
+        bodies = mapTable(deck.bodies, updateBodyMacro(deck)),
         characters = mapTable(deck.characters, updateCharacterMacro(deck, events)),
         destructibles = mapTable(deck.destructibles, updateDestructibleMacro(events)),
     )
@@ -105,6 +121,7 @@ fun updateMacro(frames: Frames, world: World): World {
   val deck = world.deck
   val events = gatherMacroEvents(deck)
   val nextDeck = updateDeckMacro(frames, world.definitions, events, deck)
+  applyBodyChanges(world.bulletState, deck.bodies, nextDeck.bodies)
   return world.copy(
       deck = nextDeck,
   )

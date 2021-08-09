@@ -11,15 +11,11 @@ import simulation.main.World
 
 fun startRoaming(world: World, actor: Id, knowledge: Knowledge): Vector3? {
   val deck = world.deck
-  val post = deck.spirits[actor]?.post
   val body = deck.bodies[actor]
   return if (body != null) {
     val dice = world.dice
     val range = 5f
-    val base = if (post != null)
-      post
-    else
-      dice.takeOne(deck.bodies.values).position
+    val base = dice.takeOne(deck.bodies.values).position
 
     val target = base + Vector3(
         dice.getFloat(-range, range),

@@ -63,7 +63,7 @@ fun placeMonster(definitions: Definitions, dice: Dice, definition: CharacterDefi
   return newCharacter(nextId, definitions, definition2, transform, Factions.monsters)
       .plusComponents(
           Spirit(
-//              post = transform.translation(),
+              origin = transform.translation(),
               attributes = setOf(SpiritAttributes.isAggressive)
           ),
           newKnowledge()
