@@ -5,15 +5,16 @@ import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.Material
 import silentorb.mythic.lookinglass.MeshElement
 import silentorb.mythic.scenery.MeshName
+import simulation.accessorize.getFirstAccessory
 import simulation.entities.Depiction
 import simulation.main.Deck
 
 fun berryBushDepiction(deck: Deck, id: Id, mesh: MeshName, depiction: Depiction): MeshElement? {
-  val accessory = deck.accessories[id]
+  val accessory = getFirstAccessory(deck.accessories, id)
   val texture = when (accessory?.quantity) {
+    0 -> Textures.leafFloor
     1 -> Textures.leafBerriesLess
-    2 -> Textures.leafBerries
-    else -> Textures.leafFloor
+    else -> Textures.leafBerries
   }
   val material = depiction.material?.copy(
       texture = texture,

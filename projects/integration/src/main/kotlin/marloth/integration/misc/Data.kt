@@ -9,7 +9,7 @@ import marloth.definition.misc.loadMarlothDefinitions
 import marloth.definition.misc.staticDamageTypes
 import marloth.definition.particles.particleEffects
 import marloth.definition.texts.englishTextResources
-import silentorb.mythic.editing.extractPropertiesSerialization
+import silentorb.mythic.editing.main.extractPropertiesSerialization
 import silentorb.mythic.lookinglass.mapAnimationInfo
 import simulation.misc.Definitions
 

@@ -13,9 +13,9 @@ import marloth.scenery.enums.MeshShapeMap
 import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugString
-import silentorb.mythic.editing.*
 import silentorb.mythic.editing.components.gizmoMenuToggleState
 import silentorb.mythic.editing.general.Typeface
+import silentorb.mythic.editing.main.*
 import silentorb.mythic.editing.updating.prepareEditorUpdate
 import silentorb.mythic.editing.updating.updateEditor
 import silentorb.mythic.editing.updating.updateGraphStateAndHistory

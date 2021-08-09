@@ -7,6 +7,7 @@ import simulation.accessorize.AccessoryDefinition
 import simulation.accessorize.AccessoryName
 import silentorb.mythic.performing.ActionDefinition
 import simulation.abilities.Actions
+import simulation.accessorize.IntrinsicReplenishment
 import simulation.accessorize.Nutrient
 import simulation.characters.EquipmentSlot
 import simulation.combat.general.AttackMethod
@@ -212,8 +213,8 @@ fun actionAccessories(): ActionAccessoryMap = mapOf(
             components = listOf(
                 Nutrient(
                     value = 30
-                )
-            )
+                ),
+            ),
         ),
         action = ActionDefinition(
             equipmentSlot = EquipmentSlot.utility

@@ -27,6 +27,13 @@ data class NewHand(
               component
           }
       )
+
+  fun replaceComponents(replacements: Collection<Any>): NewHand =
+      this.copy(
+          components = this.components
+              .filter { component -> replacements.none { it::class == component::class } }
+              .plus(replacements)
+      )
 }
 
 data class SimpleHand(

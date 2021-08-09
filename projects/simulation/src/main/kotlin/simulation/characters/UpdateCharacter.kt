@@ -132,7 +132,7 @@ fun updateCharacter(definitions: Definitions, dice: Dice, deck: Deck, bulletStat
       money = updateMoney(deck, events, actor, character.money),
       accessoryPoints = updateAccessoryPoints(events, character),
       accessoryOptions = updateAccessoryOptions(definitions, dice, deck, events, actor, character),
-      energy = modifyResourceWithEvents(events, actor, ResourceTypes.energy, character.energy, destructible.health, energyAccumulation),
+      energy = updateEnergy(events, actor, character, destructible, energyAccumulation),
       energyAccumulator = energyAccumulator - energyAccumulation * highIntScale,
       sanity = modifyResourceWithEvents(events, actor, ResourceTypes.sanity, character.sanity, maxSanity, sanityAccumulation),
       sanityAccumulator = sanityAccumulator - sanityAccumulation * highIntScale,

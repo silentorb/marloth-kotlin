@@ -9,11 +9,15 @@ import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Quaternion
 import simulation.accessorize.Accessory
+import simulation.accessorize.IntrinsicReplenishment
+import simulation.accessorize.replenishmentKey
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
 import simulation.entities.Interactable
 import simulation.entities.PrimaryMode
 import simulation.main.NewHand
+import simulation.main.getComponent
+import simulation.misc.GameAttributes
 import simulation.misc.GameProperties
 
 fun bodyFromTransform(transform: Matrix) =
@@ -73,13 +77,23 @@ fun getNodeInteractions(graph: Graph, node: Key): Interactable? {
     null
 }
 
-fun getNodeItemType(graph: Graph, node: Key): Accessory? {
+fun getNodeAccessory(graph: Graph, node: Key): Accessory? {
   val itemType = getNodeValue<String>(graph, node, GameProperties.itemType)
   val removeOnEmpty = getNodeValue<Boolean>(graph, node, GameProperties.removeOnEmpty) ?: true
+  val maxQuantity = getNodeValue<Int>(graph, node, GameProperties.maxQuantity) ?: 0
+  val components = if (nodeHasAttribute(graph, node, GameAttributes.intrinsicReplenishment))
+    mapOf(
+        replenishmentKey to IntrinsicReplenishment(),
+    )
+  else
+    mapOf()
+
   return if (itemType != null)
     Accessory(
         type = itemType,
         removeOnEmpty = removeOnEmpty,
+        maxQuantity = maxQuantity,
+        components = components,
     )
   else
     null
@@ -91,15 +105,22 @@ fun associateHandParentBodies(graph: Graph, hands: Map<String, NewHand>) =
       val parentHand = hands[parent]
       val parentId = parentHand?.id
       val parentBody = parentHand?.components?.filterIsInstance<Body>()?.firstOrNull()
-      val body = hand.components.filterIsInstance<Body>().firstOrNull()
 
-      if (parentBody != null && parentId != null && body != null) {
-        hand.replaceComponent(
-            body.copy(
+      if (parentBody != null && parentId != null) {
+        val replacements = listOfNotNull(
+            getComponent<Body>(hand)?.copy(
                 parent = parentId,
                 localTransform = getLocalNodeTransform(graph, node)
-            )
+            ),
+            getComponent<Accessory>(hand)?.copy(
+                owner = parentId,
+            ),
         )
+
+        if (replacements.any())
+          hand.replaceComponents(replacements)
+        else
+          hand
       } else
         hand
     }
@@ -118,7 +139,7 @@ fun graphToHands(resourceInfo: ResourceInfo, nextId: IdSource, graph: Graph, key
               getNodeBody(transform),
               getNodeDepiction(resourceInfo, graph, node),
               getNodeCollisionObject(resourceInfo.meshShapes, graph, node),
-              getNodeItemType(graph, node),
+              getNodeAccessory(graph, node),
               getPrimaryMode(graph, node),
               getNodeInteractions(graph, node),
           )

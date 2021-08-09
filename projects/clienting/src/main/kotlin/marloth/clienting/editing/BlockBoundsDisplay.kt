@@ -8,7 +8,7 @@ import imgui.ImColor
 import imgui.ImDrawList
 import marloth.definition.misc.nonTraversableBlockSides
 import marloth.definition.misc.sideGroups
-import silentorb.mythic.editing.*
+import silentorb.mythic.editing.main.*
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.filterByProperty
 import silentorb.mythic.ent.getNodeValue

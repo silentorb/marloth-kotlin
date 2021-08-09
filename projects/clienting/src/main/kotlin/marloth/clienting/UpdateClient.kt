@@ -25,9 +25,9 @@ import silentorb.mythic.bloom.old.getHoverBoxes
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.debugging.toggleDebugBoolean
-import silentorb.mythic.editing.Editor
-import silentorb.mythic.editing.EditorCommands
-import silentorb.mythic.editing.checkSaveEditor
+import silentorb.mythic.editing.main.Editor
+import silentorb.mythic.editing.main.EditorCommands
+import silentorb.mythic.editing.main.checkSaveEditor
 import silentorb.mythic.editing.general.ensureImGuiIsInitialized
 import silentorb.mythic.ent.Id
 import silentorb.mythic.haft.updateInputDeviceStates

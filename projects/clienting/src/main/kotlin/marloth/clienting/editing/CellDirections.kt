@@ -4,9 +4,9 @@ import generation.architecture.building.directionRotation
 import generation.general.CellDirection
 import generation.general.Direction
 import generation.general.isSimpleSideNode
-import silentorb.mythic.editing.Editor
-import silentorb.mythic.editing.EditorCommands
-import silentorb.mythic.editing.getNodeSelection
+import silentorb.mythic.editing.main.Editor
+import silentorb.mythic.editing.main.EditorCommands
+import silentorb.mythic.editing.main.getNodeSelection
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.integrateTransform
 import silentorb.mythic.ent.scenery.nodeHasAttribute

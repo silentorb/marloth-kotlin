@@ -26,16 +26,18 @@ fun sleepFilter(strength: Float): ScreenFilter =
     solidColorFilter(Vector4(0f, 0f, 0f, strength))
 
 fun getSleepFilter(deck: Deck, actor: Id, commandType: String, strength: (FloatTimer) -> Float): ScreenFilter? {
-  val timer = deck.timersFloat.values.firstOrNull { timer ->
-    timer.onFinished
-        .any { event ->
-          event is Command && event.type == commandType && event.target == actor
-        }
-  }
+  val timer = deck.timersFloat.values
+      .firstOrNull { timer ->
+        timer.onFinished
+            .any { event ->
+              event is Command && event.type == commandType && event.target == actor
+            }
+      }
+
   return if (timer != null)
     sleepFilter(strength(timer))
   else
-    null
+    sleepFilter(1f)
 }
 
 fun getScreenFilters(deck: Deck, actor: Id): List<ScreenFilter> {

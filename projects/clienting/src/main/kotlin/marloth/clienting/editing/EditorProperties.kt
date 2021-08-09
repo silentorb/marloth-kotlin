@@ -4,8 +4,8 @@ import generation.architecture.biomes.Biomes
 import generation.general.*
 import imgui.ImGui
 import marloth.definition.misc.blockSides
-import silentorb.mythic.editing.*
 import silentorb.mythic.editing.components.*
+import silentorb.mythic.editing.main.*
 import silentorb.mythic.ent.Serialization
 import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.spatial.Vector3i

@@ -4,6 +4,7 @@ import marloth.scenery.enums.CharacterCommands
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Commands
 import silentorb.mythic.happenings.Events
+import simulation.accessorize.getFirstAccessory
 import simulation.main.Deck
 
 object InteractionActions {
@@ -52,7 +53,7 @@ fun canInteractWith(deck: Deck, item: Id): Boolean {
   val interactable = deck.interactables[item]
   return when (interactable?.onInteract) {
     InteractionBehaviors.harvest -> {
-      val accessory = deck.accessories[item]
+      val accessory = getFirstAccessory(deck.accessories, item)
       accessory?.quantity ?: 0 > 0
     }
     else -> true

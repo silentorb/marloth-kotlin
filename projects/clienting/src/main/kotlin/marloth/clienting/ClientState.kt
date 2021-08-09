@@ -14,7 +14,7 @@ import marloth.scenery.enums.TextResourceMapper
 import silentorb.mythic.aura.AudioState
 import silentorb.mythic.aura.newAudioState
 import silentorb.mythic.debugging.getDebugBoolean
-import silentorb.mythic.editing.Editor
+import silentorb.mythic.editing.main.Editor
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.Command
 import silentorb.mythic.lookinglass.ResourceInfo

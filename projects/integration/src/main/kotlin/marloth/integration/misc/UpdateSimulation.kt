@@ -21,7 +21,6 @@ import simulation.happenings.withSimulationEvents
 import simulation.main.Deck
 import simulation.main.World
 import simulation.misc.Factions
-import simulation.updating.simulationDelta
 import simulation.updating.updateWorld
 
 fun updateSimulationDatabase(db: Database, next: World, previous: World) {
@@ -98,7 +97,7 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
     val definitions = app.definitions
     val previous = worlds.takeLast(2).first()
     val allEvents = gatherEventsForSimulation(app, previousClient, clientState, world, previous, commands)
-    val nextWorld = updateWorld(definitions, allEvents, 1, world)
+    val nextWorld = updateWorld(allEvents, 1, world)
     val finalWorld = nextWorld.copy(
         deck = nextWorld.deck.copy(
             targets = updateTargeting(nextWorld, app.client, clientState.players, commands, previousClient.commands, nextWorld.deck.targets)

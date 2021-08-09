@@ -1,5 +1,10 @@
 package simulation.characters
 
+import silentorb.mythic.ent.Id
+import silentorb.mythic.happenings.Events
+import simulation.combat.general.Destructible
+import simulation.combat.general.ResourceTypes
+import simulation.combat.general.modifyResourceWithEvents
 import simulation.misc.HighInt
 import simulation.misc.Int1000
 import simulation.misc.highIntScale
@@ -40,3 +45,6 @@ fun getEnergyExpense(rates: ResourceRates, frames: Int = 1, velocity: Int1000): 
 
 fun getRoundedAccumulation(expense: HighInt): Int =
     expense / highIntScale
+
+fun updateEnergy(events: Events, actor: Id, character: Character, destructible: Destructible, mod: Int = 0) =
+    modifyResourceWithEvents(events, actor, ResourceTypes.energy, character.energy, destructible.health, mod)

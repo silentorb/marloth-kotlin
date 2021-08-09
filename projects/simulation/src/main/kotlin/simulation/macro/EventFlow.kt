@@ -18,14 +18,14 @@ fun gatherMacroAfterCommands(commands: Commands): Commands =
     getMacroUpdateCommands(commands)
         .flatMap { (it.value as? MacroUpdate)?.after ?: listOf() }
 
-//fun applyMacroUpdates(commands: Commands, world: World): World {
-//  val macroUpdates = getMacroUpdateCommands(commands)
-//  assert(macroUpdates.size < 2)
-//
-//  val macroUpdate = macroUpdates.firstOrNull()?.value as? MacroUpdate
-//
-//  return if (macroUpdate != null)
-//    updateMacro(macroUpdate.duration, world)
-//  else
-//    world
-//}
+fun applyMacroUpdates(commands: Commands, world: World): World {
+  val macroUpdates = getMacroUpdateCommands(commands)
+  assert(macroUpdates.size < 2)
+
+  val macroUpdate = macroUpdates.firstOrNull()?.value as? MacroUpdate
+
+  return if (macroUpdate != null)
+    updateMacro(macroUpdate.duration, world)
+  else
+    world
+}

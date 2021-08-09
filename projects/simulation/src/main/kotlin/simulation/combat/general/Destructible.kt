@@ -59,6 +59,9 @@ val restoreDestructibleHealth: (Destructible) -> Destructible = { destructible -
   )
 }
 
+fun modifyDestructible(events: Events, actor: Id, destructible: Destructible, mod: Int = 0) =
+    modifyResourceWithEvents(events, actor, ResourceTypes.health, destructible.health, destructible.maxHealth, mod)
+
 fun updateDestructibleHealth(definitions: Definitions, deck: Deck, events: Events): (Id, Destructible) -> Destructible {
   val damageEvents = events.filterIsInstance<DamageEvent>()
   val restoreEvents = events.filterIsInstance<RestoreHealth>()
@@ -83,7 +86,7 @@ fun updateDestructibleHealth(definitions: Definitions, deck: Deck, events: Event
     val healthAccumulation = getRoundedAccumulation(healthAccumulator)
     val mod = healthAccumulation + nourishmentAdjustment
     result.copy(
-        health = modifyResourceWithEvents(events, actor, ResourceTypes.health, result.health, result.maxHealth, mod),
+        health = modifyDestructible(events, actor, result, mod),
         healthAccumulator = healthAccumulator - healthAccumulation * highIntScale,
     )
   }

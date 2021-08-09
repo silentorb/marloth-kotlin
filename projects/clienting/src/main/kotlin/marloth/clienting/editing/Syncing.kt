@@ -1,8 +1,8 @@
 package marloth.clienting.editing
 
-import silentorb.mythic.editing.Editor
-import silentorb.mythic.editing.FileItem
-import silentorb.mythic.editing.FileItemType
+import silentorb.mythic.editing.main.Editor
+import silentorb.mythic.editing.main.FileItem
+import silentorb.mythic.editing.main.FileItemType
 import simulation.main.World
 
 const val activeWorldKey = "active world"

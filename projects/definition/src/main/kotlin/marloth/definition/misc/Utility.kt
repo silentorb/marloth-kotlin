@@ -5,7 +5,7 @@ import marloth.definition.data.ActionAccessoryMap
 import marloth.scenery.enums.DamageTypes
 import marloth.scenery.enums.ModifierDirection
 import marloth.scenery.enums.Text
-import silentorb.mythic.editing.loadGraphLibrary
+import silentorb.mythic.editing.main.loadGraphLibrary
 import silentorb.mythic.ent.*
 import simulation.accessorize.ModifierDefinition
 import simulation.combat.general.DamageType

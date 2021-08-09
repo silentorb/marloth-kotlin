@@ -44,5 +44,5 @@ fun expiredTimers(timersFloat: Table<FloatTimer>, timersInt: Table<IntTimer>): S
 
 fun eventsFromTimers(deck: Deck): Events =
     deck.timersFloat
-        .filter { it.value.duration - simulationDelta < 0f }
+        .filter { it.value.duration < 0f }
         .flatMap { it.value.onFinished }

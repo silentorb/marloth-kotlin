@@ -26,6 +26,7 @@ object GameAttributes {
 
   val wallSlot = "wallSlot"
   val isEssentialSide = "isEssentialSide"
+  val intrinsicReplenishment = "intrinsicReplenishment"
 }
 
 object DistAttributes {
@@ -64,6 +65,7 @@ object GameProperties {
   const val depiction = "depiction"
   const val mode = "mode"
   const val rarity = "rarity"
+  const val maxQuantity = "maxQuantity"
 
   const val mass = "mass"
 //  const val resistance = "resistance"
