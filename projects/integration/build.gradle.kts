@@ -11,7 +11,7 @@ dependencies {
   implementation("silentorb.mythic:debugging")
 }
 
-requires(project, "clienting", "definition", "generation_architecture", "generation_population",
+requires(project, "clienting", "definition", "generation_architecture",
     "simulation", "persistence"
 )
 
