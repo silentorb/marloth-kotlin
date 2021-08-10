@@ -157,7 +157,7 @@ fun characterOrientationZ(characterRig: CharacterRig) =
     Quaternion().rotateZ(characterRig.facingRotation.x)
 
 fun hoverCameraOrientationZ(thirdPersonRig: ThirdPersonRig) =
-    Quaternion().rotateZ(thirdPersonRig.rotation.x - Pi / 2)
+    Quaternion().rotateZ(thirdPersonRig.rotation.x)
 
 fun interpolateCharacterRigs(scalar: Float, first: Table<CharacterRig>, second: Table<CharacterRig>) =
     interpolateTables(scalar, first, second) { s, a, b ->

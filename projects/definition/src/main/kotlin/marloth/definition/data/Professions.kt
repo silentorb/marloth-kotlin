@@ -23,7 +23,7 @@ object Professions {
   val magician = CharacterDefinition(
       name = TextId.id_magician,
       health = 200,
-      accessories = listOf(Accessories.shadowSpirit),
+      accessories = listOf(),
       depictionType = DepictionType.child,
       deathSound = Sounds.girlScream,
       damageMultipliers = mapOf(),
@@ -34,7 +34,7 @@ object Professions {
   val alchemist = CharacterDefinition(
       name = DevText("Alchemist"),
       health = 200,
-      accessories = listOf(Accessories.shadowSpirit),
+      accessories = listOf(),
       depictionType = DepictionType.child,
       deathSound = Sounds.girlScream,
       damageMultipliers = mapOf(),

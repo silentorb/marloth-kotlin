@@ -53,7 +53,7 @@ fun updateEntities(definitions: Definitions, world: World, navigation: Navigatio
           primaryModes = mapTable(deck.primaryModes, updatePrimaryModes(commands)),
           sounds = mapTableValues(deck.sounds, updateSound(delta)),
           spirits = mapTable(deck.spirits, updateSpirit(world, delta)),
-          thirdPersonRigs = mapTable(deck.thirdPersonRigs, updateThirdPersonCamera(world.bulletState.dynamicsWorld, CollisionGroups.affectsCamera, events, deck.bodies, deck.characterRigs, deck.targets, freedomTable, delta)),
+          thirdPersonRigs = mapTable(deck.thirdPersonRigs, updateThirdPersonCamera(world.bulletState.dynamicsWorld, CollisionGroups.solidStatic, events, deck.bodies, deck.characterRigs, deck.targets, freedomTable, delta)),
           timersFloat = mapTableValues(deck.timersFloat, updateFloatTimer(delta))
       )
     }

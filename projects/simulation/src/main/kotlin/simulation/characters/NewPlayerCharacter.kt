@@ -1,5 +1,6 @@
 package simulation.characters
 
+import silentorb.mythic.characters.rigs.newThirdPersonRig
 import silentorb.mythic.debugging.getDebugString
 import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.toSpatialEntries
@@ -34,7 +35,7 @@ fun newPlayerCharacter(nextId: IdSource, id: Id, definitions: Definitions, profe
       faction = Factions.misfits,
       position = location + Vector3(0f, 0f, 1f),
       angle = angle
-  )
+  ).plusComponents(newThirdPersonRig(location, angle))
 }
 
 fun newPlayerAndCharacter(nextId: IdSource, definitions: Definitions, location: Vector3, angle: Float, profession: ProfessionId): List<NewHand> {

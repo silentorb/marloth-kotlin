@@ -2,12 +2,13 @@ package marloth.clienting.input
 
 import marloth.clienting.gui.hud.toggleTargetingCommand
 import marloth.scenery.enums.CharacterCommands
+import marloth.scenery.enums.CharacterRigCommands
 import silentorb.mythic.haft.*
 import org.lwjgl.glfw.GLFW
 
 val gameGamepadBindings = mapOf(
     GAMEPAD_BUTTON_START to GuiCommandType.menu,
-    GAMEPAD_BUTTON_BACK to GuiCommandType.characterInfo,
+//    GAMEPAD_BUTTON_BACK to GuiCommandType.characterInfo,
 
     GAMEPAD_BUTTON_DPAD_UP to CharacterCommands.equipSlot0,
     GAMEPAD_BUTTON_DPAD_LEFT to CharacterCommands.equipSlot1,
@@ -28,7 +29,8 @@ val gameGamepadBindings = mapOf(
     GAMEPAD_BUTTON_Y to CharacterCommands.useItem,
     GAMEPAD_BUTTON_B to CharacterCommands.abilityDefense,
     GAMEPAD_BUTTON_A to CharacterCommands.abilityMobility,
-    GAMEPAD_BUTTON_RIGHT_THUMB to toggleTargetingCommand
+    GAMEPAD_BUTTON_RIGHT_THUMB to toggleTargetingCommand,
+    GAMEPAD_BUTTON_BACK to CharacterRigCommands.switchView,
 )
 
 fun defaultMouseGameBindings() = mapOf(
@@ -54,6 +56,7 @@ fun defaultKeyboardGameBindings() = mapOf(
     GLFW.GLFW_KEY_1 to CharacterCommands.previousItem,
     GLFW.GLFW_KEY_2 to CharacterCommands.nextItem,
     GLFW.GLFW_KEY_C to GuiCommandType.characterInfo,
+    GLFW.GLFW_KEY_F6 to CharacterRigCommands.switchView,
     GLFW.GLFW_KEY_SPACE to CharacterCommands.abilityMobility
 ) + defaultSharedKeyboardBindings
 
