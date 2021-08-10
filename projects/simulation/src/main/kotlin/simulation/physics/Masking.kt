@@ -8,8 +8,10 @@ object CollisionGroups {
   val affectsCamera = 8
   val opaque = 16
   val spirit = 32
-  
+
   val solidStatic = static or opaque
+
+  val solidStaticCamera = static or opaque or affectsCamera
 
   val tangibleMask = dynamic or static
 

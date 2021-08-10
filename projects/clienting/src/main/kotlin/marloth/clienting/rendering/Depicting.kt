@@ -183,7 +183,7 @@ fun characterPlacement(location: Vector3, height: Float, rotationZ: Float): Matr
     .translate(characterFootPosition(location, height))
     .rotateZ(rotationZ)
     .rotateZ(Pi / 2f)
-    .scale(0.7f)
+    .scale(0.5f)
 
 fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depiction: Depiction): ElementGroup {
   val body = deck.bodies[id]!!

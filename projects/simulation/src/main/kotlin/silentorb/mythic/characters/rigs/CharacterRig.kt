@@ -124,14 +124,14 @@ fun updateCharacterRigBulletBody(
 
 //      println("$horizontalVelocity $heightAdjustmentRange")
 //      println("$groundDistance $transitionStepHeight")
-      btBody.translate(toGdxVector3(Vector3(0f, 0f, transitionStepHeight)))
+//      btBody.translate(toGdxVector3(Vector3(0f, 0f, transitionStepHeight)))
     } else if (stepHeight < 0f) {
       val transitionStepHeight = if (abs(stepHeight) < 0.01f)
         stepHeight
       else
         max(-0.05f, stepHeight * 0.3f)
 
-      btBody.translate(toGdxVector3(Vector3(0f, 0f, transitionStepHeight)))
+//      btBody.translate(toGdxVector3(Vector3(0f, 0f, transitionStepHeight)))
     }
   }
 

@@ -10,6 +10,7 @@
 ["ceiling1","mesh","floorSquare"],
 ["ceiling1","parent","dungeon-block"],
 ["ceiling1","translation",[0.0,-5.0,7.26]],
+["dungeon-block","blockRotations","all"],
 ["dungeon-block","",""],
 ["dungeon-block","biome","dungeon"],
 ["floor","type","solid-box"],
