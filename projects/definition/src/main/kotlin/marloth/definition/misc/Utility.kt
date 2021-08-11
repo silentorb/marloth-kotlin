@@ -7,11 +7,14 @@ import marloth.scenery.enums.ModifierDirection
 import marloth.scenery.enums.Text
 import silentorb.mythic.editing.main.loadGraphLibrary
 import silentorb.mythic.ent.*
+import silentorb.mythic.scenery.SceneProperties
 import simulation.accessorize.ModifierDefinition
 import simulation.combat.general.DamageType
 import simulation.combat.general.ModifierOperation
 import simulation.combat.general.ValueModifier
 import simulation.combat.general.ValueModifierDirection
+import simulation.misc.GameAttributes
+import simulation.misc.GameProperties
 
 fun newResistanceModifier(name: Text, damageType: DamageType) = ModifierDefinition(
     name = name,
@@ -53,3 +56,13 @@ fun multiLevelActionAccessory(baseName: String, levels: Int, generator: (Int) ->
 
           name to bundleWithAnyUpgrades
         }
+
+fun isBlockSide(entry: Entry): Boolean =
+    (entry.property == SceneProperties.type && entry.target == GameAttributes.blockSide) ||
+        entry.property == GameProperties.mine
+
+fun getSideNodes(graph: Graph): Collection<String> =
+    graph
+        .filter(::isBlockSide)
+        .map { it.source }
+        .distinct()

@@ -10,7 +10,7 @@ import silentorb.mythic.ent.scenery.nodeHasAttribute
 import simulation.misc.GameAttributes
 import simulation.misc.GameProperties
 
-fun gatherSides(sideGroups: Map<String, Set<String>>, graph: Graph, sideNodes: List<String>,
+fun gatherSides(sideGroups: Map<String, Set<String>>, graph: Graph, sideNodes: Collection<String>,
                 nonTraversableBlockSides: Collection<String>): List<Pair<CellDirection, Side?>> {
   val sides = sideNodes
       .mapNotNull { node ->
@@ -31,6 +31,7 @@ fun gatherSides(sideGroups: Map<String, Set<String>>, graph: Graph, sideNodes: L
               height = height,
               isTraversable = !nonTraversableBlockSides.contains(mine),
               isEssential = isEssential,
+              greedy = nodeHasAttribute(graph, node, GameAttributes.greedy)
           )
         }
       }

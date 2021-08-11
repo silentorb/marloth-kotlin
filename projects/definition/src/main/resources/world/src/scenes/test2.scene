@@ -1,7 +1,0 @@
-{
-"graph" : [
-["b","mesh","Cylinder"],
-["b","parent","test2"],
-["test2","",""]
-]
-}

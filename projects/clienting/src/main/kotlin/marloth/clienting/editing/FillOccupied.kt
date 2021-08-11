@@ -3,6 +3,7 @@ package marloth.clienting.editing
 import generation.architecture.engine.getCellDirection
 import generation.general.CellDirection
 import generation.general.Direction
+import marloth.definition.misc.getSideNodes
 import silentorb.mythic.ent.Entry
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.Key
@@ -19,7 +20,7 @@ fun getMissingOccupied(meshShapes: Map<Key, Shape>, graph: Graph): List<Vector3i
   val occupiedCells = getCellOccupancy(meshShapes, graph, meshNodes)
       .distinct()
 
-  val currentSideCells = getNodesWithAttribute(graph, GameAttributes.blockSide)
+  val currentSideCells = getSideNodes(graph)
       .mapNotNull { node -> getCellDirection(graph, node)?.cell }
 
   return occupiedCells - currentSideCells

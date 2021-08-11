@@ -103,8 +103,12 @@ tailrec fun addPathStep(
     state: BlockState
 ): BlockState {
   val (grid, blacklist) = state
+
+  if (grid.size > 1000)
+    throw Error("Infinite loop in world generation.")
+
   val incompleteSides = if (state.branchingMode == BranchingMode.linear && state.lastCell != null) {
-    val sides = getIncompleteBlockSides(grid, state.lastCell) - blacklist
+    val sides = filterBlockSides(grid, state.lastCell) - blacklist
     if (sides.any())
       sides
     else
@@ -114,9 +118,6 @@ tailrec fun addPathStep(
 
   if (incompleteSides.none())
     return state
-
-  if (grid.size > 1000)
-    throw Error("Infinite loop in world generation.")
 
   val stepCount = getSignificantCellCount(grid)
 //  worldGenerationLog {
@@ -128,10 +129,6 @@ tailrec fun addPathStep(
     val incompleteSide = dice.takeOne(incompleteSides)
     val nextPosition = getNextPosition(incompleteSide)
     assert(!grid.containsKey(nextPosition))
-//    val side = currentBlock.sides[incompleteSide.direction]!!
-//    worldGenerationLog {
-//      "Side: ${currentBlock.name} ${side.mineOld}, ${incompleteSide.position} ${incompleteSide.direction}"
-//    }
     val biome = state.biomeGrid(nextPosition)
     val groupedBlocks = state.biomeBlocks[biome]
     if (groupedBlocks == null)
@@ -150,7 +147,9 @@ tailrec fun addPathStep(
       )
     } else {
       val (blockOffset, block) = matchResult
-      worldGenerationLog { "Block: ${block.name}" }
+      worldGenerationLog {
+        "Winding Step: ${incompleteSide.cell} ${incompleteSide.direction} ${block.name} "
+      }
       val cellAdditions = extractCells(block, nextPosition - blockOffset)
 //      if (!cellAdditions.containsKey(nextPosition))
 //        matchConnectingBlock(dice, groupedBlocks.all - blocks, grid, nextPosition, incompleteSide)
@@ -168,6 +167,53 @@ tailrec fun addPathStep(
   }
 }
 
+tailrec fun extendBlockSides(dice: Dice, state: BlockState): BlockState {
+  val (grid, blacklist) = state
+
+  if (grid.size > 1000)
+    throw Error("Infinite loop in world generation.")
+
+  val incompleteSides = getIncompleteBlockSides(grid) { it.greedy } - blacklist
+
+  if (incompleteSides.none())
+    return state
+
+  val incompleteSide = dice.takeOne(incompleteSides)
+  val nextPosition = getNextPosition(incompleteSide)
+  assert(!grid.containsKey(nextPosition))
+  val biome = state.biomeGrid(nextPosition)
+  val groupedBlocks = state.biomeBlocks[biome]
+  if (groupedBlocks == null)
+    throw Error("Biome mismatch")
+
+  val blocks = groupedBlocks.nonTraversable
+  val essentialDirectionSideDirection = oppositeDirections[incompleteSide.direction]!!
+
+  val matchResult = matchConnectingBlock(dice, blocks, grid, nextPosition, essentialDirectionSideDirection)
+
+  val nextState = if (matchResult == null) {
+    state.copy(
+        blacklistSides = state.blacklistSides + incompleteSide
+    )
+  } else {
+    val (blockOffset, block) = matchResult
+    worldGenerationLog {
+      "Winding Step: ${incompleteSide.cell} ${incompleteSide.direction} ${block.name} "
+    }
+    val cellAdditions = extractCells(block, nextPosition - blockOffset)
+
+    assert(cellAdditions.containsKey(nextPosition))
+    assert(cellAdditions.any { it.value.offset == Vector3i.zero })
+    assert(cellAdditions.none { grid.containsKey(it.key) })
+    state.copy(
+        biomeBlocks = state.biomeBlocks + (biome to filterUsedUniqueBlock(block, groupedBlocks)),
+        grid = grid + cellAdditions,
+        lastCell = nextPosition,
+    )
+  }
+  return extendBlockSides(dice, nextState)
+}
+
 fun windingPath(seed: Long, dice: Dice, config: BlockConfig, length: Int, grid: BlockGrid): BlockGrid {
   val blocks = filterUsedUniqueBlocks(grid, config.blocks)
   val groupedBlocks = config.biomes
@@ -176,8 +222,7 @@ fun windingPath(seed: Long, dice: Dice, config: BlockConfig, length: Int, grid: 
       }
       .filterValues { it.flexible.any() }
 
-  val biomeAnchors = newBiomeAnchors(setOf("city"), dice,
-//      val biomeAnchors = newBiomeAnchors(groupedBlocks.keys, dice,
+      val biomeAnchors = newBiomeAnchors(groupedBlocks.keys, dice,
       worldRadius = length.toFloat().pow(1f / 4f) * cellLength,
       biomeSize = 15f,
       minGap = 2f
@@ -202,7 +247,7 @@ fun windingPath(seed: Long, dice: Dice, config: BlockConfig, length: Int, grid: 
     val intermediateState = addPathStep(firstLength, dice, state)
     val nextState = addPathStep(secondLength, dice, intermediateState.copy(branchingMode = BranchingMode.open))
     if (nextState.grid.size >= length)
-      return nextState.grid
+      return extendBlockSides(dice, nextState.copy(blacklistBlockLocations = mapOf(), blacklistSides = listOf())).grid
     else
       println("Failed to generate world with seed $seed")
   }

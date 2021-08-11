@@ -1,0 +1,7 @@
+{
+"graph" : [
+["building-side","",""],
+["building-side","other","street"],
+["building-side","mine","buildingEntrance"]
+]
+}

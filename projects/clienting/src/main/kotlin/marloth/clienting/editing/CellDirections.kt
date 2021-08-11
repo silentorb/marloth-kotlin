@@ -8,6 +8,7 @@ import silentorb.mythic.editing.main.Editor
 import silentorb.mythic.editing.main.EditorCommands
 import silentorb.mythic.editing.main.getNodeSelection
 import silentorb.mythic.ent.*
+import silentorb.mythic.ent.scenery.expandGraphInstances
 import silentorb.mythic.ent.scenery.integrateTransform
 import silentorb.mythic.ent.scenery.nodeHasAttribute
 import silentorb.mythic.happenings.Command
@@ -26,7 +27,7 @@ fun updateSideNodeNames(editor: Editor, graph: Graph, previous: Graph): Commands
     listOf()
   else {
     val sideNodes = selection
-        .filter(nodeHasAttribute(graph, GameAttributes.blockSide))
+        .filter{ nodeHasProperty(graph, it, GameProperties.mine) }
         .filter(::isSimpleSideNode)
 
     sideNodes

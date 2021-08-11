@@ -5,6 +5,8 @@ import generation.architecture.engine.*
 import generation.architecture.engine.BlockBuilder
 import generation.general.*
 import marloth.clienting.editing.*
+import marloth.definition.misc.getSideNodes
+import marloth.definition.misc.isBlockSide
 import marloth.definition.misc.nonTraversableBlockSides
 import marloth.definition.misc.sideGroups
 import marloth.scenery.enums.Textures
@@ -110,7 +112,7 @@ fun cellsFromSides(sides: List<Pair<CellDirection, Side?>>): Map<Vector3i, Block
   return cells + headroomCells
 }
 
-fun prepareBlockGraph(graph: Graph, sideNodes: List<String>, biomes: Collection<String>): Graph {
+fun prepareBlockGraph(graph: Graph, sideNodes: Collection<String>, biomes: Collection<String>): Graph {
   val truncatedGraph = graph.filter { !sideNodes.contains(it.source) || !isSimpleSideNode(it.source) }
   val defaultTexture = biomes
       .mapNotNull { defaultBiomeTextures[it] }
@@ -131,8 +133,11 @@ fun prepareBlockGraph(graph: Graph, sideNodes: List<String>, biomes: Collection<
 }
 
 fun interpolateCellCount(cells: Set<Vector3i>, axis: Int): Int =
-    (cells.minOf { it[axis] } + 1 until cells.maxOf { it[axis] })
-        .count { i -> cells.none { it[axis] == i } }
+    if (cells.none())
+      0
+    else
+      (cells.minOf { it[axis] } + 1 until cells.maxOf { it[axis] })
+          .count { i -> cells.none { it[axis] == i } }
 
 // Traversible cells are only marked along edges of a block
 // For large blocks, this function pads the traversable cell count
@@ -242,7 +247,8 @@ fun graphToBlockBuilder(name: String, graph: Graph): List<BlockBuilder> {
     listOf()
   else {
     val heights = listOf(0) + getNodeValues(graph, root, GameProperties.heightVariant)
-    val sideNodes = getNodesWithAttribute(graph, GameAttributes.blockSide)
+    val sideNodes = getSideNodes(graph)
+
     val sides = gatherSides(sideGroups, graph, sideNodes, nonTraversableBlockSides)
     return heights.map { height ->
       val adjustedSides = adjustSideHeights(sides, height)
@@ -268,10 +274,7 @@ fun graphsToBlockBuilders(graphLibrary: GraphLibrary): List<BlockBuilder> {
   val library = newExpansionLibrary(graphLibrary, mapOf())
   return graphLibrary
       .filterValues { graph ->
-        graph.any {
-          (it.property == SceneProperties.type && it.target == GameAttributes.blockSide) ||
-              it.property == GameProperties.mine
-        }
+        graph.any(::isBlockSide)
       }
       .keys
       .flatMap { key ->

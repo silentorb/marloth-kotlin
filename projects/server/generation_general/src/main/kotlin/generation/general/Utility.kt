@@ -30,4 +30,4 @@ fun rotateZ(turns: Int, cellDirection: CellDirection): CellDirection =
     )
 
 fun isSimpleSideNode(node: String): Boolean =
-    node.matches(Regex("\\d+[-,]\\d+[-,]\\d+"))
+    node.matches(Regex("\\d+[-,]\\d+[-,]\\d+.*?"))

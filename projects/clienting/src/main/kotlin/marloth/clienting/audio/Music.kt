@@ -25,6 +25,7 @@ data class MusicPlayer(
 }
 
 fun isAudioDeviceAvailable(): Boolean {
+  return AudioSystem.getMixerInfo().any()
   val format = AudioFormat(44100f, 16, 2, true, false)
   val info = DataLine.Info(SourceDataLine::class.java, format)
   return AudioSystem.isLineSupported(info)

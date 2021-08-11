@@ -17,5 +17,5 @@ data class Side(
     val isTraversable: Boolean = true,
     val isEssential: Boolean = false,
     val canMatchEssential: Boolean = true,
-    val tryToFill: Boolean = false,
+    val greedy: Boolean = false,
 )

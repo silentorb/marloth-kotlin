@@ -1,0 +1,8 @@
+{
+"graph" : [
+["street-building","",""],
+["street-building","mine","street"],
+["street-building","other","buildingEntrance"],
+["street-building","type","greedy"]
+]
+}

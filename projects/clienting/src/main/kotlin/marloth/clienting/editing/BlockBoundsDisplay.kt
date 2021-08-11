@@ -6,6 +6,8 @@ import generation.architecture.engine.getCellDirection
 import generation.general.*
 import imgui.ImColor
 import imgui.ImDrawList
+import marloth.definition.misc.getSideNodes
+import marloth.definition.misc.isBlockSide
 import marloth.definition.misc.nonTraversableBlockSides
 import marloth.definition.misc.sideGroups
 import silentorb.mythic.editing.main.*
@@ -120,7 +122,7 @@ fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
   val cells = getCellOccupancy(editor.enumerations.resourceInfo.meshShapes, graph, meshNodes)
       .distinct()
 
-  val sideNodes = getNodesWithAttribute(graph, GameAttributes.blockSide)
+  val sideNodes = getSideNodes(graph)
   val sides = gatherSides(sideGroups, graph, sideNodes, nonTraversableBlockSides)
       .filter { it.second != null } as List<Pair<CellDirection, Side>>
 
@@ -180,7 +182,7 @@ fun drawWorldBlockBounds(environment: GizmoEnvironment, blockGrid: BlockGrid) {
 val blockBoundsPainter = gizmoPainterToggle(blockBoundsEnabledKey) { environment ->
   val editor = environment.editor
   val graph = getCachedGraph(editor)
-  if (anyNodeHasAttribute(graph, GameAttributes.blockSide)) {
+  if (graph.any(::isBlockSide)) {
     drawBlockBounds(environment, graph)
   }
   val blockGrid = staticDebugBlockGrid

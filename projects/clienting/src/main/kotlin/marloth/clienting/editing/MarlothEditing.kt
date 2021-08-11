@@ -137,17 +137,21 @@ fun marlothEditorMenus() =
             ),
         )
 
+fun expandGraph(editor: Editor, graph: Graph): Graph {
+  val expansionLibrary = ExpansionLibrary(
+      graphs = editor.graphLibrary,
+      schema = editor.enumerations.schema,
+  )
+  return expandGraphInstances(expansionLibrary, graph)
+}
+
 fun marlothGraphEditors(): GraphEditors = mapOf(
     MarlothEditorCommands.fillOccupiedCells to { editor, command, graph ->
       val selection = getNodeSelection(editor)
       if (selection.size != 1)
         graph
       else {
-        val expansionLibrary = ExpansionLibrary(
-            graphs = editor.graphLibrary,
-            schema = editor.enumerations.schema,
-        )
-        val expandedGraph = expandGraphInstances(expansionLibrary, graph)
+        val expandedGraph = expandGraph(editor, graph)
         fillOccupied(editor.enumerations.resourceInfo.meshShapes, expandedGraph, selection.first())
       }
     }
@@ -238,9 +242,9 @@ fun newEditorResourceInfo(client: Client): ResourceInfo {
 }
 
 fun gatherCustomEditorCommands(editor: Editor, previousEditor: Editor): Commands {
-  val graph = getActiveEditorGraph(editor)
+  val graph = getCachedGraph(editor)
   val previousGraph = getActiveEditorGraph(previousEditor)
-  return if (graph == null || previousGraph == null)
+  return if (previousGraph == null)
     listOf()
   else
     updateSideNodeNames(editor, graph, previousGraph)
