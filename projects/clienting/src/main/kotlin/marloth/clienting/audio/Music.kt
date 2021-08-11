@@ -4,6 +4,10 @@ import silentorb.mythic.debugging.getDebugString
 import java.io.File
 import java.io.FileInputStream
 import javax.sound.midi.*
+import javax.sound.sampled.AudioFormat
+import javax.sound.sampled.AudioSystem
+import javax.sound.sampled.DataLine
+import javax.sound.sampled.SourceDataLine
 
 data class MusicPlayer(
     val sequencer: Sequencer,
@@ -20,7 +24,16 @@ data class MusicPlayer(
   }
 }
 
+fun isAudioDeviceAvailable(): Boolean {
+  val format = AudioFormat(44100f, 16, 2, true, false)
+  val info = DataLine.Info(SourceDataLine::class.java, format)
+  return AudioSystem.isLineSupported(info)
+}
+
 fun newMusicPlayer(): MusicPlayer? {
+  if (!isAudioDeviceAvailable())
+    return null
+
   val soundfontPath = getDebugString("SOUNDFONT_PATH") ?: return null
   val midiFilePath = getDebugString("MIDI_PATH") ?: return null
   val soundfont: Soundbank = MidiSystem.getSoundbank(FileInputStream(File(soundfontPath)))

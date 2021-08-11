@@ -27,6 +27,7 @@ object GameAttributes {
   val wallSlot = "wallSlot"
   val isEssentialSide = "isEssentialSide"
   val intrinsicReplenishment = "intrinsicReplenishment"
+  val tryToFill = "tryToFill"
 }
 
 object DistAttributes {

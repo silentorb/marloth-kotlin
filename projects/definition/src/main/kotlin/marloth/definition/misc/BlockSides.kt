@@ -11,6 +11,11 @@ object BlockSides {
   val slopeRightHalf = "slopeRightHalf"
   val slopeLeftQuarter = "slopeLeftQuarter"
   val slopeRightQuarter = "slopeRightQuarter"
+
+  // City
+  val street = "street"
+  val streetIntersection = "streetIntersection"
+  val buildingEntrance = "buildingEntrance"
 }
 
 val nonTraversableBlockSides = setOf(
@@ -20,12 +25,15 @@ val nonTraversableBlockSides = setOf(
 
 val anyOpen = setOf(
     BlockSides.open,
-    BlockSides.partialOpen
+    BlockSides.partialOpen,
+    BlockSides.street,
 )
 
 val sideGroups: Map<String, Set<String>> = mapOf(
     "anyOpen" to anyOpen,
     "anyOpenOrClosed" to anyOpen + BlockSides.closed,
-)
+    "streetOrIntersection" to setOf(BlockSides.street, BlockSides.streetIntersection),
+
+    )
 
 val blockSides = reflectProperties<String>(BlockSides) + sideGroups.keys

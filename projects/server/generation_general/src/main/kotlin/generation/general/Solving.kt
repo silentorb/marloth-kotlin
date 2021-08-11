@@ -5,7 +5,6 @@ import silentorb.mythic.randomly.Dice
 import silentorb.mythic.randomly.getAliasedIndex
 import silentorb.mythic.spatial.Vector3i
 import simulation.misc.BlockAttributes
-import simulation.misc.CellAttribute
 
 typealias GetBlock = (Vector3i) -> BlockCell?
 
@@ -120,7 +119,7 @@ fun fallbackBiomeMatchConnectingBlock(dice: Dice, biomeBlocks: Map<String, Group
   for (option in options) {
     val blocks = biomeBlocks[option]
     if (blocks != null) {
-      val result = matchConnectingBlock(dice, blocks.all, grid, location, essentialDirectionSide)
+      val result = matchConnectingBlock(dice, blocks.traversable, grid, location, essentialDirectionSide)
       if (result != null) {
         return result
       }

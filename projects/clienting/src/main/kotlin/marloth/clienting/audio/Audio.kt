@@ -16,14 +16,18 @@ data class AudioConfig(
 )
 
 fun updateAudioStateSounds(client: Client, previousSounds: Table<Sound>, nextSounds: Table<Sound>, listenerPosition: Vector3?): (AudioState) -> AudioState = { state ->
-  //  val samples = client.platform.audio.availableBuffer / 4
-  val newSounds = nextSounds.filterKeys { !previousSounds.keys.contains(it) }
-      .filterValues { (it.position == null || listenerPosition == null) || it.position!!.distance(listenerPosition) < maxSoundDistance }
-  val sounds = updateSoundPlaying(client.platform.audio, newSounds, client.soundLibrary, listenerPosition, state.volume)(state.sounds)
+  if (client.platform.audio.isActive) {
+    //  val samples = client.platform.audio.availableBuffer / 4
+    val newSounds = nextSounds.filterKeys { !previousSounds.keys.contains(it) }
+        .filterValues { (it.position == null || listenerPosition == null) || it.position!!.distance(listenerPosition) < maxSoundDistance }
+    val sounds = updateSoundPlaying(client.platform.audio, newSounds, client.soundLibrary, listenerPosition, state.volume)(state.sounds)
 
-  state.copy(
-      sounds = sounds
-  )
+    state.copy(
+        sounds = sounds
+    )
+  }
+  else
+    state
 }
 
 fun loadAudioResource(audio: PlatformAudio, name: String) =
@@ -31,16 +35,19 @@ fun loadAudioResource(audio: PlatformAudio, name: String) =
 //audio.loadSound(getResourceUrl("audio/$name.ogg")!!.file.drop(1))
 
 fun loadSounds(audio: PlatformAudio): SoundLibrary =
-    reflectProperties<String>(Sounds).mapIndexed { i, entry ->
-      val (buffer, duration) = loadAudioResource(audio, entry)
-      val sound = SoundData(
-          type = entry,
-          buffer = buffer,
-          duration = duration
-      )
-      Pair(sound.type, sound)
-    }
-        .associate { it }
+    if (audio.isActive)
+      reflectProperties<String>(Sounds).mapIndexed { i, entry ->
+        val (buffer, duration) = loadAudioResource(audio, entry)
+        val sound = SoundData(
+            type = entry,
+            buffer = buffer,
+            duration = duration
+        )
+        Pair(sound.type, sound)
+      }
+          .associate { it }
+    else
+      mapOf()
 
 fun updateClientAudio(client: Client, worlds: List<World>, audioState: AudioState) =
     if (worlds.size < 2)

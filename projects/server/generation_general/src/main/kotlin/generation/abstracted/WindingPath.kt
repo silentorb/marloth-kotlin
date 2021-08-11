@@ -10,12 +10,14 @@ import simulation.misc.cellLength
 import kotlin.math.pow
 
 data class GroupedBlocks(
-    val all: Set<Block>,
+    val traversable: Set<Block>,
     val flexible: Set<Block>,
+    val nonTraversable: Set<Block>,
 )
 
 fun newGroupedBlocks(blocks: Collection<Block>): GroupedBlocks {
-  val flexible = blocks
+  val (traversable, nonTraversable) = blocks.partition { it.traversable.any() }
+  val flexible = traversable
       .filter { block ->
         val traversableCount = block.cells.values
             .sumBy { cell ->
@@ -28,16 +30,18 @@ fun newGroupedBlocks(blocks: Collection<Block>): GroupedBlocks {
       .toSet()
 
   return GroupedBlocks(
-      all = blocks.toSet(),
+      traversable = traversable.toSet(),
       flexible = flexible,
+      nonTraversable = nonTraversable.toSet(),
   )
 }
 
 fun filterUsedUniqueBlock(block: Block?, groupedBlocks: GroupedBlocks): GroupedBlocks =
     if (block != null && block.attributes.contains(BlockAttributes.unique))
       GroupedBlocks(
-          all = groupedBlocks.all - block,
+          traversable = groupedBlocks.traversable - block,
           flexible = groupedBlocks.flexible - block,
+          nonTraversable = groupedBlocks.nonTraversable - block,
       )
     else
       groupedBlocks
@@ -85,7 +89,7 @@ fun getAvailableBlocks(groupedBlocks: GroupedBlocks, incompleteSides: List<CellD
   val blocks = if (incompleteSides.size < 2)
     groupedBlocks.flexible
   else
-    groupedBlocks.all
+    groupedBlocks.traversable
 
   return if (block != null && block.attributes.contains(BlockAttributes.hetero))
     blocks - block
@@ -137,7 +141,7 @@ tailrec fun addPathStep(
     val essentialDirectionSideDirection = oppositeDirections[incompleteSide.direction]!!
 
     val matchResult = matchConnectingBlock(dice, blocks, grid, nextPosition, essentialDirectionSideDirection)
-        ?: matchConnectingBlock(dice, groupedBlocks.all - blocks, grid, nextPosition, essentialDirectionSideDirection)
+        ?: matchConnectingBlock(dice, groupedBlocks.traversable - blocks, grid, nextPosition, essentialDirectionSideDirection)
         ?: fallbackBiomeMatchConnectingBlock(dice, state.biomeBlocks, grid, nextPosition, biome, essentialDirectionSideDirection)
 
     val nextState = if (matchResult == null) {
@@ -172,7 +176,8 @@ fun windingPath(seed: Long, dice: Dice, config: BlockConfig, length: Int, grid: 
       }
       .filterValues { it.flexible.any() }
 
-  val biomeAnchors = newBiomeAnchors(groupedBlocks.keys, dice,
+  val biomeAnchors = newBiomeAnchors(setOf("city"), dice,
+//      val biomeAnchors = newBiomeAnchors(groupedBlocks.keys, dice,
       worldRadius = length.toFloat().pow(1f / 4f) * cellLength,
       biomeSize = 15f,
       minGap = 2f
