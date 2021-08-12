@@ -169,7 +169,8 @@ fun blockFromGraph(graph: Graph, cells: Map<Vector3i, BlockCell>, root: String, 
       rarity = if (rarity != null)
         Rarity.values()[rarity - 1]
       else
-        Rarity.uncommon
+        Rarity.uncommon,
+      isBiomeAdapter = nodeHasAttribute(graph, root, GameAttributes.biomeAdapter)
   )
 }
 

@@ -58,6 +58,7 @@ data class BlockState(
     val biomeGrid: BiomeGrid,
     val blacklistBlockLocations: Map<Vector3i, List<Block>>,
     val branchingMode: BranchingMode,
+    val biomeAdapters: Set<Block>,
     val lastCell: Vector3i? = null,
 )
 
@@ -138,17 +139,21 @@ tailrec fun addPathStep(
     val essentialDirectionSideDirection = oppositeDirections[incompleteSide.direction]!!
 
     val matchResult = matchConnectingBlock(dice, blocks, grid, nextPosition, essentialDirectionSideDirection)
-        ?: matchConnectingBlock(dice, groupedBlocks.traversable - blocks, grid, nextPosition, essentialDirectionSideDirection)
-        ?: fallbackBiomeMatchConnectingBlock(dice, state.biomeBlocks, grid, nextPosition, biome, essentialDirectionSideDirection)
+//        ?: matchConnectingBlock(dice, groupedBlocks.traversable - blocks, grid, nextPosition, essentialDirectionSideDirection)
+        ?: matchConnectingBlock(dice, state.biomeAdapters - blocks, grid, nextPosition, essentialDirectionSideDirection)
+//        ?: fallbackBiomeMatchConnectingBlock(dice, state.biomeBlocks, grid, nextPosition, biome, essentialDirectionSideDirection)
 
     val nextState = if (matchResult == null) {
+      worldGenerationLog {
+        "Blacklisting: $biome ${incompleteSide.cell} ${incompleteSide.direction}"
+      }
       state.copy(
           blacklistSides = state.blacklistSides + incompleteSide
       )
     } else {
       val (blockOffset, block) = matchResult
       worldGenerationLog {
-        "Winding Step: ${incompleteSide.cell} ${incompleteSide.direction} ${block.name} "
+        "Winding Step: $biome ${incompleteSide.cell} ${incompleteSide.direction} ${block.name} "
       }
       val cellAdditions = extractCells(block, nextPosition - blockOffset)
 //      if (!cellAdditions.containsKey(nextPosition))
@@ -222,8 +227,8 @@ fun windingPath(seed: Long, dice: Dice, config: BlockConfig, length: Int, grid: 
       }
       .filterValues { it.flexible.any() }
 
-      val biomeAnchors = newBiomeAnchors(groupedBlocks.keys, dice,
-      worldRadius = length.toFloat().pow(1f / 4f) * cellLength,
+  val biomeAnchors = newBiomeAnchors(groupedBlocks.keys, dice,
+      worldRadius = length / 2 * cellLength,
       biomeSize = 15f,
       minGap = 2f
   )
@@ -234,7 +239,8 @@ fun windingPath(seed: Long, dice: Dice, config: BlockConfig, length: Int, grid: 
       blacklistSides = listOf(),
       blacklistBlockLocations = mapOf(),
       biomeGrid = biomeGrid,
-      branchingMode = BranchingMode.linear
+      branchingMode = BranchingMode.linear,
+      biomeAdapters = blocks.filter { it.isBiomeAdapter }.toSet()
   )
 
   val (firstLength, secondLength) =

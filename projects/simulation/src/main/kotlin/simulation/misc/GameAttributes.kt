@@ -28,6 +28,7 @@ object GameAttributes {
   val isEssentialSide = "isEssentialSide"
   val intrinsicReplenishment = "intrinsicReplenishment"
   val greedy = "greedy"
+  val biomeAdapter = "biomeAdapter"
 }
 
 object DistAttributes {
