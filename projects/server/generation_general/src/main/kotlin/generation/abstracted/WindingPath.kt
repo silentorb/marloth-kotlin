@@ -223,7 +223,7 @@ fun windingPath(seed: Long, dice: Dice, config: BlockConfig, length: Int, grid: 
   val blocks = filterUsedUniqueBlocks(grid, config.blocks)
   val groupedBlocks = config.biomes
       .associateWith { biome ->
-        newGroupedBlocks(blocks.filter { it.biomes.contains(biome) })
+        newGroupedBlocks(blocks.filter { it.biomes.contains(biome) && !it.isBiomeAdapter })
       }
       .filterValues { it.flexible.any() }
 

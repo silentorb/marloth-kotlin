@@ -81,6 +81,7 @@
 ["building","type","city-building-simple"],
 ["building","rotation",[0.0,0.0,0.17453294]],
 ["building","translation",[2.4438903,2.4509482,-2.0103872]],
+["city-street","type","quarter-heights"],
 ["city-street","",""],
 ["city-street","biome","city"],
 ["city-street","rarity",2],

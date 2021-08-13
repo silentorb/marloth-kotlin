@@ -15,10 +15,7 @@ import silentorb.mythic.ent.scenery.*
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.Vector3i
-import simulation.misc.BlockRotations
-import simulation.misc.CellAttribute
-import simulation.misc.GameAttributes
-import simulation.misc.GameProperties
+import simulation.misc.*
 
 fun getTraversable(cells: Map<Vector3i, BlockCell>) =
     cells
@@ -179,7 +176,7 @@ fun shouldOmit(cellDirections: List<CellDirection>, keys: Set<CellDirection>): B
       keys.contains(cellDirection)
     }
 
-fun builderFromGraph(graph: Graph, zShifts: Collection<CellDirection>): Builder {
+fun builderFromGraph(graph: Graph, cellDirections: Map<CellDirection, CellDirection>): Builder {
   val showIfSideIsEmpty = filterByProperty(graph, GameProperties.showIfSideIsEmpty)
       .map { it.source to it.target as CellDirection }
       .plus(getNodesWithAttribute(graph, GameAttributes.showIfSideIsEmpty)
@@ -196,13 +193,7 @@ fun builderFromGraph(graph: Graph, zShifts: Collection<CellDirection>): Builder 
   return { input ->
     val omitted = showIfSideIsEmpty
         .mapValues { i ->
-          i.value.map { entry ->
-            val cellDirection = entry.second
-            if (zShifts.contains(cellDirection))
-              cellDirection.copy(cell = cellDirection.cell + Vector3i(0, 0, -1))
-            else
-              cellDirection
-          }
+          i.value.map { cellDirections[it.second] ?: it.second }
         }
         .mapNotNull { (node, cellDirections) ->
           if (shouldOmit(cellDirections, input.neighbors.keys))
@@ -215,7 +206,25 @@ fun builderFromGraph(graph: Graph, zShifts: Collection<CellDirection>): Builder 
   }
 }
 
-fun adjustSideHeights(sides: List<Pair<CellDirection, Side?>>, height: Int): List<Pair<CellDirection, Side?>> =
+fun mapSideHeightAdjustments(sides: List<Pair<CellDirection, Side?>>, height: Int): Map<CellDirection, CellDirection> =
+    sides
+        .filter { it.second != null }
+        .associate { (cellDirection, side) ->
+          val newHeight = side!!.height + height
+          val nextCellDirection = when {
+            newHeight < 0 -> cellDirection.copy(
+                cell = cellDirection.cell + Vector3i(0, 0, -1)
+            )
+            newHeight >= cellHeightResolution -> cellDirection.copy(
+                cell = cellDirection.cell + Vector3i(0, 0, 1)
+            )
+            else -> cellDirection
+          }
+          cellDirection to nextCellDirection
+        }
+
+fun adjustSideHeights(sides: List<Pair<CellDirection, Side?>>, cellDirections: Map<CellDirection, CellDirection>,
+                      height: Int): List<Pair<CellDirection, Side?>> =
     if (height == 0)
       sides
     else {
@@ -224,16 +233,10 @@ fun adjustSideHeights(sides: List<Pair<CellDirection, Side?>>, height: Int): Lis
             if (side == null)
               cellDirection to side
             else {
-              val lowerCellHeight = side.height + height < 0
-              val nextCellDirection = if (lowerCellHeight)
-                cellDirection.copy(
-                    cell = cellDirection.cell + Vector3i(0, 0, -1)
-                )
-              else
-                cellDirection
-
+              val newHeight = side.height + height
+              val nextCellDirection = cellDirections[cellDirection] ?: cellDirection
               val nextSide = side.copy(
-                  height = (side.height + height + 100) % 100,
+                  height = (newHeight + cellHeightResolution) % cellHeightResolution,
               )
 
               nextCellDirection to nextSide
@@ -252,21 +255,13 @@ fun graphToBlockBuilder(name: String, graph: Graph): List<BlockBuilder> {
 
     val sides = gatherSides(sideGroups, graph, sideNodes, nonTraversableBlockSides)
     return heights.map { height ->
-      val adjustedSides = adjustSideHeights(sides, height)
+      val cellDirectionsMap = mapSideHeightAdjustments(sides, height)
+      val adjustedSides = adjustSideHeights(sides, cellDirectionsMap, height)
       val cells = cellsFromSides(adjustedSides)
       assert(cells.keys.contains(Vector3i.zero))
       val block = blockFromGraph(graph, cells, root, name, biomes, height)
       val finalGraph = prepareBlockGraph(graph, sideNodes, biomes)
-      val offsets = sides
-          .filter {
-            val sideHeight = it.second?.height
-            sideHeight != null && sideHeight + height < 0
-          }
-          .map { (cellDirection, _) ->
-            cellDirection
-          }
-          .toSet()
-      block to builderFromGraph(finalGraph, offsets)
+      block to builderFromGraph(finalGraph, cellDirectionsMap)
     }
   }
 }

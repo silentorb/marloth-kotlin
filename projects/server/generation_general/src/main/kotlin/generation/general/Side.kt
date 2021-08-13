@@ -4,10 +4,11 @@ val verticalSides = setOf(Direction.up, Direction.down)
 
 // The standard 4 heights are incremental quarters + 10 for floor height padding
 object StandardHeights {
-  val first = 10
-  val second = 35
-  val third = 60
-  val fourth = 85
+  val first = 100
+  val firstB = 225
+  val second = 350
+  val third = 600
+  val fourth = 850
 }
 
 data class Side(

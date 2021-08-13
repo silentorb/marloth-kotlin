@@ -72,7 +72,7 @@ fun getSideHeightLines(selection: Collection<CellDirection>, sides: List<Pair<Ce
           if (dir == null)
             null
           else {
-            val heightOffset = Vector3(0f, 0f, height.toFloat() * cellLength / 100f - cellHalfLength)
+            val heightOffset = Vector3(0f, 0f, height.toFloat() * cellLength / cellHeightResolution - cellHalfLength)
             val rightAngleDirection = horizontalDirectionVectors[rotateDirection(1)(cellDirection.direction)]!!.toVector3()
             val middle = getCellPoint(cellDirection.cell) + dir * cellHalfLength + heightOffset
             val hookOffset = dir * 0.25f

@@ -8,6 +8,7 @@ import silentorb.mythic.ent.scenery.integrateTransform
 import silentorb.mythic.scenery.SceneProperties
 import silentorb.mythic.spatial.*
 import simulation.misc.absoluteCellPosition
+import simulation.misc.cellHeightResolution
 import simulation.misc.cellLength
 
 fun gatherNeighbors(grid: BlockGrid, block: Block, position: Vector3i): Map<CellDirection, String> =
@@ -34,7 +35,7 @@ fun gatherNeighbors(grid: BlockGrid, block: Block, position: Vector3i): Map<Cell
 fun transformBlockOutput(block: Block, position: Vector3i, graph: Graph): Graph {
   val zRotation = (block.turns.toFloat()) * quarterAngle
   val rotation = Vector3(0f, 0f, zRotation)
-  val location = absoluteCellPosition(position) + Vector3(0f, 0f, block.heightOffset.toFloat() / 100f * cellLength)
+  val location = absoluteCellPosition(position) + Vector3(0f, 0f, block.heightOffset.toFloat() / cellHeightResolution * cellLength)
   val parentTransform = integrateTransform(location, rotation)
   val roots = getGraphRoots(graph)
   val rootTransforms = roots.flatMap { root ->

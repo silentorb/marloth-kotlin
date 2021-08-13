@@ -9,6 +9,8 @@ const val cellLength = 5f
 
 val cellHalfLength = cellLength / 2f
 
+const val cellHeightResolution = 1000
+
 val floorOffset = Vector3(0f, 0f, -cellHalfLength)
 
 //data class Cell(
