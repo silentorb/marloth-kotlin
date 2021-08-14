@@ -1,7 +1,7 @@
 package marloth.scenery.enums
 
 // As long as there is MeshId reflection, its fields cannot be const
-object MeshId {
+object Meshes {
   val billboard = "billboard"
   val candle = "candle"
   val hollowCircle = "hollowCircle"
@@ -69,4 +69,7 @@ object MeshId {
   // Characters
 
   val girl = "girl"
+  val dressSimple = "dressSimple"
+  val eyes = "eyes"
+  val ponytail = "ponytail"
 }

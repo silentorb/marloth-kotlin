@@ -1,6 +1,6 @@
 package marloth.integration.debug
 
-import marloth.scenery.enums.MeshId
+import marloth.scenery.enums.Meshes
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.glowing.DrawMethod
 import silentorb.mythic.glowing.drawMesh
@@ -14,7 +14,7 @@ import silentorb.mythic.spatial.Vector4
 
 fun drawLights(lights: List<Light>, renderer: Renderer) {
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
-  val sphere = renderer.meshes[MeshId.sphere]!!.primitives.first()
+  val sphere = renderer.meshes[Meshes.sphere]!!.primitives.first()
   for (light in lights) {
     effect.activate(ObjectShaderConfig(
         color = Vector4(1f, 1f, 0f, 0.3f),

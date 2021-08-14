@@ -7,7 +7,6 @@ import simulation.accessorize.AccessoryDefinition
 import simulation.accessorize.AccessoryName
 import silentorb.mythic.performing.ActionDefinition
 import simulation.abilities.Actions
-import simulation.accessorize.IntrinsicReplenishment
 import simulation.accessorize.Nutrient
 import simulation.characters.EquipmentSlot
 import simulation.combat.general.AttackMethod
@@ -27,7 +26,7 @@ fun rocketLauncher(level: Int = 1) =
     ActionAccessory(
         accessory = AccessoryDefinition(
             name = TextId.id_rocketLauncher,
-            equippedMesh = MeshId.grenadeLauncher
+            equippedMesh = Meshes.grenadeLauncher
         ),
         action = ActionDefinition(
             cooldown = 1.5f,
@@ -43,7 +42,7 @@ fun rocketLauncher(level: Int = 1) =
             damageRadius = 2f,
             velocity = 20f,
             damageFalloff = 1f,
-            missileMesh = MeshId.missile,
+            missileMesh = Meshes.missile,
             damages = listOf(
                 DamageDefinition(
                     type = DamageTypes.physical,
@@ -92,7 +91,7 @@ fun pistol(level: Int) =
     ActionAccessory(
         accessory = AccessoryDefinition(
             name = TextId.id_pistol,
-            equippedMesh = MeshId.pistol
+            equippedMesh = Meshes.pistol
         ),
         action = ActionDefinition(
             cooldown = 2f,
@@ -117,7 +116,7 @@ fun actionAccessories(): ActionAccessoryMap = mapOf(
     AccessoryIdOld.grenadeLauncher to ActionAccessory(
         accessory = AccessoryDefinition(
             name = TextId.id_grenadeLauncher,
-            equippedMesh = MeshId.grenadeLauncher
+            equippedMesh = Meshes.grenadeLauncher
         ),
         action = ActionDefinition(
             cooldown = 2f,
@@ -133,7 +132,7 @@ fun actionAccessories(): ActionAccessoryMap = mapOf(
             damageRadius = 3.5f,
             velocity = 20f,
             damageFalloff = 0.8f,
-            missileMesh = MeshId.missile,
+            missileMesh = Meshes.missile,
             damages = listOf(
                 DamageDefinition(
                     type = DamageTypes.physical,
@@ -251,7 +250,7 @@ fun actionAccessories(): ActionAccessoryMap = mapOf(
     AccessoryIdOld.shotgun to ActionAccessory(
         accessory = AccessoryDefinition(
             name = DevText("Shotgun"),
-            equippedMesh = MeshId.shotgun
+            equippedMesh = Meshes.shotgun
         ),
         action = ActionDefinition(
             cooldown = 0.2f,

@@ -1,6 +1,6 @@
 package simulation.combat.spatial
 
-import marloth.scenery.enums.MeshId
+import marloth.scenery.enums.Meshes
 import silentorb.mythic.ent.Id
 import silentorb.mythic.happenings.DeleteEntityEvent
 import silentorb.mythic.happenings.Events
@@ -60,7 +60,7 @@ fun eventsFromMissileCollision(world: SpatialCombatWorld, id: Id, missile: Missi
           ),
           Depiction(
               type = DepictionType.staticMesh,
-              mesh = MeshId.sphere
+              mesh = Meshes.sphere
           ),
           FloatTimer(0.15f)
       )

@@ -1,7 +1,7 @@
 package marloth.clienting.gui.hud
 
 import marloth.scenery.enums.AccessoryIdOld
-import marloth.scenery.enums.MeshId
+import marloth.scenery.enums.Meshes
 import silentorb.mythic.characters.rigs.defaultCharacterRadius
 import silentorb.mythic.ent.Id
 import silentorb.mythic.glowing.DrawMethod
@@ -20,7 +20,7 @@ fun movementRangeLayer(color: Vector4, transform: Matrix) =
                 meshes = listOf(
                     MeshElement(
                         id = 1,
-                        mesh = MeshId.hollowCircle,
+                        mesh = Meshes.hollowCircle,
                         transform = transform,
                         material = Material(
                             color = color,

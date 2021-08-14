@@ -10,7 +10,6 @@ import silentorb.mythic.characters.rigs.ViewMode
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.Table
-import silentorb.mythic.ent.reflectProperties
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.performing.isMarkerTriggered
 import silentorb.mythic.physics.Body
@@ -23,24 +22,10 @@ import silentorb.mythic.spatial.Vector3
 import simulation.combat.spatial.executeMarker
 import simulation.entities.Depiction
 import simulation.entities.DepictionType
-import simulation.entities.depictionTypes
 import simulation.main.Deck
 import simulation.misc.Definitions
 import simulation.updating.simulationDelta
 import kotlin.math.floor
-
-//val simplePainterMap = reflectProperties<String>(MeshId).mapNotNull { meshId ->
-//  val depictionType = depictionTypes.firstOrNull { it == meshId }
-//  if (depictionType != null)
-//    Pair(depictionType, meshId)
-//  else
-//    null
-//}.associate { it }
-//    .plus(
-//        mapOf(
-//            DepictionType.child to MeshId.personBody
-//        )
-//    )
 
 fun filterDepictions(depictions: Table<Depiction>, playerRig: Id, characterRig: CharacterRig): Table<Depiction> =
     if (characterRig.viewMode == ViewMode.firstPerson && !getDebugBoolean("FLY_THROUGH_CAMERA"))
@@ -150,24 +135,27 @@ fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footP
 fun characterMeshes(depictionType: String) =
     when (depictionType) {
       DepictionType.child -> listOf(
-          MeshId.girl,
+          Meshes.girl,
+          Meshes.dressSimple,
+          Meshes.ponytail,
+          Meshes.eyes,
       )
       DepictionType.sentinel -> listOf(
-          MeshId.personBody,
-          MeshId.pants,
-          MeshId.shirt,
-          MeshId.sentinelHead
+          Meshes.personBody,
+          Meshes.pants,
+          Meshes.shirt,
+          Meshes.sentinelHead
       )
       DepictionType.hound -> listOf(
-          MeshId.personBody,
-          MeshId.pants,
-          MeshId.shirt
+          Meshes.personBody,
+          Meshes.pants,
+          Meshes.shirt
       )
       else -> listOf(
-          MeshId.personBody,
-          MeshId.hogHead,
-          MeshId.pants,
-          MeshId.shirt
+          Meshes.personBody,
+          Meshes.hogHead,
+          Meshes.pants,
+          Meshes.shirt
       )
     }
 

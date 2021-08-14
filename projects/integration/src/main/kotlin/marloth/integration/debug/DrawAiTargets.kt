@@ -1,6 +1,6 @@
 package marloth.integration.debug
 
-import marloth.scenery.enums.MeshId
+import marloth.scenery.enums.Meshes
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.glowing.DrawMethod
 import silentorb.mythic.glowing.drawMesh
@@ -15,7 +15,7 @@ import simulation.main.Deck
 fun drawAiTargets(deck: Deck, renderer: Renderer) {
   val targets = deck.spirits.mapNotNull { it.value.pursuit?.targetPosition }
   val effect = renderer.getShader(renderer.vertexSchemas.flat, ShaderFeatureConfig())
-  val cube = renderer.meshes[MeshId.cube]!!.primitives.first()
+  val cube = renderer.meshes[Meshes.cube]!!.primitives.first()
   for (target in targets) {
     effect.activate(ObjectShaderConfig(
         color = Vector4(1f, 0f, 1f, 0.3f),

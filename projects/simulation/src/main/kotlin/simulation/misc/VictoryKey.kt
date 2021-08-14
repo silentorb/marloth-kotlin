@@ -1,7 +1,7 @@
 package simulation.misc
 
 import marloth.scenery.enums.AccessoryIdOld
-import marloth.scenery.enums.MeshId
+import marloth.scenery.enums.Meshes
 import silentorb.mythic.ent.Id
 import silentorb.mythic.ent.IdSource
 import silentorb.mythic.ent.Table
@@ -39,7 +39,7 @@ fun newVictoryKey(owner: Id = 0) =
     )
 
 fun newSpatialVictoryKey(location: Vector3): Hand {
-  val mesh = MeshId.key
+  val mesh = Meshes.key
   return Hand(
       body = Body(
           position = location + Vector3(0f, 0f, 0.4f)

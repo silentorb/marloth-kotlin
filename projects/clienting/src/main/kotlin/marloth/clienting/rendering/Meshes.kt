@@ -1,6 +1,6 @@
 package marloth.clienting.rendering
 
-import marloth.scenery.enums.MeshId
+import marloth.scenery.enums.Meshes
 import silentorb.mythic.drawing.createCircleList
 import silentorb.mythic.glowing.*
 import silentorb.mythic.lookinglass.Armature
@@ -65,7 +65,7 @@ fun createMeshes(vertexSchemas: VertexSchemas): Pair<Map<MeshName, ModelMesh>, L
   val imports = importedMeshes(vertexSchemas)
   val importedMeshes = imports.flatMap { it.meshes }.associateBy { it.id }
   val customMeshes = mapOf(
-      MeshId.hollowCircle to createHollowCircleMesh(vertexSchemas.flat, 64),
+      Meshes.hollowCircle to createHollowCircleMesh(vertexSchemas.flat, 64),
       "line" to createLineMesh(vertexSchemas.flat),
       "billboard" to createBillboardMesh(vertexSchemas.textured)
   )

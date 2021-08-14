@@ -11,7 +11,7 @@ import org.recast4j.recast.Span
 import silentorb.mythic.lookinglass.Renderer
 import silentorb.mythic.lookinglass.shading.ObjectShaderConfig
 import silentorb.mythic.lookinglass.shading.ShaderFeatureConfig
-import marloth.scenery.enums.MeshId
+import marloth.scenery.enums.Meshes
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.lookinglass.SceneRenderer
 import silentorb.mythic.spatial.Vector3
@@ -27,7 +27,7 @@ fun renderNavMeshVoxels(renderer: SceneRenderer, hf: Heightfield) {
   val w = hf.width
   val h = hf.height
 
-  val cube = renderer.meshes[MeshId.cube]!!
+  val cube = renderer.meshes[Meshes.cube]!!
   val effect = renderer.getShader(renderer.renderer.vertexSchemas.flat, ShaderFeatureConfig())
   globalState.depthEnabled = true
   for (y in 0 until h) {

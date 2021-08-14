@@ -7,13 +7,13 @@ import silentorb.mythic.lookinglass.ElementGroup
 import silentorb.mythic.lookinglass.ElementGroups
 import silentorb.mythic.lookinglass.Material
 import silentorb.mythic.lookinglass.MeshElement
-import marloth.scenery.enums.MeshId
+import marloth.scenery.enums.Meshes
 import silentorb.mythic.timing.FloatCycle
 
 fun createBackgroundSphere(texture: BackgroundTextureId, cameraPosition: Vector3, orientation: Quaternion = Quaternion()) =
     MeshElement(
         id = 1,
-        mesh = MeshId.skySphere,
+        mesh = Meshes.skySphere,
         transform = Matrix.identity
             .translate(cameraPosition)
             .rotate(orientation)

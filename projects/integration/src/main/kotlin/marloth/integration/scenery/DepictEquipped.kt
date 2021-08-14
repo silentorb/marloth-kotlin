@@ -1,7 +1,7 @@
 package marloth.integration.scenery
 
 import marloth.scenery.enums.AccessoryIdOld
-import marloth.scenery.enums.MeshId
+import marloth.scenery.enums.Meshes
 import silentorb.mythic.ent.Id
 import silentorb.mythic.lookinglass.*
 import silentorb.mythic.scenery.Camera
@@ -65,7 +65,7 @@ fun getPlayerEquipmentLayer(definitions: Definitions, deck: Deck, player: Id, ca
               meshes = listOf(
                   MeshElement(
                       id = 1,
-                      mesh = MeshId.key,
+                      mesh = Meshes.key,
                       transform = transform
                   )
               ),
