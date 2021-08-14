@@ -16,7 +16,12 @@ data class Side(
     val other: Set<String>,
     val height: Int = StandardHeights.first,
     val isTraversable: Boolean = true,
-    val isEssential: Boolean = false,
+    val isEssential: Boolean = false, // This side needs to be connected to another side
     val canMatchEssential: Boolean = true,
-    val greedy: Boolean = false,
+
+    // Match this side if possible, ignoring block limits.
+    // Unlike `isEssential`, a match is not required.
+    // During the greedy pass, only new blocks without greedy sides are considered in order to prevent
+    // infinite loops and excess greed.
+    val isGreedy: Boolean = false,
 )

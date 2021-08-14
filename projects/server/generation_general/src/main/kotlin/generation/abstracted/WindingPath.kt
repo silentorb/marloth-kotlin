@@ -7,7 +7,6 @@ import silentorb.mythic.randomly.Dice
 import silentorb.mythic.spatial.Vector3i
 import simulation.misc.BlockAttributes
 import simulation.misc.cellLength
-import kotlin.math.pow
 
 data class GroupedBlocks(
     val traversable: Set<Block>,
@@ -53,12 +52,12 @@ enum class BranchingMode {
 
 data class BlockState(
     val grid: BlockGrid,
-    val blacklistSides: List<CellDirection>,
     val biomeBlocks: Map<String, GroupedBlocks>,
     val biomeGrid: BiomeGrid,
-    val blacklistBlockLocations: Map<Vector3i, List<Block>>,
     val branchingMode: BranchingMode,
     val biomeAdapters: Set<Block>,
+    val blacklistSides: List<CellDirection> = listOf(),
+    val blacklistBlockLocations: Map<Vector3i, List<Block>> = mapOf(),
     val lastCell: Vector3i? = null,
 )
 
@@ -103,7 +102,8 @@ tailrec fun addPathStep(
     dice: Dice,
     state: BlockState
 ): BlockState {
-  val (grid, blacklist) = state
+  val grid = state.grid
+  val blacklist= state.blacklistSides
 
   if (grid.size > 1000)
     throw Error("Infinite loop in world generation.")
@@ -134,7 +134,7 @@ tailrec fun addPathStep(
     val groupedBlocks = state.biomeBlocks[biome]
     if (groupedBlocks == null)
       throw Error("Biome mismatch")
-
+    
     val blocks = getAvailableBlocks(groupedBlocks, incompleteSides, grid[state.lastCell]?.source)
     val essentialDirectionSideDirection = oppositeDirections[incompleteSide.direction]!!
 
@@ -172,13 +172,30 @@ tailrec fun addPathStep(
   }
 }
 
+fun newExtensionBlockState(state: BlockState): BlockState {
+  val biomeBlocks = state.biomeBlocks.mapValues { (a_, group) ->
+    group.copy(
+        traversable = group.traversable.filter(::isGreedy).toSet(),
+        nonTraversable = group.nonTraversable.filter(::isGreedy).toSet(),
+    )
+  }
+  return BlockState(
+      grid = state.grid,
+      biomeGrid = state.biomeGrid,
+      biomeBlocks = biomeBlocks,
+      biomeAdapters = state.biomeAdapters,
+      branchingMode = state.branchingMode,
+  )
+}
+
 tailrec fun extendBlockSides(dice: Dice, state: BlockState): BlockState {
-  val (grid, blacklist) = state
+  val grid = state.grid
+  val blacklist= state.blacklistSides
 
   if (grid.size > 1000)
     throw Error("Infinite loop in world generation.")
 
-  val incompleteSides = getIncompleteBlockSides(grid) { it.greedy } - blacklist
+  val incompleteSides = getIncompleteBlockSides(grid) { it.isGreedy } - blacklist
 
   if (incompleteSides.none())
     return state
@@ -191,7 +208,11 @@ tailrec fun extendBlockSides(dice: Dice, state: BlockState): BlockState {
   if (groupedBlocks == null)
     throw Error("Biome mismatch")
 
-  val blocks = groupedBlocks.nonTraversable
+  val blocks = if (grid[incompleteSide.cell]!!.cell.sides[incompleteSide.direction]!!.isTraversable)
+    groupedBlocks.traversable
+  else
+    groupedBlocks.nonTraversable
+
   val essentialDirectionSideDirection = oppositeDirections[incompleteSide.direction]!!
 
   val matchResult = matchConnectingBlock(dice, blocks, grid, nextPosition, essentialDirectionSideDirection)
@@ -236,8 +257,6 @@ fun windingPath(seed: Long, dice: Dice, config: BlockConfig, length: Int, grid: 
   val state = BlockState(
       grid = grid,
       biomeBlocks = groupedBlocks,
-      blacklistSides = listOf(),
-      blacklistBlockLocations = mapOf(),
       biomeGrid = biomeGrid,
       branchingMode = BranchingMode.linear,
       biomeAdapters = blocks.filter { it.isBiomeAdapter }.toSet()
@@ -253,7 +272,7 @@ fun windingPath(seed: Long, dice: Dice, config: BlockConfig, length: Int, grid: 
     val intermediateState = addPathStep(firstLength, dice, state)
     val nextState = addPathStep(secondLength, dice, intermediateState.copy(branchingMode = BranchingMode.open))
     if (nextState.grid.size >= length)
-      return extendBlockSides(dice, nextState.copy(blacklistBlockLocations = mapOf(), blacklistSides = listOf())).grid
+      return extendBlockSides(dice, newExtensionBlockState(nextState)).grid
     else
       println("Failed to generate world with seed $seed")
   }

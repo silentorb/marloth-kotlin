@@ -4,8 +4,8 @@
 ["bounds","mesh","slope"],
 ["bounds","type","solid-custom"],
 ["bounds","depiction","none"],
-["bounds","translation",[0.2,0.0,0.1]],
-["bounds","scale",[2.8,2.0,2.0]],
+["bounds","scale",[1.35,1.0,1.0]],
+["bounds","translation",[0.17605388,0.0,0.10333373]],
 ["simple-stairs","",""],
 ["simple-stairs","mesh","stairNarrowHalf"]
 ]

@@ -31,3 +31,6 @@ fun rotateZ(turns: Int, cellDirection: CellDirection): CellDirection =
 
 fun isSimpleSideNode(node: String): Boolean =
     node.matches(Regex("\\d+[-,]\\d+[-,]\\d+.*?"))
+
+fun isGreedy(block: Block): Boolean =
+    block.cells.any { cell -> cell.value.sides.any { it.value.isGreedy } }

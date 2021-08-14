@@ -87,7 +87,7 @@ fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock,
 fun matchBlock(dice: Dice, blocks: Set<Block>, getBlock: GetBlock, surroundingSides: SideMap,
                essentialDirectionSide: Direction): Pair<Vector3i, Block>? {
   val options = blocks.mapNotNull { block ->
-    val offset = checkBlockMatch(surroundingSides, getBlock, essentialDirectionSide)(block)
+     val offset = checkBlockMatch(surroundingSides, getBlock, essentialDirectionSide)(block)
     if (offset != null)
       offset to block
     else

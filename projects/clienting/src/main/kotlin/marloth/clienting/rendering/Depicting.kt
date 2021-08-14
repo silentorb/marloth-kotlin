@@ -150,10 +150,7 @@ fun getDebugTextBillboard(definitions: Definitions, deck: Deck, actor: Id, footP
 fun characterMeshes(depictionType: String) =
     when (depictionType) {
       DepictionType.child -> listOf(
-          MeshId.personBody,
-          MeshId.pants,
-          MeshId.shirt,
-          MeshId.pumpkinHead
+          MeshId.girl,
       )
       DepictionType.sentinel -> listOf(
           MeshId.personBody,
@@ -183,14 +180,17 @@ fun characterPlacement(location: Vector3, height: Float, rotationZ: Float): Matr
     .translate(characterFootPosition(location, height))
     .rotateZ(rotationZ)
     .rotateZ(Pi / 2f)
-    .scale(0.5f)
 
 fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depiction: Depiction): ElementGroup {
   val body = deck.bodies[id]!!
   val characterRig = deck.characterRigs[id]!!
   val collisionObject = deck.collisionObjects[id]!!
   val shape = collisionObject.shape
+  val scale = if (depiction.type == DepictionType.child) 1f else 0.5f
+
   val transform = characterPlacement(body.position, shape.height, characterRig.facingRotation.x)
+      .scale(scale)
+
   val meshes = characterMeshes(depiction.type)
 
   val animations = deck.animations[id]!!.animations.map {
@@ -208,6 +208,11 @@ fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depi
 
   val accessories = getAccessories(deck.accessories, id)
 
+  val armature = if (depiction.type == DepictionType.child)
+    ArmatureId.girl
+  else
+    ArmatureId.person
+
   return ElementGroup(
       meshes = meshes
           .map {
@@ -218,7 +223,7 @@ fun convertCharacterDepiction(definitions: Definitions, deck: Deck, id: Id, depi
                 location = body.position
             )
           },
-      armature = ArmatureId.person.name,
+      armature = armature,
       animations = animations,
       attachments = accessories
           .mapNotNull { (_, accessoryRecord) ->

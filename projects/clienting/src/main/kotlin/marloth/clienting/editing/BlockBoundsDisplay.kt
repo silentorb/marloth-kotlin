@@ -17,7 +17,9 @@ import silentorb.mythic.ent.getNodeValue
 import silentorb.mythic.ent.scenery.anyNodeHasAttribute
 import silentorb.mythic.ent.scenery.getNodesWithAttribute
 import silentorb.mythic.ent.scenery.nodeHasAttribute
+import silentorb.mythic.ent.singleValueCache
 import silentorb.mythic.scenery.SceneProperties
+import silentorb.mythic.scenery.Shape
 import silentorb.mythic.spatial.Matrix
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
@@ -115,16 +117,22 @@ fun drawlines(drawList: ImDrawList, transform: ScreenTransform, lines: Collectio
   }
 }
 
-fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
-  val editor = environment.editor
-  val selection = getNodeSelection(editor)
+val blockCells = singleValueCache<Pair<Graph, Map<String, Shape>>, Pair<List<Vector3i>, List<Pair<CellDirection, Side>>>> { (graph, meshShapes) ->
   val meshNodes = filterByProperty(graph, SceneProperties.mesh).map { it.source }
-  val cells = getCellOccupancy(editor.enumerations.resourceInfo.meshShapes, graph, meshNodes)
+  val cells = getCellOccupancy(meshShapes, graph, meshNodes)
       .distinct()
 
   val sideNodes = getSideNodes(graph)
   val sides = gatherSides(sideGroups, graph, sideNodes, nonTraversableBlockSides)
       .filter { it.second != null } as List<Pair<CellDirection, Side>>
+
+  cells to sides
+}
+
+fun drawBlockBounds(environment: GizmoEnvironment, graph: Graph) {
+  val editor = environment.editor
+  val selection = getNodeSelection(editor)
+  val (cells, sides) = blockCells(graph to editor.enumerations.resourceInfo.meshShapes)
 
   val variableSides = selection.mapNotNull { node ->
     if (nodeHasAttribute(graph, node, GameAttributes.showIfSideIsEmpty))

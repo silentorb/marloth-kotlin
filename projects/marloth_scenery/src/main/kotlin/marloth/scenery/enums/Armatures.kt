@@ -1,7 +1,8 @@
 package marloth.scenery.enums
 
-enum class ArmatureId {
-  person
+object ArmatureId {
+  const val girl = "girl"
+  const val person = "person"
 }
 
 object AnimationId {

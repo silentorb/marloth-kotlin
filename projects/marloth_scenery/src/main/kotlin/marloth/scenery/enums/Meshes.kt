@@ -65,4 +65,8 @@ object MeshId {
 
   val branchingTree = "branchingTree"
   val lampPost = "lampPost"
+
+  // Characters
+
+  val girl = "girl"
 }
