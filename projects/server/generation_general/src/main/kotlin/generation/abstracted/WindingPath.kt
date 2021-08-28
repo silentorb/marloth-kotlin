@@ -175,8 +175,8 @@ tailrec fun addPathStep(
 fun newExtensionBlockState(state: BlockState): BlockState {
   val biomeBlocks = state.biomeBlocks.mapValues { (a_, group) ->
     group.copy(
-        traversable = group.traversable.filter(::isGreedy).toSet(),
-        nonTraversable = group.nonTraversable.filter(::isGreedy).toSet(),
+        traversable = group.traversable.filter(::isNotGreedy).toSet(),
+        nonTraversable = group.nonTraversable.filter(::isNotGreedy).toSet(),
     )
   }
   return BlockState(
@@ -208,7 +208,9 @@ tailrec fun extendBlockSides(dice: Dice, state: BlockState): BlockState {
   if (groupedBlocks == null)
     throw Error("Biome mismatch")
 
-  val blocks = if (grid[incompleteSide.cell]!!.cell.sides[incompleteSide.direction]!!.isTraversable)
+  val cell = grid[incompleteSide.cell]!!
+  val side = cell.cell.sides[incompleteSide.direction]!!
+  val blocks = if (side.isTraversable)
     groupedBlocks.traversable
   else
     groupedBlocks.nonTraversable

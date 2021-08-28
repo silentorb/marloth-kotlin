@@ -34,3 +34,6 @@ fun isSimpleSideNode(node: String): Boolean =
 
 fun isGreedy(block: Block): Boolean =
     block.cells.any { cell -> cell.value.sides.any { it.value.isGreedy } }
+
+fun isNotGreedy(block: Block): Boolean =
+    !isGreedy(block)
