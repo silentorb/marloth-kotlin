@@ -65,10 +65,6 @@ fun balanceWeights(index: Int, value: Float, locks: List<Boolean>): (List<Float>
     else
       weight * scalar
   }
-
-  if (result.sum() > 1.000001f) {
-    val k = 0
-  }
   result
 }
 

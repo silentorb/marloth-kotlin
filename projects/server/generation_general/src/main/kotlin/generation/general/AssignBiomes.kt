@@ -8,46 +8,6 @@ import kotlin.math.max
 typealias BiomeGrid = (Vector3i) -> String
 typealias VoronoiAnchors2d<T> = List<VoronoiAnchor2d<T>>
 
-fun getGridBounds(grid: Set<Vector3i>): WorldBoundary =
-    if (grid.none())
-      WorldBoundary(Vector3.zero, Vector3.zero)
-    else
-      WorldBoundary(
-          Vector3i(
-              grid.minOf { it.x },
-              grid.minOf { it.y },
-              grid.minOf { it.z },
-          ).toVector3() - cellHalfLength,
-          Vector3i(
-              grid.maxOf { it.x },
-              grid.maxOf { it.y },
-              grid.maxOf { it.z },
-          ).toVector3() + cellHalfLength
-      )
-
-tailrec fun removeClumps(range: Float, nodes: VoronoiAnchors2d<String>, removed: VoronoiAnchors2d<String> = listOf()): VoronoiAnchors2d<String> =
-    if (nodes.none())
-      removed
-    else {
-      val next = nodes.first()
-      val remaining = nodes.drop(1)
-      val tooClose = remaining
-          .filter { it.position.distance(next.position) < range }
-
-      removeClumps(range, remaining - tooClose, removed + tooClose)
-    }
-
-fun <T> newVoronoiGrid(biomes: List<T>, dice: Dice, bounds: WorldBoundary): VoronoiAnchors<T> {
-  val averageBiomeLength = 20
-  val lengthMod = averageBiomeLength * averageBiomeLength
-  val dimensions = bounds.dimensions// * gridScale
-  val x = dimensions.x.toInt()
-  val y = dimensions.y.toInt()
-  val anchorCount = max(1, x * y / lengthMod)
-  val values = biomes.toList()
-  return voronoiAnchors(values, anchorCount, dice, bounds.start, bounds.end)
-}
-
 fun newBiomeAnchors(biomes: Set<String>, dice: Dice, worldRadius: Float, biomeSize: Float, minGap: Float): VoronoiAnchors2d<String> {
   val biomeLengthCount = max(1, (worldRadius * 2f / biomeSize).toInt())
   val margin = minGap / 2f

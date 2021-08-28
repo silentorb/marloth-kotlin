@@ -1,5 +1,6 @@
 package generation.general
 
+import silentorb.mythic.spatial.Vector2
 import silentorb.mythic.spatial.Vector3
 import silentorb.mythic.spatial.Vector3i
 
@@ -19,3 +20,18 @@ data class WorldBoundary(
   val dimensions: Vector3
     get() = end - start
 }
+
+data class CellDirection(
+    val cell: Vector3i,
+    val direction: Direction
+)
+
+data class BlockConfig(
+    val blocks: Set<Block>,
+    val biomes: Set<String>,
+)
+
+data class VoronoiAnchor2d<T>(
+    val position: Vector2,
+    val value: T
+)

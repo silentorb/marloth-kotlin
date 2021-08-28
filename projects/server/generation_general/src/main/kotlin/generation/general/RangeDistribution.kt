@@ -1,6 +1,5 @@
-package generation.abstracted
+package generation.general
 
-import generation.general.Rarity
 import silentorb.mythic.randomly.Dice
 
 // This assumes that there is no entry with a weight of zero

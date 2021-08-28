@@ -24,4 +24,14 @@ data class Side(
     // During the greedy pass, only new blocks without greedy sides are considered in order to prevent
     // infinite loops and excess greed.
     val isGreedy: Boolean = false,
+
+    // Can match sides with different heights if the connection is nonessential
+    val looseNonEssentialHeights: Boolean = false,
+)
+
+// This is a solution for fringe cases and may end up being temporary
+const val unmatchable = "unmatchable"
+val unmatchableSide = Side(
+    mine = unmatchable,
+    other = setOf(),
 )

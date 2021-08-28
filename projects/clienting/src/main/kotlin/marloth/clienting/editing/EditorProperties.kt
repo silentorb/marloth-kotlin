@@ -92,6 +92,12 @@ fun marlothEditorPropertyDefinitions(sides: List<String> = blockSides): Property
         widget = cellDirectionWidget,
         defaultValue = { CellDirection(Vector3i.zero, Direction.east) },
     ),
+    GameProperties.hideIfSideIsEmpty to PropertyDefinition(
+        displayName = "Hide if Side is Empty",
+        serialization = cellDirectionSerialization,
+        widget = cellDirectionWidget,
+        defaultValue = { CellDirection(Vector3i.zero, Direction.east) },
+    ),
     GameProperties.sideHeight to PropertyDefinition(
         displayName = "Side Height",
         serialization = intSerialization,

@@ -36,6 +36,7 @@ fun rotateBlockBuilder(turns: Int, blockBuilder: BlockBuilder): BlockBuilder =
           }
 
       block.copy(
+          name = block.name + "${-turns}turns",
           cells = cells,
           traversable = getTraversable(cells),
           turns = turns
@@ -78,16 +79,19 @@ fun cellsFromSides(sides: List<Pair<CellDirection, Side?>>): Map<Vector3i, Block
       .entries
       .associate { (offset, value) ->
         // Null sides are used to indicate the existence of a non-traversable cell
-        val sides = value
+        val nonNullSides = value
             .filter { it.second != null }
+        val sideMap = nonNullSides
             .associate { it.first.direction to it.second!! }
 
-        val isTraversable = sides.any { it.value.isTraversable }
+        assert(nonNullSides.size == sideMap.size)
+
+        val isTraversable = sideMap.any { it.value.isTraversable }
         val attributes = setOfNotNull(
             if (isTraversable) CellAttribute.isTraversable else null,
         )
         offset to BlockCell(
-            sides = sides,
+            sides = sideMap,
             isTraversable = isTraversable,
             attributes = attributes,
         )
@@ -176,31 +180,46 @@ fun shouldOmit(cellDirections: List<CellDirection>, keys: Set<CellDirection>): B
       keys.contains(cellDirection)
     }
 
-fun builderFromGraph(graph: Graph, cellDirections: Map<CellDirection, CellDirection>): Builder {
-  val showIfSideIsEmpty = filterByProperty(graph, GameProperties.showIfSideIsEmpty)
-      .map { it.source to it.target as CellDirection }
-      .plus(getNodesWithAttribute(graph, GameAttributes.showIfSideIsEmpty)
-          .mapNotNull {
-            val direction = getNodeValue<CellDirection>(graph, it, GameProperties.direction)
-            if (direction != null)
-              it to direction
-            else
-              null
-          }
-      )
-      .groupBy { it.first }
-
-  return { input ->
-    val omitted = showIfSideIsEmpty
+fun getVariableSideElements(property: String, attribute: String, graph: Graph, cellDirections: Map<CellDirection, CellDirection>) =
+    filterByProperty(graph, property)
+        .map { it.source to it.target as CellDirection }
+        .plus(getNodesWithAttribute(graph, attribute)
+            .mapNotNull {
+              val direction = getNodeValue<CellDirection>(graph, it, GameProperties.direction)
+              if (direction != null)
+                it to direction
+              else
+                null
+            }
+        )
+        .groupBy { it.first }
         .mapValues { i ->
           i.value.map { cellDirections[it.second] ?: it.second }
         }
-        .mapNotNull { (node, cellDirections) ->
-          if (shouldOmit(cellDirections, input.neighbors.keys))
-            node
-          else
-            null
-        }
+
+fun builderFromGraph(graph: Graph, cellDirections: Map<CellDirection, CellDirection>, height: Int): Builder {
+  val showIfSideIsEmpty =
+      getVariableSideElements(GameProperties.showIfSideIsEmpty, GameAttributes.showIfSideIsEmpty, graph, cellDirections)
+
+  val hideIfSideIsEmpty =
+      getVariableSideElements(GameProperties.hideIfSideIsEmpty, GameAttributes.hideIfSideIsEmpty, graph, cellDirections)
+
+  val showIfHeightOffset =
+      if (height == 0)
+        getNodesWithAttribute(graph, GameAttributes.showIfHeightOffset)
+      else
+        listOf()
+
+  return { input ->
+    val omitted = showIfSideIsEmpty
+        .filter { shouldOmit(it.value, input.neighbors.keys) }
+        .plus(
+            hideIfSideIsEmpty
+                .filter { !shouldOmit(it.value, input.neighbors.keys) }
+        )
+        .map { it.key }
+        .plus(showIfHeightOffset)
+        .distinct()
 
     removeNodesAndChildren(graph, omitted)
   }
@@ -261,7 +280,7 @@ fun graphToBlockBuilder(name: String, graph: Graph): List<BlockBuilder> {
       assert(cells.keys.contains(Vector3i.zero))
       val block = blockFromGraph(graph, cells, root, name, biomes, height)
       val finalGraph = prepareBlockGraph(graph, sideNodes, biomes)
-      block to builderFromGraph(finalGraph, cellDirectionsMap)
+      block to builderFromGraph(finalGraph, cellDirectionsMap, height)
     }
   }
 }

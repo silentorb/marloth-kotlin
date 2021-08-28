@@ -1,6 +1,6 @@
 package marloth.integration.generation
 
-import generation.abstracted.distributeToRaritySlots
+import generation.general.distributeToRaritySlots
 import generation.architecture.engine.GenerationConfig
 import marloth.clienting.editing.biomeIds
 import marloth.definition.misc.monsterDistributions

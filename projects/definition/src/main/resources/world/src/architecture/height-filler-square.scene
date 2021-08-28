@@ -1,0 +1,24 @@
+{
+"graph" : [
+["height-filler-square","",""],
+["wall","type","common-wall-tall"],
+["wall","parent","height-filler-square"],
+["wall","translation",[0.0,0.0,-5.0]],
+["wall","type","showIfHeightOffset"],
+["wall1","type","common-wall-tall"],
+["wall1","translation",[0.0,0.0,-5.0]],
+["wall1","type","showIfHeightOffset"],
+["wall1","parent","height-filler-square"],
+["wall1","rotation",[0.0,0.0,1.5707964]],
+["wall2","type","common-wall-tall"],
+["wall2","translation",[0.0,0.0,-5.0]],
+["wall2","type","showIfHeightOffset"],
+["wall2","parent","height-filler-square"],
+["wall2","rotation",[0.0,0.0,3.1415927]],
+["wall3","type","common-wall-tall"],
+["wall3","translation",[0.0,0.0,-5.0]],
+["wall3","type","showIfHeightOffset"],
+["wall3","parent","height-filler-square"],
+["wall3","rotation",[0.0,0.0,-1.5707964]]
+]
+}

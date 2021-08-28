@@ -104,10 +104,6 @@ fun applyCompression(buffer: FloatBuffer, min: Float, max: Float): FloatBuffer {
 
   loopFloatBuffer(buffer) { color ->
     val n = (color - min) * mod
-
-    if (color > 0.5f) {
-      val k = 0
-    }
     output.put(cleanup(n))
   }
 

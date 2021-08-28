@@ -1,6 +1,5 @@
 package generation.general
 
-import generation.abstracted.GroupedBlocks
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.randomly.getAliasedIndex
 import silentorb.mythic.spatial.Vector3i
@@ -20,18 +19,20 @@ fun getOtherSide(getBlock: GetBlock, origin: Vector3i): (Direction) -> Side? = {
   val offset = directionVectors[direction]!!
   val position = origin + offset
   val block = getBlock(position)
-  val sides = block?.sides
-  sides?.getOrDefault(oppositeSide, null)
+  block?.sides?.getOrDefault(oppositeSide, null)
 }
 
-fun sidesMatch(first: Side, second: Side): Boolean =
+fun sidesMatch(first: Side, second: Side, isEssential: Boolean = true): Boolean =
     first.other.contains(second.mine) &&
         second.other.contains(first.mine) &&
-        first.height == second.height
+        (first.height == second.height ||
+            (!isEssential &&
+                first.looseNonEssentialHeights && second.looseNonEssentialHeights)
+            )
 
-fun sidesMatch(surroundingSides: SideMap, direction: Direction, blockSide: Side): Boolean {
+fun sidesMatch(surroundingSides: SideMap, direction: Direction, blockSide: Side, isEssential: Boolean = true): Boolean {
   val otherSide = surroundingSides[direction]
-  return otherSide != null && sidesMatch(blockSide, otherSide)
+  return otherSide != null && sidesMatch(blockSide, otherSide, isEssential)
 }
 
 fun getSurroundingSides(getBlock: GetBlock, location: Vector3i): SideMap {
@@ -52,6 +53,7 @@ fun getSurroundingSides(blockGrid: BlockGrid, location: Vector3i): SideMap {
   return getSurroundingSides(getBlock, location)
 }
 
+// essentialDirectionSide is from the perspective of the potential block
 fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock,
                     essentialDirectionSide: Direction): (Block) -> Vector3i? = { block ->
   val traversable = block.traversable.any()
@@ -76,7 +78,10 @@ fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock,
                     else
                       getSurroundingSides(getBlock, appliedOffset)
 
-                    surroundingSides2.all { side -> sidesMatch(cell.sides, side.key, side.value) }
+                    val isEssentialCell = cellOffset == baseOffset
+                    surroundingSides2.all { side ->
+                      sidesMatch(cell.sides, side.key, side.value, isEssentialCell && side.key == essentialDirectionSide)
+                    }
                   }
                 }
       }
@@ -87,7 +92,7 @@ fun checkBlockMatch(surroundingSides: SideMap, getBlock: GetBlock,
 fun matchBlock(dice: Dice, blocks: Set<Block>, getBlock: GetBlock, surroundingSides: SideMap,
                essentialDirectionSide: Direction): Pair<Vector3i, Block>? {
   val options = blocks.mapNotNull { block ->
-     val offset = checkBlockMatch(surroundingSides, getBlock, essentialDirectionSide)(block)
+    val offset = checkBlockMatch(surroundingSides, getBlock, essentialDirectionSide)(block)
     if (offset != null)
       offset to block
     else
@@ -111,27 +116,6 @@ fun matchConnectingBlock(dice: Dice, blocks: Set<Block>, grid: BlockGrid, locati
   return matchBlock(dice, blocks, getBlock, surroundingSides, essentialDirectionSide)
 }
 
-fun fallbackBiomeMatchConnectingBlock(dice: Dice, biomeBlocks: Map<String, GroupedBlocks>, grid: BlockGrid,
-                                      location: Vector3i, biome: String,
-                                      essentialDirectionSide: Direction): Pair<Vector3i, Block>? {
-  val options = directionVectors.values
-      .mapNotNull { offset -> grid[location + offset]?.source?.biomes }
-      .distinct()
-      .minus(biome)
-
-  for (option in options) {
-    val blocks = biomeBlocks[option]
-    if (blocks != null) {
-      val result = matchConnectingBlock(dice, blocks.traversable, grid, location, essentialDirectionSide)
-      if (result != null) {
-        return result
-      }
-    }
-  }
-
-  return null
-}
-
 fun openSides(blockGrid: BlockGrid, position: Vector3i, condition: (Side) -> Boolean): Map<Direction, Vector3i> {
   val block = blockGrid[position]!!
   return directionVectors
@@ -140,8 +124,6 @@ fun openSides(blockGrid: BlockGrid, position: Vector3i, condition: (Side) -> Boo
         side != null && condition(side) && !blockGrid.containsKey(position + direction.value)
       }
 }
-
-typealias UsableConnectionTypes = (Vector3i) -> (Direction) -> Side
 
 fun filterBlockSides(blockGrid: BlockGrid, position: Vector3i, condition: (Side) -> Boolean = { it.isTraversable }
 ): List<CellDirection> {

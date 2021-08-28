@@ -31,6 +31,8 @@ import simulation.entities.getInteractionCommandType
 import simulation.happenings.Notification
 import simulation.main.World
 import simulation.misc.Definitions
+import simulation.misc.cellHalfLength
+import simulation.misc.cellLength
 import kotlin.math.roundToInt
 
 private val textStyle = TextStyles.smallGray
@@ -221,11 +223,12 @@ fun hudLayout(textResources: TextResources, world: World, clientState: ClientSta
       )
 
   val viewMode = characterRig?.viewMode ?: ViewMode.firstPerson
+  val convertCellAxis = { value: Float -> ((value - cellHalfLength) / cellLength).toInt() }
   val debugInfo = listOfNotNull(
 //            "LR: ${floatToRoundedString(lightRating(deck, player))}",
       if (getDebugBoolean("HUD_DRAW_PLAYER_VELOCITY")) "Velocity: ${floatToRoundedString(body.velocity.length())}" else null,
       if (getDebugBoolean("HUD_DRAW_CELL_LOCATION"))
-        "${body.position.x.toInt() / 5} ${body.position.y.toInt() / 5} ${body.position.z.toInt() / 5}"
+        "${convertCellAxis(body.position.x)} ${convertCellAxis(body.position.y)} ${convertCellAxis(body.position.z)}"
       else
         null,
       if (getDebugBoolean("HUD_DRAW_PLAYER_ROTATION"))

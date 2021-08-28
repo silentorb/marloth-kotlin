@@ -31,7 +31,8 @@ fun gatherSides(sideGroups: Map<String, Set<String>>, graph: Graph, sideNodes: C
               height = height,
               isTraversable = !nonTraversableBlockSides.contains(mine) && !nonTraversableBlockSides.containsAll(other),
               isEssential = isEssential,
-              isGreedy = nodeHasAttribute(graph, node, GameAttributes.greedy)
+              isGreedy = nodeHasAttribute(graph, node, GameAttributes.greedy),
+              looseNonEssentialHeights = nodeHasAttribute(graph, node, GameAttributes.looseNonEssentialHeights),
           )
         }
       }

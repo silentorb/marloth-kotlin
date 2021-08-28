@@ -1,6 +1,5 @@
 package generation.architecture.engine
 
-import generation.abstracted.*
 import generation.architecture.biomes.Biomes
 import generation.general.*
 import silentorb.mythic.ent.reflectProperties

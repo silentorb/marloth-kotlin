@@ -1,4 +1,4 @@
-package generation.abstracted
+package generation.general
 
 import silentorb.mythic.spatial.Vector3i
 
@@ -13,9 +13,6 @@ fun padSlopeCells(cells: List<Vector3i>) =
 
 fun isSlope(direction: Vector3i) =
     direction.z != 0 && (direction.x != 0 || direction.y != 0)
-
-fun isVertical(direction: Vector3i) =
-    direction.z != 0 && direction.x == 0 && direction.y == 0
 
 fun gatherCellsAlongPath(from: Vector3i, direction: Vector3i, distance: Int): List<Vector3i> {
   val primary = (1..distance).map {

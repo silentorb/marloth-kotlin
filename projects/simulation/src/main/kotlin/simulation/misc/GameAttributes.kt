@@ -22,6 +22,8 @@ object GameAttributes {
   val lockedRotation = "lockedRotation"
   val lightDistribution = "lightDistribution"
   val showIfSideIsEmpty = "showIfSideIsEmpty"
+  val showIfHeightOffset = "showIfHeightOffset"
+  val hideIfSideIsEmpty = "hideIfSideIsEmpty"
   val heteroBlock = BlockAttributes.hetero
 
   val wallSlot = "wallSlot"
@@ -29,6 +31,7 @@ object GameAttributes {
   val intrinsicReplenishment = "intrinsicReplenishment"
   val greedy = "greedy"
   val biomeAdapter = "biomeAdapter"
+  val looseNonEssentialHeights = "looseNonEssentialHeights"
 }
 
 object DistAttributes {
@@ -55,6 +58,7 @@ object GameProperties {
   const val other = "other"
   const val direction = "direction"
   const val showIfSideIsEmpty = "showIfNull"
+  const val hideIfSideIsEmpty = "hideIfNull"
   const val sideHeight = "sideLevel"
   const val biome = "biome"
   const val blockRotations = "blockRotations"

@@ -1,6 +1,5 @@
-package generation.abstracted
+package generation.general
 
-import generation.general.*
 import silentorb.mythic.debugging.conditionalDebugLog
 import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.randomly.Dice
@@ -137,7 +136,6 @@ tailrec fun addPathStep(
     
     val blocks = getAvailableBlocks(groupedBlocks, incompleteSides, grid[state.lastCell]?.source)
     val essentialDirectionSideDirection = oppositeDirections[incompleteSide.direction]!!
-
     val matchResult = matchConnectingBlock(dice, blocks, grid, nextPosition, essentialDirectionSideDirection)
 //        ?: matchConnectingBlock(dice, groupedBlocks.traversable - blocks, grid, nextPosition, essentialDirectionSideDirection)
         ?: matchConnectingBlock(dice, state.biomeAdapters - blocks, grid, nextPosition, essentialDirectionSideDirection)
@@ -153,7 +151,7 @@ tailrec fun addPathStep(
     } else {
       val (blockOffset, block) = matchResult
       worldGenerationLog {
-        "Winding Step: $biome ${incompleteSide.cell} ${incompleteSide.direction} ${block.name} "
+        "Winding Step: $biome ${incompleteSide.cell} ${nextPosition} ${incompleteSide.direction} ${block.name} "
       }
       val cellAdditions = extractCells(block, nextPosition - blockOffset)
 //      if (!cellAdditions.containsKey(nextPosition))
