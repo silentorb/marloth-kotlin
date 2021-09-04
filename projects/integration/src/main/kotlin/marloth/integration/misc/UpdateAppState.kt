@@ -84,7 +84,7 @@ fun updateFixedInterval(app: GameApp, boxes: PlayerBoxes, playerBloomDefinitions
               deferredCommands
           )
 
-          checkRestartGame(app, appState, clientState) ?: updateAppStateWorlds(app, appState, clientState)
+          checkNewGame(app, appState, clientState) ?: updateAppStateWorlds(app, appState, clientState)
         },
         updateAppStateForFirstNewPlayer,
         updateAppStateForNewPlayers

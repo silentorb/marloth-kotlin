@@ -26,7 +26,7 @@ import kotlin.concurrent.thread
 
 fun newWorld(app: GameApp, graph: Graph = listOf(), graphLibrary: GraphLibrary = mapOf()): World {
   return logExecutionTime("World generation", getDebugBoolean("PROFILE_WORLD_GENERATION")) {
-    val generationConfig = newGenerationConfig(app, graphLibrary)
+    val generationConfig = newGenerationConfig(app.definitions, graphLibrary)
     newWorldFromGenerated(app.definitions, generateNewWorld(app.db, graph, generationConfig))
   }
 }
@@ -47,7 +47,7 @@ fun restartClientState(input: PlatformInput, client: ClientState, playerMap: Map
         activeLoadingTasks = setOf(),
     )
 
-fun newOrRestartWorld(app: GameApp, appState: AppState, scene: String): World {
+fun beginNewOrRestartWorld(app: GameApp, appState: AppState, scene: String): World {
   val editor = appState.client.editor
   val graph = when {
     !getDebugBoolean("STATIC_MAP") -> listOf()
@@ -64,7 +64,7 @@ fun newOrRestartWorld(app: GameApp, appState: AppState, scene: String): World {
   }
 }
 
-fun newOrRestartGame(app: GameApp, appState: AppState, world: World): AppState {
+fun finishNewOrRestartGame(app: GameApp, appState: AppState, world: World): AppState {
   System.gc()
 
   return if (appState.worlds.none()) {
@@ -93,12 +93,13 @@ fun newOrRestartGame(app: GameApp, appState: AppState, world: World): AppState {
 }
 
 var asyncWorld: World? = null
+var creatingNewWorld: Boolean = false
 
-fun checkRestartGame(app: GameApp, appState: AppState, clientState: ClientState): AppState? {
+fun checkNewGame(app: GameApp, appState: AppState, clientState: ClientState): AppState? {
   val localAsyncAppState = asyncWorld
-  return if (localAsyncAppState != null) {
+  return if (localAsyncAppState != null) { // Async processing finished so return the finished world
     asyncWorld = null
-    newOrRestartGame(app, appState.copy(client = clientState), localAsyncAppState)
+    finishNewOrRestartGame(app, appState.copy(client = clientState), localAsyncAppState)
   } else if (clientState.activeLoadingTasks.any())
     appState.copy(client = clientState)
   else {
@@ -107,7 +108,7 @@ fun checkRestartGame(app: GameApp, appState: AppState, clientState: ClientState)
     if (newGameCommand != null) {
       val scene = newGameCommand.value as? String ?: mainScene()
       thread(start = true) {
-        asyncWorld = newOrRestartWorld(app, appState.copy(client = clientState), scene)
+        asyncWorld = beginNewOrRestartWorld(app, appState.copy(client = clientState), scene)
         println("")
       }
       appState.copy(

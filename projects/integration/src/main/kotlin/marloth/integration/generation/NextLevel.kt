@@ -1,6 +1,5 @@
 package marloth.integration.generation
 
-import marloth.integration.front.GameApp
 import silentorb.mythic.ent.GraphWrapper
 import silentorb.mythic.ent.Table
 import silentorb.mythic.physics.newBulletStateWithGraph
@@ -39,14 +38,14 @@ fun extractLongTermEntities(deck: Deck): Table<NewHand> =
     }
 
 // nextLevel ignores runtime editor changes
-fun nextLevel(app: GameApp, world: World): World {
+fun nextLevel(world: World): World {
   val global = world.global
   val definitions = world.definitions
   val level = global.level + 1
   val nextId = world.nextId.source()
   releaseBulletState(world.bulletState)
   val players = world.deck.players
-  val initialConfig = newGenerationConfig(app)
+  val initialConfig = newGenerationConfig(definitions, mapOf())
   val dice = Dice(initialConfig.seed)
   val persistentHands = extractLongTermEntities(world.deck)
       .mapValues { (id, hand) ->

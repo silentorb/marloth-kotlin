@@ -6,7 +6,6 @@ import marloth.clienting.editing.marlothGraphSchema
 import marloth.clienting.editing.marlothPropertiesSerialization
 import marloth.clienting.editing.staticDebugBlockGrid
 import marloth.definition.misc.loadMarlothGraphLibrary
-import marloth.integration.front.GameApp
 import marloth.integration.misc.persistenceTable
 import persistence.Database
 import persistence.queryEntries
@@ -17,7 +16,6 @@ import silentorb.mythic.ent.*
 import silentorb.mythic.ent.scenery.ExpansionLibrary
 import silentorb.mythic.ent.scenery.removeNodesAndChildren
 import silentorb.mythic.ent.scenery.withNodeChildren
-import silentorb.mythic.lookinglass.ResourceInfo
 import silentorb.mythic.physics.newBulletStateWithGraph
 import silentorb.mythic.randomly.Dice
 import silentorb.mythic.scenery.SceneProperties
@@ -84,7 +82,7 @@ fun newWorldFromGenerated(definitions: Definitions, source: GeneratedWorld): Wor
 fun newGenerationSeed(): Long =
     getDebugString("GENERATION_SEED")?.toLong() ?: System.currentTimeMillis()
 
-fun newGenerationConfig(definitions: Definitions, resourceInfo: ResourceInfo,
+fun newGenerationConfig(definitions: Definitions,
                         graphLibrary: GraphLibrary,
                         seed: Long = newGenerationSeed()): GenerationConfig {
   val expansionLibrary = ExpansionLibrary(
@@ -97,8 +95,8 @@ fun newGenerationConfig(definitions: Definitions, resourceInfo: ResourceInfo,
   return GenerationConfig(
       seed = seed,
       definitions = definitions,
-      meshes = compileArchitectureMeshInfo(resourceInfo.meshShapes),
-      resourceInfo = resourceInfo,
+      meshes = compileArchitectureMeshInfo(definitions.resourceInfo.meshShapes),
+      resourceInfo = definitions.resourceInfo,
       includeEnemies = getDebugString("MONSTER_LIMIT") != "0",
       cellCount = getDebugInt("BASE_ROOM_COUNT") ?: 100,
       expansionLibrary = expansionLibrary,
@@ -106,11 +104,6 @@ fun newGenerationConfig(definitions: Definitions, resourceInfo: ResourceInfo,
       propGraphs = propGraphs,
   )
 }
-
-fun newGenerationConfig(gameApp: GameApp,
-                        graphLibrary: GraphLibrary = mapOf(),
-                        seed: Long = newGenerationSeed()): GenerationConfig =
-    newGenerationConfig(gameApp.definitions, gameApp.client.resourceInfo, graphLibrary, seed)
 
 fun generateWorldGraphAndDeck(nextId: IdSource, generationConfig: GenerationConfig,
                               dice: Dice = Dice(generationConfig.seed)): Pair<Graph, Deck> {

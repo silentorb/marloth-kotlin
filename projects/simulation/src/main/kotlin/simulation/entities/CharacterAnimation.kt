@@ -82,7 +82,7 @@ fun updatePrimaryAnimation(deck: Deck, character: Id): AnimationName {
       return if (speed < 0.1f)
         AnimationId.stand
       else
-        AnimationId.run
+        AnimationId.walk
     }
   }
 }

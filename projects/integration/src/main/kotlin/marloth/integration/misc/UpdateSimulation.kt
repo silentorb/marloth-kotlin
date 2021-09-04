@@ -92,9 +92,8 @@ fun updateSimulation(app: GameApp, previousClient: ClientState, clientState: Cli
   val world = updateWorldGraph(clientState.events, worlds.last())
 
   return if (world.nextCommands.any { it.type == CharacterCommands.nextWorld }) {
-    listOf(nextLevel(app, world))
+    listOf(nextLevel(world))
   } else {
-    val definitions = app.definitions
     val previous = worlds.takeLast(2).first()
     val allEvents = gatherEventsForSimulation(app, previousClient, clientState, world, previous, commands)
     val nextWorld = updateWorld(allEvents, 1, world)
