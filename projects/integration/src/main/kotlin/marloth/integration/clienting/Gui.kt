@@ -20,6 +20,10 @@ fun getHudDebugInfo(appState: AppState): List<String> =
           "FPS: " + String.format("%,d", fps).padStart(4, ' ')
         } else
           null,
+        if (isDebuggingDrawnObjectCount()) {
+          "Drawn Objects: $debugDrawnObjectCount"
+        } else
+          null,
     )
 
 fun layoutIntegratedPlayerGui(definitions: Definitions, appState: AppState): (Id, Vector2i) -> Box = { player, dimensions ->

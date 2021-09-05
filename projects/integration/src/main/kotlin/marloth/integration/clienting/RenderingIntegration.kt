@@ -26,6 +26,11 @@ import simulation.main.World
 import simulation.misc.interpolateWorlds
 import simulation.updating.getIdle
 
+var debugDrawnObjectCount: Int = -1
+
+fun isDebuggingDrawnObjectCount() =
+    getDebugBoolean("DEBUG_DRAWN_OBJECT_COUNT")
+
 fun renderOverlay(appState: AppState, world: World, canvas: Canvas, dimensions: Vector2i, player: Id) {
   val clientState = appState.client
   val guiState = clientState.guiStates[player]
@@ -41,6 +46,13 @@ fun renderOverlay(appState: AppState, world: World, canvas: Canvas, dimensions: 
     renderLayout(box, canvas, getDebugBoolean("MARK_BLOOM_GUI_PASS"))
   }
 }
+
+fun getSceneLayerObjectCount(layer: SceneLayer): Int =
+    layer.elements.sumOf {
+      it.meshes.size +
+          it.billboards.size +
+          it.attachments.size
+    } + layer.children.sumBy(::getSceneLayerObjectCount)
 
 fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes: Map<Id, Box>, viewports: List<Vector4i>
 ) {
@@ -60,6 +72,11 @@ fun renderMain(client: Client, windowInfo: WindowInfo, appState: AppState, boxes
       if (world != null) {
         val scenes = appState.client.players
             .associateWith(createScene(client.resourceInfo, world))
+
+        if (isDebuggingDrawnObjectCount() && scenes.any()) {
+          debugDrawnObjectCount = scenes.values.first().layers
+              .sumBy(::getSceneLayerObjectCount)
+        }
 
         val viewportIterator = viewports.iterator()
         val boxIterator = boxes.values.iterator()

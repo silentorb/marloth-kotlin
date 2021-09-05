@@ -5,6 +5,7 @@ import generation.architecture.engine.GenerationConfig
 import marloth.clienting.editing.biomeIds
 import marloth.definition.misc.monsterDistributions
 import marloth.definition.misc.monsterLimit
+import silentorb.mythic.debugging.getDebugBoolean
 import silentorb.mythic.debugging.getDebugInt
 import silentorb.mythic.ent.Graph
 import silentorb.mythic.ent.IdSource
@@ -102,9 +103,13 @@ fun selectSlots(attributes: Collection<String>, limit: (Int) -> Int): SlotSelect
 }
 
 fun populateMonsters(config: DistributionConfig, slots: SlotMap): SlotMap {
-  val maxMonsters = min(monsterLimit(), config.cellCount / max(2, 16 - config.level))
+  val maxMonsters = min(monsterLimit(), slots.size / max(2, 16 - config.level))
   val groundSlots = slots.filter { it.value.attributes.contains(SlotTypes.ground) }
-  return selectSlots(config.dice, groundSlots, maxMonsters)
+  val result = selectSlots(config.dice, groundSlots, maxMonsters)
+  if (getDebugBoolean("DEBUG_MONSTER_COUNT")) {
+    println("Monster Count: ${result.size}")
+  }
+  return result
 }
 
 fun distributeItemHands(config: GenerationConfig, nextId: IdSource, dice: Dice, slots: SlotMap): List<NewHand> {
